@@ -48,7 +48,7 @@ bool CameraTest::setup(yarp::os::Property& property) {
                         "opening port, is YARP network available?");
 
     // connecting
-    RTF_ASSERT_REPORT(Asserter::format("connecting from %s to %s",
+    RTF_REPORT(Asserter::format("connecting from %s to %s",
                                        port.getName().c_str(), cameraPortName.c_str()));
     RTF_ASSERT_ERROR_IF(Network::connect(cameraPortName, port.getName()),
                      "could not connect to remote port, camera unavailable");
@@ -56,13 +56,13 @@ bool CameraTest::setup(yarp::os::Property& property) {
 }
 
 void CameraTest::tearDown() {
-    RTF_ASSERT_REPORT("down!");
+    RTF_REPORT("down!");
     Network::disconnect(cameraPortName, port.getName());
     port.close();
 }
 
 void CameraTest::run() {
-    RTF_ASSERT_REPORT("Reading images...");
+    RTF_REPORT("Reading images...");
     double timeStart=yarp::os::Time::now();
     double timeNow=timeStart;
 
@@ -76,9 +76,9 @@ void CameraTest::run() {
     }
 
     int expectedFrames = times*frequency;
-    RTF_ASSERT_REPORT(Asserter::format("Received %d frames, expecting %d",
+    RTF_REPORT(Asserter::format("Received %d frames, expecting %d",
                                        frames,
                                        expectedFrames));
-    RTF_ASSERT_CHECK(abs(frames-expectedFrames)<tolerance,
+    RTF_CHECK(abs(frames-expectedFrames)<tolerance,
                      "checking number of received frames");
 }

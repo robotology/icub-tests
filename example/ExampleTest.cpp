@@ -27,7 +27,7 @@ bool ExampleTest::setup(yarp::os::Property &property) {
     // initialization goes here ...
     string example = property.check("example", Value("default value")).asString();
 
-    RTF_ASSERT_REPORT(Asserter::format("Use '%s' for the example param!",
+    RTF_REPORT(Asserter::format("Use '%s' for the example param!",
                                        example.c_str()));
     return true;
 }
@@ -38,14 +38,13 @@ void ExampleTest::tearDown() {
 
 void ExampleTest::run() {
 
-    RTF_ASSERT_REPORT("testing integers");
-    RTF_ASSERT_CHECK(2<3, "is not smaller");
     int a = 5; int b = 3;
-    RTF_ASSERT_CHECK(a<b, Asserter::format("%d is not smaller than %d.", a, b));
-    RTF_ASSERT_REPORT("testing a > b");
-    RTF_ASSERT_CHECK(a>b, Asserter::format("%d is not smaller than %d.", a, b));
-    RTF_ASSERT_CHECK(a==b, Asserter::format("%d is not smaller than %d.", a, b));
-    RTF_ASSERT_FAIL("failed");
+    RTF_REPORT("testing a < b");
+    RTF_CHECK(a<b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_REPORT("testing a > b");
+    RTF_CHECK(a>b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_REPORT("testing a == b");
+    RTF_CHECK(a==b, Asserter::format("%d is not smaller than %d.", a, b));
     // add more 
     // ...
 }
