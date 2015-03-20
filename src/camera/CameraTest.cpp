@@ -1,0 +1,84 @@
+// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2015 iCub Facility
+ * Authors: Ali Paikan and Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+#include <iostream>
+#include <stdlib.h>     // for abs()
+#include <TestAssert.h>
+#include <Plugin.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Property.h>
+
+#include "CameraTest.h"
+
+using namespace RTF;
+using namespace yarp::os;
+using namespace yarp::sig;
+
+#define TIMES       1
+#define FREQUENCY   30
+#define TOLERANCE   5
+
+
+// prepare the plugin
+PREPARE_PLUGIN(CameraTest)
+
+CameraTest::CameraTest() : YarpTestCase("CameraTest") {
+}
+
+CameraTest::~CameraTest() { }
+
+bool CameraTest::setup(yarp::os::Property& property) {
+
+    // updating parameters
+    RTF_ASSERT_ERROR_IF(property.check("portname"),
+                        "The portname must be given as the test paramter!");
+    cameraPortName = property.find("portname").asString();
+    times = property.check("times") ? property.find("times").asInt() : TIMES;
+    frequency = property.check("frequency") ? property.find("frequency").asInt() : FREQUENCY;
+    tolerance = property.check("tolerance") ? property.find("tolerance").asInt() : TOLERANCE;
+
+    // opening port
+    RTF_ASSERT_ERROR_IF(port.open("/CameraTest/image:i"),
+                        "opening port, is YARP network available?");
+
+    // connecting
+    RTF_ASSERT_REPORT(Asserter::format("connecting from %s to %s",
+                                       port.getName().c_str(), cameraPortName.c_str()));
+    RTF_ASSERT_ERROR_IF(Network::connect(cameraPortName, port.getName()),
+                     "could not connect to remote port, camera unavailable");
+    return true;
+}
+
+void CameraTest::tearDown() {
+    RTF_ASSERT_REPORT("down!");
+    Network::disconnect(cameraPortName, port.getName());
+    port.close();
+}
+
+void CameraTest::run() {
+    RTF_ASSERT_REPORT("Reading images...");
+    double timeStart=yarp::os::Time::now();
+    double timeNow=timeStart;
+
+    int frames=0;
+    while(timeNow<timeStart+times) {
+        Image *image=port.read(false);
+        if(image!=0)
+            frames++;
+        yarp::os::Time::delay(0.01);
+        timeNow=yarp::os::Time::now();
+    }
+
+    int expectedFrames = times*frequency;
+    RTF_ASSERT_REPORT(Asserter::format("Received %d frames, expecting %d",
+                                       frames,
+                                       expectedFrames));
+    RTF_ASSERT_CHECK(abs(frames-expectedFrames)<tolerance,
+                     "checking number of received frames");
+}
