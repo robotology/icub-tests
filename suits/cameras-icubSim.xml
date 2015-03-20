@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Camera Test Suit">
+    <description> Testing robot cameras</description>
+    <environment>--robotname icubSim</environment>
+
+    <test param="--from right_camera.ini --context iCubSim"> libCameraTest.so </test>
+    <test param="--from left_camera.ini --context iCubSim"> libCameraTest.so </test>
+</suit>
+
