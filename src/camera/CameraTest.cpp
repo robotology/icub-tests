@@ -56,7 +56,6 @@ bool CameraTest::setup(yarp::os::Property& property) {
 }
 
 void CameraTest::tearDown() {
-    RTF_REPORT("down!");
     Network::disconnect(cameraPortName, port.getName());
     port.close();
 }

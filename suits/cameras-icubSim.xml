@@ -4,7 +4,7 @@
     <description> Testing robot cameras</description>
     <environment>--robotname icubSim</environment>
 
-    <test param="--from right_camera.ini --context iCubSim"> libCameraTest.so </test>
-    <test param="--from left_camera.ini --context iCubSim"> libCameraTest.so </test>
+    <test param="--from right_camera.ini"> CameraTest.so </test>
+    <test param="--from left_camera.ini"> CameraTest.so </test> 
 </suit>
 
