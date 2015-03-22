@@ -13,6 +13,7 @@
 #include <string>
 #include <TestCase.h>
 #include <TestAssert.h>
+#include <Arguments.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
@@ -60,7 +61,7 @@ public:
             strcpy(szenv, strEnv.c_str());
             int argc = 0;
             char** argv = new char*[128]; // maximum 128
-            parseArguments(szenv, &argc, argv);
+            RTF::Arguments::parse(szenv, &argc, argv);
             argv[argc]=0;
             envprop.fromCommand(argc, argv, false);
             delete [] szenv;
