@@ -16,6 +16,9 @@ set(YARP_HELPERS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
+# Build yarp fixture manager plugin
+# add_subdirectory(src/fixture-ymanager)
+
 # Build example? 
 add_subdirectory(example)
 
