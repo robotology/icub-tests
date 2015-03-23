@@ -100,7 +100,7 @@ bool ExampleTest::setup(yarp::os::Property &property) {
 }
 
 void ExampleTest::tearDown() {
-    // finalization goes her ...
+    // finalization goes here ...
 }
 
 void ExampleTest::run() {
@@ -118,6 +118,8 @@ void ExampleTest::run() {
 ```
 
 Notice: The `RTF_CHECK`, `RTF_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which stop only the current test case (Not the whole test suite) of being proceed. The error/failure message thrown by the exception are caught. (See http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html for basic assertion macros). 
+
+All the report/assertion macros include the source line number where the check/report or assertion happen. To see them, you can run the test case or suit with `--detail` parameter using the `testrunner` (See http://robotology.github.io/robot-testing/documentation/testrunner.html). 
 
 * Create a cmake file to build the plugin: 
 
