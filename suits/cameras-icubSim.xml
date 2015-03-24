@@ -3,7 +3,7 @@
 <suit name="Camera Test Suit">
     <description> Testing robot cameras</description>
     <environment>--robotname icubSim</environment>
-    <!--fixture param="--application icubSim.xml"> yarpmanager.so </fixture-->
+    <!--fixture param="--fixture example-fixture.xml"> yarpmanager.so </fixture-->
 
     <test param="--from right_camera.ini"> CameraTest.so </test>
     <test param="--from left_camera.ini"> CameraTest.so </test> 

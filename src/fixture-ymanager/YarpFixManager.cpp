@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <Plugin.h>
-#include <TestAssert.h>
 
 #include <yarp/manager/utility.h>
 #include <yarp/os/Network.h>
@@ -25,6 +24,7 @@ using namespace yarp::manager;
 PREPARE_FIXTURE_PLUGIN(YarpFixManager)
 
 bool YarpFixManager::setup(int argc, char** argv) {
+    RTF_FIXTURE_REPORT("yarpmanager is setuping the fixture...");
 
     // check yarp network
     yarp.setVerbosity(-1);
@@ -32,52 +32,74 @@ bool YarpFixManager::setup(int argc, char** argv) {
                         "YARP network does not seem to be available, is the yarp server accessible?");
 
     // load the config file and update the environment if available
-    // E.g., "--from mytest.ini"
+    // E.g., "--application myapp.xml"
     yarp::os::ResourceFinder rf;
     rf.setVerbose(false);
     rf.setDefaultContext("RobotTesting");
-    rf.configure(argc, argv);
+    rf.configure("", argc, argv, false);
 
-    printf("rf: %s\n", rf.toString().c_str());
-    RTF_ASSERT_ERROR_IF(rf.check("application"),
-                        "No application xml file is set (add --aplication yourfixture.xml)");
+    RTF_ASSERT_ERROR_IF(rf.check("fixture"),
+                        "No application xml file is set (add --fixture yourfixture.xml)");
 
-    //yarp::os::Property config;
-    //config.fromString(rf.toString());
+    fixtureName = rf.find("fixture").asString();
+    std::string appfile = rf.findFileByName(std::string("fixtures/"+fixtureName).c_str());
+    RTF_ASSERT_ERROR_IF(appfile.size(),
+                        RTF::Asserter::format("yarpmanager cannot find apllication file %s. Is it in the 'fixtures' folder?",
+                                              fixtureName.c_str()));
 
+    // enable restricted mode to ensure all the modules
+    // is running and enable watchdog to monitor the modules.    
+    enableWatchDog();
+    enableAutoConnect();
+    enableRestrictedMode();
 
-    printf("Called from fixture plugin: setupping fixture...\n");
-    // do the setup here
-    // ...
+    // load the fixture (application xml)
+    char szAppName[] = "fixture";
+    bool ret = addApplication(appfile.c_str(), szAppName);
+    const char* szerror = getLogger()->getLastError();
+    RTF_ASSERT_ERROR_IF(ret,
+                        "yarpmanager cannot setup the fixture because " +
+                        std::string((szerror) ? szerror : ""));
+    ret = loadApplication(szAppName);
+    szerror = getLogger()->getLastError();
+    RTF_ASSERT_ERROR_IF(ret,
+                        "yarpmanager cannot setup the fixture because " +
+                        std::string((szerror) ? szerror : ""));
+
+    //run the modules and connect
+    ret = run();
+    szerror = getLogger()->getLastError();
+    RTF_ASSERT_ERROR_IF(ret,
+                        "yarpmanager cannot setup the fixture because " +
+                        std::string((szerror) ? szerror : ""));
     return true;
 }
 
 void YarpFixManager::tearDown() {
-    printf("Called from fixture plugin: tearing down the fixture...\n");
-    // do the tear down here
-    // ...
+    RTF_FIXTURE_REPORT("yarpmanager is tearing down the fixture...");
+    bool ret = stop();
+    if(!ret)
+        ret = kill();
+    const char* szerror = getLogger()->getLastError();
+    RTF_ASSERT_ERROR_IF(ret,
+                        "yarpmanager cannot teardown the fixture because " +
+                        std::string((szerror) ? szerror : ""));
 }
 
-void YarpFixManager::onExecutableStart(void* which) {
-
-}
-
-void YarpFixManager::onExecutableStop(void* which) {
-
-}
-
-void YarpFixManager::onExecutableDied(void* which) {
-
-}
 
 void YarpFixManager::onExecutableFailed(void* which) {
-
-}
-
-void YarpFixManager::onCnnStablished(void* which) {
-
+    Executable* exe = (Executable*) which;
+    TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
+                    Asserter::format("Module %s is failed!", exe->getCommand()),
+                    RTF_SOURCEFILE(), RTF_SOURCELINE());
+    getDispatcher()->fixtureCollapsed(msg);
 }
 
 void YarpFixManager::onCnnFailed(void* which) {
-
+    Connection* cnn = (Connection*) which;
+    TestMessage msg(Asserter::format("Fixture %s collapsed", fixtureName.c_str()),
+                    Asserter::format("Connection %s - %s is failed!",
+                                     cnn->from(), cnn->to()),
+                    RTF_SOURCEFILE(), RTF_SOURCELINE());
+    getDispatcher()->fixtureCollapsed(msg);
 }

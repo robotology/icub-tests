@@ -1,0 +1,29 @@
+<application>
+    <name>FakeEyes</name>
+    <description>A fake robot eye creator based on test_grabber</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line --name /icubSim/cam/right</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <deployer>yarpdev</deployer>
+    </module>
+    <!--
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /view</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+    </module>
+
+    <connection>
+        <from>/icubSim/cam/right</from>
+        <to>/view</to>
+    </connection>
+    -->
+</application>
+

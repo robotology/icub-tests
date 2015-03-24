@@ -94,7 +94,7 @@ bool ExampleTest::setup(yarp::os::Property &property) {
     // initialization goes here ...
     string example = property.check("example", Value("default value")).asString();
 
-    RTF_REPORT(Asserter::format("Use '%s' for the example param!",
+    RTF_TEST_REPORT(Asserter::format("Use '%s' for the example param!",
                                        example.c_str()));
     return true;
 }
@@ -106,18 +106,18 @@ void ExampleTest::tearDown() {
 void ExampleTest::run() {
 
     int a = 5; int b = 3;
-    RTF_REPORT("testing a < b");
-    RTF_CHECK(a<b, Asserter::format("%d is not smaller than %d.", a, b));
-    RTF_REPORT("testing a > b");
-    RTF_CHECK(a>b, Asserter::format("%d is not smaller than %d.", a, b));
-    RTF_REPORT("testing a == b");
-    RTF_CHECK(a==b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_TEST_REPORT("testing a < b");
+    RTF_TEST_CHECK(a<b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_TEST_REPORT("testing a > b");
+    RTF_TEST_CHECK(a>b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_TEST_REPORT("testing a == b");
+    RTF_TEST_CHECK(a==b, Asserter::format("%d is not smaller than %d.", a, b));
     // add more 
     // ...
 }
 ```
 
-Notice: The `RTF_CHECK`, `RTF_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which stop only the current test case (Not the whole test suite) of being proceed. The error/failure message thrown by the exception are caught. (See http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html for basic assertion macros). 
+Notice: The `RTF_TEST_CHECK`, `RTF_TEST_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which stop only the current test case (Not the whole test suite) of being proceed. The error/failure message thrown by the exception are caught. (See http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html for basic assertion macros). 
 
 All the report/assertion macros include the source line number where the check/report or assertion happen. To see them, you can run the test case or suit with `--detail` parameter using the `testrunner` (See http://robotology.github.io/robot-testing/documentation/testrunner.html). 
 
