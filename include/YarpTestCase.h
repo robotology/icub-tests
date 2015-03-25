@@ -88,7 +88,7 @@ public:
         return setup(property);
     }
 
-    virtual bool setup(yarp::os::Property& property) { }
+    virtual bool setup(yarp::os::Property& property) {return false;}
 
 private:
     yarp::os::Network yarp;
