@@ -9,19 +9,22 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(Robot-Tests)
 
-# set the include dir for helper classes 
+# set the include dir for helper classes
 set(YARP_HELPERS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
-# set the output plugin directory to collect all the shared libraries 
+# set the output plugin directory to collect all the shared libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
 # Build yarp fixture manager plugin
 # add_subdirectory(src/fixture-ymanager)
 
-# Build example? 
+# Build example?
 add_subdirectory(example)
 
-# Build camera tests 
+# Build camera tests
 add_subdirectory(src/camera)
+
+# Build model consistency check
+add_subdirectory(src/models-consistency)
 
