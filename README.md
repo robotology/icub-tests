@@ -6,7 +6,7 @@ See https://github.com/robotology/robot-testing for how to use RTF.
 
 Contents
 --------
-* [Installing RTF](#Installing)
+* [Installing RTF](#Installing RTF)
 * Building tests 
 * Configuration
 * Running the tests
@@ -15,9 +15,8 @@ Contents
 * Running multiple tests using test suite and fixture manager
 
 
-#Installing
-Installing RTF
---------------
+#Installing RTF
+---------------
 * If you have not installed RTF, Please see http://robotology.github.io/robot-testing/index.html. 
 
 
@@ -196,7 +195,8 @@ or to run the iCubSim camera test whith the test configuration file:
 
 ```
     testrunner --verbose --test plugins/CameraTest.so --param "--from right_camera.ini" --environment "--robotname icubSim"
-``
+```
+
 This runs the icubSim right camera with the paramteres specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. 
 Notice that the environment parameter `--robotname icubSim` is used to locate the currect context (for this examples is `icubSim`) and also to update the variables 
 loaded from the `right_camera.ini` file. 
