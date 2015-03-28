@@ -31,3 +31,5 @@ add_subdirectory(src/models-consistency)
 # Build motor tests
 add_subdirectory(src/motor-tests)
 
+# Build force sensor tests
+add_subdirectory(src/ftsensor-tests)

@@ -35,6 +35,9 @@ CameraTest::~CameraTest() { }
 
 bool CameraTest::setup(yarp::os::Property& property) {
 
+    if(property.check("name"))
+        setName(property.find("name").asString());
+
     // updating parameters
     RTF_ASSERT_ERROR_IF(property.check("portname"),
                         "The portname must be given as the test paramter!");

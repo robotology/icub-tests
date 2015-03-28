@@ -41,6 +41,9 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     iPosition=NULL;
     m_initialized=false;
 
+    if(configuration.check("name"))
+        setName(configuration.find("name").asString());
+
     RTF_ASSERT_ERROR_IF(configuration.check("portname"),
                         "Missing 'portname' parameter, cannot open device");
     m_portname = configuration.find("portname").asString();
@@ -222,7 +225,7 @@ void MotorTest::run() {
             timeout=m_aTimeout[j];
     }
 
-    printf("Waiting timeout %.2lf", timeout);
+    RTF_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", timeout));
     bool reached=false;
     double *encoders;
     encoders=new double [m_NumJoints];

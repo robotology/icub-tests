@@ -8,9 +8,18 @@
     <!-- Camera -->
     <test type="dll" param="--from right_camera.ini"> CameraTest </test>
     <test type="dll" param="--from left_camera.ini"> CameraTest </test> 
-    
+
+    <!-- Sensors -->
+    <test type="dll" param="--from test_ft_left_arm.ini"> FtSensorTest </test>
+    <test type="dll" param="--from test_ft_left_foot.ini"> FtSensorTest </test>
+    <test type="dll" param="--from test_ft_left_leg.ini"> FtSensorTest </test>
+    <test type="dll" param="--from test_ft_right_arm.ini"> FtSensorTest </test>
+    <test type="dll" param="--from test_ft_right_foot.ini"> FtSensorTest </test>
+    <test type="dll" param="--from test_ft_right_leg.ini"> FtSensorTest </test>
+
     <!-- Motors -->
     <test type="dll" param="--from test_right_arm.ini"> MotorTest </test>
     <test type="dll" param="--from test_left_arm.ini"> MotorTest </test>
+
 </suit>
 
