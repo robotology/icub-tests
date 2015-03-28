@@ -1,0 +1,29 @@
+<application>
+    <name>iCub Simulator</name>
+    <description>A fixture to prepare iCub Simulator for the test cases</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>iCub_SIM</name>
+        <parameters></parameters>
+        <node>localhost</node>
+    </module>    
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /right</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <dependency>
+            <port timeout="10">/icubSim/cam/right</port>
+            <port timeout="10">/icubSim/cam/left</port>
+        </dependency>
+    </module>
+
+    <connection>
+        <from>/icubSim/cam/right</from>
+        <to>/right</to>
+    </connection>
+</application>
+

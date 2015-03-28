@@ -31,6 +31,10 @@
 class YarpFixManager : public RTF::FixtureManager,
         yarp::manager::Manager {
 public:
+
+    YarpFixManager();
+    virtual ~YarpFixManager();
+
     virtual bool setup(int argc, char** argv);
 
     virtual void tearDown();
@@ -44,6 +48,7 @@ protected:
     virtual void onCnnFailed(void* which);
 
 private:
+    bool initialized;
     yarp::os::Network yarp;
     std::string fixtureName;
 };
