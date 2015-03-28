@@ -1,27 +1,24 @@
 icub-tests
 ==========
-The icub-tests repository contains tests for the iCub robot. Tests are written using the Robot Testing Framework (RTF). 
+The `icub-tests` repository contains tests for the iCub robot. Tests are written using the Robot Testing Framework (RTF). 
 See https://github.com/robotology/robot-testing for how to use RTF. 
 
 
-Contents
---------
+#Contents
 * [Installing RTF](#Installing RTF)
-* Building tests 
-* Configuration
-* Running the tests
-* Writing new test cases
-* Running a single test case
-* Running multiple tests using test suite and fixture manager
+* [Building tests](#Building tests)
+* [Configuration](#Configuration)
+* [Running the tests](#Running the tests)
+* [Writing new test cases](#Writing new test cases)
+* [Running a single test case](#Running a single test case)
+* [Running multiple tests using test suite and fixture manager](#Running multiple tests using test suite and fixture manager)
 
 
 #Installing RTF
----------------
 * If you have not installed RTF, Please see http://robotology.github.io/robot-testing/index.html. 
 
 
-Building tests 
---------------
+#Building tests 
 ```
     $ git clone https://github.com/robotology/icub-tests.git
     $ cd icub-tests; 
@@ -29,8 +26,7 @@ Building tests
     $ cmake ../; make
 ```
 
-Configuration
--------------
+#Configuration
 * Test cases are built as RTF plug-ins (shared libraries) and can be found in `icub-tests/build/plugins` folder. We need to add the plug-ins path to the platform library environment variable (i.e., `LD_LIBRARY_PATH` on Linux machine). 
 
 ```
@@ -43,8 +39,7 @@ Configuration
     $ echo 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:<path to icub-tests/suit>' >> ~/.bashrc
 ```
 
-Running the tests
------------------
+#Running the tests
 You can run the tests by using the RTF `testrunner` and the test suits XML files. For example to run the camera tests for the iCub simulator:
 
 ```
@@ -52,8 +47,7 @@ You can run the tests by using the RTF `testrunner` and the test suits XML files
     $ testrunner --verbose --suit cameras-icubSim.xml -o camera-result.txt
 ```
 
-Writing new test cases
-----------------------
+#Writing new test cases
 * create a folder with the name of your test case in the `icub-tests/src/` folder to keep your test codes: 
 
 ```
@@ -182,8 +176,7 @@ To do that, adds the following line to the `icub-test/CMakeLists.txt`
 
 Please check the `icub-tests/example` folder for a template for developing tests for the iCub. 
 
-Running a single test case
---------------------------
+#Running a single test case
 As it is documented here ([*Running test case plug-ins using testrunner*](http://robotology.github.io/robot-testing/documentation/testrunner.html)) 
 you can run a single test case or run it with the other tests using a test suite.  For example: 
 
@@ -198,13 +191,12 @@ or to run the iCubSim camera test whith the test configuration file:
 ```
 
 This runs the icubSim right camera with the paramteres specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. 
-Notice that the environment parameter `--robotname icubSim` is used to locate the currect context (for this examples is `icubSim`) and also to update the variables 
+Notice that the environment parameter `--robotname icubSim` is used to locate the correct context (for this examples is `icubSim`) and also to update the variables 
 loaded from the `right_camera.ini` file. 
 
 
-Running multiple tests using a test suite and fixture manager
--------------------------------------------------------------
-You can update one the exisiting suite XML file to add your test case plugin and its paramteres or create a new test suite which keeps all the revelant test cases. 
+#Running multiple tests using a test suite and fixture manager
+You can update one the existing suite XML file to add your test case plug-in and its parameters or create a new test suite which keeps all the relevant test cases. 
 For example the `basic-icubSim.xml` test suite keeps the basic tests for cameras and motors: 
 
 ```xml
@@ -232,7 +224,7 @@ Then you can run all the test cases at the same time:
     testrunner --verbose --suit icub-tests/suits/basics-icubSim.xml
 ```
 
-The `testrunner`, first, launchs the iCub simulator and then runs all the tests in order. After running all the test cases, the `tesrunner` stop the simulator. If the 
+The `testrunner`, first, launches the iCub simulator and then runs all the tests in order. After running all the test cases, the `tesrunner` stop the simulator. If the 
 iCub simulator crashes during the test run, the `testrunner` re-launch it and continue running the remaining tests. 
 
 How `testrunner` knows that it should launch the iCub simulator before running the tests? Well, this is indicated by `<fixture param="--fixture icubsim-fixture.xml"> yarpmanager </fixture>`. 
