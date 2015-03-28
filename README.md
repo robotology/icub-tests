@@ -40,11 +40,11 @@ See https://github.com/robotology/robot-testing for how to use RTF.
 ```
 
 #Running the tests
-You can run the tests by using the RTF `testrunner` and the test suits XML files. For example to run the camera tests for the iCub simulator:
+You can run the tests by using the RTF `testrunner` and the test suits XML files. For example to run the basic tests for the iCub simulator:
 
 ```
     $ cd icub-tests/suits
-    $ testrunner --verbose --suit cameras-icubSim.xml -o camera-result.txt
+    $ testrunner --verbose --suit basics-icubSim.xml -o camera-result.txt
 ```
 
 #Writing new test cases
