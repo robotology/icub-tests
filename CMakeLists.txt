@@ -28,3 +28,6 @@ add_subdirectory(src/camera)
 # Build model consistency check
 add_subdirectory(src/models-consistency)
 
+# Build motor tests
+add_subdirectory(src/motor-tests)
+
