@@ -25,6 +25,10 @@ ExampleTest::~ExampleTest() { }
 bool ExampleTest::setup(yarp::os::Property &property) {
 
     // initialization goes here ...
+    //updating the test name
+    if(property.check("name"))
+        setName(property.find("name").asString());
+   
     string example = property.check("example", Value("default value")).asString();
 
     RTF_TEST_REPORT(Asserter::format("Use '%s' for the example param!",
