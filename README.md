@@ -130,7 +130,7 @@ void ExampleTest::run() {
 }
 ```
 
-Notice: The `RTF_TEST_CHECK`, `RTF_TEST_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which prevent only the current test case (Not the whole test suite) of being proceed. The error/failure messages thrown by the exceptions are caught. (See [*Assertion macros*](http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html for basic assertion macros)). 
+Notice: The `RTF_TEST_CHECK`, `RTF_TEST_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which prevent only the current test case (Not the whole test suite) of being proceed. The error/failure messages thrown by the exceptions are caught. (See [*Basic Assertion macros*](http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html)). 
 
 The report/assertion macros store the source line number where the check/report or assertion happen. To see them, you can run the test case or suit with `--detail` parameter using the `testrunner` (See [*Running test case plug-ins using testrunner*](http://robotology.github.io/robot-testing/documentation/testrunner.html)). 
 
