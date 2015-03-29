@@ -11,13 +11,11 @@ See https://github.com/robotology/robot-testing for how to use RTF.
 
 **[Configuration](#configuration)** 
 
-**[Running the tests](#running-the-tests)** 
-
 **[Writing new test cases](#writing-new-test-cases)** 
 
 **[Running a single test case](#running-a-single-test-case)** 
 
-**[Running multiple tests using test suite and fixture manager](#running-multiple-tests)** 
+**[Running multiple tests using test suite](#running-multiple-tests-using-test-suite)** 
 
 
 ## Installing RTF
@@ -50,14 +48,6 @@ On windows machines use the Cmake program to create Visual Studio project and bu
     $ echo 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:<path to icub-tests/suit>' >> ~/.bashrc
 ```
 
-## Running the tests
-
-You can run the tests by using the RTF `testrunner` and the test suits XML files. For example to run the basic tests for the iCub simulator:
-
-```
-    $ cd icub-tests/suits
-    $ testrunner --verbose --suit basics-icubSim.xml -o camera-result.txt
-```
 
 ## Writing new test cases
 
