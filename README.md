@@ -4,14 +4,14 @@ The `icub-tests` repository contains tests for the iCub robot. Tests are written
 See https://github.com/robotology/robot-testing for how to use RTF. 
 
 
-### Contents
-** [Installing RTF](#Installing-RTF) **
-** [Building tests](#Building-tests) **
-** [Configuration](#Configuration) **
-** [Running the tests](#Running-the-tests) **
-** [Writing new test cases](#Writing-new-test-cases) **
-** [Running a single test case](#Running-single-tests) **
-** [Running multiple tests using test suite and fixture manager](#Running-multiple-tests) **
+### Table of Contents
+**[Installing RTF](#Installing-RTF)**
+**[Building tests](#Building-tests)**
+**[Configuration](#Configuration)**
+**[Running the tests](#Running-the-tests)**
+**[Writing new test cases](#Writing-new-test-cases)**
+**[Running a single test case](#Running-single-tests)**
+**[Running multiple tests using test suite and fixture manager](#Running-multiple-tests)**
 
 
 ## Installing RTF
