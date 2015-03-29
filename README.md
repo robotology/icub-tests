@@ -4,42 +4,48 @@ The `icub-tests` repository contains tests for the iCub robot. Tests are written
 See https://github.com/robotology/robot-testing for how to use RTF. 
 
 
-#Contents
-* [Installing RTF](#Installing RTF)
-* [Building tests](#Building tests)
-* [Configuration](#Configuration)
-* [Running the tests](#Running the tests)
-* [Writing new test cases](#Writing new test cases)
-* [Running a single test case](#Running a single test case)
-* [Running multiple tests using test suite and fixture manager](#Running multiple tests using test suite and fixture manager)
+### Contents
+** [Installing RTF](#Installing-RTF) **
+** [Building tests](#Building-tests) **
+** [Configuration](#Configuration) **
+** [Running the tests](#Running-the-tests) **
+** [Writing new test cases](#Writing-new-test-cases) **
+** [Running a single test case](#Running-single-tests) **
+** [Running multiple tests using test suite and fixture manager](#Running-multiple-tests) **
 
 
-#Installing RTF
+## Installing RTF
+
 * If you have not installed RTF, Please see http://robotology.github.io/robot-testing/index.html. 
 
 
-#Building tests 
+## Building tests 
+
+On Linux machines, open a terminal and type:
 ```
     $ git clone https://github.com/robotology/icub-tests.git
     $ cd icub-tests; 
     $ mkdir build; cd build
     $ cmake ../; make
 ```
+On windows machines use the Cmake program to create Visual Studio project and build it. 
 
-#Configuration
+## Configuration
+
 * Test cases are built as RTF plug-ins (shared libraries) and can be found in `icub-tests/build/plugins` folder. We need to add the plug-ins path to the platform library environment variable (i.e., `LD_LIBRARY_PATH` on Linux machine). 
 
 ```
     $ echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path to icub_tests/build/plugins>' >> ~/.bashrc
 ```
 
-* Tests configuration (.ini files) can be found in `icub-tests/suit/contexts`. We need to configure `YARP_DATA_DIRS` environment variable so that the test cases can load the configurations.
+* Tests configuration (.ini files) can be found in `icub-tests/suit/contexts`. We need to configure `YARP_DATA_DIRS` environment variable so that the test cases can load the configuration files.
 
 ```
     $ echo 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:<path to icub-tests/suit>' >> ~/.bashrc
 ```
 
-#Running the tests
+## Running the tests
+
 You can run the tests by using the RTF `testrunner` and the test suits XML files. For example to run the basic tests for the iCub simulator:
 
 ```
@@ -47,8 +53,9 @@ You can run the tests by using the RTF `testrunner` and the test suits XML files
     $ testrunner --verbose --suit basics-icubSim.xml -o camera-result.txt
 ```
 
-#Writing new test cases
-* create a folder with the name of your test case in the `icub-tests/src/` folder to keep your test codes: 
+## Writing new test cases
+
+* Create a folder with the name of your test case in the `icub-tests/src/` folder to keep your test codes: 
 
 ```
     $ mkdir icub-tests/src/example-test
@@ -127,11 +134,11 @@ void ExampleTest::run() {
 }
 ```
 
-Notice: The `RTF_TEST_CHECK`, `RTF_TEST_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which stop only the current test case (Not the whole test suite) of being proceed. The error/failure message thrown by the exception are caught. (See http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html for basic assertion macros). 
+Notice: The `RTF_TEST_CHECK`, `RTF_TEST_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which prevent only the current test case (Not the whole test suite) of being proceed. The error/failure messages thrown by the exceptions are caught. (See [*Assertion macros*](http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html for basic assertion macros)). 
 
-All the report/assertion macros include the source line number where the check/report or assertion happen. To see them, you can run the test case or suit with `--detail` parameter using the `testrunner` (See http://robotology.github.io/robot-testing/documentation/testrunner.html). 
+The report/assertion macros store the source line number where the check/report or assertion happen. To see them, you can run the test case or suit with `--detail` parameter using the `testrunner` (See [*Running test case plug-ins using testrunner*](http://robotology.github.io/robot-testing/documentation/testrunner.html)). 
 
-* Create a cmake file to build the plugin: 
+* Create a cmake file to build the plug-in: 
 
 ```cmake
 cmake_minimum_required(VERSION 2.8.9)
@@ -176,9 +183,10 @@ To do that, adds the following line to the `icub-test/CMakeLists.txt`
 
 Please check the `icub-tests/example` folder for a template for developing tests for the iCub. 
 
-#Running a single test case
+## Running a single test case
+
 As it is documented here ([*Running test case plug-ins using testrunner*](http://robotology.github.io/robot-testing/documentation/testrunner.html)) 
-you can run a single test case or run it with the other tests using a test suite.  For example: 
+you can run a single test case or run it with the other tests using a test suite.  For example, to run a single test case: 
 
 ```
     testrunner --verbose --test plugins/ExampleTest.so  --param "--name MyExampleTest"
@@ -190,13 +198,13 @@ or to run the iCubSim camera test whith the test configuration file:
     testrunner --verbose --test plugins/CameraTest.so --param "--from right_camera.ini" --environment "--robotname icubSim"
 ```
 
-This runs the icubSim right camera with the paramteres specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. 
-Notice that the environment parameter `--robotname icubSim` is used to locate the correct context (for this examples is `icubSim`) and also to update the variables 
-loaded from the `right_camera.ini` file. 
+This runs the icubSim right-camera test with the parameters specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. 
+Notice that the environment parameter `--robotname icubSim` is used to locate the correct context (for this examples is `icubSim`) and also to update the variables loaded from the `right_camera.ini` file. 
 
 
-#Running multiple tests using a test suite and fixture manager
-You can update one the existing suite XML file to add your test case plug-in and its parameters or create a new test suite which keeps all the relevant test cases. 
+## Running multiple tests using a test suite and fixture manager
+
+You can update one of the existing suite XML files to add your test case plug-in and its parameters or create a new test suite which keeps all the relevant test cases. 
 For example the `basic-icubSim.xml` test suite keeps the basic tests for cameras and motors: 
 
 ```xml
@@ -218,25 +226,23 @@ For example the `basic-icubSim.xml` test suite keeps the basic tests for cameras
 
 ```
 
-Then you can run all the test cases at the same time: 
+Then you can run all the test cases from the test suite: 
 
 ```
     testrunner --verbose --suit icub-tests/suits/basics-icubSim.xml
 ```
 
-The `testrunner`, first, launches the iCub simulator and then runs all the tests in order. After running all the test cases, the `tesrunner` stop the simulator. If the 
-iCub simulator crashes during the test run, the `testrunner` re-launch it and continue running the remaining tests. 
+The `testrunner`, first, launches the iCub simulator and then runs all the tests one after each other. After running all the test cases, the `tesrunner` stop the simulator. If the 
+iCub simulator crashes during the test run, the `testrunner` re-launchs it and continues running the remaining tests. 
 
 How `testrunner` knows that it should launch the iCub simulator before running the tests? Well, this is indicated by `<fixture param="--fixture icubsim-fixture.xml"> yarpmanager </fixture>`. 
-The `testrunner` uses the `yarpmanager` fixture plug-in to launch the modules which are listed in the `icubsim-fixture.xml`.  Notice that all the fixture files should be 
-located in the `icub-tests/suits/fixtures` folder. 
+The `testrunner` uses the `yarpmanager` fixture plug-in to launch the modules which are listed in the `icubsim-fixture.xml`.  Notice that all the fixture files should be located in the `icub-tests/suits/fixtures` folder. 
 
-Contributers
-------------
+## Contributers
+
 * Ali Paikan 
 * Lorenzo Natale
 * Silvio Traversaro
 * Alessandro Scalzo
 * Marco Randazzo
-
 
