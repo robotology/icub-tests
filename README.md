@@ -6,12 +6,19 @@ See https://github.com/robotology/robot-testing for how to use RTF.
 
 ### Table of Contents
 **[Installing RTF](#installing-rtf)** 
+
 **[Building tests](#building-tests)** 
+
 **[Configuration](#configuration)** 
+
 **[Running the tests](#running-the-tests)** 
+
 **[Writing new test cases](#writing-new-test-cases)** 
-**[Running a single test case](#running-single-tests)** 
+
+**[Running a single test case](#running-a-single-test-case)** 
+
 **[Running multiple tests using test suite and fixture manager](#running-multiple-tests)** 
+
 
 ## Installing RTF
 
