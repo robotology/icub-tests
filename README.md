@@ -198,7 +198,7 @@ This runs the icubSim right-camera test with the parameters specified in the `ri
 Notice that the environment parameter `--robotname icubSim` is used to locate the correct context (for this examples is `icubSim`) and also to update the variables loaded from the `right_camera.ini` file. 
 
 
-## Running multiple tests using a test suite and fixture manager
+## Running multiple tests using a test suite
 
 You can update one of the existing suite XML files to add your test case plug-in and its parameters or create a new test suite which keeps all the relevant test cases. 
 For example the `basic-icubSim.xml` test suite keeps the basic tests for cameras and motors: 
