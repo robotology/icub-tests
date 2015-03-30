@@ -53,9 +53,9 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"invalid joints parameter");
     njoints = jointsBottle->size();
     RTF_ASSERT_ERROR_IF(njoints>0,"invalid number of joints");
-    jointsList=new double[njoints];
+    jointsList=new int[njoints];
     currPos=new double[njoints];
-    for (int i=0; i <njoints; i++) jointsList[i]=jointsBottle->get(i).asDouble();
+    for (int i=0; i <njoints; i++) jointsList[i]=jointsBottle->get(i).asInt();
     
     frequency = property.find("frequency").asDouble();
     RTF_ASSERT_ERROR_IF(frequency>0,"invalid frequency");
@@ -96,41 +96,65 @@ void PositionDirect::tearDown()
     if (dd) {delete dd; dd =0;}
 }
 
+void PositionDirect::setMode(int desired_mode)
+{
+    for (int i=0; i<njoints; i++)
+    {
+        icmd->setControlMode(jointsList[i],desired_mode);
+        iimd->setInteractionMode(jointsList[i],VOCAB_IM_STIFF);
+        yarp::os::Time::delay(0.010);
+    }
+
+    int* cmodes = new int [njoints];
+    yarp::dev::InteractionModeEnum* imodes = new InteractionModeEnum [njoints];
+    int timeout = 0;
+
+    while (1)
+    {
+        int ok=0;
+        for (int i=0; i<njoints; i++)
+        {
+            icmd->getControlMode (jointsList[i],&cmodes[i]);
+            iimd->getInteractionMode(jointsList[i],&imodes[i]);
+            if (cmodes[jointsList[i]]==desired_mode && imodes[jointsList[i]]==VOCAB_IM_STIFF) ok++;
+        }
+        if (ok==njoints) break;
+        if (timeout>100)
+        {
+            delete []cmodes;
+            delete []imodes;
+            RTF_ASSERT_ERROR("Unable to set control mode/interaction mode");
+        }
+        yarp::os::Time::delay(0.2);
+        timeout++;
+    }
+
+    delete []cmodes;
+    delete []imodes;
+}
+
 void PositionDirect::goHome()
 {
     for (int i=0; i<njoints; i++)
     {
-        icmd->setControlMode(i,VOCAB_CM_POSITION);
-        iimd->setInteractionMode(i,VOCAB_IM_STIFF);
-        yarp::os::Time::delay(0.100);
-    }
-
-    for (int i=0; i<njoints; i++)
-    {
-        int cmode=0;
-        yarp::dev::InteractionModeEnum imode;
-        icmd->getControlMode(i, &cmode);
-        iimd->getInteractionMode(i, &imode);
-        RTF_ASSERT_ERROR_IF(cmode==VOCAB_CM_POSITION,"Unable to set control mode: VOCAB_CM_POSITION");
-        RTF_ASSERT_ERROR_IF(imode==VOCAB_IM_STIFF,"Unable to set interaction mode: VOCAB_IM_STIFF");
-    }
-
-    for (int i=0; i<njoints; i++)
-    {
-        ipos->positionMove(i,zero);
+        ipos->setRefSpeed(jointsList[i],20.0);
+        ipos->positionMove(jointsList[i],zero);
     }
 
     int timeout = 0;
     while (1)
     {
-        ienc->getEncoders(currPos);
         int in_position=0;
         for (int i=0; i<njoints; i++)
         {
-            if (fabs(currPos[i]-zero)<1) in_position++;
+            ienc->getEncoder(jointsList[i],&currPos[i]);
+            if (fabs(currPos[jointsList[i]]-zero)<0.5) in_position++;
         }
         if (in_position==njoints) break;
-        RTF_ASSERT_ERROR_IF(timeout>100,"Timeout while reaching zero position");
+        if (timeout>100)
+        {
+            RTF_ASSERT_ERROR("Timeout while reaching zero position");
+        }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
@@ -138,14 +162,9 @@ void PositionDirect::goHome()
 
 void PositionDirect::run()
 {
+    setMode(VOCAB_CM_POSITION);
     goHome();
-
-    icmd->setControlMode(jointsList[0],VOCAB_CM_POSITION_DIRECT);
-    yarp::os::Time::delay(0.100);
-
-    int cmode=0;
-    icmd->getControlMode(0, &cmode);
-    RTF_ASSERT_ERROR_IF(cmode==VOCAB_CM_POSITION_DIRECT,"Unable to set control mode: VOCAB_CM_POSITION_DIRECT");
+    setMode(VOCAB_CM_POSITION_DIRECT);
 
     double start_time = yarp::os::Time::now();
     double previous_cmd=zero;
@@ -161,7 +180,11 @@ void PositionDirect::run()
             sprintf(buff,"error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",previous_cmd,cmd,max_step);
             RTF_ASSERT_ERROR(buff);
         }
-        idir->setPosition(0,cmd);
+        for (int i=0; i<njoints; i++)
+        {
+            ienc->getEncoder(jointsList[i],&currPos[i]);
+            idir->setPosition(jointsList[i],cmd);
+        }
         previous_cmd = cmd;
         
         //printf("%+6.3f %f\n",elapsed, cmd);
@@ -169,5 +192,6 @@ void PositionDirect::run()
         if (elapsed*frequency>cycles) break;
     }
 
+    setMode(VOCAB_CM_POSITION);
     goHome();
 }

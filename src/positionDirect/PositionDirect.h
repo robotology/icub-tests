@@ -27,11 +27,12 @@ public:
     virtual void run();
 
     void goHome();
+    void setMode(int desired_mode);
 
 private:
     std::string robotName;
     std::string partName;
-    double* jointsList;
+    int* jointsList;
     double* currPos;
     double frequency;
     double amplitude;
