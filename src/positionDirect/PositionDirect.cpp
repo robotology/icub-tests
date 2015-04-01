@@ -13,6 +13,8 @@
 
 #include "PositionDirect.h"
 
+//example     -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 --frequency 0.8 --amplitude 10.0 --cycles 10 --tolerance 1.0 --sampleTime 0.010 --cmdMode 0"
+//example2    -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(2)"" --zero 0 --frequency 0.4 --amplitude 10.0 --cycles 10 --tolerance 1.0 --sampleTime 0.010 --cmdMode 0"
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -22,13 +24,15 @@ PREPARE_PLUGIN(PositionDirect)
 
 PositionDirect::PositionDirect() : YarpTestCase("PositionDirect") {
     jointsList=0;
-    currPos=0;
+    pos_tot=0;
     dd=0;
     ipos=0;
     icmd=0;
     iimd=0;
     ienc=0;
     idir=0;
+    cmd_some=0;
+    cmd_tot=0;
 }
 
 PositionDirect::~PositionDirect() { }
@@ -44,18 +48,16 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("amplitude"), "The amplitude of the control signal must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("sampleTime"), "The tolerance of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("cmdMode"), "the cmdType must be given as the test parameter! 0=single_joint, 1=all_joints, 2=some_joints");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"invalid joints parameter");
-    njoints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(njoints>0,"invalid number of joints");
-    jointsList=new int[njoints];
-    currPos=new double[njoints];
-    for (int i=0; i <njoints; i++) jointsList[i]=jointsBottle->get(i).asInt();
+    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    n_cmd_joints = jointsBottle->size();
+    RTF_ASSERT_ERROR_IF(n_cmd_joints>0,"invalid number of joints, it must be >0");
     
     frequency = property.find("frequency").asDouble();
     RTF_ASSERT_ERROR_IF(frequency>0,"invalid frequency");
@@ -74,6 +76,9 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     sampleTime = property.find("sampleTime").asDouble();
     RTF_ASSERT_ERROR_IF(sampleTime>0,"invalid sampleTime");
 
+    cmd_mode = (cmd_mode_t) property.find("cmdMode").asInt();
+    RTF_ASSERT_ERROR_IF(cmd_mode>=0 && cmd_mode<=2,"invalid cmdMode: can be 0=single_joint, 1=all_joints ,2=some_joints");
+
     Property options;
     options.put("device", "remote_controlboard");
     options.put("remote", "/"+robotName+"/"+partName);
@@ -87,6 +92,27 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
 
+    if (!ienc->getAxes(&n_part_joints))
+    {
+        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+    }
+
+    if (cmd_mode==all_joints && n_part_joints!=n_cmd_joints)
+    {
+        RTF_ASSERT_ERROR("if all_joints=2 mode is selected, joints parameter must include the full list of joints");
+    }
+
+    if (cmd_mode==single_joint && n_cmd_joints!=1)
+    {
+        RTF_ASSERT_ERROR("if single_joint=1 mode is selected, joints parameter must include one single joint");
+    }
+
+    cmd_tot = new double[n_part_joints];
+    pos_tot=new double[n_part_joints];
+    jointsList=new int[n_cmd_joints];
+    cmd_some=new double[n_cmd_joints];
+    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
+
     return true;
 }
 
@@ -98,44 +124,72 @@ void PositionDirect::tearDown()
 
 void PositionDirect::setMode(int desired_mode)
 {
-    for (int i=0; i<njoints; i++)
+    for (int i=0; i<n_cmd_joints; i++)
     {
         icmd->setControlMode(jointsList[i],desired_mode);
         iimd->setInteractionMode(jointsList[i],VOCAB_IM_STIFF);
         yarp::os::Time::delay(0.010);
     }
 
-    int* cmodes = new int [njoints];
-    yarp::dev::InteractionModeEnum* imodes = new InteractionModeEnum [njoints];
+    int cmode;
+    yarp::dev::InteractionModeEnum imode; 
     int timeout = 0;
 
     while (1)
     {
         int ok=0;
-        for (int i=0; i<njoints; i++)
+        for (int i=0; i<n_cmd_joints; i++)
         {
-            icmd->getControlMode (jointsList[i],&cmodes[i]);
-            iimd->getInteractionMode(jointsList[i],&imodes[i]);
-            if (cmodes[jointsList[i]]==desired_mode && imodes[jointsList[i]]==VOCAB_IM_STIFF) ok++;
+            icmd->getControlMode (jointsList[i],&cmode);
+            iimd->getInteractionMode(jointsList[i],&imode);
+            if (cmode==desired_mode && imode==VOCAB_IM_STIFF) ok++;
         }
-        if (ok==njoints) break;
+        if (ok==n_cmd_joints) break;
         if (timeout>100)
         {
-            delete []cmodes;
-            delete []imodes;
             RTF_ASSERT_ERROR("Unable to set control mode/interaction mode");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
+}
 
-    delete []cmodes;
-    delete []imodes;
+void PositionDirect::executeCmd()
+{
+    if (cmd_mode==single_joint)
+    {
+        for (int i=0; i<n_cmd_joints; i++)
+        {
+            idir->setPosition(jointsList[i],cmd_single);
+        }
+    }
+    else if (cmd_mode==some_joints)
+    {
+        for (int i=0; i<n_cmd_joints; i++)
+        {
+            cmd_some[i]=cmd_single;
+        }
+        idir->setPositions(n_cmd_joints,jointsList, cmd_some);
+    }
+    else if (cmd_mode==all_joints)
+    {
+        for (int i=0; i<n_part_joints; i++)
+        {
+            cmd_tot[i]=cmd_single;
+        }
+        idir->setPositions(cmd_tot);
+    }
+    else
+    {
+        RTF_ASSERT_ERROR("Invalid cmd_mode");
+    }
+
+    prev_cmd=cmd_single;
 }
 
 void PositionDirect::goHome()
 {
-    for (int i=0; i<njoints; i++)
+    for (int i=0; i<n_cmd_joints; i++)
     {
         ipos->setRefSpeed(jointsList[i],20.0);
         ipos->positionMove(jointsList[i],zero);
@@ -145,12 +199,12 @@ void PositionDirect::goHome()
     while (1)
     {
         int in_position=0;
-        for (int i=0; i<njoints; i++)
+        for (int i=0; i<n_cmd_joints; i++)
         {
-            ienc->getEncoder(jointsList[i],&currPos[i]);
-            if (fabs(currPos[jointsList[i]]-zero)<0.5) in_position++;
+            ienc->getEncoder(jointsList[i],&pos_tot[jointsList[i]]);
+            if (fabs(pos_tot[jointsList[i]]-zero)<0.5) in_position++;
         }
-        if (in_position==njoints) break;
+        if (in_position==n_cmd_joints) break;
         if (timeout>100)
         {
             RTF_ASSERT_ERROR("Timeout while reaching zero position");
@@ -167,26 +221,21 @@ void PositionDirect::run()
     setMode(VOCAB_CM_POSITION_DIRECT);
 
     double start_time = yarp::os::Time::now();
-    double previous_cmd=zero;
-    const double max_step = 1.0;
+    const double max_step = 2.0;
+    prev_cmd=cmd_single = amplitude*sin(0.0)+zero;
     while(1)
     {
         double curr_time = yarp::os::Time::now();
         double elapsed = curr_time-start_time;
-        double cmd = amplitude*sin(2*3.14159265359*frequency*elapsed)+zero;
-        if (fabs(previous_cmd-cmd)>max_step)
+        cmd_single = amplitude*sin(2*3.14159265359*frequency*elapsed)+zero;
+        if (fabs(prev_cmd-cmd_single)>max_step)
         {
             char buff[255];
-            sprintf(buff,"error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",previous_cmd,cmd,max_step);
+            sprintf(buff,"error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",prev_cmd,cmd_single,max_step);
             RTF_ASSERT_ERROR(buff);
         }
-        for (int i=0; i<njoints; i++)
-        {
-            ienc->getEncoder(jointsList[i],&currPos[i]);
-            idir->setPosition(jointsList[i],cmd);
-        }
-        previous_cmd = cmd;
-        
+        ienc->getEncoders(pos_tot);
+        executeCmd();
         //printf("%+6.3f %f\n",elapsed, cmd);
         yarp::os::Time::delay(sampleTime);
         if (elapsed*frequency>cycles) break;

@@ -27,20 +27,27 @@ public:
     virtual void run();
 
     void goHome();
+    void executeCmd();
     void setMode(int desired_mode);
 
 private:
     std::string robotName;
     std::string partName;
     int* jointsList;
-    double* currPos;
     double frequency;
     double amplitude;
     double cycles;
     double tolerance;
     double sampleTime;
     double zero;
-    int    njoints;
+    int    n_part_joints;
+    int    n_cmd_joints;
+    enum cmd_mode_t
+    { 
+      single_joint = 0,
+      all_joints = 1,
+      some_joints =2
+    } cmd_mode;
 
     yarp::dev::PolyDriver        *dd;
     yarp::dev::IPositionControl2 *ipos;
@@ -48,6 +55,14 @@ private:
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPositionDirect   *idir;
+
+    double  cmd_single;
+    double* cmd_tot;
+    double* cmd_some;
+
+    double* pos_tot;
+
+    double prev_cmd;
 };
 
 #endif //_PositionDirect_H
