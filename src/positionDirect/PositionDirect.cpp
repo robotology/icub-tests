@@ -6,6 +6,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
+
+#include <math.h>
 #include <TestAssert.h>
 #include <Plugin.h>
 #include <yarp/os/Time.h>
@@ -228,12 +230,9 @@ void PositionDirect::run()
         double curr_time = yarp::os::Time::now();
         double elapsed = curr_time-start_time;
         cmd_single = amplitude*sin(2*3.14159265359*frequency*elapsed)+zero;
-        if (fabs(prev_cmd-cmd_single)>max_step)
-        {
-            char buff[255];
-            sprintf(buff,"error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",prev_cmd,cmd_single,max_step);
-            RTF_ASSERT_ERROR(buff);
-        }
+        RTF_ASSERT_ERROR_IF(fabs(prev_cmd-cmd_single)>max_step,
+                            Asserter::format("error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",
+                                             prev_cmd,cmd_single,max_step));
         ienc->getEncoders(pos_tot);
         executeCmd();
         //printf("%+6.3f %f\n",elapsed, cmd);
