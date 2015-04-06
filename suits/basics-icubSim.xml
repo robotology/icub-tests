@@ -4,13 +4,16 @@
     <description>Testing robot's basic features</description>
     <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubsim-fixture.xml"> yarpmanager </fixture>
-
     <!-- Camera -->
     <test type="dll" param="--from right_camera.ini"> CameraTest </test>
     <test type="dll" param="--from left_camera.ini"> CameraTest </test> 
+
+    <!-- Interfaces (wrappers) frequency -->
+    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
     
     <!-- Motors -->
     <test type="dll" param="--from test_right_arm.ini"> MotorTest </test>
     <test type="dll" param="--from test_left_arm.ini"> MotorTest </test>
+
 </suit>
 

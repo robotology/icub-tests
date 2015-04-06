@@ -7,7 +7,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-project(Robot-Tests)
+project(iCub-Tests)
 
 # set the include dir for helper classes
 set(YARP_HELPERS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
@@ -36,4 +36,7 @@ add_subdirectory(src/ftsensor-tests)
 
 # Build force sensor tests
 add_subdirectory(src/positionDirect)
+
+# Build ports frequency tests
+add_subdirectory(src/ports-frequency)
 
