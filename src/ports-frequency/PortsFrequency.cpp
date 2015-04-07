@@ -63,28 +63,31 @@ void PortsFrequency::run() {
     for(unsigned int i=0; i<ports.size(); i++) {
         port.reset();
         RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
-        RTF_TEST_CHECK(Network::connect(ports[i].name.c_str(), port.getName()),
-                         Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
-        port.useCallback();
-        Time::delay(testTime);
-        port.disableCallback();
-        double freq = 1.0/port.getAvg();
-        RTF_TEST_REPORT(Asserter::format("Calculated frequency %d hrz. (min: %d, max: %d)",
-                        (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
-        if(port.getSAvg() <= 0) {
-            RTF_TEST_REPORT("Source frequency is not available");
-        }
-        else {
-            RTF_TEST_REPORT(Asserter::format("Source frequency %d hrz. (min: %d, max: %d)",
-                                             (int)(1.0/port.getSAvg()), (int)(1.0/port.getSMax()), (int)(1.0/port.getSMin())));
-        }
-        double diff = fabs(freq - ports[i].frequency);
-        RTF_TEST_CHECK(diff < ports[i].tolerance,
-                       Asserter::format("Calculated frequency is outside the desired range [%d .. %d]",
-                                        ports[i].frequency-ports[i].tolerance,
-                                        ports[i].frequency+ports[i].tolerance));
+        bool connected = Network::connect(ports[i].name.c_str(), port.getName());
+        RTF_TEST_CHECK(connected,
+                       Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
+        if(connected) {
+            port.useCallback();
+            Time::delay(testTime);
+            port.disableCallback();
+            double freq = 1.0/port.getAvg();
+            RTF_TEST_REPORT(Asserter::format("Calculated frequency %d hrz. (min: %d, max: %d)",
+                            (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
+            if(port.getSAvg() <= 0) {
+                RTF_TEST_REPORT("Source frequency is not available");
+            }
+            else {
+                RTF_TEST_REPORT(Asserter::format("Source frequency %d hrz. (min: %d, max: %d)",
+                                                 (int)(1.0/port.getSAvg()), (int)(1.0/port.getSMax()), (int)(1.0/port.getSMin())));
+            }
+            double diff = fabs(freq - ports[i].frequency);
+            RTF_TEST_CHECK(diff < ports[i].tolerance,
+                           Asserter::format("Calculated frequency is outside the desired range [%d .. %d]",
+                                            ports[i].frequency-ports[i].tolerance,
+                                            ports[i].frequency+ports[i].tolerance));
 
-        Network::disconnect(ports[i].name.c_str(), port.getName());
+            Network::disconnect(ports[i].name.c_str(), port.getName());
+        }
     }
 }
 

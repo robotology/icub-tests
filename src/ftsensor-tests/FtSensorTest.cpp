@@ -35,6 +35,7 @@ bool FtSensorTest::setup(yarp::os::Property &configuration) {
 
     RTF_ASSERT_ERROR_IF(configuration.check("portname"),
                         "Missing 'portname' parameter");
+    portname = configuration.find("portname").asString();
 
     RTF_ASSERT_ERROR_IF(port.open("/iCubTest/FTsensor"),
                         "opening port, is YARP network working?");
@@ -44,7 +45,7 @@ bool FtSensorTest::setup(yarp::os::Property &configuration) {
 
     RTF_ASSERT_ERROR_IF(Network::connect(portname, port.getName()),
                         Asserter::format("could not connect to remote port %s, FT sensor unavailable",
-                                         port.getName().c_str()));
+                                         portname.c_str()));
     return true;
 }
 

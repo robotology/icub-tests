@@ -9,6 +9,9 @@
     <test type="dll" param="--from right_camera.ini"> CameraTest </test>
     <test type="dll" param="--from left_camera.ini"> CameraTest </test> 
 
+    <!-- Interfaces (wrappers) frequency -->
+    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
+
     <!-- Sensors -->
     <test type="dll" param="--from test_ft_left_arm.ini"> FtSensorTest </test>
     <test type="dll" param="--from test_ft_left_foot.ini"> FtSensorTest </test>
