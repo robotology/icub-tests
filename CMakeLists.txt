@@ -25,6 +25,12 @@ add_subdirectory(example)
 # Build camera tests
 add_subdirectory(src/camera)
 
+# Build position direct test
+add_subdirectory(src/positionDirect)
+
+# Build position direct test
+add_subdirectory(src/opticalEncoders)
+
 # Build model consistency check
 add_subdirectory(src/models-consistency)
 

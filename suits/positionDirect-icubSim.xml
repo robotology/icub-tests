@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Position Direct Test Suit">
+    <description> Testing position direct</description>
+    <environment>--robotname icub</environment>
+
+    <test param="--from positionDirect.ini"> PositionDirect.so </test>
+</suit>
+
