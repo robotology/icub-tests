@@ -1,0 +1,67 @@
+
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  - TRAVIS_BUILD_TYPE=Debug
+  - TRAVIS_BUILD_TYPE=Release
+
+before_script:
+  # install a recent cmake and lua 5.1 
+  #ubuntu dependencies
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo sh -c 'echo "deb http://www.icub.org/ubuntu precise contrib/science" > /etc/apt/sources.list.d/icub.list'; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo add-apt-repository -y ppa:kubuntu-ppa/backports; fi 
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo add-apt-repository -y ppa:robotology/ppa; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install cmake liblua5.1-dev; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get --force-yes install icub-common; fi
+  
+  - cd ..
+  # install yarp
+  - git clone https://github.com/robotology/yarp
+  - cd yarp
+  - mkdir build
+  - cd build
+  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE}  ..
+  - make
+  - sudo make install
+  - sudo ldconfig
+  - cd ../..
+  
+   # install icub-main 
+  - git clone https://github.com/robotology/icub-main
+  - cd icub-main
+  - mkdir build
+  - cd build
+  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE}  ..
+  - make
+  - sudo make install
+  - sudo ldconfig
+  - cd ../..
+  
+  # install robot-testing framework
+  - git clone https://github.com/robotology/robot-testing
+  - cd robot-testing
+  - mkdir build 
+  - cd build 
+  - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
+  - make 
+  - cd ../..
+  
+  # configure icub-tests
+  - mkdir build 
+  - cd build 
+  - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..
+  
+script: 
+  - make
+  # test install/uninstall
+  - sudo make install
+  - sudo make uninstall
+
+notifications:
+  email:
+    - pegua1@gmail.com
