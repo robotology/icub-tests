@@ -20,7 +20,8 @@ See https://github.com/robotology/robot-testing for how to use RTF.
 
 ## Installing RTF
 
-* If you have not installed RTF, Please see http://robotology.github.io/robot-testing/index.html. 
+If you have not installed RTF, Please see http://robotology.github.io/robot-testing/index.html . 
+Note that `icub-tests` use the YARP support in RTF, so please check that RTF is compiled with the `ENABLE_YARP` CMake option setted to ON.
 
 
 ## Building tests 
