@@ -28,8 +28,9 @@ add_subdirectory(src/camera)
 # Build position direct test
 add_subdirectory(src/positionDirect)
 
-# Build position direct test
-add_subdirectory(src/opticalEncoders)
+# Build optical encoder tests
+add_subdirectory(src/opticalEncoders-consistency)
+add_subdirectory(src/opticalEncoders-drift)
 
 # Build model consistency check
 add_subdirectory(src/models-consistency)
@@ -39,6 +40,9 @@ add_subdirectory(src/motor-tests)
 
 # Build force sensor tests
 add_subdirectory(src/ftsensor-tests)
+
+# Build controlModes tests
+add_subdirectory(src/controlModes)
 
 # Build ports frequency tests
 add_subdirectory(src/ports-frequency)
