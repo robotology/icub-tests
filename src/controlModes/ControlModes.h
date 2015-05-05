@@ -30,6 +30,7 @@ public:
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyAmplifier(int desired_amplifier_mode, yarp::os::ConstString title);
 
     void zeroCurrentLimits();
     void getOriginalCurrentLimits();
