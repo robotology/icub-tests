@@ -194,7 +194,7 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode,cmode,imode);
+            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), cmode,imode,desired_control_mode,desired_interaction_mode);
             RTF_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
@@ -202,6 +202,37 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
+    RTF_TEST_REPORT(sbuf);
+}
+
+void ControlModes::verifyAmplifier(int desired_amplifier_mode, yarp::os::ConstString title)
+{
+    int amode;
+    int timeout = 0;
+
+    while (1)
+    {
+        int ok=0;
+        for (int i=0; i<n_cmd_joints; i++)
+        {
+            iamp->getAmpStatus   (jointsList[i],&amode);
+            //@@@@@@
+            amode = 0; // to complete using the proper interface
+            //@@@@@@
+            if (amode==desired_amplifier_mode) ok++;
+        }
+        if (ok==n_cmd_joints) break;
+        if (timeout>100)
+        {
+            char sbuf[500];
+            sprintf(sbuf,"Test (%s) failed: amplifier mode is (%d), it should be (%d)",title.c_str(), amode, desired_amplifier_mode);
+            RTF_ASSERT_ERROR(sbuf);
+        }
+        yarp::os::Time::delay(0.2);
+        timeout++;
+    }
+    char sbuf[500];
+    sprintf(sbuf,"Test (%s) passed: amplifier mode is (%d)",title.c_str(), desired_amplifier_mode);
     RTF_TEST_REPORT(sbuf);
 }
 
@@ -268,106 +299,138 @@ void ControlModes::run()
     getOriginalCurrentLimits();
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
+    verifyAmplifier(0,"test0b"); //@@@@@@ To be completed
     goHome();
 
     //------ check all modes when stiff ------
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test1");
+    verifyAmplifier(0,"test1b");
 
     setMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_STIFF,"test2");
+    verifyAmplifier(0,"test2b");
 
     setMode(VOCAB_CM_VELOCITY,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_VELOCITY,VOCAB_IM_STIFF,"test3");
+    verifyAmplifier(0,"test3b");
 
     setMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
+    verifyAmplifier(0,"test4b");
     
     setMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF,"test5");
+    verifyAmplifier(0,"test5b");
 
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test6");
+    verifyAmplifier(0,"test6b");
 
     setMode(VOCAB_CM_IDLE,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_IDLE,VOCAB_IM_STIFF,"test7");
+    verifyAmplifier(0,"test7b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test8");
+    verifyAmplifier(0,"test8b");
 
     setMode(VOCAB_CM_FORCE_IDLE,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_IDLE,VOCAB_IM_STIFF,"test9"); //VOCAB_CM_IDLE is intentional
+    verifyAmplifier(0,"test9b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test10");
+    verifyAmplifier(0,"test10b");
     goHome();
 
     //------ check all modes when compliant ------
     setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test11");
+    verifyAmplifier(0,"test11b");
 
     setMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_COMPLIANT,"test12");
+    verifyAmplifier(0,"test12b");
 
     setMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT,"test13");
+    verifyAmplifier(0,"test13b");
 
     setMode(VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT,"test14");
+    verifyAmplifier(0,"test14b");
 
     setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT,"test15");
+    verifyAmplifier(0,"test15b");
     
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT,"test0");
+    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT,"test16");
+    verifyAmplifier(0,"test16b");
 
     setMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test16");
+    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test17");
+    verifyAmplifier(0,"test17b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test17");
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test18");
+    verifyAmplifier(0,"test18b");
 
     setMode(VOCAB_CM_FORCE_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test18"); //VOCAB_CM_IDLE is intentional
+    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test19"); //VOCAB_CM_IDLE is intentional
+    verifyAmplifier(0,"test19b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test19");
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test20");
+    verifyAmplifier(0,"test20b");
     goHome();
 
     //------ create an intentional HW FAULT ------
     zeroCurrentLimits();
-    verifyMode(VOCAB_CM_HW_FAULT, VOCAB_IM_STIFF,"test20");
+    verifyMode(VOCAB_CM_HW_FAULT, VOCAB_IM_STIFF,"test21");
+    verifyAmplifier(0,"test21b");
     resetOriginalCurrentLimits();
 
     //------ check all modes when in HW_FAULT ------
     setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test21");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test22");
+    verifyAmplifier(0,"test22b");
 
     setMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test22");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test23");
+    verifyAmplifier(0,"test23b");
 
     setMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test23");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test24");
+    verifyAmplifier(0,"test24b");
 
     setMode(VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test24");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test25");
+    verifyAmplifier(0,"test25b");
 
     setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test25");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test26");
+    verifyAmplifier(0,"test26b");
     
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test26");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test27");
+    verifyAmplifier(0,"test27b");
 
     setMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test27");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test28");
+    verifyAmplifier(0,"test28b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test28");
+    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test29");
+    verifyAmplifier(0,"test29b");
 
     setMode(VOCAB_CM_FORCE_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test29"); //VOCAB_CM_IDLE is intentional
+    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test30"); //VOCAB_CM_IDLE is intentional
+    verifyAmplifier(0,"test30b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test30");
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test31");
+    verifyAmplifier(0,"test31b");
     goHome();
 }
