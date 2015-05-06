@@ -7,18 +7,18 @@
  *
  */
 
-#ifndef _OPENLOOPCONSITENCY_H_
-#define _OPENLOOPCONSITENCY_H_
+#ifndef _TORQUECONTORLCONSISTENCY_H_
+#define _TORQUECONTORLCONSISTENCY_H_
 
 #include <string>
 #include <YarpTestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-class OpenLoopConsitency : public YarpTestCase {
+class TorqueControlConsistency : public YarpTestCase {
 public:
-    OpenLoopConsitency();
-    virtual ~OpenLoopConsitency();
+    TorqueControlConsistency();
+    virtual ~TorqueControlConsistency();
 
     virtual bool setup(yarp::os::Property& property);
 
@@ -30,11 +30,13 @@ public:
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    
+    void setRefTorque(double value);
+    void verifyRefTorque(double value, yarp::os::ConstString title);
 
-    void setRefOpenloop(double value);
-    void verifyRefOpenloop(double value, yarp::os::ConstString title);
-    void verifyOutputEqual(double value, yarp::os::ConstString title);
-    void verifyOutputDiff(double value, yarp::os::ConstString title);
+    void zeroCurrentLimits();
+    void getOriginalCurrentLimits();
+    void resetOriginalCurrentLimits();
 
 private:
     std::string robotName;
@@ -57,7 +59,7 @@ private:
     yarp::dev::IControlMode2     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
-    yarp::dev::IOpenLoopControl  *iopl;
+    yarp::dev::ITorqueControl    *itrq;
 
     double  cmd_single;
     double* cmd_tot;
@@ -70,4 +72,4 @@ private:
     double* pos_tot;
 };
 
-#endif //_OPENLOOPCONSITENCY_H_
+#endif //_TORQUECONTORLCONSISTENCY_H
