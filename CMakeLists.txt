@@ -23,8 +23,11 @@ add_subdirectory(example)
 # Build camera tests
 add_subdirectory(src/camera)
 
-# Build position direct test
+# Build position direct tests
 add_subdirectory(src/positionDirect)
+
+# Build openloop tests
+add_subdirectory(src/openloop-consitency)
 
 # Build optical encoder tests
 add_subdirectory(src/opticalEncoders-consistency)
