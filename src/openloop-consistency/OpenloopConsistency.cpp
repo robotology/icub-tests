@@ -13,20 +13,20 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
-#include "OpenLoopConsitency.h"
+#include "OpenLoopConsistency.h"
 
-//example1    -v -t OpenLoopConsitency.dll -p "--robot icub --part head --joints ""(0)"" --zero 0"
-//example2    -v -t OpenLoopConsitency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 "
-//example3    -v -t OpenLoopConsitency.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
+//example1    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0)"" --zero 0"
+//example2    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 "
+//example3    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
 
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(OpenLoopConsitency)
+PREPARE_PLUGIN(OpenLoopConsistency)
 
-OpenLoopConsitency::OpenLoopConsitency() : YarpTestCase("OpenLoopConsitency") {
+OpenLoopConsistency::OpenLoopConsistency() : YarpTestCase("OpenLoopConsistency") {
     jointsList=0;
     pos_tot=0;
     dd=0;
@@ -42,9 +42,9 @@ OpenLoopConsitency::OpenLoopConsitency() : YarpTestCase("OpenLoopConsitency") {
     prevcurr_tot=0;
 }
 
-OpenLoopConsitency::~OpenLoopConsitency() { }
+OpenLoopConsistency::~OpenLoopConsistency() { }
 
-bool OpenLoopConsitency::setup(yarp::os::Property& property) {
+bool OpenLoopConsistency::setup(yarp::os::Property& property) {
 
     // updating parameters
     RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
@@ -65,7 +65,7 @@ bool OpenLoopConsitency::setup(yarp::os::Property& property) {
     Property options;
     options.put("device", "remote_controlboard");
     options.put("remote", "/"+robotName+"/"+partName);
-    options.put("local", "/OpenLoopConsitencyTest/"+robotName+"/"+partName);
+    options.put("local", "/OpenLoopConsistencyTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
     RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
@@ -103,13 +103,13 @@ bool OpenLoopConsitency::setup(yarp::os::Property& property) {
     return true;
 }
 
-void OpenLoopConsitency::tearDown()
+void OpenLoopConsistency::tearDown()
 {
     if (jointsList) {delete jointsList; jointsList =0;}
     if (dd) {delete dd; dd =0;}
 }
 
-void OpenLoopConsitency::setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode)
+void OpenLoopConsistency::setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode)
 {
     for (int i=0; i<n_cmd_joints; i++)
     {
@@ -119,7 +119,7 @@ void OpenLoopConsitency::setMode(int desired_control_mode, yarp::dev::Interactio
     }
 }
 
-void OpenLoopConsitency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode; 
@@ -149,7 +149,7 @@ void OpenLoopConsitency::verifyMode(int desired_control_mode, yarp::dev::Interac
     RTF_TEST_REPORT(sbuf);
 }
 
-void OpenLoopConsitency::goHome()
+void OpenLoopConsistency::goHome()
 {
     for (int i=0; i<n_cmd_joints; i++)
     {
@@ -176,7 +176,7 @@ void OpenLoopConsitency::goHome()
     }
 }
 
-void OpenLoopConsitency::setRefOpenloop(double value)
+void OpenLoopConsistency::setRefOpenloop(double value)
 {
     cmd_single=value;
     if (cmd_mode==single_joint)
@@ -209,7 +209,7 @@ void OpenLoopConsitency::setRefOpenloop(double value)
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsitency::verifyRefOpenloop(double verify_val, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyRefOpenloop(double verify_val, yarp::os::ConstString title)
 {
     double value;
     char sbuf[500];
@@ -274,7 +274,7 @@ void OpenLoopConsitency::verifyRefOpenloop(double verify_val, yarp::os::ConstStr
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsitency::verifyOutputEqual(double verify_val, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstString title)
 {
     double value;
     char sbuf[500];
@@ -339,7 +339,7 @@ void OpenLoopConsitency::verifyOutputEqual(double verify_val, yarp::os::ConstStr
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsitency::verifyOutputDiff(double verify_val, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyOutputDiff(double verify_val, yarp::os::ConstString title)
 {
     double value;
     char sbuf[500];
@@ -404,7 +404,7 @@ void OpenLoopConsitency::verifyOutputDiff(double verify_val, yarp::os::ConstStri
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsitency::run()
+void OpenLoopConsistency::run()
 {
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");

@@ -7,7 +7,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-set(PROJECTNAME OpenloopConsistency)
+set(PROJECTNAME TorqueControlConsistency)
 project(${PROJECTNAME})
 
 find_package(RTF)
@@ -22,8 +22,8 @@ include_directories(${CMAKE_SOURCE_DIR}
 link_libraries(${RTF_LIBRARIES}
                ${YARP_LIBRARIES})
 
-add_library(${PROJECTNAME} MODULE OpenloopConsistency.h
-                                  OpenloopConsistency.cpp)
+add_library(${PROJECTNAME} MODULE TorqueControlConsistency.h
+                                  TorqueControlConsistency.cpp)
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime

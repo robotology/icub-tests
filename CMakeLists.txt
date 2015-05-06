@@ -27,7 +27,10 @@ add_subdirectory(src/camera)
 add_subdirectory(src/positionDirect)
 
 # Build openloop tests
-add_subdirectory(src/openloop-consitency)
+add_subdirectory(src/openloop-consistency)
+
+# Build torque control tests
+add_subdirectory(src/torqueControl-consistency)
 
 # Build optical encoder tests
 add_subdirectory(src/opticalEncoders-consistency)
