@@ -52,6 +52,7 @@ before_script:
   - cd ../..
   
   # configure icub-tests
+  - cd icub-tests
   - mkdir build 
   - cd build 
   - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..
