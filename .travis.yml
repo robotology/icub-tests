@@ -47,7 +47,7 @@ before_script:
   - cd robot-testing
   - mkdir build 
   - cd build 
-  - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
+  - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_MIDDLEWARE_PLUGINS:BOOL=ON -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
   - make 
   - cd ../..
   
