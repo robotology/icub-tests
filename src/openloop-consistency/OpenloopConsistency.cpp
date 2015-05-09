@@ -13,7 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
-#include "OpenLoopConsistency.h"
+#include "OpenloopConsistency.h"
 
 //example1    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0)"" --zero 0"
 //example2    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 "
