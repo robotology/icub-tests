@@ -7,7 +7,7 @@
  *
  */
 
-#include <Plugin.h>
+#include <rtf/dll/Plugin.h>
 #include "iKiniDynConsistencyTest.h"
 
 // Yarp includes

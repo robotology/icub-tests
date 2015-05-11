@@ -8,8 +8,8 @@
  */
 
 #include <math.h>
-#include <TestAssert.h>
-#include <Plugin.h>
+#include <rtf/TestAssert.h>
+#include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
@@ -178,7 +178,7 @@ void ControlModes::setMode(int desired_control_mode, yarp::dev::InteractionModeE
 void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
 {
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)
@@ -318,7 +318,7 @@ void ControlModes::run()
     setMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
     verifyAmplifier(0,"test4b");
-    
+
     setMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF,"test5");
     verifyAmplifier(0,"test5b");
@@ -364,7 +364,7 @@ void ControlModes::run()
     setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT,"test15");
     verifyAmplifier(0,"test15b");
-    
+
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT,"test16");
     verifyAmplifier(0,"test16b");
@@ -412,7 +412,7 @@ void ControlModes::run()
     setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test26");
     verifyAmplifier(0,"test26b");
-    
+
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test27");
     verifyAmplifier(0,"test27b");

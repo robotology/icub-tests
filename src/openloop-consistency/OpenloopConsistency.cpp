@@ -8,8 +8,8 @@
  */
 
 #include <math.h>
-#include <TestAssert.h>
-#include <Plugin.h>
+#include <rtf/TestAssert.h>
+#include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
@@ -122,7 +122,7 @@ void OpenLoopConsistency::setMode(int desired_control_mode, yarp::dev::Interacti
 void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
 {
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)

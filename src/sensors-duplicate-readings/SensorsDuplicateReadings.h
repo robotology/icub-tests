@@ -10,7 +10,7 @@
 #ifndef _SENSORSDUPLICATEREADINGS_H_
 #define _SENSORSDUPLICATEREADINGS_H_
 
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
 #include <vector>

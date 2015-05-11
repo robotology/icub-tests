@@ -8,7 +8,7 @@
  */
 
 #include <math.h>
-#include <Plugin.h>
+#include <rtf/dll/Plugin.h>
 #include "PortsFrequency.h"
 #include <yarp/os/Time.h>
 #include <yarp/os/Stamp.h>
@@ -55,7 +55,7 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
 }
 
 void PortsFrequency::tearDown() {
-    // finalization goes her ...    
+    // finalization goes her ...
     port.close();
 }
 

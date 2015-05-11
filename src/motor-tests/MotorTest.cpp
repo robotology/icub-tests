@@ -9,8 +9,8 @@
 
 #include <cmath>
 
-#include <Plugin.h>
-#include <TestAssert.h>
+#include <rtf/dll/Plugin.h>
+#include <rtf/TestAssert.h>
 
 #include "MotorTest.h"
 

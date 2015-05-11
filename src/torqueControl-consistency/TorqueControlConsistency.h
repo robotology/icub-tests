@@ -11,7 +11,7 @@
 #define _TORQUECONTORLCONSISTENCY_H_
 
 #include <string>
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -30,7 +30,7 @@ public:
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
-    
+
     void setRefTorque(double value);
     void verifyRefTorque(double value, yarp::os::ConstString title);
 
@@ -47,7 +47,7 @@ private:
     int    n_part_joints;
     int    n_cmd_joints;
     enum cmd_mode_t
-    { 
+    {
       single_joint = 0,
       all_joints = 1,
       some_joints =2

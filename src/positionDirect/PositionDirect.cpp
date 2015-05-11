@@ -8,8 +8,8 @@
  */
 
 #include <math.h>
-#include <TestAssert.h>
-#include <Plugin.h>
+#include <rtf/TestAssert.h>
+#include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
@@ -60,7 +60,7 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
     RTF_ASSERT_ERROR_IF(n_cmd_joints>0,"invalid number of joints, it must be >0");
-    
+
     frequency = property.find("frequency").asDouble();
     RTF_ASSERT_ERROR_IF(frequency>0,"invalid frequency");
 
@@ -134,7 +134,7 @@ void PositionDirect::setMode(int desired_mode)
     }
 
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)

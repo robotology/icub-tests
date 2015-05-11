@@ -13,7 +13,7 @@ project(${PROJECTNAME})
 
 # add the required cmake packages
 find_package(RTF)
-find_package(RTF COMPONENTS DLL)
+find_package(RTF COMPONENTS DLL YARP)
 find_package(YARP)
 
 # add include directories

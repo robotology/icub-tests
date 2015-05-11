@@ -10,7 +10,7 @@
 #ifndef _MOTORTEST_H_
 #define _MOTORTEST_H_
 
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 
 #include <yarp/os/Value.h>
 #include <yarp/sig/Vector.h>

@@ -8,8 +8,8 @@
  */
 
 #include <cstdlib>
-#include <Plugin.h>
-#include <Asserter.h>
+#include <rtf/dll/Plugin.h>
+#include <rtf/Asserter.h>
 
 #include <yarp/os/Time.h>
 

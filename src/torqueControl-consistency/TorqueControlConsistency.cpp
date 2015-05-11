@@ -8,8 +8,8 @@
  */
 
 #include <math.h>
-#include <TestAssert.h>
-#include <Plugin.h>
+#include <rtf/TestAssert.h>
+#include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
@@ -122,7 +122,7 @@ void TorqueControlConsistency::setMode(int desired_control_mode, yarp::dev::Inte
 void TorqueControlConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
 {
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)
@@ -282,7 +282,7 @@ void TorqueControlConsistency::run()
 
     setMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test1");
-    
+
     setRefTorque(0.1);
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test2");
     verifyRefTorque(0.1,"test2a");
@@ -292,12 +292,12 @@ void TorqueControlConsistency::run()
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test3");
     verifyRefTorque(0,"test3a");
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test3b");
-    
+
     setRefTorque(-0.1);
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
     verifyRefTorque(-0.1,"test4a");
     verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4b");
-    
+
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test5");
     goHome();

@@ -8,8 +8,8 @@
  */
 #include <iostream>
 #include <stdlib.h>     // for abs()
-#include <TestAssert.h>
-#include <Plugin.h>
+#include <rtf/TestAssert.h>
+#include <rtf/dll/Plugin.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>

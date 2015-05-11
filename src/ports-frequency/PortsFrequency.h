@@ -10,7 +10,7 @@
 #ifndef _PORTSFREQUENCY_H_
 #define _PORTSFREQUENCY_H_
 
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <vector>

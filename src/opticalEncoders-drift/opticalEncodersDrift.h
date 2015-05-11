@@ -11,7 +11,7 @@
 #define _OPTICALENCODERSDRIFT_H_
 
 #include <string>
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -34,7 +34,7 @@ public:
 private:
     std::string robotName;
     std::string partName;
-    
+
     yarp::sig::Vector jointsList;
 
     double threshold;

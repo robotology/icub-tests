@@ -10,7 +10,7 @@
 #ifndef _CAMERATEST_H_
 #define _CAMERATEST_H_
 
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 
 class ExampleTest : public YarpTestCase {
 public:
