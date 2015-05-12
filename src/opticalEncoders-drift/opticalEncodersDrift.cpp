@@ -7,13 +7,8 @@
  *
  */
 #include <math.h>
-<<<<<<< HEAD
 #include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
-=======
-#include <TestAssert.h>
-#include <Plugin.h>
->>>>>>> origin/master
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
@@ -76,11 +71,7 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
 
     Bottle* minBottle = property.find("min").asList();
     RTF_ASSERT_ERROR_IF(minBottle!=0,"unable to parse min parameter");
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> origin/master
     Bottle* speedBottle = property.find("speed").asList();
     RTF_ASSERT_ERROR_IF(speedBottle!=0,"unable to parse speed parameter");
 
@@ -141,11 +132,7 @@ void OpticalEncodersDrift::setMode(int desired_mode)
     }
 
     int cmode;
-<<<<<<< HEAD
     yarp::dev::InteractionModeEnum imode;
-=======
-    yarp::dev::InteractionModeEnum imode; 
->>>>>>> origin/master
     int timeout = 0;
 
     while (1)
@@ -203,11 +190,7 @@ void OpticalEncodersDrift::run()
     bool go_to_max=false;
     int  curr_cycle=0;
     double start_time = yarp::os::Time::now();
-<<<<<<< HEAD
 
-=======
-            
->>>>>>> origin/master
     imot->getMotorEncoders             (zero_enc_mot);
     while(1)
     {
@@ -227,11 +210,7 @@ void OpticalEncodersDrift::run()
             if (fabs(enc_jnt[i]-curr_val)<0.5) in_position++;
         }
         if (in_position==jointsList.size()) reached=true;
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> origin/master
         if (elapsed >= 20.0)
         {
             RTF_ASSERT_ERROR("Timeout while moving joint");
