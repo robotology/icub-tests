@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(iCub-Tests)
 
-# find a version of RTF higher then 1.0.1
+# find a version of RTF higher than 1.0.1
 # and with yarp support enabled
 find_package(RTF 1.0.1 COMPONENTS YARP REQUIRED)
 
