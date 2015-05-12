@@ -11,7 +11,7 @@
 #define _CAMERATEST_H_
 
 #include <string>
-#include <YarpTestCase.h>
+#include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Image.h>
 
