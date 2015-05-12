@@ -35,7 +35,7 @@ On Linux machines, open a terminal and type:
 ```
 On windows machines use the CMake program to create Visual Studio project and build it. 
 
-Notice: in case CMake fails to detect the RTF package check that you installed RTF or that you set the RTF_DIR environment variables to point to the build directory. Also check that RTF was compiled with YARP support enables (set ENABLE_MIDDLEWARE_PLUGINS and verify that ENABLE_YARP is ON).
+Notice: in case CMake fails to detect the RTF package check that you installed RTF or that you set the RTF_DIR environment variables to point to the build directory. Also check that RTF was compiled with YARP support enables (set `ENABLE_MIDDLEWARE_PLUGINS` and verify that `ENABLE_YARP` is ON).
 
 ## Configuration
 
