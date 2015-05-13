@@ -191,13 +191,16 @@ you can run a single test case or run it with the other tests using a test suite
     testrunner --verbose --test plugins/ExampleTest.so  --param "--name MyExampleTest"
 ```
 
+Notice that this test require the `yarpserver` to be running and it contains tests that are programmed to succeed and some that are programmed to fail.
+
 or to run the iCubSim camera test whith the test configuration file:
 
 ```
     testrunner --verbose --test plugins/CameraTest.so --param "--from right_camera.ini" --environment "--robotname icubSim"
 ```
 
-This runs the icubSim right-camera test with the parameters specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. 
+This runs the icubSim right-camera test with the parameters specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. This test assumes you are running `yarpserver` and the iCub simulator (i.e. `iCub_SIM`).
+
 Notice that the environment parameter `--robotname icubSim` is used to locate the correct context (for this examples is `icubSim`) and also to update the variables loaded from the `right_camera.ini` file. 
 
 
