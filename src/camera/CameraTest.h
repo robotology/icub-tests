@@ -28,8 +28,8 @@ public:
 
 private:
     std::string cameraPortName;
-    int times;
-    int frequency;
+    int measure_time;
+    int expected_frequency;
     int tolerance;
     yarp::os::BufferedPort<yarp::sig::Image> port;
 };
