@@ -17,6 +17,9 @@ find_package(RTF 1.0.1 COMPONENTS YARP REQUIRED)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
+# options
+option(ICUB_TESTS_USES_ICUB_MAIN "Turn on to compile the tests that depend on the icub-main repository" OFF)
+
 # Build example?
 add_subdirectory(example)
 
@@ -37,7 +40,9 @@ add_subdirectory(src/opticalEncoders-consistency)
 add_subdirectory(src/opticalEncoders-drift)
 
 # Build model consistency check
-add_subdirectory(src/models-consistency)
+if(ICUB_TESTS_USES_ICUB_MAIN)
+    add_subdirectory(src/models-consistency)
+endif()
 
 # Build motor tests
 add_subdirectory(src/motor-tests)
