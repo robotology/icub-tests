@@ -6,7 +6,8 @@
     <fixture param="--fixture icubgazebosim-fixture.xml"> yarpmanager </fixture>
 
     <!-- Interfaces (wrappers) frequency -->
-    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
+    <!-- time based test: disable until we use /clock for test synchronization 
+    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test> -->
 
     <!-- Sensors -->
     <test type="dll" param="--from test_ft_left_arm.ini"> FtSensorTest </test>
@@ -17,14 +18,10 @@
     <test type="dll" param="--from test_ft_right_leg.ini"> FtSensorTest </test>
 
     <!-- Detect sensors that stream duplicate readings -->
-    <test type="dll" param="--from sensor_duplicate_readings.ini"> SensorsDuplicateReadings </test>
+    <!-- <test type="dll" param="--from sensor_duplicate_readings.ini"> SensorsDuplicateReadings </test> -->
 
     <!-- Motors -->
-    <test type="dll" param="--from test_right_arm.ini"> MotorTest </test>
-    <test type="dll" param="--from test_left_arm.ini"> MotorTest </test>
-
-    <!-- Interfaces (wrappers) frequency -->
-    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
+    <!-- <test type="dll" param="--from test_torso.ini"> MotorTest </test> -->
 
 
 </suit>

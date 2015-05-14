@@ -1,0 +1,59 @@
+<application>
+    <name>iCub Gazebo</name>
+    <description>A fixture to prepare iCub Simulator for the test cases.</description>
+    <version>1.0</version>
+    <authors>
+        <author email="silvio.traversaro@iit.it">Silvio Traversaro</author>
+    </authors>
+    
+    
+    <module>
+        <name>gzserver</name>
+        <parameters>world/icub_fixed.world</parameters>
+        <node>localhost</node>
+    </module>
+    <!--
+    <module>
+        <name>iCub_SIM</name>
+        <parameters></parameters>
+        <node>localhost</node>
+    </module>    
+    -->
+    <!-- dummy module, necessary to wait until the simulator is actually loaded 
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /right</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <dependency>
+            <port timeout="10">/icubSim/cam/right</port>
+            <port timeout="10">/icubSim/cam/left</port>
+        </dependency>
+    </module>-->
+    
+    <module>
+        <name>yarp</name>
+        <parameters>help</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <dependency>
+            <port timeout="10">/icubGazeboSim/left_leg/stateExt:o</port>
+            <port timeout="10">/icubGazeboSim/right_leg/stateExt:o</port>
+        </dependency>
+    </module>
+    
+    <!--
+    <connection>
+        <from>/icubGazeboSim/left_leg/stateExt:o</from>
+        <to>/read</to>
+    </connection>
+    -->
+    <!--
+    <connection>
+        <from>/icubSim/cam/right</from>
+        <to>/right</to>
+    </connection>
+    -->
+    
+</application>
+
