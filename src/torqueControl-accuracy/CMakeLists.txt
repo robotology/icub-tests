@@ -7,7 +7,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-set(PROJECTNAME opticalEncodersDrift)
+set(PROJECTNAME TorqueControlAccuracy)
 project(${PROJECTNAME})
 
 find_package(RTF)
@@ -20,11 +20,10 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_HELPERS_INCLUDE_DIR})
 
 link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES}
-               YARP::YARP_manager)
+               ${YARP_LIBRARIES})
 
-add_library(${PROJECTNAME} MODULE opticalEncodersDrift.h
-                                  opticalEncodersDrift.cpp)
+add_library(${PROJECTNAME} MODULE TorqueControlAccuracy.h
+                                  TorqueControlAccuracy.cpp)
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime

@@ -15,6 +15,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/sig/Matrix.h>
 
 class OpticalEncodersDrift : public YarpTestCase {
@@ -30,6 +31,7 @@ public:
 
     void goHome();
     void setMode(int desired_mode);
+    void saveToFile(std::string filename, yarp::os::Bottle &b);
 
 private:
     std::string robotName;
@@ -47,17 +49,17 @@ private:
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IMotorEncoders    *imot;
 
-    double* enc_jnt;
-    double* enc_mot;
-    double* zero_enc_mot;
-    double* end_enc_mot;
-    double* err_enc_mot;
+    yarp::sig::Vector enc_jnt;
+    yarp::sig::Vector enc_mot;
+    yarp::sig::Vector home_enc_mot;
+    yarp::sig::Vector end_enc_mot;
+    yarp::sig::Vector err_enc_mot;
 
     int     cycles;
-    double* max;
-    double* min;
-    double* zero;
-    double* speed;
+    yarp::sig::Vector max;
+    yarp::sig::Vector min;
+    yarp::sig::Vector home;
+    yarp::sig::Vector speed;
 };
 
 #endif //_opticalEncodersDRIFT_H

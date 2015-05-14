@@ -12,12 +12,14 @@
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
-
+#include <fstream>
+#include <algorithm>
+#include <cstdlib>
 #include "opticalEncodersDrift.h"
+#include <yarp/manager/localbroker.h>
 
-//example     -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 --frequency 0.8 --amplitude 10.0 --cycles 100 --threshold 1.0 --sampleTime 0.010 --cmdMode 2"
-//example2    -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(2)"" --zero 0 --frequency 0.4 --amplitude 10.0 --cycles 100 --threshold 1.0 --sampleTime 0.010 --cmdMode 0"
-//            -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(0)"" --zero 0 --frequency 0.8 --amplitude 10.0 --cycles 100 --threshold 1.0 --sampleTime 0.010 --cmdMode 2"
+//example     -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --max "(10 10 10)" --min "(-10 -10 -10)" --cycles 100 --threshold 1.0 "
+//example2    -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --max "(10      )" --min "(-10)"         --cycles 100 --threshold 1.0 "
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -36,7 +38,7 @@ OpticalEncodersDrift::OpticalEncodersDrift() : YarpTestCase("OpticalEncodersDrif
     imot=0;
     enc_jnt=0;
     enc_mot=0;
-    zero_enc_mot=0;
+    home_enc_mot=0;
     end_enc_mot=0;
     err_enc_mot=0;
     cycles=100;
@@ -47,14 +49,14 @@ OpticalEncodersDrift::~OpticalEncodersDrift() { }
 bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("zero"),    "The zero position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("max"), "The max position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("min"), "The min position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("speed"), "The positionMove reference speed must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("robot"),     "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("part"),      "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("joints"),    "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("home"),      "The home position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("max"),       "The max position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("min"),       "The min position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("cycles"),    "The number of cycles of the control signal must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("threshold"), "The max error threshold must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
@@ -63,8 +65,8 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
 
-    Bottle* zeroBottle = property.find("zero").asList();
-    RTF_ASSERT_ERROR_IF(zeroBottle!=0,"unable to parse zero parameter");
+    Bottle* homeBottle = property.find("home").asList();
+    RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse zero parameter");
 
     Bottle* maxBottle = property.find("max").asList();
     RTF_ASSERT_ERROR_IF(maxBottle!=0,"unable to parse max parameter");
@@ -103,16 +105,16 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
-    enc_jnt = new double[n_part_joints];
-    enc_mot = new double[n_part_joints];
-    zero_enc_mot = new double[n_part_joints];
-    end_enc_mot = new double[n_part_joints];
-    err_enc_mot = new double[n_part_joints];
+    enc_jnt.resize(n_part_joints);
+    enc_mot.resize(n_part_joints);
+    home_enc_mot.resize(n_part_joints);
+    end_enc_mot.resize(n_part_joints);
+    err_enc_mot.resize(n_part_joints);
 
-    max     = new double[n_cmd_joints]; for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
-    min     = new double[n_cmd_joints]; for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
-    zero    = new double[n_cmd_joints]; for (int i=0; i< n_cmd_joints; i++) zero[i]=zeroBottle->get(i).asDouble();
-    speed   = new double[n_cmd_joints]; for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
+    max.resize  (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
+    min.resize  (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
+    home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
+    speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
 
     return true;
 }
@@ -159,7 +161,7 @@ void OpticalEncodersDrift::goHome()
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
         ipos->setRefSpeed((int)jointsList[i],speed[i]);
-        ipos->positionMove((int)jointsList[i],zero[i]);
+        ipos->positionMove((int)jointsList[i],home[i]);
     }
 
     int timeout = 0;
@@ -170,7 +172,7 @@ void OpticalEncodersDrift::goHome()
         {
             double tmp=0;
             ienc->getEncoder((int)jointsList[i],&tmp);
-            if (fabs(tmp-zero[i])<0.5) in_position++;
+            if (fabs(tmp-home[i])<0.5) in_position++;
         }
         if (in_position==jointsList.size()) break;
         if (timeout>100)
@@ -182,23 +184,50 @@ void OpticalEncodersDrift::goHome()
     }
 }
 
+void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
+{
+    std::fstream fs;
+    fs.open (filename.c_str(), std::fstream::out);
+    
+    for (unsigned int i=0; i<b.size(); i++)
+    {
+        std::string s = b.get(i).toString();
+        std::replace(s.begin(), s.end(), '(', ' ');
+        std::replace(s.begin(), s.end(), ')', ' ');
+        fs << s << endl;
+    }
+
+    fs.close();
+}
+
 void OpticalEncodersDrift::run()
 {
     setMode(VOCAB_CM_POSITION);
     goHome();
 
     bool go_to_max=false;
+    for (unsigned int i=0; i<jointsList.size(); i++)
+    {
+        ipos->positionMove(i,min[i]);
+    }
+
     int  curr_cycle=0;
     double start_time = yarp::os::Time::now();
+    Bottle dataToPlot;
 
-    imot->getMotorEncoders             (zero_enc_mot);
+    imot->getMotorEncoders             (home_enc_mot.data());
     while(1)
     {
         double curr_time = yarp::os::Time::now();
         double elapsed = curr_time-start_time;
 
-        ienc->getEncoders                  (enc_jnt);
-        imot->getMotorEncoders             (enc_mot);
+        ienc->getEncoders                  (enc_jnt.data());
+        imot->getMotorEncoders             (enc_mot.data());
+        Bottle& row = dataToPlot.addList();
+        Bottle& v1 = row.addList();
+        Bottle& v2 = row.addList();
+        v1.read(enc_jnt);
+        v2.read(enc_mot);
 
         bool reached= false;
         int in_position=0;
@@ -241,15 +270,27 @@ void OpticalEncodersDrift::run()
 
     goHome();
     yarp::os::Time::delay(2.0);
-    imot->getMotorEncoders             (end_enc_mot);
 
-    for (int i=0; i<n_part_joints; i++)
+    //automatic check, not complete yet
     {
-        err_enc_mot[i]=zero_enc_mot[i]-end_enc_mot[i];
-
-        if (fabs(err_enc_mot[i]) > threshold)
+        imot->getMotorEncoders             (end_enc_mot.data());
+        for (int i=0; i<n_part_joints; i++)
         {
-            //...print something
+            err_enc_mot[i]=home_enc_mot[i]-end_enc_mot[i];
+
+            if (fabs(err_enc_mot[i]) > threshold)
+            {
+                //...assert something
+            }
         }
     }
+
+    string filename = "plot.txt";
+    saveToFile(filename,dataToPlot);
+    char plotstring[1000];
+    //gnuplot -e "unset key; plot for [col=1:6] 'C:\software\icub-tests\build\plugins\Debug\plot.txt' using col with lines" -persist
+    sprintf (plotstring, "gnuplot -e \" unset key; plot for [col=1:%d] '%s' using col with lines \" -persist", n_part_joints,filename.c_str());
+    
+    system (plotstring);
+
 }
