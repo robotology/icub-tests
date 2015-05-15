@@ -7,7 +7,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-set(PROJECTNAME opticalEncoders)
+set(PROJECTNAME opticalEncodersConsistency)
 project(${PROJECTNAME})
 
 find_package(RTF)
@@ -22,8 +22,8 @@ include_directories(${CMAKE_SOURCE_DIR}
 link_libraries(${RTF_LIBRARIES}
                ${YARP_LIBRARIES})
 
-add_library(${PROJECTNAME} MODULE opticalEncoders.h
-                                  opticalEncoders.cpp)
+add_library(${PROJECTNAME} MODULE opticalEncodersConsistency.h
+                                  opticalEncodersConsistency.cpp)
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime
