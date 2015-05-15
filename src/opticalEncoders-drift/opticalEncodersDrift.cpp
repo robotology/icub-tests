@@ -18,8 +18,8 @@
 #include "opticalEncodersDrift.h"
 #include <yarp/manager/localbroker.h>
 
-//example     -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --max "(10 10 10)" --min "(-10 -10 -10)" --cycles 100 --threshold 1.0 "
-//example2    -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --max "(10      )" --min "(-10)"         --cycles 100 --threshold 1.0 "
+//example     -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --max "(10 10 10)" --min "(-10 -10 -10)" --cycles 100 --tolerance 1.0 "
+//example2    -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --max "(10      )" --min "(-10)"         --cycles 100 --tolerance 1.0 "
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -57,7 +57,7 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("min"),       "The min position must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("cycles"),    "The number of cycles of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("threshold"), "The max error threshold must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("tolerance"), "The max error tolerance must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -77,8 +77,8 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     Bottle* speedBottle = property.find("speed").asList();
     RTF_ASSERT_ERROR_IF(speedBottle!=0,"unable to parse speed parameter");
 
-    threshold = property.find("threshold").asDouble();
-    RTF_ASSERT_ERROR_IF(threshold>=0,"invalid threshold");
+    tolerance = property.find("tolerance").asDouble();
+    RTF_ASSERT_ERROR_IF(tolerance>=0,"invalid tolerance");
 
     cycles = property.find("cycles").asInt();
     RTF_ASSERT_ERROR_IF(cycles>=0,"invalid cycles");
@@ -278,7 +278,7 @@ void OpticalEncodersDrift::run()
         {
             err_enc_mot[i]=home_enc_mot[i]-end_enc_mot[i];
 
-            if (fabs(err_enc_mot[i]) > threshold)
+            if (fabs(err_enc_mot[i]) > tolerance)
             {
                 //...assert something
             }

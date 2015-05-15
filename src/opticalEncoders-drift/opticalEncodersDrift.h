@@ -38,7 +38,7 @@ private:
     std::string partName;
     yarp::sig::Vector jointsList;
 
-    double threshold;
+    double tolerance;
 
     int    n_part_joints;
 
