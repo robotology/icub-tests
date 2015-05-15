@@ -61,6 +61,7 @@ void PortsFrequency::tearDown() {
 
 void PortsFrequency::run() {
     for(unsigned int i=0; i<ports.size(); i++) {
+        RTF_TEST_REPORT("");
         port.reset();
         RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
         bool connected = Network::connect(ports[i].name.c_str(), port.getName());
@@ -70,22 +71,23 @@ void PortsFrequency::run() {
             port.useCallback();
             Time::delay(testTime);
             port.disableCallback();
-            double freq = 1.0/port.getAvg();
-            RTF_TEST_REPORT(Asserter::format("Calculated frequency %d hrz. (min: %d, max: %d)",
-                            (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
             if(port.getSAvg() <= 0) {
-                RTF_TEST_REPORT("Source frequency is not available");
+                RTF_TEST_REPORT("Sender frequency is not available");
             }
             else {
-                RTF_TEST_REPORT(Asserter::format("Source frequency %d hrz. (min: %d, max: %d)",
+                RTF_TEST_REPORT(Asserter::format("Time delay between sender/receiver is %.4f s. (min: %.4f, max: %.f4)",
+                                port.getDAvg(), port.getDMax(), port.getDMin()));
+                RTF_TEST_REPORT(Asserter::format("Sender frequency %d hrz. (min: %d, max: %d)",
                                                  (int)(1.0/port.getSAvg()), (int)(1.0/port.getSMax()), (int)(1.0/port.getSMin())));
             }
+            double freq = 1.0/port.getAvg();
+            RTF_TEST_REPORT(Asserter::format("Receiver frequency %d hrz. (min: %d, max: %d)",
+                            (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
             double diff = fabs(freq - ports[i].frequency);
             RTF_TEST_CHECK(diff < ports[i].tolerance,
-                           Asserter::format("Calculated frequency is outside the desired range [%d .. %d]",
+                           Asserter::format("Receiver frequency is outside the desired range [%d .. %d]",
                                             ports[i].frequency-ports[i].tolerance,
-                                            ports[i].frequency+ports[i].tolerance));
-
+                                            ports[i].frequency+ports[i].tolerance));            
             Network::disconnect(ports[i].name.c_str(), port.getName());
         }
     }
@@ -94,21 +96,38 @@ void PortsFrequency::run() {
 void DataPort::onRead(yarp::os::Bottle& bot) {
     double tcurrent = Time::now();
     Stamp stm;
-    getEnvelope(stm);
-    if(count != 0) {
+    bool hasTimeStamp = getEnvelope(stm);
+
+    if(count == 0) {
+        if(hasTimeStamp) {
+            double tdiff = fabs(tcurrent - stm.getTime());
+            dsum = dmax = dmin = tdiff;
+        }
+    }
+    else {
         // calculating statistics
-        double tdiff =  tcurrent - tprev;
+        double tdiff =  fabs(tcurrent - tprev);
         sum += tdiff;
         max = (tdiff > max) ? tdiff : max;
         min = (min<0 || min > tdiff) ? tdiff : min;
 
         // calculating statistics using time stamp
-        tdiff = stm.getTime() - stprev;
-        ssum += tdiff;
-        smax = (tdiff > smax) ? tdiff : smax;
-        smin = (smin<0 || smin > tdiff) ? tdiff : smin;
+        if(hasTimeStamp) {
+            tdiff = fabs(stm.getTime() - stprev);
+            ssum += tdiff;
+            smax = (tdiff > smax) ? tdiff : smax;
+            smin = (smin<0 || smin > tdiff) ? tdiff : smin;
+
+            // calculating time delay
+            double tdiff = fabs(tcurrent - stm.getTime());
+            dsum += tdiff;
+            dmax = (tdiff > dmax) ? tdiff : dmax;
+            dmin = (dmin<0 || dmin > tdiff) ? tdiff : dmin;
+        }
     }
+
     count++;
     tprev = tcurrent;
-    stprev = stm.getTime();
+    if(hasTimeStamp)
+        stprev = stm.getTime();
 }

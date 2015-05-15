@@ -26,8 +26,8 @@ public:
 class DataPort : public yarp::os::BufferedPort<yarp::os::Bottle> {
 public:
     void reset() {
-        max = smax = sum = ssum = 0.0;
-        min = smin = -1.0;
+        max = smax = sum = ssum = dmax = dsum = 0.0;
+        min = smin = dmin = -1.0;
         tprev = stprev = 0.0;
         count = 0;
     }
@@ -38,6 +38,9 @@ public:
     double getSMax() { return smax; }
     double getSMin() { return smin; }
     double getSAvg() { return ssum/count; }
+    double getDMax() { return dmax; }
+    double getDMin() { return dmin; }
+    double getDAvg() { return dsum/count; }
 
     unsigned long getCount() { return count; }
 
@@ -46,8 +49,9 @@ public:
 private:
     unsigned long count;
     double tprev, stprev;
-    double max, min, sum;
-    double smax, smin, ssum;
+    double max, min, sum;       // receiver time
+    double smax, smin, ssum;    // sender time
+    double dmax, dmin, dsum;    // time delay
 };
 
 class PortsFrequency : public YarpTestCase {
