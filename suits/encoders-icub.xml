@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Encoders Test Suit">
+    <description> Testing encoders</description>
+    <environment>--robotname icub</environment>
+
+    <test type="dll" param="--from optical_encoders_drift_left_arm.ini">  OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_right_arm.ini"> OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_left_leg.ini">  OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_right_leg.ini"> OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_torso.ini">     OpticalEncodersDrift </test>
+
+    <test type="dll" param="--from optical_encoders_consistency_left_arm.ini">  OpticalEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_right_arm.ini"> OpticalEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_left_leg.ini">  OpticalEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_right_leg.ini"> OpticalEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_torso.ini">     OpticalEncodersConsistency </test>
+</suit>
+
