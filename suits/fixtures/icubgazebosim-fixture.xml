@@ -12,25 +12,7 @@
         <parameters>world/icub_fixed.world</parameters>
         <node>localhost</node>
     </module>
-    <!--
-    <module>
-        <name>iCub_SIM</name>
-        <parameters></parameters>
-        <node>localhost</node>
-    </module>    
-    -->
-    <!-- dummy module, necessary to wait until the simulator is actually loaded 
-    <module>
-        <name>yarpview</name>
-        <parameters>--name /right</parameters>
-        <node>localhost</node>
-        <prefix></prefix>
-        <dependency>
-            <port timeout="10">/icubSim/cam/right</port>
-            <port timeout="10">/icubSim/cam/left</port>
-        </dependency>
-    </module>-->
-    
+
     <module>
         <name>yarp</name>
         <parameters>help</parameters>
@@ -39,21 +21,14 @@
         <dependency>
             <port timeout="10">/icubGazeboSim/left_leg/stateExt:o</port>
             <port timeout="10">/icubGazeboSim/right_leg/stateExt:o</port>
+            <port timeout="10">/icubGazeboSim/left_arm/analog:o</port>
+            <port timeout="10">/icubGazeboSim/right_arm/analog:o</port>
+            <port timeout="10">/icubGazeboSim/left_leg/analog:o</port>
+            <port timeout="10">/icubGazeboSim/left_foot/analog:o</port>
+            <port timeout="10">/icubGazeboSim/right_leg/analog:o</port>
+            <port timeout="10">/icubGazeboSim/right_foot/analog:o</port>
         </dependency>
     </module>
-    
-    <!--
-    <connection>
-        <from>/icubGazeboSim/left_leg/stateExt:o</from>
-        <to>/read</to>
-    </connection>
-    -->
-    <!--
-    <connection>
-        <from>/icubSim/cam/right</from>
-        <to>/right</to>
-    </connection>
-    -->
     
 </application>
 
