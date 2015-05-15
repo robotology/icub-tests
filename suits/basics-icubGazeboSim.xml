@@ -21,7 +21,7 @@
     <!-- <test type="dll" param="--from sensor_duplicate_readings.ini"> SensorsDuplicateReadings </test> -->
 
     <!-- Motors -->
-    <!-- <test type="dll" param="--from test_torso.ini"> MotorTest </test> -->
+    <!-- <test type="dll" param="--from test_motortest_torso.ini"> MotorTest </test> -->
 
 
 </suit>
