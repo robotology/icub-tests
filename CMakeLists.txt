@@ -46,6 +46,7 @@ endif()
 
 # Build motor tests
 add_subdirectory(src/motor-tests)
+add_subdirectory(src/jointLimits)
 
 # Build force sensor tests
 add_subdirectory(src/ftsensor-tests)
