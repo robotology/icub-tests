@@ -42,13 +42,16 @@ bool CameraTest::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("portname"),
                         "The portname must be given as the test paramter!");
     cameraPortName = property.find("portname").asString();
-    times = property.check("times") ? property.find("times").asInt() : TIMES;
-    frequency = property.check("frequency") ? property.find("frequency").asInt() : FREQUENCY;
+    measure_time = property.check("measure_time") ? property.find("measure_time").asInt() : TIMES;
+    expected_frequency = property.check("expected_frequency") ? property.find("expected_frequency").asInt() : FREQUENCY;
     tolerance = property.check("tolerance") ? property.find("tolerance").asInt() : TOLERANCE;
 
     // opening port
     RTF_ASSERT_ERROR_IF(port.open("/CameraTest/image:i"),
                         "opening port, is YARP network available?");
+
+    RTF_TEST_REPORT(Asserter::format("Listening to camera for %d seconds",
+                                       measure_time));
 
     // connecting
     RTF_TEST_REPORT(Asserter::format("connecting from %s to %s",
@@ -69,7 +72,7 @@ void CameraTest::run() {
     double timeNow=timeStart;
 
     int frames=0;
-    while(timeNow<timeStart+times) {
+    while(timeNow<timeStart+measure_time) {
         Image *image=port.read(false);
         if(image!=0)
             frames++;
@@ -77,7 +80,7 @@ void CameraTest::run() {
         timeNow=yarp::os::Time::now();
     }
 
-    int expectedFrames = times*frequency;
+    int expectedFrames = measure_time*expected_frequency;
     RTF_TEST_REPORT(Asserter::format("Received %d frames, expecting %d",
                                        frames,
                                        expectedFrames));
