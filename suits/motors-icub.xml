@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Motor Control Suite">
+    <description>Testing robot motors</description>
+    <environment>--robotname icub</environment>
+    <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture-->
+
+    <!-- Motors -->
+    <test type="dll" param="--from test_motortest_right_arm.ini"> MotorTest </test>
+    <test type="dll" param="--from test_motortest_left_arm.ini"> MotorTest </test>
+
+    <!-- Joint Limits -->
+    <test type="dll" param="--from joint_limits_right_arm.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_left_arm.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_right_leg.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_left_leg.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_torso.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_hrad.ini"> JointLimits </test>
+	
+</suit>
+

@@ -18,8 +18,8 @@
 #include "jointLimits.h"
 #include <yarp/manager/localbroker.h>
 
-//example     -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --outputLimitPercent "(30 30 30)"  --tolerance 1.0 "
-//example2    -v -t JointLimits.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --outputLimitPercent "(30 30 30)"  --tolerance 1.0 "
+//example     -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --outputLimitPercent "(30 30 30)"  --tolerance 0.2"
+//example2    -v -t JointLimits.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --outputLimitPercent "(30 30 30)"  --tolerance 0.2 "
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -37,9 +37,6 @@ JointLimits::JointLimits() : YarpTestCase("JointLimits") {
     ienc=0;
     ilim=0;
     enc_jnt=0;
-    home_enc_mot=0;
-    end_enc_mot=0;
-    err_enc_mot=0;
     original_pids=0;
     pids_saved=false;
 }
@@ -55,7 +52,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("home"),        "The home position must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("speed"),       "The positionMove reference speed must be given as the test parameter!");
 
-    RTF_ASSERT_ERROR_IF(property.check("outputLimit"),  "The outputLimit must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("outputLimitPercent"),  "The outputLimitPercent must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("tolerance"), "  The max error tolerance must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
@@ -88,6 +85,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(ilim),"Unable to open limits interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ipid),"Unable to open pid interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -101,10 +99,6 @@ bool JointLimits::setup(yarp::os::Property& property) {
     enc_jnt.resize(n_part_joints);
     max_lims.resize(n_cmd_joints);
     min_lims.resize(n_cmd_joints);
-    
-    home_enc_mot.resize(n_part_joints);
-    end_enc_mot.resize(n_part_joints);
-    err_enc_mot.resize(n_part_joints);
 
     home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
     speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
@@ -247,7 +241,7 @@ void JointLimits::run()
         ilim->getLimits((int)jointsList[i],&min_lims[i],&max_lims[i]);
         RTF_ASSERT_ERROR_IF(max_lims[i]!=min_lims[i],"Invalid limit: max==min?");
         RTF_ASSERT_ERROR_IF(max_lims[i]>min_lims[i],"Invalid limit: max<min?");
-        RTF_ASSERT_ERROR_IF(max_lims[i]==0 && min_lims[i]==0,"Invalid limit: max==min==0");
+        RTF_ASSERT_ERROR_IF(max_lims[i]!=0 && min_lims[i]!=0,"Invalid limit: max==min==0");
     }
     
     for (unsigned int i=0; i<jointsList.size(); i++)

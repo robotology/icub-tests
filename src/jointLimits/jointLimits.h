@@ -57,10 +57,6 @@ private:
     yarp::sig::Vector min_lims;
     yarp::sig::Vector outputLimit;
 
-    yarp::sig::Vector home_enc_mot;
-    yarp::sig::Vector end_enc_mot;
-    yarp::sig::Vector err_enc_mot;
-
     yarp::sig::Vector home;
     yarp::sig::Vector speed;
 
