@@ -22,7 +22,7 @@ using namespace yarp::math;
 // prepare the plugin
 PREPARE_PLUGIN(SensorsDuplicateReadings)
 
-SensorsDuplicateReadings::SensorsDuplicateReadings() : YarpTestCase("PortsFrequency") {
+SensorsDuplicateReadings::SensorsDuplicateReadings() : YarpTestCase("SensorsDuplicateReadings") {
 }
 
 SensorsDuplicateReadings::~SensorsDuplicateReadings() { }
