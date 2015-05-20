@@ -17,5 +17,13 @@
     <test type="dll" param="--from joint_limits_torso.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test>
 
+    <!-- Motor Stiction -->
+	<test type="dll" param="--from motor_stiction_right_arm.ini"> MotorStiction </test>
+    <test type="dll" param="--from motor_stiction_left_arm.ini"> MotorStiction </test>
+    <test type="dll" param="--from motor_stiction_right_leg.ini"> MotorStiction </test>
+    <test type="dll" param="--from motor_stiction_left_leg.ini"> MotorStiction </test>
+    <test type="dll" param="--from motor_stiction_torso.ini"> MotorStiction </test>
+    <test type="dll" param="--from motor_stiction_head.ini"> MotorStiction </test>
+	
 </suit>
 
