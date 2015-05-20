@@ -14,7 +14,7 @@
     <test type="dll" param="--from joint_limits_right_leg.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_left_leg.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_torso.ini"> JointLimits </test>
-    <test type="dll" param="--from joint_limits_hrad.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test>
 
 </suit>
 
