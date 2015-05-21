@@ -233,6 +233,7 @@ void JointLimits::goToSingle(int i, double pos)
 
 void JointLimits::run()
 {
+    char buff[500];
     setMode(VOCAB_CM_POSITION);
     goTo(home);
 
@@ -241,13 +242,16 @@ void JointLimits::run()
         ilim->getLimits((int)jointsList[i],&min_lims[i],&max_lims[i]);
         RTF_ASSERT_ERROR_IF(max_lims[i]!=min_lims[i],"Invalid limit: max==min?");
         RTF_ASSERT_ERROR_IF(max_lims[i]>min_lims[i],"Invalid limit: max<min?");
-        RTF_ASSERT_ERROR_IF(max_lims[i]!=0 && min_lims[i]!=0,"Invalid limit: max==min==0");
+        if (max_lims[i] == 0 && min_lims[i] == 0) RTF_ASSERT_ERROR("Invalid limit: max==min==0");
     }
     
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
+        sprintf(buff,"Testing joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);RTF_TEST_REPORT(buff);
         goToSingle(i, max_lims[i]);
+        sprintf(buff,"Testing joint %d, min limit: %f",(int)jointsList[i],min_lims[i]);RTF_TEST_REPORT(buff);
         goToSingle(i, min_lims[i]);
+        sprintf(buff,"Testing joint %d, homing to: %f",(int)jointsList[i],home[i]);RTF_TEST_REPORT(buff);
         goToSingle(i, home[i]);
     }
     ienc->getEncoders                  (enc_jnt.data());

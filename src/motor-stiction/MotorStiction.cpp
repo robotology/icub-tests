@@ -53,9 +53,13 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("outputDelay") ,  "The output_delay must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("outputMax"),     "The output_max must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("threshold"),     "The threshold must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("repeat"),        "The repeat must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
+    
+    repeat = property.find("repeat").asInt();
+    RTF_ASSERT_ERROR_IF(repeat>=0,"repeat must be greater than zero");
 
     Bottle* homeBottle = property.find("home").asList();
     RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse zero parameter");
@@ -88,6 +92,7 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ilim),"Unable to open limits interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -103,12 +108,20 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     opl_delay.resize (n_cmd_joints);          for (int i=0; i< n_cmd_joints; i++) opl_delay[i]=output_delay_Bottle->get(i).asDouble();
     opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=output_max_Bottle->get(i).asDouble();
     movement_threshold.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) movement_threshold[i]=threshold_Bottle->get(i).asDouble();
+    
+    max_lims.resize(n_cmd_joints);
+    min_lims.resize(n_cmd_joints);
+    for (int i=0; i <n_cmd_joints; i++) ilim->getLimits((int)jointsList[i],&min_lims[i],&max_lims[i]);
 
     return true;
 }
 
 void MotorStiction::tearDown()
 {
+    char buff[500];
+    sprintf(buff,"Closing test module");RTF_TEST_REPORT(buff);
+    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
     goHome();
     if (dd) {delete dd; dd =0;}
 }
@@ -121,6 +134,13 @@ void MotorStiction::setMode(int desired_control_mode, yarp::dev::InteractionMode
         iimd->setInteractionMode((int)jointsList[i],desired_interaction_mode);
         yarp::os::Time::delay(0.010);
     }
+}
+
+void MotorStiction::setModeSingle(int i, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode)
+{
+    icmd->setControlMode((int)jointsList[i],desired_control_mode);
+    iimd->setInteractionMode((int)jointsList[i],desired_interaction_mode);
+    yarp::os::Time::delay(0.010);
 }
 
 void MotorStiction::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
@@ -159,26 +179,30 @@ void MotorStiction::goHome()
     {
         ipos->setRefSpeed((int)jointsList[i],20.0);
         ipos->positionMove((int)jointsList[i],home[i]);
+        yarp::os::Time::delay(0.010);
     }
 
-    int timeout = 0;
-    while (1)
+    char buff [500];
+    sprintf(buff,"Homing the whole part");RTF_TEST_REPORT(buff);
+
+    int in_position=0;
+    for (unsigned int i=0; i<jointsList.size(); i++)
     {
-        int in_position=0;
-        for (unsigned int i=0; i<jointsList.size(); i++)
+        double time_started = yarp::os::Time::now();
+        while (1)
         {
             double pos;
             ienc->getEncoder((int)jointsList[i],&pos);
-            if (fabs(pos-home[i])<0.5) in_position++;
+            if (fabs(pos-home[i])<1.0) break;
+            if (yarp::os::Time::now()-time_started>20) 
+            {
+                sprintf(buff,"Timeout while reaching zero position, joint %d, curr_enc %f, home %f", (int)jointsList[i],pos,home[i]);
+                RTF_ASSERT_ERROR(buff);
+            }
         }
-        if (in_position==jointsList.size()) break;
-        if (timeout>100)
-        {
-            RTF_ASSERT_ERROR("Timeout while reaching zero position");
-        }
-        yarp::os::Time::delay(0.2);
-        timeout++;
     }
+
+    sprintf(buff,"Homing succesfully completed");RTF_TEST_REPORT(buff);
 }
 
 void MotorStiction::saveToFile(std::string filename, yarp::os::Bottle &b)
@@ -186,7 +210,7 @@ void MotorStiction::saveToFile(std::string filename, yarp::os::Bottle &b)
     std::fstream fs;
     fs.open (filename.c_str(), std::fstream::out);
     
-    for (unsigned int i=0; i<b.size(); i++)
+    for (int i=0; i<b.size(); i++)
     {
         std::string s = b.get(i).toString();
         std::replace(s.begin(), s.end(), '(', ' ');
@@ -197,113 +221,201 @@ void MotorStiction::saveToFile(std::string filename, yarp::os::Bottle &b)
     fs.close();
 }
 
+void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotList, stiction_data& current_test, bool positive_sign)
+{
+    char buff[500];
+    double time     = yarp::os::Time::now();
+    double time_old = yarp::os::Time::now();
+    double enc=0;
+    double start_enc=0;
+    ienc->getEncoder((int)jointsList[i],&enc);
+    ienc->getEncoder((int)jointsList[i],&start_enc);
+    bool not_moving = true;
+    double opl=0;
+    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
+    iopl->setRefOutput((int)jointsList[i],opl);
+    double last_opl_cmd=yarp::os::Time::now();
+    Bottle dataToPlot;
+
+    while (not_moving)
+    {
+        Bottle& row = dataToPlot.addList();
+        Bottle& v1 = row.addList();
+        Bottle& v2 = row.addList();
+
+        iopl->setRefOutput((int)jointsList[i],opl);
+        ienc->getEncoder((int)jointsList[i],&enc);
+
+        //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);RTF_TEST_REPORT(buff);
+
+        if (fabs(enc-start_enc)>movement_threshold[i])
+        {
+            iopl->setRefOutput((int)jointsList[i],0.0);
+            not_moving=false;
+            if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=true;}
+            else               {current_test.neg_opl=opl; current_test.neg_test_passed=true;}
+            dataToPlotList.push_back(dataToPlot);
+            sprintf(buff,"Test success (output=%f)",opl);RTF_TEST_REPORT(buff);
+        }
+        else if (opl>=opl_max[i])
+        {
+            iopl->setRefOutput((int)jointsList[i],0.0);
+            not_moving=false;
+            if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
+            else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
+            dataToPlotList.push_back(dataToPlot);
+            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);RTF_TEST_REPORT(buff);
+        }
+        else if (fabs(enc-max_lims[i]) < 1.0 ||
+                 fabs(enc-min_lims[i]) < 1.0 )
+        {
+            iopl->setRefOutput((int)jointsList[i],0.0);
+            not_moving=false;
+            if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
+            else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
+            dataToPlotList.push_back(dataToPlot);
+            sprintf(buff,"Test failed because hw limit was touched (enc=%f)",enc);RTF_TEST_REPORT(buff);
+        }
+
+        if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
+        {
+            if (positive_sign)
+            {opl+=opl_step[i];}
+            else
+            {opl-=opl_step[i];}
+            last_opl_cmd=yarp::os::Time::now();
+        }
+            
+        time = yarp::os::Time::now();
+        v1.addDouble(time);
+        v2.addDouble(enc);
+        v2.addDouble(opl);
+        yarp::os::Time::delay(0.010);
+
+        if (time-time_old>5.0 && not_moving==true)
+        {
+            sprintf(buff,"test in progress on joint %d, current output value = %f",(int)jointsList[i],opl);RTF_TEST_REPORT(buff);
+            time_old=time;
+        }
+    }
+}
+
+void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlotList, stiction_data& current_test, bool positive_sign)
+{
+    char buff[500];
+    double time     = yarp::os::Time::now();
+    double time_old = yarp::os::Time::now();
+    double enc=0;
+    double start_enc=0;
+    ienc->getEncoder((int)jointsList[i],&enc);
+    ienc->getEncoder((int)jointsList[i],&start_enc);
+    bool not_moving = true;
+    double opl=0;
+    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
+    iopl->setRefOutput((int)jointsList[i],opl);
+    double last_opl_cmd=yarp::os::Time::now();
+    Bottle dataToPlot;
+
+    while (not_moving)
+    {
+        Bottle& row = dataToPlot.addList();
+        Bottle& v1 = row.addList();
+        Bottle& v2 = row.addList();
+
+        iopl->setRefOutput((int)jointsList[i],opl);
+        ienc->getEncoder((int)jointsList[i],&enc);
+
+        //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);RTF_TEST_REPORT(buff);
+
+        if (opl>=opl_max[i])
+        {
+            iopl->setRefOutput((int)jointsList[i],0.0);
+            not_moving=false;
+            if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
+            else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
+            dataToPlotList.push_back(dataToPlot);
+            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);RTF_TEST_REPORT(buff);
+        }
+        else if (fabs(enc-max_lims[i]) < 1.0 ||
+                 fabs(enc-min_lims[i]) < 1.0 )
+        {
+            iopl->setRefOutput((int)jointsList[i],0.0);
+            not_moving=false;
+            if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=true;}
+            else               {current_test.neg_opl=opl; current_test.neg_test_passed=true;}
+            dataToPlotList.push_back(dataToPlot);
+            sprintf(buff,"Test success (output=%f)",opl);RTF_TEST_REPORT(buff);
+        }
+
+        if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
+        {
+            if (positive_sign)
+            {opl+=opl_step[i];}
+            else
+            {opl-=opl_step[i];}
+            last_opl_cmd=yarp::os::Time::now();
+        }
+            
+        time = yarp::os::Time::now();
+        v1.addDouble(time);
+        v2.addDouble(enc);
+        v2.addDouble(opl);
+        yarp::os::Time::delay(0.010);
+
+        if (time-time_old>5.0 && not_moving==true)
+        {
+            sprintf(buff,"test in progress on joint %d, current output value = %f",(int)jointsList[i],opl);RTF_TEST_REPORT(buff);
+            time_old=time;
+        }
+    }
+}
+
 void MotorStiction::run()
 {
-    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
-    goHome();
+    //yarp::os::Time::delay(10);
 
+    char buff[500];
     std::vector<Bottle> dataToPlotList;
+    
+    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+    goHome();
 
     for (unsigned int i=0 ; i<jointsList.size(); i++)
     {
-        stiction_data current_test;
-        current_test.jnt=(int)jointsList[i];
-
-        double opl=0;
-        bool not_moving;
-
-        double enc=0;
-        double prev_enc=0;
-        not_moving = true;
-        opl=0;
-        setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-        iopl->setRefOutput((int)jointsList[i],opl);
-        while (not_moving)
+        for (int repeat_count=0; repeat_count<repeat; repeat_count++)
         {
-            Bottle  dataToPlot;
-            Bottle& row = dataToPlot.addList();
-            Bottle& v1 = row.addList();
-            Bottle& v2 = row.addList();
+            stiction_data current_test;
+            current_test.jnt=(int)jointsList[i];
+            current_test.cycle= repeat_count;
 
-            opl+=opl_step[i];
+            setModeSingle(i,VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
+            iopl->setRefOutput((int)jointsList[i],0.0);
 
-            iopl->setRefOutput((int)jointsList[i],opl);
-            ienc->getEncoder((int)jointsList[i],&enc);
-            if (fabs(enc-prev_enc)>movement_threshold[i])
-            {
-                iopl->setRefOutput((int)jointsList[i],0.0);
-                not_moving=false;
-                current_test.pos_opl=opl;
-                current_test.pos_test_passed=true;
-                dataToPlotList.push_back(dataToPlot);
-            }
-            if (opl>=opl_max[i])
-            {
-                iopl->setRefOutput((int)jointsList[i],0.0);
-                not_moving=false;
-                current_test.pos_opl=opl;
-                current_test.pos_test_passed=false;
-                dataToPlotList.push_back(dataToPlot);
-            }
-            yarp::os::Time::delay(opl_delay[i]);
-            prev_enc=enc;
-            v1.addDouble(enc);
-            v2.addDouble(opl);
+            sprintf(buff,"Testing joint %d, cycle %d, positive output",(int)jointsList[i],repeat_count);RTF_TEST_REPORT(buff);
+            OplExecute(i,dataToPlotList,current_test, true);
 
-        }
-        setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-        goHome();
-        
+            setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+            goHome();
 
-        enc=0;
-        prev_enc=0;
-        not_moving = true;
-        opl=0;
-        setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-        iopl->setRefOutput((int)jointsList[i],opl);
+            setModeSingle(i, VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
+            iopl->setRefOutput((int)jointsList[i],0.0);
 
-        while (not_moving)
-        {
-            Bottle  dataToPlot;
-            Bottle& row = dataToPlot.addList();
-            Bottle& v1 = row.addList();
-            Bottle& v2 = row.addList();
+            sprintf(buff,"Testing joint %d, cycle %d, negative output",(int)jointsList[i],repeat_count);RTF_TEST_REPORT(buff);
+            OplExecute(i,dataToPlotList,current_test, false);
 
-            opl-=opl_step[i];
+            setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+            goHome();
 
-            iopl->setRefOutput((int)jointsList[i],opl);
-            ienc->getEncoder((int)jointsList[i],&enc);
-            if (fabs(enc-prev_enc)>movement_threshold[i])
-            {
-                iopl->setRefOutput((int)jointsList[i],0.0);
-                not_moving=false;
-                current_test.pos_opl=opl;
-                current_test.pos_test_passed=true;
-                dataToPlotList.push_back(dataToPlot);
-            }
-            if (opl<=-opl_max[i])
-            {
-                iopl->setRefOutput((int)jointsList[i],0.0);
-                not_moving=false;
-                current_test.pos_opl=opl;
-                current_test.pos_test_passed=false;
-                dataToPlotList.push_back(dataToPlot);
-            }
-            yarp::os::Time::delay(opl_delay[i]);
-            prev_enc=enc;
-            v1.addDouble(enc);
-            v2.addDouble(opl);
-        }
+            //test cycle complete, save data
+            stiction_data_list.push_back(current_test);
 
-        setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-        goHome();
-        stiction_data_list.push_back(current_test);
-
-        char filename[500];
-        sprintf (filename, "plot_stiction_j%d.txt",(int)jointsList[i]);
-        saveToFile(filename,dataToPlotList[i]);
-    }
+            char filename[500];
+            sprintf (filename, "plot_stiction_%s_j%d_n_c%d.txt",partName.c_str(),(int)jointsList[i],repeat_count);
+            saveToFile(filename,dataToPlotList.rbegin()[0]); //last element
+            sprintf (filename, "plot_stiction_%s_j%d_p_c%d.txt",partName.c_str(),(int)jointsList[i],repeat_count);
+            saveToFile(filename,dataToPlotList.rbegin()[1]); //second last element
+        } 
+    } 
 
     goHome();
 
@@ -317,18 +429,19 @@ void MotorStiction::run()
         //system (plotstring);
     }
     
+    //stiction_data_list.size() include tests for all joints, multiple cycles
     for (unsigned int i=0; i <stiction_data_list.size(); i++)
     {
         if (stiction_data_list[i].neg_test_passed==false)
         {
             char buff [500];
-            sprintf(buff, "test failed on joint %d, negative output value: %f",stiction_data_list[i].jnt,stiction_data_list[i].neg_opl);
+            sprintf(buff, "test failed on joint %d, cycle %d, negative output value: %f",stiction_data_list[i].jnt,stiction_data_list[i].cycle,stiction_data_list[i].neg_opl);
             RTF_ASSERT_ERROR(buff);
         }
         else if (stiction_data_list[i].pos_test_passed==false)
         {
             char buff [500];
-            sprintf(buff, "test failed on joint %d, positive output value: %f",stiction_data_list[i].jnt,stiction_data_list[i].neg_opl);
+            sprintf(buff, "test failed on joint %d, cycle %d,  positive output value: %f",stiction_data_list[i].jnt,stiction_data_list[i].cycle,stiction_data_list[i].pos_opl);
             RTF_ASSERT_ERROR(buff);
         }
     }

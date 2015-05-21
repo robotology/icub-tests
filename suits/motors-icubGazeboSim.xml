@@ -16,6 +16,14 @@
     <test type="dll" param="--from joint_limits_torso.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test>
 
+    <!-- Openloop -->
+	<test type="dll" param="--from openloop_consistency_right_arm.ini"> OpenLoopConsistency </test>
+    <test type="dll" param="--from openloop_consistency_left_arm.ini"> OpenLoopConsistency </test>
+    <test type="dll" param="--from openloop_consistency_right_leg.ini"> OpenLoopConsistency </test>
+    <test type="dll" param="--from openloop_consistency_left_leg.ini"> OpenLoopConsistency </test>
+    <test type="dll" param="--from openloop_consistency_torso.ini"> OpenLoopConsistency </test>
+    <test type="dll" param="--from openloop_consistency_head.ini"> OpenLoopConsistency </test>
+	
     <!-- Motor Stiction -->
 	<test type="dll" param="--from motor_stiction_right_arm.ini"> MotorStiction </test>
     <test type="dll" param="--from motor_stiction_left_arm.ini"> MotorStiction </test>
