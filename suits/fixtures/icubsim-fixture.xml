@@ -9,21 +9,9 @@
         <name>iCub_SIM</name>
         <parameters></parameters>
         <node>localhost</node>
+        <ensure>
+            <wait>10</wait>
+        </ensure>
     </module>    
-    <module>
-        <name>yarpview</name>
-        <parameters>--name /right</parameters>
-        <node>localhost</node>
-        <prefix></prefix>
-        <dependency>
-            <port timeout="10">/icubSim/cam/right</port>
-            <port timeout="10">/icubSim/cam/left</port>
-        </dependency>
-    </module>
-
-    <connection>
-        <from>/icubSim/cam/right</from>
-        <to>/right</to>
-    </connection>
 </application>
 
