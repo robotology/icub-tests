@@ -35,10 +35,15 @@ public:
 private:
     std::string robotName;
     std::string partName;
+    std::string plotString1;
+    std::string plotString2;
+    std::string plotString3;
+    std::string plotString4;
 
     yarp::sig::Vector jointsList;
 
     double tolerance;
+    double position_move_tolerance;
 
     int    n_part_joints;
     int    cycles;

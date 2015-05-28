@@ -21,6 +21,7 @@
 
 //example     -v -t OpticalEncodersConsistency.dll -p "--robot icub --part left_arm --joints ""(0 1 2)"" --home ""(-30 30 10)"" --speed ""(20 20 20)"" --max ""(-20 40 20)"" --min ""(-40 20 0)"" --cycles 10 --tolerance 1.0 "
 //example2    -v -t OpticalEncodersConsistency.dll -p "--robot icub --part head     --joints ""(2)""     --home ""(0)""         --speed ""(20      )"" --max ""(10      )""  --min ""(-10)""      --cycles 10 --tolerance 1.0 "
+//-v - s "C:\software\icub-tests\suits\encoders-icubSim.xml"
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -47,44 +48,16 @@ OpticalEncodersConsistency::OpticalEncodersConsistency() : YarpTestCase("Optical
     acc_jnt2mot=0;
     acc_mot=0;
     cycles =10;
-
-    matrix_arms.resize(16,16);
-    matrix_arms.eye();
-    double r=40;
-    double R=65;
-    matrix_arms (0,0) = 1;
-    matrix_arms (1,0) = -R/r;
-    matrix_arms (1,1) = R/r;
-    matrix_arms (2,0) = -R/r;
-    matrix_arms (2,1) = R/r;
-    matrix_arms (2,2) = R/r;
-
-    matrix_torso.resize(3,3);
-    matrix_torso.eye();
-    r=0.022*1000;
-    R=0.04*1000;
-    matrix_torso (0,0) = R/r;
-    matrix_torso (1,0) = 0;
-    matrix_torso (2,0) = 0;
-    matrix_torso (0,1) = -1;
-    matrix_torso (1,1) = 1;
-    matrix_torso (2,1) = 1;
-    matrix_torso (0,2) = 0;
-    matrix_torso (1,2) = -1;
-    matrix_torso (2,2) = 1;
-
-    matrix_legs.resize(6,6);
-    matrix_legs.eye();
-    matrix_legs (0,0) = 60/40;
-
-    matrix_head.resize(6,6);
-    matrix_head.eye();
+    position_move_tolerance = 1.0;
 }
 
 OpticalEncodersConsistency::~OpticalEncodersConsistency() { }
 
 bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 
+    char b[5000];
+    strcpy (b,property.toString().c_str());
+    RTF_TEST_REPORT("on setup()");
     // updating parameters
     RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("part"), "The part name must be given as the test parameter!");
@@ -94,10 +67,14 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("min"),       "The min position must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
-
+    RTF_ASSERT_ERROR_IF(property.check("matrix_size"),  "The matrix size must be given!");
+    RTF_ASSERT_ERROR_IF(property.check("matrix"),       "The coupling matrix must be given!");
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
-
+    plotString1 = property.find("plotString1").asString();
+    plotString2 = property.find("plotString2").asString();
+    plotString3 = property.find("plotString3").asString();
+    plotString4 = property.find("plotString4").asString();
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
 
@@ -115,6 +92,31 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 
     tolerance = property.find("tolerance").asDouble();
     RTF_ASSERT_ERROR_IF(tolerance>=0,"invalid tolerance");
+
+    int matrix_size=property.find("matrix_size").asInt();
+    if (matrix_size>0)
+    {
+        matrix.resize(matrix_size,matrix_size);
+        matrix.eye();
+        Bottle* matrixBottle = property.find("matrix").asList();
+        if (matrixBottle!= NULL && matrixBottle->size() == (matrix_size*matrix_size) )
+        {
+            for (int i=0; i< (matrix_size*matrix_size); i++)
+            {
+                matrix.data()[i]=matrixBottle->get(i).asDouble();
+            }
+        }
+        else
+        {
+           char buff [500];
+           sprintf (buff, "invalid number of elements of parameter matrix %d!=%d", matrixBottle->size() , (matrix_size*matrix_size));
+           RTF_ASSERT_ERROR(buff);
+        }
+    }
+    else
+    {
+        RTF_ASSERT_ERROR("invalid matrix_size: must be >0");
+    }
 
     //optional parameters
     if (property.check("cycles"))
@@ -142,13 +144,22 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
-    enc_jnt.resize(n_part_joints);
-    enc_mot.resize(n_part_joints);
-    vel_jnt.resize(n_part_joints);
-    vel_mot.resize(n_part_joints);
-    acc_jnt.resize(n_part_joints);
-    acc_mot.resize(n_part_joints);
-    zero_vector.resize(n_part_joints);
+    enc_jnt.resize(n_cmd_joints); enc_jnt.zero();
+    enc_mot.resize(n_cmd_joints); enc_mot.zero();
+    vel_jnt.resize(n_cmd_joints); vel_jnt.zero();
+    vel_mot.resize(n_cmd_joints); vel_mot.zero();
+    acc_jnt.resize(n_cmd_joints); acc_jnt.zero();
+    acc_mot.resize(n_cmd_joints); acc_mot.zero();
+    prev_enc_jnt.resize(n_cmd_joints); prev_enc_jnt.zero();
+    prev_enc_mot.resize(n_cmd_joints); prev_enc_mot.zero();
+    prev_enc_jnt2mot.resize(n_cmd_joints); prev_enc_jnt2mot.zero();
+    prev_vel_jnt.resize(n_cmd_joints); prev_vel_jnt.zero();
+    prev_vel_mot.resize(n_cmd_joints); prev_vel_mot.zero();
+    prev_vel_jnt2mot.resize(n_cmd_joints); prev_vel_jnt2mot.zero();
+    prev_acc_jnt.resize(n_cmd_joints); prev_acc_jnt.zero();
+    prev_acc_mot.resize(n_cmd_joints); prev_acc_mot.zero();
+    prev_acc_jnt2mot.resize(n_cmd_joints); prev_acc_jnt2mot.zero();
+    zero_vector.resize(n_cmd_joints);
     zero_vector.zero();
 
     max.resize(n_cmd_joints);   for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
@@ -161,11 +172,18 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 
 void OpticalEncodersConsistency::tearDown()
 {
+    char buff[500];
+    sprintf(buff,"Closing test module");RTF_TEST_REPORT(buff);
+    setMode(VOCAB_CM_POSITION);
+    goHome();
     if (dd) {delete dd; dd =0;}
 }
 
 void OpticalEncodersConsistency::setMode(int desired_mode)
 {
+    if (icmd == 0) RTF_ASSERT_ERROR("Invalid control mode interface");
+    if (iimd == 0) RTF_ASSERT_ERROR("Invalid interaction mode interface");
+
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
         icmd->setControlMode((int)jointsList[i],desired_mode);
@@ -198,10 +216,19 @@ void OpticalEncodersConsistency::setMode(int desired_mode)
 
 void OpticalEncodersConsistency::goHome()
 {
+    if (ipos == 0) RTF_ASSERT_ERROR("Invalid position control interface");
+    if (ienc == 0) RTF_ASSERT_ERROR("Invalid encoders interface");
+
+    bool ret = true;
+    char buff [500];
+    sprintf(buff,"Homing the whole part");RTF_TEST_REPORT(buff);
+
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
-        ipos->setRefSpeed((int)jointsList[i],speed[i]);
-        ipos->positionMove((int)jointsList[i],home[i]);
+        ret = ipos->setRefSpeed((int)jointsList[i],speed[i]);
+        RTF_ASSERT_ERROR_IF(ret, "ipos->setRefSpeed returned false");
+        ret = ipos->positionMove((int)jointsList[i],home[i]);
+        RTF_ASSERT_ERROR_IF(ret, "ipos->positionMove returned false");
     }
 
     int timeout = 0;
@@ -212,7 +239,7 @@ void OpticalEncodersConsistency::goHome()
         {
             double tmp=0;
             ienc->getEncoder((int)jointsList[i],&tmp);
-            if (fabs(tmp-home[i])<0.5) in_position++;
+            if (fabs(tmp-home[i])<position_move_tolerance) in_position++;
         }
         if (in_position==jointsList.size()) break;
         if (timeout>100)
@@ -242,56 +269,65 @@ void OpticalEncodersConsistency::saveToFile(std::string filename, yarp::os::Bott
 
 void OpticalEncodersConsistency::run()
 {
+    char buff [500];
     setMode(VOCAB_CM_POSITION);
     goHome();
 
     bool go_to_max=false;
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
-        ipos->positionMove(i,min[i]);
+        ipos->positionMove((int)jointsList[i], min[i]);
     }
 
     int  cycle=0;
     double start_time = yarp::os::Time::now();
 
-    if      (partName=="left_arm")  {matrix = matrix_arms;}
-    else if (partName=="right_arm") {matrix = matrix_arms;}
-    else if (partName=="torso")     {matrix = matrix_torso;}
-    else if (partName=="left_leg")  {matrix = matrix_legs;}
-    else if (partName=="right_leg") {matrix = matrix_legs;}
-    else if (partName=="head")      {matrix = matrix_head;}
-    else
-    {
-        RTF_ASSERT_ERROR("Unknown part name, missing matrix for this part");
-    }
     trasp_matrix = matrix.transposed();
     inv_matrix = yarp::math::luinv(matrix);
     inv_trasp_matrix = inv_matrix.transposed();
+
+    sprintf(buff,"Matrix:\n %s \n", matrix.toString().c_str());
+    RTF_TEST_REPORT(buff);
+    sprintf(buff,"Inv matrix:\n %s \n", inv_matrix.toString().c_str());
+    RTF_TEST_REPORT(buff);
+
     Bottle dataToPlot_test1;
     Bottle dataToPlot_test2;
     Bottle dataToPlot_test3;
     Bottle dataToPlot_test4;
 
     bool test_data_is_valid = false;
+    bool first_time = true;
+    yarp::sig::Vector off_enc_mot; off_enc_mot.resize(jointsList.size());
+    yarp::sig::Vector off_enc_jnt2mot; off_enc_jnt2mot.resize(jointsList.size());
+    yarp::sig::Vector tmp_vector;
+    tmp_vector.resize(n_part_joints);
 
-    while(1)
+    while (1)
     {
         double curr_time = yarp::os::Time::now();
-        double elapsed = curr_time-start_time;
+        double elapsed = curr_time - start_time;
 
-        ienc->getEncoders                  (enc_jnt.data());
-        imot->getMotorEncoders             (enc_mot.data());
-        ienc->getEncoderSpeeds             (vel_jnt.data());
-        imot->getMotorEncoderSpeeds        (vel_mot.data());
-        ienc->getEncoderAccelerations      (acc_jnt.data());
-        imot->getMotorEncoderAccelerations (acc_mot.data());
+        bool ret = true;
+        ret = ienc->getEncoders(tmp_vector.data());                  for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoders returned false");
+        ret = imot->getMotorEncoders(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "imot->getMotorEncoder returned false");
+        ret = ienc->getEncoderSpeeds(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoderSpeeds returned false");
+        ret = imot->getMotorEncoderSpeeds(tmp_vector.data());        for (unsigned int i = 0; i < jointsList.size(); i++) vel_mot[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "imot->getMotorEncoderSpeeds returned false");
+        ret = ienc->getEncoderAccelerations(tmp_vector.data());      for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoderAccelerations returned false");
+        ret = imot->getMotorEncoderAccelerations(tmp_vector.data()); for (unsigned int i = 0; i < jointsList.size(); i++) acc_mot[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "imot->getMotorEncoderAccelerations returned false");
 
-        if (enc_jnt==zero_vector) {RTF_TEST_REPORT("Invalid getEncoders data");test_data_is_valid=true;}
-        if (enc_mot==zero_vector) {RTF_TEST_REPORT("Invalid getMotorEncoders data");test_data_is_valid=true;}
-        if (vel_jnt==zero_vector) {RTF_TEST_REPORT("Invalid getEncoderSpeeds data");test_data_is_valid=true;}
-        if (vel_mot==zero_vector) {RTF_TEST_REPORT("Invalid getMotorEncoderSpeeds data");test_data_is_valid=true;}
-        if (acc_jnt==zero_vector) {RTF_TEST_REPORT("Invalid getEncoderAccelerations data");test_data_is_valid=true;}
-        if (acc_mot==zero_vector) {RTF_TEST_REPORT("Invalid getMotorEncoderAccelerations data");test_data_is_valid=true;}
+        if (enc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoders data"); test_data_is_valid = true; }
+        if (enc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoders data"); test_data_is_valid = true; }
+        if (vel_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderSpeeds data"); test_data_is_valid = true; }
+        if (vel_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderSpeeds data"); test_data_is_valid = true; }
+        if (acc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderAccelerations data"); test_data_is_valid = true; }
+        if (acc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderAccelerations data"); test_data_is_valid = true; }
 
         enc_jnt2mot = matrix * enc_jnt;
         vel_jnt2mot = matrix * vel_jnt;
@@ -300,16 +336,16 @@ void OpticalEncodersConsistency::run()
         vel_jnt2mot = vel_jnt2mot * 100;
         acc_jnt2mot = acc_jnt2mot * 100;
 
-        bool reached= false;
-        int in_position=0;
-        for (unsigned int i=0; i<jointsList.size(); i++)
+        bool reached = false;
+        int in_position = 0;
+        for (unsigned int i = 0; i < jointsList.size(); i++)
         {
-            double curr_val=0;
-            if (go_to_max==false) curr_val = min[i];
+            double curr_val = 0;
+            if (go_to_max == false) curr_val = min[i];
             else                  curr_val = max[i];
-            if (fabs(enc_jnt[i]-curr_val)<0.5) in_position++;
+            if (fabs(enc_jnt[i] - curr_val) < position_move_tolerance) in_position++;
         }
-        if (in_position==jointsList.size()) reached=true;
+        if (in_position == jointsList.size()) reached = true;
 
         if (elapsed >= 20.0)
         {
@@ -318,51 +354,58 @@ void OpticalEncodersConsistency::run()
 
         if (reached)
         {
-            if (go_to_max==false)
+            sprintf(buff, "Test cycle %d/%d", cycle, cycles); RTF_TEST_REPORT(buff);
+            if (go_to_max == false)
             {
-                for (unsigned int i=0; i<jointsList.size(); i++)
-                    ipos->positionMove(i,max[i]);
-                go_to_max=true;
+                for (unsigned int i = 0; i < jointsList.size(); i++)
+                    ipos->positionMove(i, max[i]);
+                go_to_max = true;
                 cycle++;
                 start_time = yarp::os::Time::now();
             }
             else
             {
-                for (unsigned int i=0; i<jointsList.size(); i++)
-                    ipos->positionMove(i,min[i]);
-                go_to_max=false;
+                for (unsigned int i = 0; i < jointsList.size(); i++)
+                    ipos->positionMove(i, min[i]);
+                go_to_max = false;
                 cycle++;
                 start_time = yarp::os::Time::now();
             }
         }
 
         //update previous and computes diff
-        prev_enc_jnt     = enc_jnt;
-        prev_enc_mot     = enc_mot;
+        diff_enc_jnt = (enc_jnt - prev_enc_jnt) / 0.010;
+        diff_enc_mot = (enc_mot - prev_enc_mot) / 0.010;
+        diff_enc_jnt2mot = (enc_jnt2mot - prev_enc_jnt2mot) / 0.010;
+        diff_vel_jnt = (vel_jnt - prev_vel_jnt) / 0.010;
+        diff_vel_mot = (vel_mot - prev_vel_mot) / 0.010;
+        diff_vel_jnt2mot = (vel_jnt2mot - prev_vel_jnt2mot) / 0.010;
+        diff_acc_jnt = (acc_jnt - prev_acc_jnt) / 0.010;
+        diff_acc_mot = (acc_mot - prev_acc_mot) / 0.010;
+        diff_acc_jnt2mot = (acc_jnt2mot - prev_acc_jnt2mot) / 0.010;
+        prev_enc_jnt = enc_jnt;
+        prev_enc_mot = enc_mot;
         prev_enc_jnt2mot = enc_jnt2mot;
-        prev_vel_jnt     = vel_jnt;
-        prev_vel_mot     = vel_mot;
+        prev_vel_jnt = vel_jnt;
+        prev_vel_mot = vel_mot;
         prev_vel_jnt2mot = vel_jnt2mot;
-        prev_acc_jnt     = acc_jnt;
-        prev_acc_mot     = acc_mot;
+        prev_acc_jnt = acc_jnt;
+        prev_acc_mot = acc_mot;
         prev_acc_jnt2mot = acc_jnt2mot;
-        diff_enc_jnt     = enc_jnt     - prev_enc_jnt;
-        diff_enc_mot     = enc_mot     - prev_enc_mot;
-        diff_enc_jnt2mot = enc_jnt2mot - prev_enc_jnt2mot;
-        diff_vel_jnt     = vel_jnt     - prev_vel_jnt;
-        diff_vel_mot     = vel_mot     - prev_vel_mot;
-        diff_vel_jnt2mot = vel_jnt2mot - prev_vel_jnt2mot;
-        diff_acc_jnt     = acc_jnt     - prev_acc_jnt;
-        diff_acc_mot     = acc_mot     - prev_acc_mot;
-        diff_acc_jnt2mot = acc_jnt2mot - prev_acc_jnt2mot;
+
+        if (first_time)
+        {
+            off_enc_mot = enc_mot;
+            off_enc_jnt2mot = enc_jnt2mot;
+        }
 
         //prepare data to plot
         //JOINT POSITIONS vs MOTOR POSITIONS
         Bottle& row_test1 = dataToPlot_test1.addList();
         Bottle& v1_test1 = row_test1.addList();
         Bottle& v2_test1 = row_test1.addList();
-        v1_test1.read(enc_mot);
-        v2_test1.read(enc_jnt2mot);
+        v1_test1.read(enc_mot - off_enc_mot);
+        v2_test1.read(enc_jnt2mot - off_enc_jnt2mot);
 
         //JOINT VELOCITES vs MOTOR VELOCITIES
         Bottle& row_test2 = dataToPlot_test2.addList();
@@ -372,18 +415,26 @@ void OpticalEncodersConsistency::run()
         v2_test2.read(vel_jnt2mot);
 
         //JOINT POSITIONS(DERIVED) vs JOINT SPEED
-        Bottle& row_test3 = dataToPlot_test3.addList();
-        Bottle& v1_test3 = row_test3.addList();
-        Bottle& v2_test3 = row_test3.addList();
-        v1_test3.read(vel_jnt);
-        v2_test3.read(diff_enc_jnt2mot);
+        if (first_time == false)
+        {
+            Bottle& row_test3 = dataToPlot_test3.addList();
+            Bottle& v1_test3 = row_test3.addList();
+            Bottle& v2_test3 = row_test3.addList();
+            v1_test3.read(vel_jnt);
+            v2_test3.read(diff_enc_jnt);
+        }
 
         //MOTOR POSITIONS(DERIVED) vs MOTOR SPEED
-        Bottle& row_test4 = dataToPlot_test4.addList();
-        Bottle& v1_test4 = row_test4.addList();
-        Bottle& v2_test4 = row_test4.addList();
-        v1_test4.read(vel_mot);
-        v2_test4.read(diff_enc_mot);
+        if (first_time == false)
+        {
+            Bottle& row_test4 = dataToPlot_test4.addList();
+            Bottle& v1_test4 = row_test4.addList();
+            Bottle& v2_test4 = row_test4.addList();
+            v1_test4.read(vel_mot);
+            v2_test4.read(diff_enc_mot);
+        }
+
+        first_time = false;
 
         //exit condition
         if (cycle>=cycles) break;
@@ -400,32 +451,10 @@ void OpticalEncodersConsistency::run()
     string filename4 = "plot_test4.txt";
     saveToFile(filename4,dataToPlot_test4);
 
-    char plotstring[2000];
-    char temp[1000];
-
-    sprintf (plotstring, "gnuplot -e \" unset key; set multiplot layout %d,1 title 'JOINT POSITIONS vs MOTOR POSITIONS'; ",jointsList.size());
-    for (unsigned int col=0; col<jointsList.size(); col++)
-    {sprintf (temp, " plot '%s' u %d with lines,  '%s' u %d with lines;", filename1.c_str(), col+1, filename1.c_str(), col+1+n_part_joints); strcat(plotstring,temp);}
-    sprintf (temp, "unset multiplot; \" -persist "); strcat(plotstring,temp);
-    system (plotstring);
-
-    sprintf (plotstring, "gnuplot -e \" unset key; set multiplot layout %d,1 title 'JOINT VELOCITES vs MOTOR VELOCITIES' ; ",jointsList.size());
-    for (unsigned int col=0; col<jointsList.size(); col++)
-    {sprintf (temp, " plot '%s' u %d with lines,  '%s' u %d with lines;", filename2.c_str(), col+1, filename2.c_str(), col+1+n_part_joints); strcat(plotstring,temp);}
-    sprintf (temp, "unset multiplot; \" -persist "); strcat(plotstring,temp);
-    system (plotstring);
-
-    sprintf (plotstring, "gnuplot -e \" unset key; set multiplot layout %d,1 title 'JOINT POSITIONS(DERIVED) vs JOINT SPEED ' ; ",jointsList.size());
-    for (unsigned int col=0; col<jointsList.size(); col++)
-    {sprintf (temp, " plot '%s' u %d with lines,  '%s' u %d with lines;", filename3.c_str(), col+1, filename3.c_str(), col+1+n_part_joints); strcat(plotstring,temp);}
-    sprintf (temp, "unset multiplot; \" -persist "); strcat(plotstring,temp);
-    system (plotstring);
-
-    sprintf (plotstring, "gnuplot -e \" unset key; set multiplot layout %d,1 title 'JOINT POSITIONS(DERIVED) vs MOTOR SPEED ' ; ",jointsList.size());
-    for (unsigned int col=0; col<jointsList.size(); col++)
-    {sprintf (temp, " plot '%s' u %d with lines,  '%s' u %d with lines;", filename4.c_str(), col+1, filename4.c_str(), col+1+n_part_joints); strcat(plotstring,temp);}
-    sprintf (temp, "unset multiplot; \" -persist "); strcat(plotstring,temp);
-    system (plotstring);
+    system(plotString1.c_str());
+    system(plotString2.c_str());
+    system(plotString3.c_str());
+    system(plotString4.c_str());
 
     RTF_ASSERT_ERROR_IF(test_data_is_valid,"Invalid data obtained from encoders interface");
 }
