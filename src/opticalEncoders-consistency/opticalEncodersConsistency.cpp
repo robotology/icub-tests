@@ -404,8 +404,10 @@ void OpticalEncodersConsistency::run()
         Bottle& row_test1 = dataToPlot_test1.addList();
         Bottle& v1_test1 = row_test1.addList();
         Bottle& v2_test1 = row_test1.addList();
-        v1_test1.read(enc_mot - off_enc_mot);
-        v2_test1.read(enc_jnt2mot - off_enc_jnt2mot);
+        yarp::sig::Vector v1 = enc_mot - off_enc_mot;
+        yarp::sig::Vector v2 = enc_jnt2mot - off_enc_jnt2mot;
+        v1_test1.read(v1);
+        v2_test1.read(v2);
 
         //JOINT VELOCITES vs MOTOR VELOCITIES
         Bottle& row_test2 = dataToPlot_test2.addList();
