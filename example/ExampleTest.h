@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _CAMERATEST_H_
-#define _CAMERATEST_H_
+#ifndef _EXAMPLE_TEST_H_
+#define _EXAMPLE_TEST_H_
 
 #include <rtf/yarp/YarpTestCase.h>
 
@@ -24,4 +24,4 @@ public:
     virtual void run();
 };
 
-#endif //_CAMERATEST_H
+#endif //_EXAMPLE_TEST_H
