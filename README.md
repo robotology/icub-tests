@@ -65,8 +65,8 @@ Note: in case CMake fails to detect the RTF package check that you installed RTF
 * Create a child test class inherited from the `YarpTestCase`:
 
 ```c++
-#ifndef _CAMERATEST_H_
-#define _CAMERATEST_H_
+#ifndef _EXAMPLE_TEST_H_
+#define _EXAMPLE_TEST_H_
 
 #include <YarpTestCase.h>
 
@@ -82,7 +82,7 @@ public:
     virtual void run();
 };
 
-#endif //_CAMERATEST_H
+#endif //_EXAMPLE_TEST_H
 ```
 
 * Implement the test case: 
