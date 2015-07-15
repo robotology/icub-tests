@@ -50,7 +50,7 @@ Note: in case CMake fails to detect the RTF package check that you installed RTF
 * Tests configuration (.ini files) can be found in `icub-tests/suit/contexts`. We need to configure `YARP_DATA_DIRS` environment variable so that the test cases can load the configuration files.
 
 ```
-    $ echo 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:<path to icub-tests/suit>' >> ~/.bashrc
+    $ echo 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:<path to icub-tests/suits>' >> ~/.bashrc
 ```
 
 
