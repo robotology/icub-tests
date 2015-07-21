@@ -198,7 +198,7 @@ Notice that this test require the `yarpserver` to be running and it contains tes
 or to run the iCubSim camera test whith the test configuration file:
 
 ```
-    testrunner --verbose --test plugins/CameraTest.so --param "--from right_camera.ini" --environment "--robotname icubSim"
+    testrunner --verbose --test plugins/CameraTest.so --param "--from camera_right.ini" --environment "--robotname icubSim"
 ```
 
 This runs the icubSim right-camera test with the parameters specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. This test assumes you are running `yarpserver` and the iCub simulator (i.e. `iCub_SIM`).
