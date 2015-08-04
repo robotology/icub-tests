@@ -52,7 +52,8 @@ private:
     yarp::dev::IControlMode2     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
-    yarp::dev::IMotorEncoders    *imot;
+    yarp::dev::IMotorEncoders    *imotenc;
+    yarp::dev::IMotor            *imot;
 
     yarp::sig::Vector zero_vector;
     yarp::sig::Vector enc_jnt;
@@ -98,6 +99,7 @@ private:
     yarp::sig::Vector min;
     yarp::sig::Vector home;
     yarp::sig::Vector speed;
+    yarp::sig::Vector gearbox;
 
     yarp::sig::Matrix matrix_arms;
     yarp::sig::Matrix matrix_torso;

@@ -11,6 +11,7 @@
 #include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
 #include <algorithm>
@@ -38,6 +39,8 @@ OpticalEncodersConsistency::OpticalEncodersConsistency() : YarpTestCase("Optical
     iimd=0;
     ienc=0;
     imot=0;
+    imotenc=0;
+   
     enc_jnt=0;
     enc_jnt2mot=0;
     enc_mot=0;
@@ -133,7 +136,8 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(imot),"Unable to open motor encoders interface");
+    RTF_ASSERT_ERROR_IF(dd->view(imotenc),"Unable to open motor encoders interface");
+    RTF_ASSERT_ERROR_IF(dd->view(imot),"Unable to open motor interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -160,12 +164,13 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     prev_acc_mot.resize(n_cmd_joints); prev_acc_mot.zero();
     prev_acc_jnt2mot.resize(n_cmd_joints); prev_acc_jnt2mot.zero();
     zero_vector.resize(n_cmd_joints);
-    zero_vector.zero();
+    zero_vector.zero(); 
 
-    max.resize(n_cmd_joints);   for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
-    min.resize(n_cmd_joints);   for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
-    home.resize(n_cmd_joints);  for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
-    speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
+    max.resize(n_cmd_joints);     for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
+    min.resize(n_cmd_joints);     for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
+    home.resize(n_cmd_joints);    for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
+    speed.resize(n_cmd_joints);   for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
+    gearbox.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) {double t; int b=imot->getGearboxRatio(i,&t); gearbox[i]=t;}
 
     return true;
 }
@@ -311,16 +316,16 @@ void OpticalEncodersConsistency::run()
         bool ret = true;
         ret = ienc->getEncoders(tmp_vector.data());                  for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt[i] = tmp_vector[jointsList(i)];
         RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoders returned false");
-        ret = imot->getMotorEncoders(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF(ret, "imot->getMotorEncoder returned false");
+        ret = imotenc->getMotorEncoders(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "imotenc->getMotorEncoder returned false");
         ret = ienc->getEncoderSpeeds(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt[i] = tmp_vector[jointsList(i)];
         RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoderSpeeds returned false");
-        ret = imot->getMotorEncoderSpeeds(tmp_vector.data());        for (unsigned int i = 0; i < jointsList.size(); i++) vel_mot[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF(ret, "imot->getMotorEncoderSpeeds returned false");
+        ret = imotenc->getMotorEncoderSpeeds(tmp_vector.data());        for (unsigned int i = 0; i < jointsList.size(); i++) vel_mot[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "imotenc->getMotorEncoderSpeeds returned false");
         ret = ienc->getEncoderAccelerations(tmp_vector.data());      for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt[i] = tmp_vector[jointsList(i)];
         RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoderAccelerations returned false");
-        ret = imot->getMotorEncoderAccelerations(tmp_vector.data()); for (unsigned int i = 0; i < jointsList.size(); i++) acc_mot[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF(ret, "imot->getMotorEncoderAccelerations returned false");
+        ret = imotenc->getMotorEncoderAccelerations(tmp_vector.data()); for (unsigned int i = 0; i < jointsList.size(); i++) acc_mot[i] = tmp_vector[jointsList(i)];
+        RTF_ASSERT_ERROR_IF(ret, "imotenc->getMotorEncoderAccelerations returned false");
 
         if (enc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoders data"); test_data_is_valid = true; }
         if (enc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoders data"); test_data_is_valid = true; }
@@ -332,9 +337,9 @@ void OpticalEncodersConsistency::run()
         enc_jnt2mot = matrix * enc_jnt;
         vel_jnt2mot = matrix * vel_jnt;
         acc_jnt2mot = matrix * acc_jnt;
-        enc_jnt2mot = enc_jnt2mot * 100;
-        vel_jnt2mot = vel_jnt2mot * 100;
-        acc_jnt2mot = acc_jnt2mot * 100;
+        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[jointsList(i)];
+        for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[jointsList(i)];
+        for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[jointsList(i)];
 
         bool reached = false;
         int in_position = 0;
