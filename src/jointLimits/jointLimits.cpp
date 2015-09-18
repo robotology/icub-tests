@@ -18,6 +18,8 @@
 #include "jointLimits.h"
 #include <yarp/manager/localbroker.h>
 
+#include <stdio.h>
+
 //example     -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --outputLimitPercent "(30 30 30)"  --tolerance 0.2"
 //example2    -v -t JointLimits.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --outputLimitPercent "(30 30 30)"  --tolerance 0.2 "
 using namespace RTF;
@@ -120,14 +122,17 @@ bool JointLimits::setup(yarp::os::Property& property) {
         yarp::os::Time::delay(0.010);
         yarp::dev::Pid t;
         ipid->getPid((int)jointsList[i],&t);
-        if (t.max_output!=p.max_output/100*outputLimit[i] ||
-            t.max_int!=p.max_int/100*outputLimit[i] ||
-            t.kp != p.kp ||
-            t.kd != p.kd ||
-            t.ki != p.ki)
+
+        //since pid values are double, the returned values may differ from those sent due to conversion.
+        if (fabs(t.max_output-p.max_output) > 0.5  ||
+            fabs(t.max_int-p.max_int) > 0.5  ||
+            fabs(t.kp-p.kp) > 0.5 ||
+            fabs(t.kd-p.kd) > 0.5 ||
+            fabs(t.ki-p.ki) > 0.5)
         {
             RTF_ASSERT_ERROR("Unable to set output limits");
         }
+
     }
     return true;
 }
@@ -196,7 +201,7 @@ void JointLimits::goTo(yarp::sig::Vector position)
         {
             double tmp=0;
             ienc->getEncoder((int)jointsList[i],&tmp);
-            if (fabs(tmp-position[i])<0.5) in_position++;
+            if (fabs(tmp-position[i])<tolerance) in_position++;
         }
         if (in_position==jointsList.size()) break;
         if (timeout>100)
@@ -219,11 +224,13 @@ void JointLimits::goToSingle(int i, double pos)
         int in_position=0;
         double tmp=0;
         ienc->getEncoder((int)jointsList[i],&tmp);
-        if (fabs(tmp-pos)<0.5) break;
+        if (fabs(tmp-pos)<tolerance) break;
 
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching desired position");
+            char buff[50];
+            sprintf(buff, "Timeout while reaching desired position. Reached pos=%.2f", tmp);
+            RTF_ASSERT_ERROR(buff);
         }
 
         yarp::os::Time::delay(0.2);
