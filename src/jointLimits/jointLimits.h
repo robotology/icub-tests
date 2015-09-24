@@ -30,7 +30,7 @@ public:
     virtual void run();
 
     void goTo(yarp::sig::Vector position);
-    void goToSingle(int i, double pos);
+    bool goToSingle(int i, double pos, double *reached_pos);
 
     void setMode(int desired_mode);
     void saveToFile(std::string filename, yarp::os::Bottle &b);

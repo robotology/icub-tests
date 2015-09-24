@@ -60,6 +60,10 @@ bool JointLimits::setup(yarp::os::Property& property) {
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
+    char buff[500];
+    sprintf(buff, "setting up test for %s", partName.c_str());
+    RTF_TEST_REPORT(buff);
+
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
 
@@ -77,8 +81,10 @@ bool JointLimits::setup(yarp::os::Property& property) {
 
     Property options;
     options.put("device", "remote_controlboard");
-    options.put("remote", "/"+robotName+"/"+partName);
-    options.put("local", "/positionDirectTest/"+robotName+"/"+partName);
+//    options.put("remote", "/"+robotName+"/"+partName);
+//    options.put("local", "/positionDirectTest/"+robotName+"/"+partName);
+    options.put("remote", "/icub/"+partName);
+    options.put("local", "/jointsLimitsTest/icub/"+partName);
 
     dd = new PolyDriver(options);
     RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
@@ -213,33 +219,43 @@ void JointLimits::goTo(yarp::sig::Vector position)
     }
 }
 
-void JointLimits::goToSingle(int i, double pos)
+bool JointLimits::goToSingle(int i, double pos, double *reached_pos)
 {
     ipos->setRefSpeed((int)jointsList[i],speed[i]);
     ipos->positionMove((int)jointsList[i],pos);
+    double tmp=0;
 
     int timeout = 0;
     while (1)
     {
-        int in_position=0;
-        double tmp=0;
         ienc->getEncoder((int)jointsList[i],&tmp);
         if (fabs(tmp-pos)<tolerance) break;
 
         if (timeout>100)
         {
-            char buff[50];
-            sprintf(buff, "Timeout while reaching desired position. Reached pos=%.2f", tmp);
-            RTF_ASSERT_ERROR(buff);
+            if(reached_pos != NULL)
+            {
+                *reached_pos = tmp;
+            }
+            return(false);
+//            char buff[500];
+//            sprintf(buff, "Timeout while reaching desired position. Reached pos=%.2f", tmp);
+//            RTF_ASSERT_ERROR(buff);
         }
 
         yarp::os::Time::delay(0.2);
         timeout++;
     }
+    if(reached_pos != NULL)
+    {
+        *reached_pos = tmp;
+    }
+    return(true);
 }
 
 void JointLimits::run()
 {
+   //printf("\n\t dovrei fare il run!!!\n");
     char buff[500];
     setMode(VOCAB_CM_POSITION);
     goTo(home);
@@ -254,14 +270,37 @@ void JointLimits::run()
     
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
+        bool res;
+        double reached_pos=0;
+
+        //Check max limit
         sprintf(buff,"Testing joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);RTF_TEST_REPORT(buff);
-        goToSingle(i, max_lims[i]);
+        res = goToSingle(i, max_lims[i], &reached_pos);
+        if(!res)
+        {
+            goToSingle(i,home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
+            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", max_lims[i], reached_pos);RTF_ASSERT_ERROR(buff);
+        }
+
+        //Check min limit
         sprintf(buff,"Testing joint %d, min limit: %f",(int)jointsList[i],min_lims[i]);RTF_TEST_REPORT(buff);
-        goToSingle(i, min_lims[i]);
+        res = goToSingle(i, min_lims[i], &reached_pos);
+        if(!res)
+        {
+            goToSingle(i,home[i], NULL);
+            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", min_lims[i], reached_pos);RTF_ASSERT_ERROR(buff);
+        }
+
+        //Check home position
         sprintf(buff,"Testing joint %d, homing to: %f",(int)jointsList[i],home[i]);RTF_TEST_REPORT(buff);
-        goToSingle(i, home[i]);
+        res = goToSingle(i, home[i], &reached_pos);
+        if(!res)
+        {
+            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", home[i], reached_pos);RTF_ASSERT_ERROR(buff);
+        }
+
     }
-    ienc->getEncoders                  (enc_jnt.data());
+    ienc->getEncoders(enc_jnt.data());
 
     goTo(home);
     yarp::os::Time::delay(2.0);
