@@ -37,12 +37,19 @@ function runRemoteCommand(host, cmd)
 end
 
 function checkPriorityLimits(host) 
-    RTF.testReport("Testing process priority limits (99)")
+    RTF.testReport("Testing process hard priority limits (99)")
     local result = runRemoteCommand(host, "ulimit -r")
     if result:len() == 0 then
         RTF.testCheck(result:len() > 0, "cannot run 'ulimit -r' on '"..host.."'")
     else
-        RTF.testCheck(tonumber(result) == 99, "process prioirty is limited ("..tonumber(result)..")")
+        RTF.testCheck(tonumber(result) == 99, "process soft prioirty is limited ("..tonumber(result)..")")
+    end 
+    RTF.testReport("Testing process soft priority limits (99)")
+    local result = runRemoteCommand(host, "ulimit -Hr")
+    if result:len() == 0 then
+        RTF.testCheck(result:len() > 0, "cannot run 'ulimit -Hr' on '"..host.."'")
+    else
+        RTF.testCheck(tonumber(result) == 99, "process hard prioirty is limited ("..tonumber(result)..")")
     end 
 end
 
