@@ -18,7 +18,17 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-
+/**
+* Check IPositionControl and IEncoders.
+* Check the following functions:
+* IPositionControl::getAxes()
+* IPositionControl::positionMove()
+* IPositionControl::checkMotionDone()
+* IPositionContol::setRefSpeeds()
+* IPositionControl::setRefAccelerations()
+* IEncoders::getEncoder()
+* IEncoders::getEncoders()
+*/
 class MotorTest : public YarpTestCase {
 public:
     MotorTest();
