@@ -2,7 +2,7 @@ icub-tests
 ==========
 The `icub-tests` repository contains tests for the iCub robot.
 
-See documentation on https://robotology.github.io/icub-tests/
+See documentation at https://robotology.github.io/icub-tests/
 
 To update documentation follow these steps:
 

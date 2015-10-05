@@ -22,13 +22,13 @@
 * \ingroup icub-tests
 * Check IPositionControl and IEncoders.
 * Check the following functions:
-* IPositionControl::getAxes()
-* IPositionControl::positionMove()
-* IPositionControl::checkMotionDone()
-* IPositionContol::setRefSpeeds()
-* IPositionControl::setRefAccelerations()
-* IEncoders::getEncoder()
-* IEncoders::getEncoders()
+* \li IPositionControl::getAxes()
+* \li IPositionControl::positionMove()
+* \li IPositionControl::checkMotionDone()
+* \li IPositionContol::setRefSpeeds()
+* \li IPositionControl::setRefAccelerations()
+* \li IEncoders::getEncoder()
+* \li IEncoders::getEncoders()
 */
 class MotorTest : public YarpTestCase {
 public:
