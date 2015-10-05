@@ -19,6 +19,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 /**
+* \ingroup icub-tests
 * Check IPositionControl and IEncoders.
 * Check the following functions:
 * IPositionControl::getAxes()
