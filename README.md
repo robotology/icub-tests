@@ -6,6 +6,7 @@ See documentation on https://robotology.github.io/icub-tests/
 
 To update documentation follow these steps:
 
+```bash
  git checkout gh-pages
  git rebase master
  cd doxygen
@@ -16,6 +17,7 @@ To update documentation follow these steps:
  git commit --amend
  git push --force-with-lease
  git checkout master
+```
 
 ## Contributors
 
