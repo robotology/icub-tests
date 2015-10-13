@@ -14,6 +14,19 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
 
+
+/**
+* \ingroup icub-tests
+* Check if a FT sensor port is correctly publishing a vector with 6 values.
+* No further check on the content of the vector is done.
+*
+*  Accepts the following parameters:
+* | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | name           | string | -     | "FtSensorTest" | No       | The name of the test. | -     |
+* | portname       | string | -     | -             | Yes      | The yarp port name of the FT sensor to test. | - |
+*
+*/
 class FtSensorTest : public YarpTestCase {
 public:
     FtSensorTest();

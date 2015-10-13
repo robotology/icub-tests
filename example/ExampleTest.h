@@ -12,6 +12,21 @@
 
 #include <rtf/yarp/YarpTestCase.h>
 
+/**
+* \ingroup icub-tests
+*
+* This is just an example test, use
+* it as a reference to implement new tests.
+*
+* Check the following functions:
+* \li NA
+*
+* Accepts the following parameters:
+* | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | name           | string | -     | "ExampleTest" | No       | The name of the test. | -     |
+* | example        | string | -     | default value | No       | An example value. | - | 
+*/
 class ExampleTest : public YarpTestCase {
 public:
     ExampleTest();

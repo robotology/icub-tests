@@ -15,6 +15,21 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Image.h>
 
+
+/**
+* \ingroup icub-tests
+* Check if a camera is publishing images at desired framerate.
+*
+*  Accepts the following parameters:
+* | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | name           | string | -     | "CameraTest" | No       | The name of the test. | -     |
+* | portname       | string | -     | -             | Yes      | The yarp port name of the camera to test. | - |
+* | measure_time   | int    |  s  | 1             | No      | The duration of the test. |  |
+* | expected_frequency | int    |  Hz  | 30           | No      | The expected framerate of the camera. |  |
+* | tolerance      | int    | Number of frames | 5    | No     | The tolerance on the total number of frames read during the period (expected_frequency*measure_time) to consider the test sucessful. |  |
+*
+*/
 class CameraTest : public YarpTestCase {
 public:
     CameraTest();

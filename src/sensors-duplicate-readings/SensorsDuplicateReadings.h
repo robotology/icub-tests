@@ -49,7 +49,10 @@ private:
     yarp::sig::Vector lastReading;
 };
 
+
 /**
+ * \ingroup icub-tests
+ * Check if a yarp port is correctly publishing unique values at each update .
  *
  * For some sensors, such as strain gauge based force sensors,
  * errors on the measurement ensure that two different readings of
@@ -62,6 +65,12 @@ private:
  *  * The sensor readings are not properly read, for example because packets
  *    are lost or dropped (this usually indicate some problem in your system).
  *
+ * Accepts the following parameters:
+ * | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
+ * |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+ * | name           | string | -     | "SensorsDuplicateReadings" | No       | The name of the test. | -     |
+ * | time           | double | s     | -             | Yes      | Duration of the test for each port. | - |
+ * | PORTS (group ) | Bottle | -     | -             | Yes      | List of couples of port/toleratedDuplicates with this format: (portname1, toleratedDuplicates1) (portname1, toleratedDuplicates1) | |
  *
  *
  */

@@ -21,6 +21,7 @@
 /**
 * \ingroup icub-tests
 * Check IPositionControl and IEncoders.
+*
 * Check the following functions:
 * \li IPositionControl::getAxes()
 * \li IPositionControl::positionMove()
@@ -29,6 +30,20 @@
 * \li IPositionControl::setRefAccelerations()
 * \li IEncoders::getEncoder()
 * \li IEncoders::getEncoders()
+*
+*  Accepts the following parameters:
+* | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | name           | string | -     | "MotorTest" | No       | The name of the test. | -     |
+* | portname       | string | -     | -             | Yes      | The yarp port name of the controlboard to test. | - |
+* | joints         | int    | -     | -             | Yes      | Number of axes in the controlboard. | Must be consistent with the value returned by getAxes method. |
+* | target         | vector of doubles of size joints | deg | - | Yes  | For each joint the position to reach for passing the test. | |
+* | min            | vector of doubles of size joints | deg | - | Yes  | For each joint the maximum lower error with respect to the target to consider the test as successful. | |
+* | max            | vector of doubles of size joints | deg | - | Yes  | For each joint the maximum upper error with respect to the target to consider the test as successful. | |
+* | refvel         | vector of doubles of size joints | deg/s | - | Yes | For each joint the reference velocity value to set in the low level trajectory generator. | |
+* | refacc         | vector of doubles of size joints | deg/s^2 | - | No | For each joint the reference acceleration value to set in the low level trajectory generator. | |
+* | timeout         | vector of doubles of size joints | s | - | Yes | For each joint the maximum time to wait for the joint to reach the target. | |
+*
 */
 class MotorTest : public YarpTestCase {
 public:
