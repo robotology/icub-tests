@@ -10,7 +10,7 @@
         <parameters></parameters>
         <node>localhost</node>
         <ensure>
-            <wait>10</wait>
+            <wait>20</wait>
         </ensure>
     </module>    
 </application>
