@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Basic Camera Tests Suite">
+    <description>Testing robots's Cameras</description>
+    <environment>--robotname icub --context icubV3</environment>
+
+    <!-- Interfaces (wrappers) frequency -->
+    <test type="dll" param="--from cam_stream.ini"> PortsFrequency </test>
+
+    <!-- Camera -->
+    <test type="dll" param="--from camera_right.ini"> CameraTest </test>
+    <test type="dll" param="--from camera_left.ini"> CameraTest </test> 
+
+</suit>
+
