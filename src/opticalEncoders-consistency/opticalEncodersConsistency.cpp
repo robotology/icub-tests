@@ -58,6 +58,9 @@ OpticalEncodersConsistency::~OpticalEncodersConsistency() { }
 
 bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 
+    if(property.check("name"))
+        setName(property.find("name").asString());
+
     char b[5000];
     strcpy (b,property.toString().c_str());
     RTF_TEST_REPORT("on setup()");

@@ -3,7 +3,7 @@
 <suit name="Basic Tests Suite">
     <description>Testing robot's basic features</description>
     <environment>--robotname icubSim</environment>
-    <fixture param="--fixture icubsim-fixture.xml"> yarpmanager </fixture>
+    <fixture param="--fixture icubsim-fixture-jenkins.xml"> yarpmanager </fixture>
 
     <!-- Camera -->
     <test type="dll" param="--from camera_right.ini"> CameraTest </test>

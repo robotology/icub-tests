@@ -1,0 +1,17 @@
+<application>
+    <name>iCub Simulator Jenkins</name>
+    <description>A fixture to prepare iCub Simulator for the test cases on jenkins machine</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>iCub_SIM</name>
+        <parameters></parameters>
+        <node>/jenkins</node>
+        <ensure>
+            <wait>20</wait>
+        </ensure>
+    </module>    
+</application>
+

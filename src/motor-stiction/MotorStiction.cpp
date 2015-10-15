@@ -42,6 +42,8 @@ MotorStiction::MotorStiction() : YarpTestCase("MotorStiction") {
 MotorStiction::~MotorStiction() { }
 
 bool MotorStiction::setup(yarp::os::Property& property) {
+    if(property.check("name"))
+        setName(property.find("name").asString());
 
     // updating parameters
     RTF_ASSERT_ERROR_IF(property.check("robot"),  "The robot name must be given as the test parameter!");
