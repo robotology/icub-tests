@@ -150,13 +150,13 @@ void MotorTest::run() {
     bool doneAll=false;
     bool ret=false;
 
-    RTF_TEST_REPORT("cheking joints number");
+    RTF_TEST_REPORT("checking joints number");
     iEncoders->getAxes(&nJoints);
     RTF_TEST_CHECK(m_NumJoints==nJoints, "expected number of joints is inconsistent");
 
     RTF_TEST_REPORT("Checking individual joints...");
     for (int joint=0; joint<m_NumJoints; ++joint) {
-        RTF_TEST_REPORT(Asserter::format("Checking joint %d\n", joint));
+        RTF_TEST_REPORT(Asserter::format("Checking joint %d", joint));
         if (m_aRefAcc!=NULL) {
             RTF_TEST_CHECK(iPosition->setRefAcceleration(joint, m_aRefAcc[joint]),
                 Asserter::format("setting reference acceleration on joint %d", joint));
@@ -176,7 +176,7 @@ void MotorTest::run() {
             read=iEncoders->getEncoder(joint,m_aHome+joint);
             yarp::os::Time::delay(0.1);
         }
-        RTF_TEST_CHECK(read, "read encoder");
+        RTF_TEST_CHECK(read, "getEncoder() returned true");
 
         RTF_TEST_CHECK(iPosition->positionMove(joint, m_aTargetVal[joint]),
             Asserter::format("moving joint %d to %.2lf", joint, m_aTargetVal[joint]));
