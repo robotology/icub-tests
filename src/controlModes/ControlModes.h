@@ -35,11 +35,15 @@ public:
     void zeroCurrentLimits();
     void getOriginalCurrentLimits();
     void resetOriginalCurrentLimits();
+    void verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void setModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
+    void checkJointWithTorqueMode();
 
 private:
     std::string robotName;
     std::string partName;
     int* jointsList;
+    int* jointTorqueCtrlEnabled;
 
     double zero;
     int    n_part_joints;
@@ -60,6 +64,7 @@ private:
     yarp::dev::IPositionDirect   *idir;
     yarp::dev::IVelocityControl  *ivel;
     yarp::dev::ITorqueControl    *itrq;
+    yarp::dev::IRemoteVariables  *ivar;
 
     double  cmd_single;
     double* cmd_tot;

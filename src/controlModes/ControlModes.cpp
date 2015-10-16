@@ -82,6 +82,7 @@ bool ControlModes::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(ivel),"Unable to open velocity control interface");
     RTF_ASSERT_ERROR_IF(dd->view(itrq),"Unable to open torque control interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ivar),"Unable to open remote variables interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -105,8 +106,10 @@ bool ControlModes::setup(yarp::os::Property& property) {
     cmd_some=new double[n_cmd_joints];
     prevcurr_tot=new double[n_part_joints];
     prevcurr_some=new double[n_cmd_joints];
+    jointTorqueCtrlEnabled = new int[n_part_joints];
     for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
 
+    checkJointWithTorqueMode();
     return true;
 }
 
@@ -172,10 +175,15 @@ void ControlModes::setMode(int desired_control_mode, yarp::dev::InteractionModeE
 {
     for (int i=0; i<n_cmd_joints; i++)
     {
-        icmd->setControlMode(jointsList[i],desired_control_mode);
-        iimd->setInteractionMode(jointsList[i],desired_interaction_mode);
-        yarp::os::Time::delay(0.010);
+        setModeSingle(jointsList[i], desired_control_mode, desired_interaction_mode);
     }
+}
+
+void ControlModes::setModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode)
+{
+    icmd->setControlMode(joint,desired_control_mode);
+    iimd->setInteractionMode(joint,desired_interaction_mode);
+    yarp::os::Time::delay(0.010);
 }
 
 void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
@@ -206,6 +214,53 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
     RTF_TEST_REPORT(sbuf);
+}
+
+void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+{
+    int cmode;
+    yarp::dev::InteractionModeEnum imode;
+    int timeout = 0;
+
+    while (1)
+    {
+        bool ok = false;
+        icmd->getControlMode (joint,&cmode);
+        iimd->getInteractionMode(joint,&imode);
+        if (cmode==desired_control_mode && imode==desired_interaction_mode) ok=true;
+
+        if (ok) break;
+        if (timeout>100)
+        {
+            char sbuf[500];
+            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), cmode,imode,desired_control_mode,desired_interaction_mode);
+            RTF_ASSERT_ERROR(sbuf);
+        }
+        yarp::os::Time::delay(0.2);
+        timeout++;
+    }
+    char sbuf[500];
+    sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
+    RTF_TEST_REPORT(sbuf);
+}
+
+void ControlModes::checkJointWithTorqueMode()
+{
+    yarp::os::Bottle b;
+    RTF_ASSERT_ERROR_IF(ivar->getRemoteVariable("torqueControlEnabled", b), "unable to get torqueControlEnabled");
+
+    RTF_ASSERT_ERROR_IF((b.size() != n_part_joints), "torqueControlEnabled var returns joint num not corret.");
+
+    int j=0;
+    for(int i=0; i<b.size() && j<n_part_joints; i++)
+    {
+        yarp::os::Bottle *baux = b.get(i).asList();
+        for(int k=0; k<baux->size()&& j<n_part_joints; k++)
+        {
+            jointTorqueCtrlEnabled[j] = baux->get(k).asInt();
+            j++;
+        }
+    }
 }
 
 void ControlModes::verifyAmplifier(int desired_amplifier_mode, yarp::os::ConstString title)
@@ -318,9 +373,17 @@ void ControlModes::run()
     verifyMode(VOCAB_CM_VELOCITY,VOCAB_IM_STIFF,"test3");
     verifyAmplifier(0,"test3b");
 
-    setMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
-    verifyAmplifier(0,"test4b");
+    //torque
+    for (int i=0; i<n_cmd_joints; i++)
+    {
+        if(jointTorqueCtrlEnabled[jointsList[i]])
+        {
+            std::cout << "-----joint " << jointsList[i] << "has torque enabled" <<std::endl;
+            setModeSingle(jointsList[i],VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
+            verifyModeSingle(jointsList[i], VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
+        }
+    }
+    //verifyAmplifier(0,"test4b");
 
     setMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF,"test5");
@@ -360,9 +423,17 @@ void ControlModes::run()
     verifyMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT,"test13");
     verifyAmplifier(0,"test13b");
 
-    setMode(VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT,"test14");
-    verifyAmplifier(0,"test14b");
+    for (int i=0; i<n_cmd_joints; i++)
+    {
+        if(jointTorqueCtrlEnabled[jointsList[i]])
+        {
+            std::cout << "-----joint " << jointsList[i] << "has torque enabled" <<std::endl;
+            setModeSingle(jointsList[i],VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT);
+            verifyModeSingle(jointsList[i], VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT,"test4");
+        }
+    }
+
+    //verifyAmplifier(0,"test14b");
 
     setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT,"test15");
