@@ -11,11 +11,13 @@
 
 #include <rtf/dll/Plugin.h>
 #include <rtf/TestAssert.h>
+#include <rtf/yarp/YarpTestAsserter.h>
 
 #include "MotorTest.h"
 
 using namespace std;
 using namespace RTF;
+using namespace RTF::YARP;
 using namespace yarp::os;
 
 // prepare the plugin
@@ -190,7 +192,7 @@ void MotorTest::run() {
         while(timeNow<timeStart+m_aTimeout[joint] && !reached) {
             double pos;
             iEncoders->getEncoder(joint,&pos);
-            reached=isApproxEqual(pos, m_aTargetVal[joint], m_aMinErr[joint], m_aMaxErr[joint]);
+            reached = YarpTestAsserter::isApproxEqual(pos, m_aTargetVal[joint], m_aMinErr[joint], m_aMaxErr[joint]);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
         }
@@ -231,7 +233,7 @@ void MotorTest::run() {
     encoders=new double [m_NumJoints];
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached=isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = YarpTestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
@@ -287,7 +289,7 @@ void MotorTest::run() {
     reached=false;
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached=isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = YarpTestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
@@ -318,47 +320,4 @@ void MotorTest::run() {
     delete [] swapped_refvel;
     delete [] swapped_target;
     delete [] encoders;
-}
-
-bool MotorTest::isApproxEqual(const double *left, const double *right,
-                              const double *thresholds, int lenght)
-{
-    return isApproxEqual(left, right, thresholds, thresholds, lenght);
-}
-
-bool MotorTest::isApproxEqual(const double *left, const double *right,
-                              const double *l_thresholds, const double *h_thresholds,
-                              int lenght)
-{
-    bool reached=true;
-    for(int j=0; j<lenght; j++)
-    {
-        if (left[j]<(right[j]-fabs(l_thresholds[j])) || left[j]>(right[j]+fabs(h_thresholds[j])))
-            reached=false;
-    }
-    return reached;
-}
-
-
-bool MotorTest::isApproxEqual(const yarp::sig::Vector &left,
-                              const yarp::sig::Vector &right,
-                              const yarp::sig::Vector &thresholds)
-{
-    if (left.size()!=right.size() && right.size()!=thresholds.size())
-        {
-            std::cerr<<"UnitTest.cpp::isApproxEqual vectors must have same size!\n";
-            return false;
-    }
-
-    return isApproxEqual(left.data(), right.data(), thresholds.data(), left.size());
-}
-
-bool MotorTest::isApproxEqual(double left, double right,
-                              double l_th, double h_th)
-{
-
-    if (left>=right-fabs(l_th) && left<=right+fabs(h_th))
-        return true;
-    else
-        return false;
 }
