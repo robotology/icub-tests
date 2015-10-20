@@ -62,6 +62,7 @@ public:
     void verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
     void setModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void checkJointWithTorqueMode();
+    void checkControlModeWithImCompliant(int desired_control_mode, yarp::os::ConstString title);
 
 private:
     std::string robotName;

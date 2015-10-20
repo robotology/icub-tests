@@ -12,6 +12,7 @@
 #include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Vocab.h>
 
 #include "ControlModes.h"
 
@@ -201,14 +202,14 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), cmode,imode,desired_control_mode,desired_interaction_mode);
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)cmode).c_str(), Vocab::decode((NetInt32)imode).c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
             RTF_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab::decode((NetInt32)desired_control_mode).c_str(), Vocab::decode((NetInt32)desired_interaction_mode).c_str());
     RTF_TEST_REPORT(sbuf);
 }
 
@@ -229,14 +230,14 @@ void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::d
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), cmode,imode,desired_control_mode,desired_interaction_mode);
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)cmode).c_str(), Vocab::decode((NetInt32)imode).c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
             RTF_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab::decode((NetInt32)desired_control_mode).c_str(), Vocab::decode((NetInt32)desired_interaction_mode).c_str());
     RTF_TEST_REPORT(sbuf);
 }
 
@@ -348,8 +349,30 @@ void ControlModes::goHome()
     }
 }
 
+
+void ControlModes::checkControlModeWithImCompliant(int desired_control_mode, yarp::os::ConstString title)
+{
+    char buff[500];
+    for (int i=0; i<n_cmd_joints; i++)
+    {
+        if(jointTorqueCtrlEnabled[jointsList[i]])
+        {
+            sprintf(buff, "joint %d has torque enabled. try to set %s and im_comp", jointsList[i], Vocab::decode((NetInt32)desired_control_mode).c_str());
+            RTF_TEST_REPORT(buff);
+            setModeSingle(jointsList[i],desired_control_mode,VOCAB_IM_COMPLIANT);
+            verifyModeSingle(jointsList[i], desired_control_mode,VOCAB_IM_COMPLIANT,title);
+        }
+        else
+        {
+            sprintf(buff, "joint %d doesn't support compliant interaction mode. test %s skipped", jointsList[i], title.c_str());
+            RTF_TEST_REPORT(buff);
+        }
+    }
+
+}
 void ControlModes::run()
 {
+    char buff[500];
     getOriginalCurrentLimits();
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
@@ -374,12 +397,19 @@ void ControlModes::run()
     {
         if(jointTorqueCtrlEnabled[jointsList[i]])
         {
-            std::cout << "-----joint " << jointsList[i] << "has torque enabled" <<std::endl;
+            sprintf(buff, "joint %d has torque enabled. try to set cm_torque and im_stiff", jointsList[i]);
+            RTF_TEST_REPORT(buff);
             setModeSingle(jointsList[i],VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
             verifyModeSingle(jointsList[i], VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
+            verifyAmplifier(0,"test4b");
+        }
+        else
+        {
+            sprintf(buff, "joint %d doesn't support torque control mode. test test4 skipped", jointsList[i]);
+            RTF_TEST_REPORT(buff);
         }
     }
-    //verifyAmplifier(0,"test4b");
+
 
     setMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF,"test5");
@@ -407,52 +437,48 @@ void ControlModes::run()
     goHome();
 
     //------ check all modes when compliant ------
-    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test11");
-    verifyAmplifier(0,"test11b");
-
-    setMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_COMPLIANT,"test12");
-    verifyAmplifier(0,"test12b");
-
-    setMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT,"test13");
-    verifyAmplifier(0,"test13b");
-
+    // note: not all joints can use compliant like interaction mode
     for (int i=0; i<n_cmd_joints; i++)
     {
         if(jointTorqueCtrlEnabled[jointsList[i]])
         {
-            std::cout << "-----joint " << jointsList[i] << "has torque enabled" <<std::endl;
-            setModeSingle(jointsList[i],VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT);
-            verifyModeSingle(jointsList[i], VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT,"test4");
+            sprintf(buff, "joint %d has torque enabled. try to set cm_torque and im_compliant", jointsList[i]);
+            RTF_TEST_REPORT(buff);
+            setModeSingle(jointsList[i],VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
+            verifyModeSingle(jointsList[i], VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test11");
         }
     }
 
-    //verifyAmplifier(0,"test14b");
 
-    setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT,"test15");
+    checkControlModeWithImCompliant(VOCAB_CM_POSITION, "test11");
+    verifyAmplifier(0,"test11b");
+
+
+    checkControlModeWithImCompliant(VOCAB_CM_POSITION_DIRECT,"test12");
+    verifyAmplifier(0,"test12b");
+
+    checkControlModeWithImCompliant(VOCAB_CM_VELOCITY,"test13");
+    verifyAmplifier(0,"test13b");
+
+    checkControlModeWithImCompliant(VOCAB_CM_TORQUE,"test4");
+    verifyAmplifier(0,"test14b");
+
+    checkControlModeWithImCompliant(VOCAB_CM_MIXED,"test15");
     verifyAmplifier(0,"test15b");
 
-    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT,"test16");
+    checkControlModeWithImCompliant(VOCAB_CM_OPENLOOP,"test16");
     verifyAmplifier(0,"test16b");
 
-    setMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test17");
+    checkControlModeWithImCompliant(VOCAB_CM_IDLE,"test17");
     verifyAmplifier(0,"test17b");
 
-    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test18");
+    checkControlModeWithImCompliant(VOCAB_CM_POSITION,"test18");
     verifyAmplifier(0,"test18b");
 
-    setMode(VOCAB_CM_FORCE_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test19"); //VOCAB_CM_IDLE is intentional
+    checkControlModeWithImCompliant(VOCAB_CM_IDLE,"test19"); //VOCAB_CM_IDLE is intentional
     verifyAmplifier(0,"test19b");
 
-    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test20");
+    checkControlModeWithImCompliant(VOCAB_CM_POSITION,"test20");
     verifyAmplifier(0,"test20b");
     goHome();
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Basic Camera Tests Suite">
+<suit name="Control modes Tests Suite">
     <description>Testing control modes</description>
     <environment>--robotname icub --context icubV3</environment>
 
