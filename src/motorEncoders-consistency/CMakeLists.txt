@@ -7,7 +7,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-set(PROJECTNAME OpticalEncodersConsistency)
+set(PROJECTNAME MotorEncodersConsistency)
 project(${PROJECTNAME})
 
 find_package(RTF)
@@ -23,8 +23,8 @@ link_libraries(${RTF_LIBRARIES}
                ${YARP_LIBRARIES}
                YARP::YARP_manager)
 
-add_library(${PROJECTNAME} MODULE opticalEncodersConsistency.h
-                                  opticalEncodersConsistency.cpp)
+add_library(${PROJECTNAME} MODULE motorEncodersConsistency.h
+                                  motorEncodersConsistency.cpp)
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime

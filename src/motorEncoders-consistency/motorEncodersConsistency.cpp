@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
-#include "opticalEncodersConsistency.h"
+#include "motorEncodersConsistency.h"
 #include <yarp/manager/localbroker.h>
 
 //example     -v -t OpticalEncodersConsistency.dll -p "--robot icub --part left_arm --joints ""(0 1 2)"" --home ""(-30 30 10)"" --speed ""(20 20 20)"" --max ""(-20 40 20)"" --min ""(-40 20 0)"" --cycles 10 --tolerance 1.0 "

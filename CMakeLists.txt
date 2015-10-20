@@ -36,7 +36,7 @@ add_subdirectory(src/openloop-consistency)
 add_subdirectory(src/torqueControl-consistency)
 
 # Build optical encoder tests
-add_subdirectory(src/opticalEncoders-consistency)
+add_subdirectory(src/motorEncoders-consistency)
 add_subdirectory(src/opticalEncoders-drift)
 
 # Build model consistency check

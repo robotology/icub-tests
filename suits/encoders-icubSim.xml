@@ -5,10 +5,10 @@
     <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubsim-fixture.xml"> yarpmanager </fixture> 
 
-    <test type="dll" param="--from optical_encoders_consistency_left_arm.ini">  OpticalEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_right_arm.ini"> OpticalEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_left_leg.ini">  OpticalEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_right_leg.ini"> OpticalEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_torso.ini">     OpticalEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_left_arm.ini">  MotorEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_right_arm.ini"> MotorEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_left_leg.ini">  MotorEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_right_leg.ini"> MotorEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_consistency_torso.ini">     MotorEncodersConsistency </test>
 </suit>
 
