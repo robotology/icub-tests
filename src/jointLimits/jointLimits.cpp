@@ -20,8 +20,6 @@
 
 #include <stdio.h>
 
-//example     -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --outputLimitPercent "(30 30 30)"  --tolerance 0.2"
-//example2    -v -t JointLimits.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --outputLimitPercent "(30 30 30)"  --tolerance 0.2 "
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -255,7 +253,6 @@ bool JointLimits::goToSingle(int i, double pos, double *reached_pos)
 
 void JointLimits::run()
 {
-   //printf("\n\t dovrei fare il run!!!\n");
     char buff[500];
     setMode(VOCAB_CM_POSITION);
     goTo(home);
