@@ -17,6 +17,55 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 
+/**
+* \ingroup icub-tests
+* This tests checks if the motor encoder reading are consistent with the joint encoder readings. 
+* Since the two sensors may be placed in different places, with gearboxes or tendon transmissions in between, a (signed) factor is needed to convert the two measurements.
+* The test performes a cyclic movement between two reference positions (min and max) and collects data from both the encoders during the movement.
+* The test generates four text data files, which are subsequently opened to generate plots. In all figures the joint and motor plots need to be reasonably aligned.
+* The four plots are:
+* \li joint positions  vs motor positions
+* \li joint velocities vs motor velocities
+* \li joint positions (numerically derived by the test) vs joint velocities (measured by the control board)
+* \li motor positions (numerically derived by the test) vs motor velocities (measured by the control board)
+* The conversion formula from motor measurments (M) to joint encoder measurements (J) is the following:
+* J = kinematic_mj * gearbox * M
+* with kinematic_mj the joints coupling matrix and gearbox the gearbox reduction factor (e.g. 1:100)
+
+* Example: testRunner v -t motorEncodersConsistency.dll -p "--robot icub --part left_arm --joints ""(0 1 2)"" --home ""(-30 30 10)"" --speed ""(20 20 20)"" --max ""(-20 40 20)"" --min ""(-40 20 0)"" --cycles 10 --tolerance 1.0 "
+* Example: testRunner v -s "..\icub-tests\suits\encoders-icubSim.xml"
+
+* Check the following functions:
+* \li IEncoders::getEncoders()
+* \li IEncoders::getEncoderSpeeds()
+* \li IEncoders::getEncoderAccelerations()
+* \li IMotorEncoder::getMotorEncoders()
+* \li IMotorEncoder::getMotorEncoderSpeeds()
+* \li IMotorEncoder::getMotorEncoderAccelerations()
+* Note: Acceleration is not currently tested.
+
+*
+*  Accepts the following parameters:
+* | Parameter name     | Type   | Units | Default Value | Required | Description | Notes |
+* |:------------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | robot              | string | -     | -             | Yes      | The name of the robot.     | e.g. icub |
+* | part               | string | -     | -             | Yes      | The name of trhe robot part. | e.g. left_arm |
+* | joints             | vector of ints | -     |     - | Yes      | List of joints to be tested | |
+* | home               | vector of doubles of size joints  | deg   | - | Yes | The home position for each joint | |
+* | cycles             | int    | -     | 10            | No       | The number of test cycles (going from max to min position and viceversa | |
+* | max                | vector of doubles of size joints  | deg   | - | Yes | The max position using during the joint movement | |
+* | min                | vector of doubles of size joints  | deg   | - | Yes | The min position using during the joint movement | |
+* | tolerance          | vector of doubles of size joints  | deg   | - | Yes | The tolerance used when moving from min to max reference position and viceversa | |
+* | speed              | vector of doubles of size joints  | deg/s | - | Yes | The reference speed used during the movement  | |
+* | matrix_size | int                                   | -     | - | Yes | The number of rows of the coupling matrix | Typical value = 4. |
+* | matrix      | vector of doubles of size matrix_size | -     | - | Yes | The kinematic_mj coupling matrix | matrix is identity if joints are not coupled |
+* | plotstring1 | string |      | - | Yes | The string which generates plot 1 | |
+* | plotstring2 | string |      | - | Yes | The string which generates plot 2 | |
+* | plotstring3 | string |      | - | Yes | The string which generates plot 3 | |
+* | plotstring4 | string |      | - | Yes | The string which generates plot 4 | |
+
+*
+*/
 class OpticalEncodersConsistency : public YarpTestCase {
 public:
     OpticalEncodersConsistency();

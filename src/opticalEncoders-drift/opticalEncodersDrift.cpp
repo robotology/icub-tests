@@ -89,7 +89,7 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     Property options;
     options.put("device", "remote_controlboard");
     options.put("remote", "/"+robotName+"/"+partName);
-    options.put("local", "/positionDirectTest/"+robotName+"/"+partName);
+    options.put("local", "/opticalEncodersDrift/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
     RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");

@@ -15,8 +15,6 @@
 
 #include "PositionDirect.h"
 
-//example     -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 --frequency 0.8 --amplitude 10.0 --cycles 10 --tolerance 1.0 --sampleTime 0.010 --cmdMode 0"
-//example2    -v -t PositionDirect.dll -p "--robot icub --part head --joints ""(2)"" --zero 0 --frequency 0.4 --amplitude 10.0 --cycles 10 --tolerance 1.0 --sampleTime 0.010 --cmdMode 0"
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;

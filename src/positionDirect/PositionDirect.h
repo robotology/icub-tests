@@ -15,6 +15,37 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
+/**
+* \ingroup icub-tests
+* This tests checks the positionDirect control, sending a sinusoidal reference signal, with parametric frequency and amplitude.
+* The sample time, typical in the range of 10 ms, can be also be adjusted by the user.
+* This test currently does not return any error report. It simply moves a joint, and the user visually evaluates the smoothness of the performed trajectory. In the future automatic checks/plots may be added to the test.
+* Be aware theat may exists set of parameters (e.g. high values of sample time / ampiltude /frequency) that may lead to PID instability and damage the joint.
+* The test is able to check all the three types of yarp methods (single joint, multi joint, all joints), depending on the value of cmdMode Parameter.
+
+* example: testRunner -v -t PositionDirect.dll - p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 --frequency 0.8 --amplitude 10.0 --cycles 10 --tolerance 1.0 --sampleTime 0.010 --cmdMode 0"
+* example: testRunner -v -t PositionDirect.dll - p "--robot icub --part head --joints ""(2)"" --zero 0 --frequency 0.4 --amplitude 10.0 --cycles 10 --tolerance 1.0 --sampleTime 0.010 --cmdMode 0"
+
+* Check the following functions:
+* \li IPositionDirect::setPositions()
+* \li IControlMode2::setControlMode()
+*
+*  Accepts the following parameters:
+* | Parameter name     | Type   | Units | Default Value | Required | Description | Notes |
+* |:------------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | robot              | string | -     | -     | Yes | The name of the robot.     | e.g. icub |
+* | part               | string | -     | -     | Yes | The name of trhe robot part. | e.g. left_arm |
+* | joints             | vector of ints | - | - | Yes | List of joints to be tested | |
+* | zero               | double | deg   | -     | Yes | The home position for each joint | |
+* | cycles             | int    | -     | -     | Yes | The number of test cycles (going from max to min position and viceversa) |   |
+* | frequency          | double | deg   | -     | Yes | The frequency of the sine reference signal | |
+* | amplitude          | double | deg   | -     | Yes | The ampiltude of the sine reference signal | |
+* | tolerance          | double | deg   | -     | Yes | The tolerance used when moving from min to max reference position and viceversa | |
+* | sampleTime         | double | s     | -     | Yes | The sample time of the control thread | |
+* | cmdMode            | int    | deg   | -     | Yes | = 0 to test single joint method, = 1 to test all joints, = 2 to test multi joint method | |
+*
+*/
+
 class PositionDirect : public YarpTestCase {
 public:
     PositionDirect();

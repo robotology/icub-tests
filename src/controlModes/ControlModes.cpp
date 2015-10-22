@@ -15,10 +15,6 @@
 
 #include "ControlModes.h"
 
-//example1    -v -t ControlModes.dll -p "--robot icub --part head --joints ""(0)"" --zero 0"
-//example2    -v -t ControlModes.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 "
-//example3    -v -t ControlModes.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
-
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;

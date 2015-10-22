@@ -18,6 +18,36 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Matrix.h>
 
+/**
+* \ingroup icub-tests
+* This tests checks if the relative encoders measurements are consistent over time, by performing cyclic movements between two reference positions (min and max).
+* The test collects data during the joint motion, saves data to a text file a plots the result. If the relative encoder is working correctly, the plot should have no drift.
+* Otherwise, a drift in the plot may be caused by a damaged reflective encoder/ optical disk.
+* For best reliability an high number of cycles (e.g. >100) is suggested.
+
+* example: testRunner -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --max "(10 10 10)" --min "(-10 -10 -10)" --cycles 100 --tolerance 1.0 "
+* example: testRunner -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --max "(10      )" --min "(-10)"         --cycles 100 --tolerance 1.0 "
+
+* Check the following functions:
+* \li IMotorEncoder::getMotorEncoders()
+
+*
+*  Accepts the following parameters:
+* | Parameter name     | Type   | Units | Default Value | Required | Description | Notes |
+* |:------------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
+* | robot              | string | -     | -             | Yes      | The name of the robot.     | e.g. icub |
+* | part               | string | -     | -             | Yes      | The name of trhe robot part. | e.g. left_arm |
+* | joints             | vector of ints | -     |     - | Yes      | List of joints to be tested | |
+* | home               | vector of doubles of size joints  | deg   | - | Yes | The home position for each joint | |
+* | cycles             | int    | -     | -             | Yes       | The number of test cycles (going from max to min position and viceversa) | Use values > 100 |
+* | max                | vector of doubles of size joints  | deg   | - | Yes | The max position using during the joint movement | |
+* | min                | vector of doubles of size joints  | deg   | - | Yes | The min position using during the joint movement | |
+* | tolerance          | vector of doubles of size joints  | deg   | - | Yes | The tolerance used when moving from min to max reference position and viceversa | |
+* | speed              | vector of doubles of size joints  | deg/s | - | Yes | The reference speed used during the movement  | |
+
+*
+*/
+
 class OpticalEncodersDrift : public YarpTestCase {
 public:
     OpticalEncodersDrift();

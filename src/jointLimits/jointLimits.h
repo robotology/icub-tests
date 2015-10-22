@@ -49,7 +49,7 @@
 * |:------------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
 * | robot              | string | -     | -             | Yes      | The name of the robot.     | e.g. icub |
 * | part               | string | -     | -             | Yes      | The name of trhe robot part. | e.g. left_arm |
-* | joints             | vector of ints of size joints    | -     | - | Yes | List of joints to be tested | Must be consistent with the value returned by getAxes method. |
+* | joints             | vector of ints | -     | - | Yes | List of joints to be tested | |
 * | home               | vector of doubles of size joints | deg   | - | Yes | The home position for each joint | |
 * | speed              | vector of doubles of size joints | deg/s | - | Yes | The reference speed used furing the movement | |
 * | tolerance          | vector of doubles of size joints | deg   | - | Yes | The position tolerance used to check if the limit has been properly reached. | Typical value = 0.2 deg. |
