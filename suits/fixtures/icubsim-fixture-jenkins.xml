@@ -8,7 +8,7 @@
     <module>
         <name>iCub_SIM</name>
         <parameters></parameters>
-        <node>/jenkins</node>
+        <node>/iiticubws027</node>
         <ensure>
             <wait>20</wait>
         </ensure>
