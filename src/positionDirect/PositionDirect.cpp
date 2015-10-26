@@ -231,8 +231,9 @@ void PositionDirect::run()
     {
         double curr_time = yarp::os::Time::now();
         double elapsed = curr_time-start_time;
-        cmd_single = amplitude*sin(2*3.14159265359*frequency*elapsed)+zero;
-        RTF_ASSERT_ERROR_IF(fabs(prev_cmd-cmd_single)>max_step,
+        cmd_single = amplitude*(2*3.14159265359*frequency*elapsed)+zero;
+
+        RTF_ASSERT_ERROR_IF(fabs(prev_cmd-cmd_single)<max_step,
                             Asserter::format("error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",
                                              prev_cmd,cmd_single,max_step));
         ienc->getEncoders(pos_tot);
