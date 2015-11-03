@@ -154,17 +154,17 @@ void MotorTest::run() {
 
     RTF_TEST_REPORT("checking joints number");
     iEncoders->getAxes(&nJoints);
-    RTF_TEST_CHECK(m_NumJoints==nJoints, "expected number of joints is inconsistent");
+    RTF_TEST_FAIL_IF(m_NumJoints==nJoints, "expected number of joints is inconsistent");
 
     RTF_TEST_REPORT("Checking individual joints...");
     for (int joint=0; joint<m_NumJoints; ++joint) {
         RTF_TEST_REPORT(Asserter::format("Checking joint %d", joint));
         if (m_aRefAcc!=NULL) {
-            RTF_TEST_CHECK(iPosition->setRefAcceleration(joint, m_aRefAcc[joint]),
+            RTF_TEST_FAIL_IF(iPosition->setRefAcceleration(joint, m_aRefAcc[joint]),
                 Asserter::format("setting reference acceleration on joint %d", joint));
         }
 
-        RTF_TEST_CHECK(iPosition->setRefSpeed(joint, m_aRefVel[joint]),
+        RTF_TEST_FAIL_IF(iPosition->setRefSpeed(joint, m_aRefVel[joint]),
             Asserter::format("setting reference speed on joint %d", joint));
 
         // wait some time
@@ -178,14 +178,14 @@ void MotorTest::run() {
             read=iEncoders->getEncoder(joint,m_aHome+joint);
             yarp::os::Time::delay(0.1);
         }
-        RTF_TEST_CHECK(read, "getEncoder() returned true");
+        RTF_TEST_FAIL_IF(read, "getEncoder() returned true");
 
-        RTF_TEST_CHECK(iPosition->positionMove(joint, m_aTargetVal[joint]),
+        RTF_TEST_FAIL_IF(iPosition->positionMove(joint, m_aTargetVal[joint]),
             Asserter::format("moving joint %d to %.2lf", joint, m_aTargetVal[joint]));
 
         doneAll=false;
         ret=iPosition->checkMotionDone(&doneAll);
-        RTF_TEST_CHECK(!doneAll&&ret, "checking checkMotionDone returns false after position move");
+        RTF_TEST_FAIL_IF(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
         RTF_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", m_aTimeout[joint]));
         bool reached=false;
@@ -196,25 +196,25 @@ void MotorTest::run() {
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
         }
-        RTF_TEST_CHECK(reached, "reached position");
+        RTF_TEST_FAIL_IF(reached, "reached position");
     }
 
     //////// check multiple joints
     RTF_TEST_REPORT("Checking multiple joints...");
     if (m_aRefAcc!=NULL) {
-        RTF_TEST_CHECK(iPosition->setRefAccelerations(m_aRefAcc),
+        RTF_TEST_FAIL_IF(iPosition->setRefAccelerations(m_aRefAcc),
                 "setting reference acceleration on all joints");
     }
-    RTF_TEST_CHECK(iPosition->setRefSpeeds(m_aRefVel),
+    RTF_TEST_FAIL_IF(iPosition->setRefSpeeds(m_aRefVel),
             "setting reference speed on all joints");
 
-    RTF_TEST_CHECK(iPosition->positionMove(m_aHome),
+    RTF_TEST_FAIL_IF(iPosition->positionMove(m_aHome),
             "moving all joints to home");
 
     doneAll=false;
     // make sure that checkMotionDone return false right after a movement
     ret=iPosition->checkMotionDone(&doneAll);
-    RTF_TEST_CHECK(!doneAll&&ret, "checking checkMotionDone returns false after position move");
+    RTF_TEST_FAIL_IF(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     // wait some time
     double timeStart=yarp::os::Time::now();
@@ -238,7 +238,7 @@ void MotorTest::run() {
             yarp::os::Time::delay(0.1);
     }
 
-    RTF_TEST_CHECK(reached, "reached position");
+    RTF_TEST_FAIL_IF(reached, "reached position");
 
     if(reached) {
         // check checkMotionDone.
@@ -255,7 +255,7 @@ void MotorTest::run() {
                 yarp::os::Time::delay(0.1);
         }
 
-        RTF_TEST_CHECK(doneAll&&ret, "checking checkMotionDone returns true");
+        RTF_TEST_FAIL_IF(doneAll&&ret, "checking checkMotionDone returns true");
     }
 
 
@@ -273,14 +273,14 @@ void MotorTest::run() {
         jmap[kk]=m_NumJoints-kk-1;
     }
 
-    RTF_TEST_CHECK(iPosition2->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
+    RTF_TEST_FAIL_IF(iPosition2->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
             "setting reference speed on all joints using group interface");
 
-    RTF_TEST_CHECK(iPosition2->positionMove(m_NumJoints, jmap, swapped_target),
+    RTF_TEST_FAIL_IF(iPosition2->positionMove(m_NumJoints, jmap, swapped_target),
             "moving all joints to home using group interface");
 
     ret=iPosition->checkMotionDone(&doneAll);
-    RTF_TEST_CHECK(!doneAll&&ret, "checking checkMotionDone returns false after position move");
+    RTF_TEST_FAIL_IF(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     timeStart=yarp::os::Time::now();
     timeNow=timeStart;
@@ -294,7 +294,7 @@ void MotorTest::run() {
             yarp::os::Time::delay(0.1);
     }
 
-    RTF_TEST_CHECK(reached, "reached position");
+    RTF_TEST_FAIL_IF(reached, "reached position");
 
     if (reached) {
         bool *done_vector=new bool [m_NumJoints];
@@ -311,7 +311,7 @@ void MotorTest::run() {
                 yarp::os::Time::delay(0.1);
         }
 
-        RTF_TEST_CHECK(doneAll&&ret, "checking checkMotionDone");
+        RTF_TEST_FAIL_IF(doneAll&&ret, "checking checkMotionDone");
         delete [] done_vector;
     }
 

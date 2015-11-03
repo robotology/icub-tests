@@ -84,6 +84,6 @@ void CameraTest::run() {
     RTF_TEST_REPORT(Asserter::format("Received %d frames, expecting %d",
                                        frames,
                                        expectedFrames));
-    RTF_TEST_CHECK(abs(frames-expectedFrames)<tolerance,
+    RTF_TEST_FAIL_IF(abs(frames-expectedFrames)<tolerance,
                      "checking number of received frames");
 }

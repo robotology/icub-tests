@@ -58,8 +58,8 @@ void FtSensorTest::tearDown() {
 void FtSensorTest::run() {
     RTF_TEST_REPORT("Reading FT sensors...");
     Vector *readSensor = port.read();
-    RTF_TEST_CHECK(readSensor, "could not read FT data from sensor");
+    RTF_TEST_FAIL_IF(readSensor, "could not read FT data from sensor");
 
-    RTF_TEST_CHECK(readSensor->size() == 6, "sensor has 6 values");
+    RTF_TEST_FAIL_IF(readSensor->size() == 6, "sensor has 6 values");
 }
 

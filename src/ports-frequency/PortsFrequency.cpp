@@ -65,7 +65,7 @@ void PortsFrequency::run() {
         port.reset();
         RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
         bool connected = Network::connect(ports[i].name.c_str(), port.getName());
-        RTF_TEST_CHECK(connected,
+        RTF_TEST_FAIL_IF(connected,
                        Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
         if(connected) {
             port.useCallback();
@@ -84,7 +84,7 @@ void PortsFrequency::run() {
             RTF_TEST_REPORT(Asserter::format("Receiver frequency %d hrz. (min: %d, max: %d)",
                             (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
             double diff = fabs(freq - ports[i].frequency);
-            RTF_TEST_CHECK(diff < ports[i].tolerance,
+            RTF_TEST_FAIL_IF(diff < ports[i].tolerance,
                            Asserter::format("Receiver frequency is outside the desired range [%d .. %d]",
                                             ports[i].frequency-ports[i].tolerance,
                                             ports[i].frequency+ports[i].tolerance));            

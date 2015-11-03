@@ -58,7 +58,7 @@ void SystemStatus::run() {
         RTF_TEST_REPORT("");
         RTF_TEST_REPORT(Asserter::format("Checking host %s ...", hosts[i].name.c_str()));
         bool ret = getSystemInfo(hosts[i].name, info);
-        RTF_TEST_CHECK(ret, Asserter::format("Failed to get the system status of host %s. Is the yarprun running on %s?",
+        RTF_TEST_FAIL_IF(ret, Asserter::format("Failed to get the system status of host %s. Is the yarprun running on %s?",
                                              hosts[i].name.c_str(), hosts[i].name.c_str()));
         if(ret) {
             RTF_TEST_REPORT(Asserter::format("Total memory %d MB, free memory %d MB.",
@@ -68,7 +68,7 @@ void SystemStatus::run() {
             unsigned int cpuLoad15 = (int)(info.load.cpuLoad15*100);
             RTF_TEST_REPORT(Asserter::format("Cpu load during last minute %d\%, last 5 minutes %d\%, last 15 minutes %d\%",
                                              cpuLoad1, cpuLoad5, cpuLoad15));
-            RTF_TEST_CHECK(cpuLoad1 < hosts[i].maxCpuLoad,
+            RTF_TEST_FAIL_IF(cpuLoad1 < hosts[i].maxCpuLoad,
                            Asserter::format("Cpu load (last minute) is higher than desired [%d\%]", hosts[i].maxCpuLoad));
         }
     }
@@ -94,7 +94,7 @@ bool SystemStatus::getSystemInfo(std::string remote,
 
     bool connected = yarp::os::NetworkBase::connect(port.getName(), remote.c_str(), style);
     if(!connected) {
-        RTF_TEST_CHECK(connected, string("Cannot connect to ") + remote);
+        RTF_TEST_FAIL_IF(connected, string("Cannot connect to ") + remote);
         port.close();
         return false;
     }
@@ -103,7 +103,7 @@ bool SystemStatus::getSystemInfo(std::string remote,
     NetworkBase::disconnect(port.getName().c_str(), remote.c_str());
     if(!ret) {
         port.close();
-        RTF_TEST_CHECK(ret, remote + string(" does not respond"));
+        RTF_TEST_FAIL_IF(ret, remote + string(" does not respond"));
         return false;
     }
 

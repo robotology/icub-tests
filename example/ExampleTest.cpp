@@ -44,11 +44,11 @@ void ExampleTest::run() {
 
     int a = 5; int b = 3;
     RTF_TEST_REPORT("testing a < b");
-    RTF_TEST_CHECK(a<b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_TEST_FAIL_IF(a<b, Asserter::format("%d is not smaller than %d.", a, b));
     RTF_TEST_REPORT("testing a > b");
-    RTF_TEST_CHECK(a>b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_TEST_FAIL_IF(a>b, Asserter::format("%d is not smaller than %d.", a, b));
     RTF_TEST_REPORT("testing a == b");
-    RTF_TEST_CHECK(a==b, Asserter::format("%d is not smaller than %d.", a, b));
+    RTF_TEST_FAIL_IF(a==b, Asserter::format("%d is not smaller than %d.", a, b));
     // add more
     // ...
 }

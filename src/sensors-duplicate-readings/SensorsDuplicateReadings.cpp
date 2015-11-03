@@ -65,7 +65,7 @@ void SensorsDuplicateReadings::run() {
         port.reset();
         RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
         bool connected = Network::connect(ports[i].name.c_str(), port.getName());
-        RTF_TEST_CHECK(connected,
+        RTF_TEST_FAIL_IF(connected,
                        Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
         if(connected) {
             port.useCallback();
@@ -77,7 +77,7 @@ void SensorsDuplicateReadings::run() {
             RTF_TEST_REPORT(Asserter::format("Maximum number of consecutive duplicates: %lu Maximum jitter: %lf ",
                                               port.getMaxNrOfDuplicates(), port.getMaxJitter()));
 
-            RTF_TEST_CHECK(port.getTotalNrOfDuplicates() > ports[i].toleratedDuplicates,
+            RTF_TEST_FAIL_IF(port.getTotalNrOfDuplicates() > ports[i].toleratedDuplicates,
                            Asserter::format("Number of duplicates (%lu) is higher than the tolerated (%d)",
                                             port.getTotalNrOfDuplicates(),
                                             ports[i].toleratedDuplicates));
