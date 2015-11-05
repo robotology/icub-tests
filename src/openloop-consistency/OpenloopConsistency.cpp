@@ -141,14 +141,14 @@ void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::Intera
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode,cmode,imode);
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str(), Vocab::decode((NetInt32)cmode).c_str(),Vocab::decode((NetInt32)imode).c_str());
             RTF_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
     RTF_TEST_REPORT(sbuf);
 }
 
@@ -417,6 +417,7 @@ void OpenLoopConsistency::run()
 
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test1");
+    verifyOutputEqual(0,"test1a");// here i can check that pos->openloop gives pwm 0.
     setRefOpenloop(10);
     verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test2");
     verifyRefOpenloop(10,"test2a");
