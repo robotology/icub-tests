@@ -10,10 +10,7 @@
     <!-- Neither head nor face has optical encoders
    <test type="dll" param="--from optical_encoders_drift_left_arm.ini">  OpticalEncodersDrift </test> -->
 
-    <!-- <test type="dll" param="--from opticalEncodersConsistency_head.ini">  MotorEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_right_arm.ini"> MotorEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_left_leg.ini">  MotorEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_right_leg.ini"> MotorEncodersConsistency </test>
-    <test type="dll" param="--from optical_encoders_consistency_torso.ini">     MotorEncodersConsistency </test> -->
+    <test type="dll" param="--from motorEncodersConsistency_head4J.ini">  MotorEncodersConsistency </test>
+    
 </suit>
 
