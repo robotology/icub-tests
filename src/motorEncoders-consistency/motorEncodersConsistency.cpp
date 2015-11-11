@@ -19,6 +19,9 @@
 #include <fstream>
 #include "motorEncodersConsistency.h"
 #include <yarp/manager/localbroker.h>
+#include <iostream>
+
+using namespace std;
 
 //example     -v -t OpticalEncodersConsistency.dll -p "--robot icub --part left_arm --joints ""(0 1 2)"" --home ""(-30 30 10)"" --speed ""(20 20 20)"" --max ""(-20 40 20)"" --min ""(-40 20 0)"" --cycles 10 --tolerance 1.0 "
 //example2    -v -t OpticalEncodersConsistency.dll -p "--robot icub --part head     --joints ""(2)""     --home ""(0)""         --speed ""(20      )"" --max ""(10      )""  --min ""(-10)""      --cycles 10 --tolerance 1.0 "
@@ -149,6 +152,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 
     int n_cmd_joints = jointsBottle->size();
     RTF_ASSERT_ERROR_IF(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    jointsList.clear();
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
     enc_jnt.resize(n_cmd_joints); enc_jnt.zero();
@@ -173,7 +177,13 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     min.resize(n_cmd_joints);     for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
     home.resize(n_cmd_joints);    for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
     speed.resize(n_cmd_joints);   for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
-    gearbox.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) {double t; int b=imot->getGearboxRatio(i,&t); gearbox[i]=t;}
+    gearbox.resize(n_cmd_joints);
+    for (int i=0; i< n_cmd_joints; i++)
+    {
+        double t;
+        int b=imot->getGearboxRatio(jointsList[i],&t);
+        gearbox[i]=t;
+    }
 
     return true;
 }
@@ -317,7 +327,11 @@ void OpticalEncodersConsistency::run()
         double elapsed = curr_time - start_time;
 
         bool ret = true;
-        ret = ienc->getEncoders(tmp_vector.data());                  for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt[i] = tmp_vector[jointsList(i)];
+        ret = ienc->getEncoders(tmp_vector.data());
+        for (unsigned int i = 0; i < jointsList.size(); i++)
+            enc_jnt[i] = tmp_vector[jointsList[i]];
+
+
         RTF_ASSERT_ERROR_IF(ret, "ienc->getEncoders returned false");
         ret = imotenc->getMotorEncoders(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot[i] = tmp_vector[jointsList(i)];
         RTF_ASSERT_ERROR_IF(ret, "imotenc->getMotorEncoder returned false");
@@ -340,9 +354,9 @@ void OpticalEncodersConsistency::run()
         enc_jnt2mot = matrix * enc_jnt;
         vel_jnt2mot = matrix * vel_jnt;
         acc_jnt2mot = matrix * acc_jnt;
-        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[jointsList(i)];
-        for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[jointsList(i)];
-        for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[jointsList(i)];
+        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];
+        for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[i];
+        for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
 
         bool reached = false;
         int in_position = 0;
@@ -366,7 +380,7 @@ void OpticalEncodersConsistency::run()
             if (go_to_max == false)
             {
                 for (unsigned int i = 0; i < jointsList.size(); i++)
-                    ipos->positionMove(i, max[i]);
+                    ipos->positionMove(jointsList[i], max[i]);
                 go_to_max = true;
                 cycle++;
                 start_time = yarp::os::Time::now();
@@ -374,7 +388,7 @@ void OpticalEncodersConsistency::run()
             else
             {
                 for (unsigned int i = 0; i < jointsList.size(); i++)
-                    ipos->positionMove(i, min[i]);
+                    ipos->positionMove(jointsList[i], min[i]);
                 go_to_max = false;
                 cycle++;
                 start_time = yarp::os::Time::now();
