@@ -53,7 +53,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("joints"),      "The joints list must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("home"),        "The home position must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("speed"),       "The positionMove reference speed must be given as the test parameter!");
-
+    RTF_ASSERT_ERROR_IF(property.check("outOfBoundPosition"), "The outOfBoundPosition parameter must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("outputLimitPercent"),  "The outputLimitPercent must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("tolerance"), "  The max error tolerance must be given as the test parameter!");
 
@@ -72,6 +72,9 @@ bool JointLimits::setup(yarp::os::Property& property) {
 
     Bottle* speedBottle = property.find("speed").asList();
     RTF_ASSERT_ERROR_IF(speedBottle!=0,"unable to parse speed parameter");
+
+    Bottle* outOfBoundPosition = property.find("outOfBoundPosition").asList();
+    RTF_ASSERT_ERROR_IF(outOfBoundPosition != 0, "unable to parse outOfBoundPosition parameter");
 
     Bottle* outputLimitBottle = property.find("outputLimitPercent").asList();
     RTF_ASSERT_ERROR_IF(outputLimitBottle!=0,"unable to parse speed parameter");
@@ -109,7 +112,8 @@ bool JointLimits::setup(yarp::os::Property& property) {
     home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
     speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
     outputLimit.resize(n_cmd_joints);for (int i=0; i< n_cmd_joints; i++) outputLimit[i]=outputLimitBottle->get(i).asDouble();
-
+    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asDouble(); RTF_ASSERT_ERROR_IF(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
+   
     original_pids = new yarp::dev::Pid[n_cmd_joints];
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
@@ -236,9 +240,6 @@ bool JointLimits::goToSingle(int i, double pos, double *reached_pos)
                 *reached_pos = tmp;
             }
             return(false);
-//            char buff[500];
-//            sprintf(buff, "Timeout while reaching desired position. Reached pos=%.2f", tmp);
-//            RTF_ASSERT_ERROR(buff);
         }
 
         yarp::os::Time::delay(0.2);
@@ -250,6 +251,40 @@ bool JointLimits::goToSingle(int i, double pos, double *reached_pos)
     }
     return(true);
 }
+
+bool JointLimits::goToSingleExceed(int i, double position_to_reach, double limit, double *reached_pos)
+{
+    ipos->setRefSpeed((int)jointsList[i], speed[i]);
+    ipos->positionMove((int)jointsList[i], position_to_reach);
+    double tmp = 0;
+
+    int timeout = 0;
+    while (1)
+    {
+        ienc->getEncoder((int)jointsList[i], &tmp);
+        if (fabs(tmp - position_to_reach)<tolerance) break;
+        if (timeout>100) break;
+        yarp::os::Time::delay(0.2);
+        timeout++;
+    }
+
+    *reached_pos = tmp;
+
+    if (fabs(tmp - position_to_reach)<tolerance)
+    {
+        //I reached the out of bound target. That's bad!
+        return (true);
+    }
+    if (fabs(tmp - limit)<tolerance)
+    {
+        //I'm still near the joint limit. That's fine.
+        return (false);
+    }
+
+    //I dont know where I am, that's bad!
+    return(true);
+}
+
 
 void JointLimits::run()
 {
@@ -271,22 +306,44 @@ void JointLimits::run()
         double reached_pos=0;
 
         //Check max limit
-        sprintf(buff,"Testing joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);RTF_TEST_REPORT(buff);
+        sprintf(buff,"Testing if max limit is reachable, joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);RTF_TEST_REPORT(buff);
+        //check that max_limit is reachable
         res = goToSingle(i, max_lims[i], &reached_pos);
         if(!res)
         {
             goToSingle(i,home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
             sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", max_lims[i], reached_pos);RTF_ASSERT_ERROR(buff);
         }
+        else { sprintf(buff, "Test successfull, joint %d, max limit: %f reached: %f", (int)jointsList[i], max_lims[i], reached_pos); RTF_TEST_REPORT(buff); }
+        //check that max_limit + outOfBoundPos is NOT reachable
+        sprintf(buff, "Testing that max limit cannot be exceeded, joint %d, max limit: %f", (int)jointsList[i], max_lims[i]); RTF_TEST_REPORT(buff);
+        res = goToSingleExceed(i, max_lims[i] + outOfBoundPos[i], max_lims[i], & reached_pos);
+        if (res)
+        {
+            goToSingle(i, home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
+            sprintf(buff, "Limit execeeded! Limit was (%.2f). Reached pos=%.2f", max_lims[i], reached_pos); RTF_ASSERT_ERROR(buff);
+        }
+        else { sprintf(buff, "Test successfull, joint %d, target was: %f reached: %f, limit %f ", (int)jointsList[i], max_lims[i] + outOfBoundPos[i], reached_pos, max_lims[i]); RTF_TEST_REPORT(buff); }
 
         //Check min limit
-        sprintf(buff,"Testing joint %d, min limit: %f",(int)jointsList[i],min_lims[i]);RTF_TEST_REPORT(buff);
+        //check that min_limit is reachable
+        sprintf(buff,"Testing if min limit is reachable, joint %d, min limit: %f",(int)jointsList[i],min_lims[i]);RTF_TEST_REPORT(buff);
         res = goToSingle(i, min_lims[i], &reached_pos);
         if(!res)
         {
             goToSingle(i,home[i], NULL);
             sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", min_lims[i], reached_pos);RTF_ASSERT_ERROR(buff);
         }
+        else { sprintf(buff, "Test successfull, joint %d, min limit: %f reached: %f", (int)jointsList[i], min_lims[i], reached_pos); RTF_TEST_REPORT(buff); }
+        //check that min_limit - outOfBoundPos is NOT reachable
+        sprintf(buff, "Testing that min limit cannot be exceeded, joint %d, min limit: %f", (int)jointsList[i], min_lims[i]); RTF_TEST_REPORT(buff);
+        res = goToSingleExceed(i, min_lims[i] - outOfBoundPos[i], min_lims[i], & reached_pos);
+        if (res)
+        {
+            goToSingle(i, home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
+            sprintf(buff, "Limit execeeded! Limit was (%.2f). Reached pos=%.2f", min_lims[i], reached_pos); RTF_ASSERT_ERROR(buff);
+        }
+        else { sprintf(buff, "Test successfull, joint %d, target was: %f reached: %f, limit %f ", (int)jointsList[i], min_lims[i] - outOfBoundPos[i], reached_pos, min_lims[i]); RTF_TEST_REPORT(buff); }
 
         //Check home position
         sprintf(buff,"Testing joint %d, homing to: %f",(int)jointsList[i],home[i]);RTF_TEST_REPORT(buff);
@@ -295,6 +352,7 @@ void JointLimits::run()
         {
             sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", home[i], reached_pos);RTF_ASSERT_ERROR(buff);
         }
+        else{ sprintf(buff, "Homing joint %d complete", (int)jointsList[i]); RTF_TEST_REPORT(buff); }
 
     }
     ienc->getEncoders(enc_jnt.data());

@@ -28,8 +28,10 @@
 * The test uses an limited output to avoid to damage the joint if, for example, an hardware limit is reached before the software limit.
 * If this limit is too small, the the joint may be unable to reach the limit (e.g. because of friction), so the value must be chosen accurately.
 * The test assumes the the position control is properly working and the position pid is properly tuned.
+* After testing the limits, this test also tries to move the joint out of the limits on puropose (adding to the joint limits the value of outOfBoundPosition).
+* The test is successfull if the position move command is correctly stopped at the limit. 
 *
-* Example: testRunner -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --outputLimitPercent "(30 30 30)"  --tolerance 0.2"
+* Example: testRunner -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)"" --speed ""(20 20 20)"" --outputLimitPercent ""(30 30 30)"" --outOfBoundPosition ""(2 2 2)"" --tolerance 0.2"
 *
 * Check the following functions:
 * \li IControlLimits::getLimits()
@@ -54,6 +56,7 @@
 * | speed              | vector of doubles of size joints | deg/s | - | Yes | The reference speed used furing the movement | |
 * | tolerance          | vector of doubles of size joints | deg   | - | Yes | The position tolerance used to check if the limit has been properly reached. | Typical value = 0.2 deg. |
 * | outputLimitPercent | vector of doubles of size joints | %     | - | Yes | The maximum motor output (expressed as percentage). | Safe values can be, for example, 30%.|
+* | outOfBoundPosition | vector of doubles of size joints | %     | - | Yes | This value is added the joint limit to test that a position command is not able to move out of the joint limits | Typical value 2 deg.|
 *
 */
 
@@ -70,6 +73,7 @@ public:
 
     void goTo(yarp::sig::Vector position);
     bool goToSingle(int i, double pos, double *reached_pos);
+    bool goToSingleExceed(int i, double position_to_reach, double limit, double *reached_pos);
 
     void setMode(int desired_mode);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
@@ -95,6 +99,7 @@ private:
     yarp::sig::Vector max_lims;
     yarp::sig::Vector min_lims;
     yarp::sig::Vector outputLimit;
+    yarp::sig::Vector outOfBoundPos;
 
     yarp::sig::Vector home;
     yarp::sig::Vector speed;
