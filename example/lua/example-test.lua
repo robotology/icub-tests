@@ -91,7 +91,6 @@ TestCase.setup = function(parameter)
     -- load paramters
     local property = loadParameters(parameter)
 
-    print(property:toString())
     if property:check("name") then
         RTF.setName(property:find("name"):asString())
     end        
