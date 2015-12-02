@@ -21,7 +21,7 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 option(ICUB_TESTS_USES_ICUB_MAIN "Turn on to compile the tests that depend on the icub-main repository" OFF)
 
 # Build example?
-add_subdirectory(example)
+add_subdirectory(example/cpp)
 
 # Build camera tests
 add_subdirectory(src/camera)
