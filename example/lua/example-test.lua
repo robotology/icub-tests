@@ -14,12 +14,13 @@
 --
 -- The following methods are for reporting, failures or assertions: 
 --
--- RTF.setName(name)             : sets the test name (defualt is the test filename)
--- RTF.testReport(msg)           : reports a informative message
--- RTF.testCheck(condition, msg) : reports a failure message
--- RTF.assertError(msg)          : throws an error exception with message
--- RTF.asserFail(msg)            : throws a failure exception with message
--- RTF.getEnvironment()          : returns the test environment params
+-- RTF.setName(name)              : sets the test name (defualt is the test filename)
+-- RTF.testReport(msg)            : reports a informative message
+-- RTF.testCheck(condition, msg)  : reports the test message and marks the test as failed if condition is false 
+-- RTF.testFailIf(condition, msg) : marks the test as failed and reports failure message (the reason) if condition is false
+-- RTF.assertError(msg)           : throws an error exception with message
+-- RTF.asserFail(msg)             : throws a failure exception with message
+-- RTF.getEnvironment()           : returns the test environment params
 --
 
 --
@@ -110,14 +111,9 @@ end
 TestCase.run = function()
     local a = 5
     local b = 3
-    RTF.testReport("testing a < b")
-    RTF.testCheck(a<b, "a is not smaller than b")
-
-    RTF.testReport("testing a > b")
-    RTF.testCheck(a>b, "a is not bigger than b")
-
-    RTF.testReport("testing a == b")
-    RTF.testCheck(a==b, "a is not equal to b")
+    RTF.testCheck(a<b, "a is smaller than b")
+    RTF.testCheck(a>b, "a is bigger than b")
+    RTF.testCheck(a==b, "a is equal to b")
     -- ...
     -- ...
 end
