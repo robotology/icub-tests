@@ -203,7 +203,7 @@ TestCase.run = function()
 
         -- checking control mode
         local ret = imode:getControlModes(modes)
-        RTF.testCheck(ret, "Cannot get the control mode")
+        RTF.testCheck(ret, "Getting the control mode")
         local mode_msg = ""
         local all_mode_pos = true
         for i=0,axes-1 do
