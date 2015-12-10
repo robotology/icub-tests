@@ -157,8 +157,8 @@ TestCase.run = function()
 
     -- x, y and z
     fp:set(0, -1.0)
-    fp:set(1, yarp.Random_uniform(-5,5)/10.0)
-    fp:set(2, yarp.Random_uniform(0,10)/10.0)
+    fp:set(1, yarp.Random_uniform(-10,10)/10.0)
+    fp:set(2, yarp.Random_uniform(-10,10)/10.0)
     RTF.testReport("Looking at "..fp:toString(2,-1))
     iGaze:lookAtFixationPoint(fp)    
     --iGaze:waitMotionDone()
@@ -179,6 +179,7 @@ TestCase.run = function()
     if not all_mode_pos then
         RTF.assertFail("some of the joints went in idle/hardware fault!")
     end 
+    RTF.testReport("")
 end
 
 
@@ -190,7 +191,7 @@ TestCase.tearDown = function()
     -- homing
     if iGaze ~= nil then 
         local fp = yarp.Vector(3)
-        fp:set(0, -1.0)
+        fp:set(0, -0.5)
         fp:set(1, 0.0)
         fp:set(2, 0.35) 
         RTF.testCheck(ret, "Homing ...")
