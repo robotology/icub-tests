@@ -211,7 +211,7 @@ void OpticalEncodersDrift::run()
     bool go_to_max=false;
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
-        ipos->positionMove(i,min[i]);
+        ipos->positionMove((int)jointsList[i], min[i]);
     }
 
     int  curr_cycle=0;
@@ -257,6 +257,7 @@ void OpticalEncodersDrift::run()
                 go_to_max=true;
                 curr_cycle++;
                 start_time = yarp::os::Time::now();
+                if (curr_cycle % 10 == 0) RTF_TEST_REPORT(Asserter::format("Cycle %d/%d completed", curr_cycle, cycles));
             }
             else
             {
@@ -265,10 +266,13 @@ void OpticalEncodersDrift::run()
                 go_to_max=false;
                 curr_cycle++;
                 start_time = yarp::os::Time::now();
+                if (curr_cycle % 10 == 0) RTF_TEST_REPORT(Asserter::format("Cycle %d/%d completed", curr_cycle, cycles));
             }
         }
 
         if (curr_cycle>=cycles) break;
+
+        yarp::os::Time::delay(0.010);
     }
 
     goHome();
