@@ -184,7 +184,7 @@ void MotorTest::run() {
             Asserter::format("moving joint %d to %.2lf", joint, m_aTargetVal[joint]));
 
         doneAll=false;
-        ret=iPosition->checkMotionDone(&doneAll);
+        ret=iPosition->checkMotionDone(joint, &doneAll);
         RTF_TEST_FAIL_IF(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
         RTF_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", m_aTimeout[joint]));
@@ -233,7 +233,7 @@ void MotorTest::run() {
     encoders=new double [m_NumJoints];
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached = YarpTestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = YarpTestAsserter::isApproxEqual(encoders, m_aHome, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
@@ -279,7 +279,7 @@ void MotorTest::run() {
     RTF_TEST_FAIL_IF(iPosition2->positionMove(m_NumJoints, jmap, swapped_target),
             "moving all joints to home using group interface");
 
-    ret=iPosition->checkMotionDone(&doneAll);
+    ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
     RTF_TEST_FAIL_IF(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     timeStart=yarp::os::Time::now();
@@ -289,7 +289,7 @@ void MotorTest::run() {
     reached=false;
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached = YarpTestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = YarpTestAsserter::isApproxEqual(encoders, swapped_target, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
@@ -306,7 +306,7 @@ void MotorTest::run() {
         bool ret=false;
 
         while(times>0 && !doneAll) {
-            ret=iPosition2->checkMotionDone(&doneAll);
+            ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
             if (!doneAll)
                 yarp::os::Time::delay(0.1);
         }
