@@ -232,7 +232,7 @@ void MotorTest::run() {
     double *encoders;
     encoders=new double [m_NumJoints];
     while(timeNow<timeStart+timeout && !reached) {
-            iEncoders->getEncoders(encoders);
+            RTF_TEST_FAIL_IF(iEncoders->getEncoders(encoders), "getEncoders()");
             reached = YarpTestAsserter::isApproxEqual(encoders, m_aHome, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
@@ -253,6 +253,7 @@ void MotorTest::run() {
             ret=iPosition->checkMotionDone(&doneAll);
             if (!doneAll)
                 yarp::os::Time::delay(0.1);
+            times--;
         }
 
         RTF_TEST_FAIL_IF(doneAll&&ret, "checking checkMotionDone returns true");
@@ -293,7 +294,6 @@ void MotorTest::run() {
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
-
     RTF_TEST_FAIL_IF(reached, "reached position");
 
     if (reached) {
@@ -309,6 +309,7 @@ void MotorTest::run() {
             ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
             if (!doneAll)
                 yarp::os::Time::delay(0.1);
+            times--;
         }
 
         RTF_TEST_FAIL_IF(doneAll&&ret, "checking checkMotionDone");
