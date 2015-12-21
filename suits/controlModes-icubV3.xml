@@ -5,6 +5,7 @@
     <environment>--robotname icub --context icubV3</environment>
 
     <test type="dll" param="--from controlModes_head.ini"> ControlModes </test>
+<test type="dll" param="--from controlModes_face.ini"> ControlModes </test>
 
 </suit>
 
