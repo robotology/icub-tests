@@ -33,6 +33,7 @@ MotorEncodersSignCheck::MotorEncodersSignCheck() : YarpTestCase("MotorEncodersSi
     iimd=0;
     ienc=0;
     imenc=0;
+    jPosMotion=0;
 }
 
 MotorEncodersSignCheck::~MotorEncodersSignCheck() { }
@@ -48,9 +49,8 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("home"),   "The home position must be given as the test parameter!");
 
-    RTF_ASSERT_ERROR_IF(property.check("outputStep"),    "The output_step must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("outputDelay") ,  "The output_delay must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("outputMax"),     "The output_max must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("pwmStep"),    "The output_step must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("pwmMax"),     "The output_max must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -61,14 +61,24 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
 
-    Bottle* output_step_Bottle = property.find("outputStep").asList();
-    RTF_ASSERT_ERROR_IF(output_step_Bottle!=0,"unable to parse joints parameter");
+    Bottle* pwm_step_Bottle = property.find("pwmStep").asList();
+    RTF_ASSERT_ERROR_IF(pwm_step_Bottle!=0,"unable to parse pwmStep parameter");
 
-    Bottle* output_delay_Bottle = property.find("outputDelay").asList();
-    RTF_ASSERT_ERROR_IF(output_delay_Bottle!=0,"unable to parse joints parameter");
+    Bottle* command_delay_Bottle = property.find("commandDelay").asList();
+    if(command_delay_Bottle==0)
+        RTF_TEST_REPORT("Command delay not configured. default value (0.1 sec) will be used ");
 
-    Bottle* output_max_Bottle = property.find("outputMax").asList();
-    RTF_ASSERT_ERROR_IF(output_max_Bottle!=0,"unable to parse joints parameter");
+
+    Bottle* pwm_max_Bottle = property.find("pwmMax").asList();
+    RTF_ASSERT_ERROR_IF(pwm_max_Bottle!=0,"unable to parse joints parameter");
+
+    Bottle* threshold_Bottle = property.find("PosThreshold").asList();
+    if(threshold_Bottle==0)
+        RTF_TEST_REPORT("Position threshold not configured. default value (5 deg) will be used ");
+
+    Bottle* pwm_start_Bottle = property.find("pwmStart").asList();
+    RTF_ASSERT_ERROR_IF(pwm_start_Bottle!=0,"unable to parse pwmStart parameter");
+
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -82,6 +92,7 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(imenc),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ipid),"Unable to open ipidcontrol interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -94,13 +105,37 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
     home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
-    opl_step.resize (n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_step[i]=output_step_Bottle->get(i).asDouble();
-    opl_delay.resize (n_cmd_joints);          for (int i=0; i< n_cmd_joints; i++) opl_delay[i]=output_delay_Bottle->get(i).asDouble();
-    opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=output_max_Bottle->get(i).asDouble();
+    opl_step.resize (n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_step[i]=pwm_step_Bottle->get(i).asDouble();
+    opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=pwm_max_Bottle->get(i).asDouble();
+    opl_start.resize(n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_start[i]=pwm_start_Bottle->get(i).asDouble();
+    pos_threshold.resize (n_cmd_joints);
+    if(threshold_Bottle!=0)
+    {
+        for (int i=0; i< n_cmd_joints; i++)
+            pos_threshold[i]=threshold_Bottle->get(i).asDouble();
+    }
+    else
+    {
+        for (int i=0; i< n_cmd_joints; i++)
+            pos_threshold[i]=5;
+    }
+
+    opl_delay.resize (n_cmd_joints);
+    if(command_delay_Bottle!=0)
+    {
+        for (int i=0; i< n_cmd_joints; i++)
+            opl_delay[i]=command_delay_Bottle->get(i).asDouble();
+    }
+    else
+    {
+        for (int i=0; i< n_cmd_joints; i++)
+            opl_delay[i]=0.1;
+    }
 
     jPosMotion = new jointsPosMotion(dd, jointsList);
     jPosMotion->setTolerance(2.0);
     jPosMotion->setTimeout(10); //10 sec
+
 
     return true;
 }
@@ -109,9 +144,11 @@ void MotorEncodersSignCheck::tearDown()
 {
     char buff[500];
     sprintf(buff,"Closing test module");RTF_TEST_REPORT(buff);
-    jPosMotion->setAndCheckPosControlMode();
-    jPosMotion->goTo(home);
-
+    if(jPosMotion)
+    {
+        jPosMotion->setAndCheckPosControlMode();
+        jPosMotion->goTo(home);
+    }
     delete jPosMotion;
 
     if (dd) {delete dd; dd =0;}
@@ -134,7 +171,7 @@ void MotorEncodersSignCheck::OplExecute(int i)
     double start_enc=0;
     double const delta = 10;
     bool not_moving = true;
-    double opl=0;
+    double opl=opl_start[i];
 
     iopl->setRefOutput((int)jointsList[i],opl);
     double last_opl_cmd=yarp::os::Time::now();
@@ -149,39 +186,36 @@ void MotorEncodersSignCheck::OplExecute(int i)
         iopl->setRefOutput((int)jointsList[i],opl);
         imenc->getMotorEncoder((int)jointsList[i],&enc);
 
-        if(enc > start_enc+delta)
+        if(enc > start_enc+pos_threshold[i])
         {
             iopl->setRefOutput((int)jointsList[i],0.0);
             not_moving=false;
-            sprintf(buff,"Test success (output=%f) enc=%f start_enc=%f",opl, enc, start_enc);
+            sprintf(buff,"TEST SUCCESS (pwm=%f) enc=%f start_enc=%f",opl, enc, start_enc);
             RTF_TEST_REPORT(buff);
         }
-        else if(enc < start_enc)
+        else if(enc < start_enc-pos_threshold[i])
         {
             iopl->setRefOutput((int)jointsList[i],0.0);
             not_moving=false;
-            sprintf(buff,"Test failed because enc readings drecrease (output=%f)",opl);
-            RTF_TEST_REPORT(buff);
-        }
-        else if (opl>=opl_max[i])
-        {
-            iopl->setRefOutput((int)jointsList[i],0.0);
-            not_moving=false;
-            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);
-            RTF_TEST_REPORT(buff);
+            RTF_TEST_FAIL_IF(0, RTF::Asserter::format("because enc readings drecrease enc=%f start_enc=%f (output=%f)", enc, start_enc, opl));
         }
         else if (jPosMotion->checkJointLimitsReached((int)jointsList[i]))
         {
             iopl->setRefOutput((int)jointsList[i],0.0);
             not_moving=false;
-            sprintf(buff,"Test failed because hw limit was touched (enc=%f)",enc);
-            RTF_TEST_REPORT(buff);
+            RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed because hw limit was touched (enc=%f)",enc));
         }
 
         if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
         {
             opl+=opl_step[i];
             last_opl_cmd=yarp::os::Time::now();
+        }
+        if (opl>=opl_max[i])
+        {
+            iopl->setRefOutput((int)jointsList[i],0.0);
+            not_moving=false;
+            RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed failed because max output was reached(output=%f)",opl));
         }
 
         yarp::os::Time::delay(0.010);
@@ -201,13 +235,17 @@ void MotorEncodersSignCheck::run()
     jPosMotion->setAndCheckPosControlMode();
     jPosMotion->goTo(home);
 
+
     for (unsigned int i=0 ; i<jointsList.size(); i++)
     {
+        double posout=0;
+        RTF_TEST_FAIL_IF((ipid->getOutput((int)jointsList[i], &posout)),
+                         RTF::Asserter::format(" getOutput j %d return false",(int)jointsList[i]));
+
         setModeSingle(i,VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
         iopl->setRefOutput((int)jointsList[i],0.0);
 
-        sprintf(buff,"Testing joint %d",(int)jointsList[i]);
-        RTF_TEST_REPORT(buff);
+        RTF_TEST_REPORT(RTF::Asserter::format("Testing joint %d with starting pwm = %.2f. In position j had pwm = %.2f",(int)jointsList[i], opl_start[i], posout));
         OplExecute(i);
 
         jPosMotion->setAndCheckPosControlMode();

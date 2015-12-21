@@ -52,6 +52,8 @@ private:
     yarp::sig::Vector opl_delay;
     yarp::sig::Vector max_lims;
     yarp::sig::Vector min_lims;
+    yarp::sig::Vector pos_threshold;
+    yarp::sig::Vector opl_start;
 
     int    n_part_joints;
 
@@ -61,6 +63,7 @@ private:
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IOpenLoopControl  *iopl;
     yarp::dev::IMotorEncoders    *imenc;
+    yarp::dev::IPidControl       *ipid;
 };
 
 #endif //_opticalEncoders_H
