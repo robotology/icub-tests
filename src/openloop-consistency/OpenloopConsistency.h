@@ -41,7 +41,7 @@ private:
     std::string partName;
     int* jointsList;
 
-    double zero;
+    double *home;
     int    n_part_joints;
     int    n_cmd_joints;
     enum cmd_mode_t

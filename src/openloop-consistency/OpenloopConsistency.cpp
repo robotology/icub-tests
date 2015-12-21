@@ -15,9 +15,9 @@
 
 #include "OpenloopConsistency.h"
 
-//example1    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0)"" --zero 0"
-//example2    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 "
-//example3    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
+//example1    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0)"" --home ""(0)"" "
+//example2    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)"" "
+//example3    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --home ""(0 0 0 0 0 10)"" "
 
 using namespace RTF;
 using namespace yarp::os;
@@ -53,12 +53,13 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("part"), "The part name must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("zero"),    "The zero position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("home"),    "The home positions must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
-    zero = property.find("zero").asDouble();
+    Bottle* homeBottle = property.find("home").asList();
+    RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse home parameter");
 
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
@@ -101,14 +102,21 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
     cmd_some=new double[n_cmd_joints];
     prevcurr_tot=new double[n_part_joints];
     prevcurr_some=new double[n_cmd_joints];
+    home=new double[n_cmd_joints];
     for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
-
+    for (int i=0; i <n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
     return true;
 }
 
 void OpenLoopConsistency::tearDown()
 {
+
+    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+    goHome();
+
+
     if (jointsList) {delete jointsList; jointsList =0;}
+    if(home){delete [] home; home=0;}
     if (dd) {delete dd; dd =0;}
 }
 
@@ -157,7 +165,7 @@ void OpenLoopConsistency::goHome()
     for (int i=0; i<n_cmd_joints; i++)
     {
         ipos->setRefSpeed(jointsList[i],20.0);
-        ipos->positionMove(jointsList[i],zero);
+        ipos->positionMove(jointsList[i],home[i]);
     }
 
     int timeout = 0;
@@ -167,12 +175,12 @@ void OpenLoopConsistency::goHome()
         for (int i=0; i<n_cmd_joints; i++)
         {
             ienc->getEncoder(jointsList[i],&pos_tot[jointsList[i]]);
-            if (fabs(pos_tot[jointsList[i]]-zero)<0.5) in_position++;
+            if (fabs(pos_tot[jointsList[i]]-home[i])<0.5) in_position++;
         }
         if (in_position==n_cmd_joints) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching zero position");
+            RTF_ASSERT_ERROR("Timeout while reaching home position");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -323,6 +331,10 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstSt
         for (int i=0; i<n_part_joints; i++)
         {
             if (verify_val==cmd_tot[i]) ok++;
+            else
+            {
+                RTF_TEST_REPORT(RTF::Asserter::format("verify_val=%.2f, read_val=%.2f j=%d",verify_val, cmd_tot[i], i ));
+            }
         }
         if (ok==n_part_joints)
         {
