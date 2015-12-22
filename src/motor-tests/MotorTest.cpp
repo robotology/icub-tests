@@ -290,7 +290,7 @@ void MotorTest::run() {
     reached=false;
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached = YarpTestAsserter::isApproxEqual(encoders, swapped_target, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = YarpTestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
