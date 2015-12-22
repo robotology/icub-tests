@@ -24,9 +24,8 @@
 * This tests checks if the motor encoder readings increase when positive pwm is applayed to motor.
 * This test helps you to check if RotorEncoderResolution parameter in robot's configuration files has
 * correct sign.
-* For each joint given in test's configuration file
 * The test sets one joint per time in Open Loop control mode; then applies positive pwm starting with value defined in parameter "pwmStart"
-* and increments pwm with step defined in parameter "pwmStep" until motors doesn't move of Posthreshold deg at least.
+* and increments pwm with step defined in parameter "pwmStep" until motor doesn't move of Posthreshold degree at least.
 *
 *
 * Note: This test uses RTF::YARP::jointsPosMotion class, a class for reduce time in developing test.
