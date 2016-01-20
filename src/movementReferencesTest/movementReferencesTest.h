@@ -54,6 +54,9 @@ public:
     virtual void run();
 
 private:
+    void setAndCheckControlMode(int j, int mode);
+
+
     yarp::dev::PolyDriver *dd;
     yarp::dev::IEncoders *iEncoders;
     yarp::dev::IPositionControl2 *iPosition2;
@@ -67,10 +70,12 @@ private:
     bool initialized;
     std::string robotName;
     std::string partName;
-    int numJoints;
+
     int numJointsInPart;
+    int numJoints;
     RTF::YARP::jointsPosMotion *jPosMotion;
     yarp::sig::Vector jointsList;
+    int *jList;
     
     yarp::sig::Vector targetPos;
     yarp::sig::Vector homePos;
