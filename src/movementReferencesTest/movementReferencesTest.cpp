@@ -167,11 +167,11 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
 //        RTF_TEST_REPORT(Asserter::format("targetpos [%d]=%.2f", k, targetPos[k]));
 //    }
 
-//    for(int k=0; k<numJoints; k++)
-//    {
-//        RTF_TEST_REPORT(Asserter::format("jointlist [%d]=%d", k, (int)jointsList[k]));
-//        RTF_TEST_REPORT(Asserter::format("jlist [%d]=%d", k, jList[k]));
-//    }
+ /*   for(int k=0; k<numJoints; k++)
+    {
+        RTF_TEST_REPORT(Asserter::format("jointlist [%d]=%d", k, (int)jointsList[k]));
+        RTF_TEST_REPORT(Asserter::format("jlist [%d]=%d", k, jList[k]));
+    }*/
     return true;
 }
 
@@ -245,7 +245,24 @@ void MovementReferencesTest::run() {
     RTF_TEST_FAIL_IF(iPosition2->setRefSpeeds(numJoints, jList, refVel.data()),
                 Asserter::format("setting reference speed on joints"));
     
+
+
+
+    RTF_TEST_REPORT("all joints are going to home...");
+    for (int i=0; i<numJoints; ++i)
+    {
+
+    // 1) check get reference position returns the target position set by positionMove(..)
+
+        RTF_TEST_REPORT(Asserter::format(" joint %d is going to home", jList[i]));
+
+        setAndCheckControlMode(jList[i], VOCAB_CM_POSITION);
+
+        RTF_ASSERT_FAIL_IF(jPosMotion->goToSingle(jList[i], homePos[i]),
+                Asserter::format(("go to target pos  for j %d"),jList[i]));
+    }
     
+    yarp::os::Time::delay(5);
 
     RTF_TEST_REPORT("Checking individual joints...");
 
@@ -264,7 +281,8 @@ void MovementReferencesTest::run() {
 
         RTF_TEST_FAIL_IF(jPosMotion->goToSingle(jList[i], targetPos[i]),
                 Asserter::format(("go to target pos  for j %d"),jList[i])); //Note: gotosingle use IPositioncontrol2::PositionMove
-
+        
+    yarp::os::Time::delay(0.5);
 
         RTF_TEST_FAIL_IF(iPosition2->getTargetPosition(jList[i], &rec_targetPos),
                 Asserter::format(("getting target pos for j %d"),jList[i]));
@@ -291,6 +309,8 @@ void MovementReferencesTest::run() {
         double rec_output = 0;
         RTF_TEST_FAIL_IF(iOpenLoop->setRefOutput(jList[i], output),
                Asserter::format(("set ref output for j %d"),jList[i]));
+yarp::os::Time::delay(0.5);
+
         RTF_TEST_FAIL_IF(iOpenLoop->getRefOutput(jList[i], &rec_output),
                Asserter::format(("get ref output for j %d"),jList[i]));
         
@@ -299,6 +319,7 @@ void MovementReferencesTest::run() {
 
         RTF_TEST_FAIL_IF(iPosition2->positionMove(jList[i], homePos[i]),
                 Asserter::format(("go to home  for j %d"),jList[i]));
+yarp::os::Time::delay(0.5);
         RTF_TEST_FAIL_IF(iPosition2->getTargetPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
         
@@ -322,6 +343,8 @@ void MovementReferencesTest::run() {
         double new_directPos = curr_pos+delta;
         RTF_TEST_FAIL_IF(iPosDirect->setPosition(jList[i], new_directPos),
                Asserter::format(("Direct:setPosition for j %d"),jList[i]));
+yarp::os::Time::delay(0.5);
+
         RTF_TEST_FAIL_IF(iPosDirect->getRefPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
         
@@ -348,6 +371,8 @@ void MovementReferencesTest::run() {
         double rec_vel;
         RTF_TEST_FAIL_IF(iVelocity2->velocityMove(jList[i], vel),
                Asserter::format(("IVelocity:velocityMove for j %d"),jList[i]));
+
+yarp::os::Time::delay(0.5);
         RTF_TEST_FAIL_IF(iVelocity2->getRefVelocity(jList[i], &rec_vel),
                Asserter::format(("IVelocity:getting target velocity for j %d"),jList[i]));
         res = YarpTestAsserter::isApproxEqual(vel, rec_vel, res_th, res_th);

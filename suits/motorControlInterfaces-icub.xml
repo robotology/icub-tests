@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Motor Control Interfaces Suite">
+    <description>Testing robots's Motor Control Interfaces</description>
+    <environment>--robotname icub --context icub</environment>
+
+    <!-- references -->
+    <test type="dll" param="--from motorControlInterf_rightArm.ini"> movementREferencesTest </test>
+
+
+</suit>
+
