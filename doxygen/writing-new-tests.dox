@@ -7,13 +7,13 @@
 
 * Create a folder with the name of your test case in the `icub-tests/src/` folder to keep your test codes: 
 
-```
+~~~
     $ mkdir icub-tests/src/example-test
-```
+~~~
 
 * Create a child test class inherited from the `YarpTestCase`:
 
-```c++
+~~~
 #ifndef _EXAMPLE_TEST_H_
 #define _EXAMPLE_TEST_H_
 
@@ -32,11 +32,11 @@ public:
 };
 
 #endif //_EXAMPLE_TEST_H
-```
+~~~
 
 * Implement the test case: 
 
-```c++
+~~~
 #include <Plugin.h>
 #include "ExampleTest.h"
 
@@ -90,7 +90,7 @@ The report/assertion macros store the source line number where the check/report 
 
 * Create a cmake file to build the plug-in: 
 
-```cmake
+~~~
 cmake_minimum_required(VERSION 2.8.9)
 
 # set the project name
@@ -121,15 +121,15 @@ install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)
-```
+~~~
 
 * Call your cmake file from the `icub-test/CMakeLists.txt` to build it along with the other other test plugins.
 To do that, adds the following line to the `icub-test/CMakeLists.txt`
 
-```
+~~~
     # Build example test 
     add_subdirectory(src/example-test)
-```
+~~~
 
 Please check the `icub-tests/example` folder for a template for developing tests for the iCub. 
 
@@ -138,17 +138,17 @@ Please check the `icub-tests/example` folder for a template for developing tests
 As it is documented here ([*Running test case plug-ins using testrunner*](http://robotology.github.io/robot-testing/documentation/testrunner.html)) 
 you can run a single test case or run it with the other tests using a test suite.  For example, to run a single test case: 
 
-```
+~~~
     testrunner --verbose --test plugins/ExampleTest.so  --param "--name MyExampleTest"
-```
+~~~
 
 Notice that this test require the `yarpserver` to be running and it contains tests that are programmed to succeed and some that are programmed to fail.
 
 or to run the iCubSim camera test whith the test configuration file:
 
-```
+~~~
     testrunner --verbose --test plugins/CameraTest.so --param "--from camera_right.ini" --environment "--robotname icubSim"
-```
+~~~
 
 This runs the icubSim right-camera test with the parameters specified in the `right_camera.ini` which can be found in `icub-tests/suits/contexts/icubSim` folder. This test assumes you are running `yarpserver` and the iCub simulator (i.e. `iCub_SIM`).
 
@@ -160,7 +160,7 @@ Notice that the environment parameter `--robotname icubSim` is used to locate th
 You can update one of the existing suite XML files to add your test case plug-in and its parameters or create a new test suite which keeps all the relevant test cases. 
 For example the `basic-icubSim.xml` test suite keeps the basic tests for cameras and motors: 
 
-```xml
+~~~
 <?xml version="1.0" encoding="UTF-8"?>
 
 <suit name="Basic Tests Suite">
@@ -176,14 +176,13 @@ For example the `basic-icubSim.xml` test suite keeps the basic tests for cameras
     <test type="dll" param="--from test_right_arm.ini"> MotorTest </test>
     <test type="dll" param="--from test_left_arm.ini"> MotorTest </test>
 </suit>
-
-```
+~~~
 
 Then you can run all the test cases from the test suite: 
 
-```
+~~~
     testrunner --verbose --suit icub-tests/suits/basics-icubSim.xml
-```
+~~~
 
 The `testrunner`, first, launches the iCub simulator and then runs all the tests one after each other. After running all the test cases, the `tesrunner` stop the simulator. If the 
 iCub simulator crashes during the test run, the `testrunner` re-launchs it and continues running the remaining tests. 
