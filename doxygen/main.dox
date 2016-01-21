@@ -1,0 +1,20 @@
+/**
+@mainpage iCub-tests main page
+
+The `icub-tests` repository contains tests for the iCub robot. Tests are written using the Robot Testing Framework (RTF). 
+See https://github.com/robotology/robot-testing for how to use RTF. 
+
+\li Getting started: \ref installation
+\li Getting started: \ref writing-and-running
+\li List of tests: \ref icub-tests
+
+\section contributors Contributors
+
+\li Ali Paikan 
+\li Lorenzo Natale
+\li Silvio Traversaro
+\li Alessandro Scalzo
+\li Marco Randazzo
+
+**/
+

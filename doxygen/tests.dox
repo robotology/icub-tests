@@ -1,0 +1,21 @@
+/**
+\defgroup icub-tests A list of available tests
+
+This page contains the list of all the tests tht are currently 
+available and documented. Each class is a test that can be 
+ran and configured independently.
+
+To add a test to this list it is enough that you add the following 
+line to the class that implements the test:
+
+\verbatim
+
+\ingroup icub-tests
+
+\endverbatim
+
+Do not forget to generate the documentation either locally or 
+online following the instructions 
+<a href="https://github.com/robotology/icub-tests/">here</a>.
+
+*/
