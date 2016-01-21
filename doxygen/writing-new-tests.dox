@@ -82,7 +82,7 @@ void ExampleTest::run() {
     // add more 
     // ...
 }
-```
+~~~
 
 Notice: The `RTF_TEST_CHECK`, `RTF_TEST_REPORT` do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include `_ASSERT_` within their names (e.g., `RTF_ASSERT_FAIL`) throw exceptions which prevent only the current test case (Not the whole test suite) of being proceed. The error/failure messages thrown by the exceptions are caught. (See [*Basic Assertion macros*](http://robotology.github.io/robot-testing/documentation/TestAssert_8h.html)). 
 
