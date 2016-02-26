@@ -100,7 +100,7 @@ private:
     yarp::sig::Vector min_lims;
     yarp::sig::Vector outputLimit;
     yarp::sig::Vector outOfBoundPos;
-
+    yarp::sig::Vector toleranceList;
     yarp::sig::Vector home;
     yarp::sig::Vector speed;
 
