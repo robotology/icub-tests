@@ -288,7 +288,7 @@ bool JointLimits::goToSingleExceed(int i, double position_to_reach, double limit
         //I reached the out of bound target. That's bad!
         return (true);
     }
-    if (fabs(tmp - limit)<tolerance)
+    if (fabs(tmp - limit)<toleranceList[i])
     {
         //I'm still near the joint limit. That's fine.
         return (false);
@@ -334,7 +334,7 @@ void JointLimits::run()
     //2) check that max_limit + outOfBoundPos is NOT reachable
         sprintf(buff, "Testing that max limit cannot be exceeded, joint %d, max limit: %f", (int)jointsList[i], max_lims[i]); RTF_TEST_REPORT(buff);
         res = goToSingleExceed(i, max_lims[i] + outOfBoundPos[i], max_lims[i], & reached_pos);
-        RTF_TEST_CHECK (res, Asserter::format("check if joint %d desn't exced max limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], max_lims[i] + outOfBoundPos[i], reached_pos, max_lims[i]));
+        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced max limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], max_lims[i] + outOfBoundPos[i], reached_pos, max_lims[i]));
         //if (res)
         //{
         //    goToSingle(i, home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
@@ -358,7 +358,7 @@ void JointLimits::run()
     //4) check that min_limit - outOfBoundPos is NOT reachable
         sprintf(buff, "Testing that min limit cannot be exceeded, joint %d, min limit: %f", (int)jointsList[i], min_lims[i]); RTF_TEST_REPORT(buff);
         res = goToSingleExceed(i, min_lims[i] - outOfBoundPos[i], min_lims[i], & reached_pos);
-        RTF_TEST_CHECK (res, Asserter::format("check if joint %d desn't exced min limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], min_lims[i] - outOfBoundPos[i], reached_pos, min_lims[i]));
+        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced min limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], min_lims[i] - outOfBoundPos[i], reached_pos, min_lims[i]));
         
         //if (res)
         //{
