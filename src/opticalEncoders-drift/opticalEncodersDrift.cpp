@@ -239,7 +239,7 @@ void OpticalEncodersDrift::run()
             double curr_val=0;
             if (go_to_max==false) curr_val = min[i];
             else                  curr_val = max[i];
-            if (fabs(enc_jnt[i]-curr_val)<0.5) in_position++;
+            if (fabs(enc_jnt[i]-curr_val)<tolerance) in_position++;
         }
         if (in_position==jointsList.size()) reached=true;
 
@@ -292,7 +292,11 @@ void OpticalEncodersDrift::run()
         }
     }
 
-    string filename = "plot.txt";
+
+    string filename = "plot";
+    filename += partName;
+    filename += ".txt";
+
     saveToFile(filename,dataToPlot);
     char plotstring[1000];
     //gnuplot -e "unset key; plot for [col=1:6] 'C:\software\icub-tests\build\plugins\Debug\plot.txt' using col with lines" -persist
