@@ -12,6 +12,7 @@
 #include "PortsFrequency.h"
 #include <yarp/os/Time.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/QosStyle.h>
 
 using namespace std;
 using namespace RTF;
@@ -68,6 +69,12 @@ void PortsFrequency::run() {
         RTF_TEST_FAIL_IF(connected,
                        Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
         if(connected) {
+            // setting QOS
+            QosStyle qos;
+            qos.setPacketPriorityByLevel(QosStyle::PacketPriorityHigh);
+            qos.setThreadPriority(30);
+            qos.setThreadPolicy(1);
+            Network::setConnectionQos(ports[i].name.c_str(), port.getName(), qos);
             port.useCallback();
             Time::delay(testTime);
             port.disableCallback();
