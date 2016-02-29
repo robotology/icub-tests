@@ -87,7 +87,9 @@ void PortsFrequency::run() {
             RTF_TEST_FAIL_IF(diff < ports[i].tolerance,
                            Asserter::format("Receiver frequency is outside the desired range [%d .. %d]",
                                             ports[i].frequency-ports[i].tolerance,
-                                            ports[i].frequency+ports[i].tolerance));            
+                                            ports[i].frequency+ports[i].tolerance));
+            RTF_TEST_REPORT(Asserter::format("Lost %ld packets. received (%ld)", 
+                                             port.getPacketLostCount(), port.getCount()));
             Network::disconnect(ports[i].name.c_str(), port.getName());
         }
     }
@@ -102,6 +104,7 @@ void DataPort::onRead(yarp::os::Bottle& bot) {
         if(hasTimeStamp) {
             double tdiff = fabs(tcurrent - stm.getTime());
             dsum = dmax = dmin = tdiff;
+            prevPacketCount = stm.getCount();
         }
     }
     else {
@@ -123,6 +126,10 @@ void DataPort::onRead(yarp::os::Bottle& bot) {
             dsum += tdiff;
             dmax = (tdiff > dmax) ? tdiff : dmax;
             dmin = (dmin<0 || dmin > tdiff) ? tdiff : dmin;
+            // calculating packet losts
+            if(stm.getCount() > prevPacketCount)
+                packetLostCount += stm.getCount() - prevPacketCount - 1;
+            prevPacketCount = stm.getCount();
         }
     }
 

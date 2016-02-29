@@ -30,6 +30,8 @@ public:
         min = smin = dmin = -1.0;
         tprev = stprev = 0.0;
         count = 0;
+        prevPacketCount = 0;
+        packetLostCount = 0;
     }
 
     double getMax() { return max; }
@@ -41,13 +43,14 @@ public:
     double getDMax() { return dmax; }
     double getDMin() { return dmin; }
     double getDAvg() { return dsum/count; }
-
+    unsigned long getPacketLostCount() { return packetLostCount; }
     unsigned long getCount() { return count; }
 
     virtual void onRead(yarp::os::Bottle& bot);
 
 private:
-    unsigned long count;
+    unsigned long count, packetLostCount;
+    unsigned long prevPacketCount;
     double tprev, stprev;
     double max, min, sum;       // receiver time
     double smax, smin, ssum;    // sender time
