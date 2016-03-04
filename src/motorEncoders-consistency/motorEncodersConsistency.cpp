@@ -54,7 +54,7 @@ OpticalEncodersConsistency::OpticalEncodersConsistency() : YarpTestCase("Optical
     acc_jnt2mot=0;
     acc_mot=0;
     cycles =10;
-    position_move_tolerance = 1.0;
+    tolerance = 1.0;
 }
 
 OpticalEncodersConsistency::~OpticalEncodersConsistency() { }
@@ -257,7 +257,7 @@ void OpticalEncodersConsistency::goHome()
         {
             double tmp=0;
             ienc->getEncoder((int)jointsList[i],&tmp);
-            if (fabs(tmp-home[i])<position_move_tolerance) in_position++;
+            if (fabs(tmp-home[i])<tolerance) in_position++;
         }
         if (in_position==jointsList.size()) break;
         if (timeout>100)
@@ -365,7 +365,7 @@ void OpticalEncodersConsistency::run()
             double curr_val = 0;
             if (go_to_max == false) curr_val = min[i];
             else                  curr_val = max[i];
-            if (fabs(enc_jnt[i] - curr_val) < position_move_tolerance) in_position++;
+            if (fabs(enc_jnt[i] - curr_val) < tolerance) in_position++;
         }
         if (in_position == jointsList.size()) reached = true;
 

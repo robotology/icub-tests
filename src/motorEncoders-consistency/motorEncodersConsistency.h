@@ -92,7 +92,6 @@ private:
     yarp::sig::Vector jointsList;
 
     double tolerance;
-    double position_move_tolerance;
 
     int    n_part_joints;
     int    cycles;
