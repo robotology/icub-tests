@@ -86,6 +86,18 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     cycles = property.find("cycles").asInt();
     RTF_ASSERT_ERROR_IF(cycles>=0,"invalid cycles");
 
+    if(property.check("plot_enabled"))
+        plot = property.find("plot").asBool();
+    else
+        plot = true;
+
+    if(plot)
+        RTF_TEST_REPORT("This test will run gnuplot utility at the end.");
+    else
+        RTF_TEST_REPORT("This test will NOT run gnuplot utility at the end.");
+
+
+
     Property options;
     options.put("device", "remote_controlboard");
     options.put("remote", "/"+robotName+"/"+partName);
@@ -175,7 +187,7 @@ void OpticalEncodersDrift::goHome()
         {
             double tmp=0;
             ienc->getEncoder((int)jointsList[i],&tmp);
-            if (fabs(tmp-home[i])<0.5) in_position++;
+            if (fabs(tmp-home[i])<tolerance) in_position++;
         }
         if (in_position==jointsList.size()) break;
         if (timeout>100)
@@ -293,15 +305,25 @@ void OpticalEncodersDrift::run()
     }
 
 
-    string filename = "plot";
+    string filename = "encDrift_plot_";
     filename += partName;
     filename += ".txt";
 
+    int num_j = jointsList.size();
     saveToFile(filename,dataToPlot);
+
     char plotstring[1000];
     //gnuplot -e "unset key; plot for [col=1:6] 'C:\software\icub-tests\build\plugins\Debug\plot.txt' using col with lines" -persist
-    sprintf (plotstring, "gnuplot -e \" unset key; plot for [col=1:%d] '%s' using col with lines \" -persist", n_part_joints,filename.c_str());
+    sprintf (plotstring, "gnuplot -e \" unset key; plot for [col=1:%d] '%s' using col with lines \" -persist", num_j,filename.c_str());
     
-    system (plotstring);
+    if(plot)
+    {
+        system (plotstring);
+    }
+    else
+    {
+        RTF_TEST_REPORT("Test is finished. Please check if collected date are ok, by using following command: ");
+        RTF_TEST_REPORT(RTF::Asserter::format("%s", plotstring));
+    }
 
 }

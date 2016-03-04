@@ -90,6 +90,8 @@ private:
     yarp::sig::Vector min;
     yarp::sig::Vector home;
     yarp::sig::Vector speed;
+
+    bool plot; //if true, the test runs gnuplot utility at end of test.
 };
 
 #endif //_opticalEncodersDRIFT_H
