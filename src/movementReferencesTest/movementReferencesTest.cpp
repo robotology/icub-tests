@@ -327,7 +327,7 @@ yarp::os::Time::delay(0.5);
         //the positionMove(homepos) command should be discarded by firmware motor controller
         res = YarpTestAsserter::isApproxEqual(homePos[i], rec_targetPos, res_th, res_th);
         RTF_TEST_CHECK(!res,
-               Asserter::format(("joint %d discards PosotinMove command while it is in opnLoop mode"),jList[i]));
+               Asserter::format(("joint %d discards PosotinMove command while it is in opnLoop mode. Set=%.2f rec=%.2f"),jList[i], homePos[i], rec_targetPos));
 
     //3) check get reference pos (directPosition mode) returns the target position set by setPosition()
         //set direct mode

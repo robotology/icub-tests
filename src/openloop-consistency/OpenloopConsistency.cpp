@@ -424,11 +424,12 @@ void OpenLoopConsistency::run()
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
     goHome();
-    verifyRefOpenloop(0,"test0a");
+    //verifyRefOpenloop(0,"test0a"); if I get openLoop reference I get last given refrence
     //verifyOutputDiff(0,"test0b"); //TO BE CHECKED
 
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test1");
+    verifyRefOpenloop(0,"test0a"); //When joint swap in openloop mode, the reference should be 0.
     verifyOutputEqual(0,"test1a");// here i can check that pos->openloop gives pwm 0.
     setRefOpenloop(10);
     verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test2");
@@ -448,7 +449,7 @@ void OpenLoopConsistency::run()
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test7");
     goHome();
-    verifyRefOpenloop(0,"test7a");
+    verifyRefOpenloop(-10,"test7a");
     //verifyOutputDiff(0,"test7b"); //TO BE CHECKED
 
 }
