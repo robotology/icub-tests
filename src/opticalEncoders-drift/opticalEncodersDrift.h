@@ -59,7 +59,7 @@ public:
 
     virtual void run();
 
-    void goHome();
+    bool goHome();
     void setMode(int desired_mode);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
 

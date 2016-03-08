@@ -171,7 +171,7 @@ void OpticalEncodersDrift::setMode(int desired_mode)
     }
 }
 
-void OpticalEncodersDrift::goHome()
+bool OpticalEncodersDrift::goHome()
 {
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
@@ -192,11 +192,13 @@ void OpticalEncodersDrift::goHome()
         if (in_position==jointsList.size()) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching zero position");
+            RTF_TEST_REPORT("Timeout while reaching home position");
+            return false;
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
+    return true;
 }
 
 void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
@@ -218,7 +220,7 @@ void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
 void OpticalEncodersDrift::run()
 {
     setMode(VOCAB_CM_POSITION);
-    goHome();
+    RTF_ASSERT_FAIL_IF(goHome(), "Test can't run");
 
     bool go_to_max=false;
     for (unsigned int i=0; i<jointsList.size(); i++)
@@ -287,7 +289,7 @@ void OpticalEncodersDrift::run()
         yarp::os::Time::delay(0.010);
     }
 
-    goHome();
+    bool isInHome = goHome();
     yarp::os::Time::delay(2.0);
 
     //automatic check, not complete yet
@@ -304,7 +306,7 @@ void OpticalEncodersDrift::run()
         }
     }
 
-
+    
     string filename = "encDrift_plot_";
     filename += partName;
     filename += ".txt";
@@ -325,5 +327,7 @@ void OpticalEncodersDrift::run()
         RTF_TEST_REPORT("Test is finished. Please check if collected date are ok, by using following command: ");
         RTF_TEST_REPORT(RTF::Asserter::format("%s", plotstring));
     }
+    
+    RTF_ASSERT_ERROR_IF(isInHome, "This part is not in home. Suit test will be terminated!");
 
 }
