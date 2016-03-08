@@ -9,13 +9,15 @@
     <test type="dll" param="--from test_motortest_right_arm.ini"> MotorTest </test>
     <test type="dll" param="--from test_motortest_left_arm.ini"> MotorTest </test>
 
-    <!-- Joint Limits -->
+    <!-- Joint Limits 
+    Removed these tests because jointsLimits test depends on robot type (CAN or ethernet.)
+    Please use jointsLimits_robotCan.xml or jointsLimits_robotEth.xml suit to check limits.
     <test type="dll" param="--from joint_limits_right_arm.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_left_arm.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_right_leg.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_left_leg.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_torso.ini"> JointLimits </test>
-    <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test> -->
 	
     <!-- Openloop -->
 	<test type="dll" param="--from openloop_consistency_right_arm.ini"> OpenLoopConsistency </test>
