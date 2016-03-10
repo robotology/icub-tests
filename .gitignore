@@ -2,3 +2,5 @@ build
 *.swp
 *.*~
 CMakeLists.txt.user
+result.txt
+

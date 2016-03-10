@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Test Suite">
+    <description>A Suit example</description>
+    <environment></environment>
+    <fixture param="--probability 0.5"> ExampleFixture </fixture>
+
+    <!-- Test cases -->
+    <test type="dll" param="--name Example1"> ExampleTest </test>
+    <test type="dll" param="--name Example2"> ExampleTest </test>
+    <test type="dll" param="--name Example3"> ExampleTest </test>
+    <test type="dll" param="--name Example4"> ExampleTest </test>
+
+</suit>
+
