@@ -26,4 +26,4 @@ To update documentation follow these steps:
 * Silvio Traversaro
 * Alessandro Scalzo
 * Marco Randazzo
-
+* Valentina Gaggero
