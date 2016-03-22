@@ -265,25 +265,47 @@ bool JointLimits::goToSingle(int i, double pos, double *reached_pos)
     return(true);
 }
 
-bool JointLimits::goToSingleExceed(int i, double position_to_reach, double limit, double *reached_pos)
+bool JointLimits::goToSingleExceed(int i, double position_to_reach, double limit, double reachedLimit, double *reached_pos)
 {
     ipos->setRefSpeed((int)jointsList[i], speed[i]);
     ipos->positionMove((int)jointsList[i], position_to_reach);
     double tmp = 0;
-
+    bool excededLimit = false;
     int timeout = 0;
+    double limitToCheck;
+    if(fabs(reachedLimit-limit)>toleranceList[i])
+    {
+        //if i'm here joint did NOT reached the limit and I would check joint doesn't exced reached limit
+        limitToCheck = reachedLimit;
+    }
+    else
+    {
+        limitToCheck = limit;
+    }
     while (1)
     {
         ienc->getEncoder((int)jointsList[i], &tmp);
-        if (fabs(tmp - position_to_reach)<toleranceList[i]) break;
-        if (timeout>100) break;
+        if(fabs(tmp - limitToCheck)>toleranceList[i])
+        {
+            excededLimit = true;
+            //RTF_TEST_REPORT (Asserter::format("j %d exced limitTocheck %f: reached %f",(int)jointsList[i],  limitToCheck, tmp));
+            break;
+        }
+        if (fabs(tmp - position_to_reach)<toleranceList[i])
+        {
+            excededLimit = true;
+            //RTF_TEST_REPORT (Asserter::format("j %d is near position_to_reach %f: reached %f",(int)jointsList[i],  position_to_reach, tmp));
+            break;
+        }
+
+        if (timeout>50) break;
         yarp::os::Time::delay(0.2);
         timeout++;
     }
 
     *reached_pos = tmp;
 
-    if (fabs(tmp - position_to_reach)<toleranceList[i])
+/*    if (fabs(tmp - position_to_reach)<toleranceList[i])
     {
         //I reached the out of bound target. That's bad!
         return (true);
@@ -293,9 +315,14 @@ bool JointLimits::goToSingleExceed(int i, double position_to_reach, double limit
         //I'm still near the joint limit. That's fine.
         return (false);
     }
-
     //I dont know where I am, that's bad!
     return(true);
+*/
+
+    if( excededLimit)
+        return (true);
+    else
+        return(false);
 }
 
 
@@ -318,6 +345,7 @@ void JointLimits::run()
     {
         bool res;
         double reached_pos=0;
+        double excededpos_reached = 0;
 
     //1) Check max limit
         sprintf(buff,"Testing if max limit is reachable, joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);RTF_TEST_REPORT(buff);
@@ -333,8 +361,8 @@ void JointLimits::run()
         
     //2) check that max_limit + outOfBoundPos is NOT reachable
         sprintf(buff, "Testing that max limit cannot be exceeded, joint %d, max limit: %f", (int)jointsList[i], max_lims[i]); RTF_TEST_REPORT(buff);
-        res = goToSingleExceed(i, max_lims[i] + outOfBoundPos[i], max_lims[i], & reached_pos);
-        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced max limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], max_lims[i] + outOfBoundPos[i], reached_pos, max_lims[i]));
+        res = goToSingleExceed(i, max_lims[i] + outOfBoundPos[i], max_lims[i], reached_pos, &excededpos_reached);
+        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced max limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], max_lims[i] + outOfBoundPos[i], excededpos_reached, max_lims[i]));
         //if (res)
         //{
         //    goToSingle(i, home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
@@ -357,8 +385,8 @@ void JointLimits::run()
         
     //4) check that min_limit - outOfBoundPos is NOT reachable
         sprintf(buff, "Testing that min limit cannot be exceeded, joint %d, min limit: %f", (int)jointsList[i], min_lims[i]); RTF_TEST_REPORT(buff);
-        res = goToSingleExceed(i, min_lims[i] - outOfBoundPos[i], min_lims[i], & reached_pos);
-        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced min limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], min_lims[i] - outOfBoundPos[i], reached_pos, min_lims[i]));
+        res = goToSingleExceed(i, min_lims[i] - outOfBoundPos[i], min_lims[i], reached_pos, & excededpos_reached);
+        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced min limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], min_lims[i] - outOfBoundPos[i], excededpos_reached, min_lims[i]));
         
         //if (res)
         //{

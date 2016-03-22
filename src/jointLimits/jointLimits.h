@@ -73,7 +73,7 @@ public:
 
     void goTo(yarp::sig::Vector position);
     bool goToSingle(int i, double pos, double *reached_pos);
-    bool goToSingleExceed(int i, double position_to_reach, double limit, double *reached_pos);
+    bool goToSingleExceed(int i, double position_to_reach, double limit, double reachedLimit, double *reached_pos);
 
     void setMode(int desired_mode);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
