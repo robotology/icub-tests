@@ -15,7 +15,7 @@
 
     <module>
         <name>yarp</name>
-        <parameters>help</parameters>
+        <parameters>read /dummy</parameters>
         <node>localhost</node>
         <prefix></prefix>
         <dependency>
