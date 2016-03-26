@@ -6,28 +6,13 @@
         <author email="silvio.traversaro@iit.it">Silvio Traversaro</author>
     </authors>
     
-    
-    <module>
+     <module>
         <name>gzserver</name>
-        <parameters>world/icub_fixed.world</parameters>
+        <parameters>--verbose world/icub_fixed.world</parameters>
         <node>localhost</node>
-    </module>
-
-    <module>
-        <name>yarp</name>
-        <parameters>read /dummy</parameters>
-        <node>localhost</node>
-        <prefix></prefix>
-        <dependency>
-            <port timeout="10">/icubGazeboSim/left_leg/stateExt:o</port>
-            <port timeout="10">/icubGazeboSim/right_leg/stateExt:o</port>
-            <port timeout="10">/icubGazeboSim/left_arm/analog:o</port>
-            <port timeout="10">/icubGazeboSim/right_arm/analog:o</port>
-            <port timeout="10">/icubGazeboSim/left_leg/analog:o</port>
-            <port timeout="10">/icubGazeboSim/left_foot/analog:o</port>
-            <port timeout="10">/icubGazeboSim/right_leg/analog:o</port>
-            <port timeout="10">/icubGazeboSim/right_foot/analog:o</port>
-        </dependency>
+        <ensure>
+            <wait>20</wait>
+        </ensure>
     </module>
     
 </application>
