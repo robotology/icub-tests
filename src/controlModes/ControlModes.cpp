@@ -490,39 +490,49 @@ void ControlModes::run()
 
     //------ check all modes when in HW_FAULT ------
     setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test22");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test22");
     verifyAmplifier(0,"test22b");
 
     setMode(VOCAB_CM_POSITION_DIRECT,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test23");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test23");
     verifyAmplifier(0,"test23b");
 
     setMode(VOCAB_CM_VELOCITY,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test24");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test24");
     verifyAmplifier(0,"test24b");
 
     setMode(VOCAB_CM_TORQUE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test25");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test25");
     verifyAmplifier(0,"test25b");
 
     setMode(VOCAB_CM_MIXED,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test26");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test26");
     verifyAmplifier(0,"test26b");
 
     setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test27");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test27");
     verifyAmplifier(0,"test27b");
 
     setMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test28");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test28");
     verifyAmplifier(0,"test28b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_HW_FAULT,VOCAB_IM_COMPLIANT,"test29");
+    checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test29");
     verifyAmplifier(0,"test29b");
 
     setMode(VOCAB_CM_FORCE_IDLE,VOCAB_IM_COMPLIANT);
-    verifyMode(VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test30"); //VOCAB_CM_IDLE is intentional
+    for (int i=0; i<n_cmd_joints; i++)
+    {
+        if(jointTorqueCtrlEnabled[jointsList[i]])
+        {
+            verifyModeSingle(jointsList[i], VOCAB_CM_IDLE,VOCAB_IM_COMPLIANT,"test30-comp");
+        }
+        else
+        {
+            verifyModeSingle(jointsList[i], VOCAB_CM_IDLE,VOCAB_IM_STIFF,"test30-stiff");
+        }
+    }
     verifyAmplifier(0,"test30b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
