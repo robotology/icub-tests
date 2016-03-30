@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Basic Tests Suite">
-    <description>Testing robot's basic features</description>
+<suit name="ft sensor tests">
+    <description>Testing ft sensors</description>
     <environment>--robotname icub</environment>
-    <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture-->
-
-    <!-- Camera -->
-    <test type="dll" param="--from camera_right.ini"> CameraTest </test>
-    <test type="dll" param="--from camera_left.ini"> CameraTest </test> 
-
-    <!-- Interfaces (wrappers) frequency -->
-    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
 
     <!-- Sensors -->
     <test type="dll" param="--from test_ft_left_arm.ini"> FtSensorTest </test>

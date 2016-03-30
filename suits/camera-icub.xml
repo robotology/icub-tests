@@ -4,9 +4,6 @@
     <description>Testing robots's Cameras</description>
     <environment>--robotname icub</environment>
 
-    <!-- Interfaces (wrappers) frequency -->
-    <test type="dll" param="--from cam_stream.ini"> PortsFrequency </test>
-
     <!-- Camera -->
     <test type="dll" param="--from camera_right.ini"> CameraTest </test>
     <test type="dll" param="--from camera_left.ini"> CameraTest </test> 

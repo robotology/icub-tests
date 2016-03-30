@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="robot's stream frequency test">
+    <description>Testing robot's streams frequency</description>
+    <environment>--robotname icub</environment>
+
+    <!-- Interfaces (wrappers) frequency -->
+    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
+    
+</suit>
+
