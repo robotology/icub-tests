@@ -5,8 +5,8 @@
     <environment>--robotname icub --context icub</environment>
 
     <!-- references -->
-    <test type="dll" param="--from motorControlInterf_rightArm.ini"> movementREferencesTest </test>
-
+    <test type="dll" param="--from motorControlInterf_rightArm.ini"> movementReferencesTest </test>
+    <test type="dll" param="--from motorControlInterf_head.ini"> movementReferencesTest </test>
 
 </suit>
 

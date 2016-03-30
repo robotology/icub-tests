@@ -7,7 +7,7 @@
 
 
 cmake_minimum_required(VERSION 2.8.9)
-set(PROJECTNAME movementREferencesTest)
+set(PROJECTNAME movementReferencesTest)
 project(${PROJECTNAME})
 
 find_package(RTF)
