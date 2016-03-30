@@ -2,11 +2,22 @@
 
 <suit name="Motor Control Interfaces Suite">
     <description>Testing robots's Motor Control Interfaces</description>
-    <environment>--robotname icub --context icub</environment>
+    <environment>--robotname icub</environment>
 
     <!-- references -->
     <test type="dll" param="--from motorControlInterf_rightArm.ini"> movementReferencesTest </test>
     <test type="dll" param="--from motorControlInterf_head.ini"> movementReferencesTest </test>
+
+    <!-- check motion done and Iposition, IEncoder interfaces test -->
+    <test type="dll" param="--from motortest_head.ini"> MotorTest </test> 
+    <test type="dll" param="--from motortest_face.ini"> MotorTest </test>
+    <test type="dll" param="--from motortest_right_arm.ini"> MotorTest </test>
+    <test type="dll" param="--from motortest_left_arm.ini"> MotorTest </test>
+
+    <!-- Openloop (until now used only on icubV3 head) -->
+    <test type="dll" param="--from openloopConsistency_head.ini"> OpenLoopConsistency </test>
+    <test type="dll" param="--from openLoopConsistency_face.ini"> OpenloopConsistency </test>
+
 
 </suit>
 
