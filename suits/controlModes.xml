@@ -2,10 +2,10 @@
 
 <suit name="Control modes Tests Suite">
     <description>Testing control modes</description>
-    <environment>--robotname icub --context icubV3</environment>
+    <environment>--robotname icub </environment>
 
     <test type="dll" param="--from controlModes_head.ini"> ControlModes </test>
-<test type="dll" param="--from controlModes_face.ini"> ControlModes </test>
+    <test type="dll" param="--from controlModes_face.ini"> ControlModes </test>
 
 </suit>
 

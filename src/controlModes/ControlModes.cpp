@@ -52,12 +52,16 @@ bool ControlModes::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("part"), "The part name must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("zero"),    "The zero position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF(property.check("home"),    "The home positions must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
+    if(property.check("tolerance"))
+        tolerance = property.find("tolerance").asDouble();
+    else
+        tolerance = 0.5;
 
-    zero = property.find("zero").asDouble();
+    RTF_TEST_REPORT(RTF::Asserter::format("Tolerance of %.2f is used to check home position", tolerance));
 
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
@@ -104,7 +108,12 @@ bool ControlModes::setup(yarp::os::Property& property) {
     prevcurr_tot=new double[n_part_joints];
     prevcurr_some=new double[n_cmd_joints];
     jointTorqueCtrlEnabled = new int[n_part_joints];
+    home_pos = new double[n_cmd_joints];
+
     for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
+
+    Bottle* homePosBottle = property.find("home").asList();
+    for (int i=0; i <n_cmd_joints; i++) home_pos[i]=homePosBottle->get(i).asDouble();
 
     checkJointWithTorqueMode();
     return true;
@@ -327,7 +336,7 @@ void ControlModes::goHome()
     for (int i=0; i<n_cmd_joints; i++)
     {
         ipos->setRefSpeed(jointsList[i],20.0);
-        ipos->positionMove(jointsList[i],zero);
+        ipos->positionMove(jointsList[i],home_pos[i]);
     }
 
     int timeout = 0;
@@ -337,7 +346,7 @@ void ControlModes::goHome()
         for (int i=0; i<n_cmd_joints; i++)
         {
             ienc->getEncoder(jointsList[i],&pos_tot[jointsList[i]]);
-            if (fabs(pos_tot[jointsList[i]]-zero)<0.5) in_position++;
+            if (fabs(pos_tot[jointsList[i]]-home_pos[i])<tolerance) in_position++;
         }
         if (in_position==n_cmd_joints) break;
         if (timeout>100)

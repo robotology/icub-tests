@@ -70,9 +70,10 @@ private:
     int* jointsList;
     int* jointTorqueCtrlEnabled;
 
-    double zero;
+    double *home_pos;
     int    n_part_joints;
     int    n_cmd_joints;
+    double tolerance;
     enum cmd_mode_t
     { 
       single_joint = 0,
