@@ -82,6 +82,7 @@ public:
     void saveToFile(std::string filename, yarp::os::Bottle &b);
 
 private:
+    std::string getPath(const std::string& str);
     std::string robotName;
     std::string partName;
     std::string plotString1;
@@ -92,6 +93,7 @@ private:
     yarp::sig::Vector jointsList;
 
     double tolerance;
+    bool plot_enabled;
 
     int    n_part_joints;
     int    cycles;

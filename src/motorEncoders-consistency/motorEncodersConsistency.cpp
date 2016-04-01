@@ -55,6 +55,7 @@ OpticalEncodersConsistency::OpticalEncodersConsistency() : YarpTestCase("Optical
     acc_mot=0;
     cycles =10;
     tolerance = 1.0;
+    plot_enabled = false;
 }
 
 OpticalEncodersConsistency::~OpticalEncodersConsistency() { }
@@ -80,10 +81,15 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF(property.check("matrix"),       "The coupling matrix must be given!");
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
-    plotString1 = property.find("plotString1").asString();
-    plotString2 = property.find("plotString2").asString();
-    plotString3 = property.find("plotString3").asString();
-    plotString4 = property.find("plotString4").asString();
+    if(property.check("plot_enabled"))
+        plot_enabled = property.find("plot_enabled").asBool();
+    /*if(plot_enabled)
+    {
+        plotString1 = property.find("plotString1").asString();
+        plotString2 = property.find("plotString2").asString();
+        plotString3 = property.find("plotString3").asString();
+        plotString4 = property.find("plotString4").asString();
+    }*/
     Bottle* jointsBottle = property.find("joints").asList();
     RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
 
@@ -344,19 +350,19 @@ void OpticalEncodersConsistency::run()
         ret = imotenc->getMotorEncoderAccelerations(tmp_vector.data()); for (unsigned int i = 0; i < jointsList.size(); i++) acc_mot[i] = tmp_vector[jointsList(i)];
         RTF_ASSERT_ERROR_IF(ret, "imotenc->getMotorEncoderAccelerations returned false");
 
-        if (enc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoders data"); test_data_is_valid = true; }
-        if (enc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoders data"); test_data_is_valid = true; }
-        if (vel_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderSpeeds data"); test_data_is_valid = true; }
-        if (vel_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderSpeeds data"); test_data_is_valid = true; }
-        if (acc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderAccelerations data"); test_data_is_valid = true; }
-        if (acc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderAccelerations data"); test_data_is_valid = true; }
+        //if (enc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoders data"); test_data_is_valid = true; }
+        //if (enc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoders data"); test_data_is_valid = true; }
+        //if (vel_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderSpeeds data"); test_data_is_valid = true; }
+        //if (vel_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderSpeeds data"); test_data_is_valid = true; }
+        //if (acc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderAccelerations data"); test_data_is_valid = true; }
+        //if (acc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderAccelerations data"); test_data_is_valid = true; }
 
         enc_jnt2mot = matrix * enc_jnt;
         vel_jnt2mot = matrix * vel_jnt;
-        acc_jnt2mot = matrix * acc_jnt;
+        //acc_jnt2mot = matrix * acc_jnt;
         for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];
         for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[i];
-        for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
+        //for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
 
         bool reached = false;
         int in_position = 0;
@@ -404,16 +410,16 @@ void OpticalEncodersConsistency::run()
         diff_vel_jnt2mot = (vel_jnt2mot - prev_vel_jnt2mot) / 0.010;
         diff_acc_jnt = (acc_jnt - prev_acc_jnt) / 0.010;
         diff_acc_mot = (acc_mot - prev_acc_mot) / 0.010;
-        diff_acc_jnt2mot = (acc_jnt2mot - prev_acc_jnt2mot) / 0.010;
+        //diff_acc_jnt2mot = (acc_jnt2mot - prev_acc_jnt2mot) / 0.010;
         prev_enc_jnt = enc_jnt;
         prev_enc_mot = enc_mot;
         prev_enc_jnt2mot = enc_jnt2mot;
         prev_vel_jnt = vel_jnt;
         prev_vel_mot = vel_mot;
         prev_vel_jnt2mot = vel_jnt2mot;
-        prev_acc_jnt = acc_jnt;
-        prev_acc_mot = acc_mot;
-        prev_acc_jnt2mot = acc_jnt2mot;
+       // prev_acc_jnt = acc_jnt;
+        //prev_acc_mot = acc_mot;
+       // prev_acc_jnt2mot = acc_jnt2mot;
 
         if (first_time)
         {
@@ -466,19 +472,53 @@ void OpticalEncodersConsistency::run()
 
     goHome();
 
-    string filename1 = "plot_test1.txt";
+    yarp::os::ResourceFinder rf;
+    rf.setDefaultContext("scripts");
+
+    string partfilename = partName+".txt";
+    string testfilename = "encConsis_";
+    string filename1 = testfilename + "jointPos_MotorPos_" + partfilename;
     saveToFile(filename1,dataToPlot_test1);
-    string filename2 = "plot_test2.txt";
+    string filename2 = testfilename + "jointVel_motorVel_" + partfilename;
     saveToFile(filename2,dataToPlot_test2);
-    string filename3 = "plot_test3.txt";
+    string filename3 = testfilename + "joint_derivedVel_vel_" + partfilename;
     saveToFile(filename3,dataToPlot_test3);
-    string filename4 = "plot_test4.txt";
+    string filename4 = testfilename + "motor_derivedVel_vel_" + partfilename;
     saveToFile(filename4,dataToPlot_test4);
 
-    system(plotString1.c_str());
-    system(plotString2.c_str());
-    system(plotString3.c_str());
-    system(plotString4.c_str());
+    //find octave scripts
+    std::string octaveFile = rf.findFile("encoderConsistencyPlotAll.m");
+    if(octaveFile.size() == 0)
+    {
+        yError()<<"Cannot find file encoderConsistencyPlotAll.m";
+        return;
+    }
 
-    RTF_ASSERT_ERROR_IF(test_data_is_valid,"Invalid data obtained from encoders interface");
+    //prepare octave command
+    std::string octaveCommand= "octave --path "+ getPath(octaveFile);
+    stringstream ss;
+    ss << jointsList.size();
+    string str = ss.str();
+    octaveCommand+= " -q --eval \"encoderConsistencyPlotAll('" +partName +"'," + str +")\"  --persist";
+
+    if(plot_enabled)
+    {
+        int ret = system (octaveCommand.c_str());
+    }
+    else
+    {
+         yInfo() << "Test has collected all data. You need to plot data to check is test is passed";
+         yInfo() << "Please run following command to plot data.";
+         yInfo() << octaveCommand;
+         yInfo() << "To exit from Octave application please type 'exit' command.";
+    }
+   // RTF_ASSERT_ERROR_IF(test_data_is_valid,"Invalid data obtained from encoders interface");
+}
+
+
+std::string OpticalEncodersConsistency::getPath(const std::string& str)
+{
+  size_t found;
+  found=str.find_last_of("/\\");
+  return(str.substr(0,found));
 }
