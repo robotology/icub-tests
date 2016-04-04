@@ -58,6 +58,9 @@ add_subdirectory(src/motor-stiction)
 # Build force sensor tests
 add_subdirectory(src/ftsensor-tests)
 
+# Build accelerometers tests
+add_subdirectory(src/accelerometers-reading)
+
 # Build controlModes tests
 add_subdirectory(src/controlModes)
 
