@@ -3,11 +3,8 @@ function oneFile_plot(filename, titleStr, numofjoint)
 
 data = load(filename);
 for i= 1:1:numofjoint
-    if(numofjoint>4)
-        subplot(3, 2, i, "align");
-    else
-        subplot(numofjoint, 1, i, "align");
-    endif
+    
+    subplot(numofjoint, 1, i, "align");
     printf("index %d\n", i);
     plot(data(:, 0+i), "r", data(:,numofjoint+i), "b");
     refresh();
