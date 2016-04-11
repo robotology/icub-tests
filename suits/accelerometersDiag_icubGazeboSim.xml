@@ -1,9 +1,9 @@
 <?xml version="0.1" encoding="UTF-8"?>
 
-<suit name="Accelerometers Diagnosis Suite (ETHERNET Robot)">
+<suit name="Accelerometers Diagnosis Suite (Gazebo Robot)">
     <description>Testing robot's MTB accelerometers</description>
-    <environment>--robotname icub --bustype eth --context icubEth</environment>
-    <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture> -->
+    <environment>--robotname icubGazeboSim --bustype eth --context icubEth</environment>
+    <fixture param="--fixture icubgazebosim-fixture.xml"> yarpmanager </fixture>
 
     <!-- Interfaces (wrappers) frequency -->
     <!-- time based test: disable until we use /clock for test synchronization 

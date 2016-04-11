@@ -2,8 +2,8 @@
 
 <suit name="Accelerometers Diagnosis Suite (CAN Robot)">
     <description>Testing robot's MTB accelerometers</description>
-    <environment>--robotname icub --bustype can --context icub</environment>
-    <fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture>
+    <environment>--robotname icub --bustype can --context icubCan</environment>
+    <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture> -->
 
     <!-- Interfaces (wrappers) frequency -->
     <!-- time based test: disable until we use /clock for test synchronization 
@@ -12,8 +12,10 @@
     <!-- Sensors -->
     <test type="dll" param="--from accelerometersReading_left_arm.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_right_arm.ini"> AccelerometersReading </test>
-    <test type="dll" param="--from accelerometersReading_left_leg.ini"> AccelerometersReading </test>
-    <test type="dll" param="--from accelerometersReading_right_leg.ini"> AccelerometersReading </test>
+    <test type="dll" param="--from accelerometersReading_left_hand.ini"> AccelerometersReading </test>
+    <test type="dll" param="--from accelerometersReading_right_hand.ini"> AccelerometersReading </test>
+    <test type="dll" param="--from accelerometersReading_left_foot.ini"> AccelerometersReading </test>
+    <test type="dll" param="--from accelerometersReading_right_foot.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_torso.ini"> AccelerometersReading </test>
 
     <!-- Detect sensors that stream duplicate readings -->

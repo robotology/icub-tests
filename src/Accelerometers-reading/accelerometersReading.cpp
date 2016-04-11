@@ -34,7 +34,7 @@ sampleTime(0.010)
 AccelerometersReading::~AccelerometersReading() { }
 
 bool AccelerometersReading::setup(yarp::os::Property &configuration) {
-
+    std::cout << "properties...\n" << configuration.toString() << "\n";
     // initialization goes here ...
     if(configuration.check("name"))
         setName(configuration.find("name").asString());
@@ -50,10 +50,10 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     this->robotName = configuration.find("robot").asString();
     // bus type
     std::string busTypeStr = configuration.find("bus").asString();
-    if (busTypeStr.compare("can")) {
+    if (!busTypeStr.compare("can")) {
         this->busType = BUSTYPE_CAN;
     }
-    else if (busTypeStr.compare("eth")) {
+    else if (!busTypeStr.compare("eth")) {
         this->busType = BUSTYPE_ETH;
     }
     else {
@@ -85,7 +85,7 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     }
 
     // parse the MTB sensors list
-    this->mtbListBottle = configuration.find("mtbList").asList();
+    this->mtbListBottle = new Bottle(*configuration.find("mtbList").asList());
 
     // open the port
     RTF_ASSERT_ERROR_IF(port.open("/iCubTest/" + partName + "/inertialMTB:i"),
@@ -97,7 +97,7 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     RTF_ASSERT_ERROR_IF(Network::connect(portName, port.getName()),
                         Asserter::format("could not connect to remote source port %s, MTB inertial sensor unavailable",
                                          portName.c_str()));
-    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbListBottle));
+    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbListBottle->toString().c_str()));
 
     return true;
 }
@@ -112,7 +112,7 @@ void AccelerometersReading::run() {
     RTF_TEST_REPORT("Reading MTB accelerometers:");
 
     //Read data from sensors for about 5s
-    for(int cycleIdx=0; cycleIdx<100; cycleIdx++)
+    for(int cycleIdx=0; cycleIdx<500; cycleIdx++)
     {
         ostringstream sizeErrorMessage, invalidMeasErrorMessage;
 
@@ -125,19 +125,19 @@ void AccelerometersReading::run() {
         sizeErrorMessage
         << "sensor stream size issue: we should get "
         << this->mtbListBottle->size()
-        << "sensor measurement vectors of 3 components!";
+        << " sensor measurement vectors of 3 components!";
         RTF_TEST_FAIL_IF(readSensor->size() == 3*(this->mtbListBottle->size()), sizeErrorMessage.str());
 
         // look for invalid data
         for(int sensorIdx=0; sensorIdx<this->mtbListBottle->size(); sensorIdx++)
         {
-            Vector sensorMeas = readSensor->subVector(sensorIdx, sensorIdx+2);
+            Vector sensorMeas = readSensor->subVector(sensorIdx*3, sensorIdx*3+2);
             invalidMeasErrorMessage
             << this->mtbListBottle->get(sensorIdx).asString()
             << " sensor measurement is invalid";
-            RTF_TEST_FAIL_IF(sensorMeas(0) != -1
-                             || sensorMeas(1) != -1
-                             || sensorMeas(2) != -1, invalidMeasErrorMessage.str());
+            RTF_TEST_FAIL_IF(sensorMeas(0) != -1.0
+                             || sensorMeas(1) != -1.0
+                             || sensorMeas(2) != -1.0, invalidMeasErrorMessage.str());
         }
 
         yarp::os::Time::delay(this->sampleTime);
