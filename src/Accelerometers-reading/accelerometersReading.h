@@ -14,8 +14,17 @@
 #include <vector>
 #include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/sig/Vector.h>
+#include "IMTBsensorParser.h"
 
+namespace yarp {
+    namespace sig {
+        class Vector;
+    }
+    namespace os {
+        class Property;
+        class Bottle;
+    }
+}
 
 /**
  * \ingroup icub-tests
@@ -57,9 +66,13 @@ private:
     busType_t busType;
     std::string portName; // source port we will read from
     yarp::os::BufferedPort<yarp::sig::Vector> port; // anonymous destination port
-    yarp::os::Bottle* mtbListBottle;
+    yarp::os::Bottle mtbList;
+    std::vector<IMTBsensorParser::sensorTypeT> mtbTypeList;
+    yarp::os::Bottle reordMtbList;
     double sampleTime;
     const double sensoReadingCycles = 500; // read MTB sensors for 5s
+    IMTBsensorParser* sensorParserPtr;
+
 };
 
 #endif //_ACCELEROMETERSREADING_H_

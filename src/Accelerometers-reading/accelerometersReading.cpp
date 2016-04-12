@@ -11,10 +11,15 @@
 #include <sstream>
 #include <rtf/dll/Plugin.h>
 #include <rtf/Asserter.h>
+#include <array>
 
 #include <yarp/os/Time.h>
+#include <yarp/sig/Vector.h>
 
-#include "accelerometersReading.h"
+#include "AccelerometersReading.h"
+#include "IMTBsensorParser.h"
+#include "MTBsensorParserCan.h"
+#include "MTBsensorParserEth.h"
 
 using namespace std;
 using namespace RTF;
@@ -48,17 +53,20 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     // set class attributes accordingly
     // robot name
     this->robotName = configuration.find("robot").asString();
-    // bus type
+    // bus type and respective sensor parser
     std::string busTypeStr = configuration.find("bus").asString();
     if (!busTypeStr.compare("can")) {
         this->busType = BUSTYPE_CAN;
+        this->sensorParserPtr = new MTBsensorParserCan();
     }
     else if (!busTypeStr.compare("eth")) {
         this->busType = BUSTYPE_ETH;
+        this->sensorParserPtr = new MTBsensorParserEth();
     }
     else {
         this->busType = BUSTYPE_UNKNOWN;
     }
+
     // port name
     // (to be removed along with opening and connecting the port if wholeBodySensors API is used)
     std::string partName = configuration.find("part").asString();
@@ -85,7 +93,11 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     }
 
     // parse the MTB sensors list
-    this->mtbListBottle = new Bottle(*configuration.find("mtbList").asList());
+    this->mtbList = *configuration.find("mtbList").asList();
+
+    // For now, sensor type will always be Accelerometers
+    this->mtbTypeList.resize(this->mtbList.size());
+    this->mtbTypeList.assign(this->mtbTypeList.size(), IMTBsensorParser::SENSORTYPE_ACC);
 
     // open the port
     RTF_ASSERT_ERROR_IF(port.open("/iCubTest/" + partName + "/inertialMTB:i"),
@@ -97,7 +109,7 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     RTF_ASSERT_ERROR_IF(Network::connect(portName, port.getName()),
                         Asserter::format("could not connect to remote source port %s, MTB inertial sensor unavailable",
                                          portName.c_str()));
-    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbListBottle->toString().c_str()));
+    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbList.toString().c_str()));
 
     return true;
 }
@@ -109,35 +121,55 @@ void AccelerometersReading::tearDown() {
 }
 
 void AccelerometersReading::run() {
+    std::string formatErrMsg;
+
     RTF_TEST_REPORT("Reading MTB accelerometers:");
 
-    //Read data from sensors for about 5s
-    for(int cycleIdx=0; cycleIdx<500; cycleIdx++)
+    /*
+     * Read data from sensors and
+     * compute the data mapping.
+     */
+    Vector *readSensor = port.read();
+    // check for reading failure
+    RTF_TEST_FAIL_IF(readSensor, "could not read inertial data from sensor");
+
+    // Check format and size. Build the sensor data mapping and save the control
+    // data (sensor IDs, types, ...)
+    RTF_TEST_FAIL_IF(this->sensorParserPtr->mapSensorData(readSensor,
+                                                          this->mtbTypeList, this->mtbList,
+                                                          this->reordMtbList, formatErrMsg), formatErrMsg);
+
+    /*
+     * Read data from sensors for about 5s
+     */
+    for(int cycleIdx=0; cycleIdx<this->sensoReadingCycles; cycleIdx++)
     {
-        ostringstream sizeErrorMessage, invalidMeasErrorMessage;
+        // error messages and sensor data buffer allocation
+        ostringstream invalidMeasErrMsg;
+        std::vector< std::array<double,3> > sensorMeasList;
 
         Vector *readSensor = port.read();
 
         // check for reading failure
         RTF_TEST_FAIL_IF(readSensor, "could not read inertial data from sensor");
 
-        // check size
-        sizeErrorMessage
-        << "sensor stream size issue: we should get "
-        << this->mtbListBottle->size()
-        << " sensor measurement vectors of 3 components!";
-        RTF_TEST_FAIL_IF(readSensor->size() == 3*(this->mtbListBottle->size()), sizeErrorMessage.str());
+        // Check that control data didn't change
+        RTF_TEST_FAIL_IF(this->sensorParserPtr->checkControlData(readSensor), "Message configuration changed");
+
+        // Get data from sensors
+        this->sensorParserPtr->parseSensorMeas(readSensor, sensorMeasList);
 
         // look for invalid data
-        for(int sensorIdx=0; sensorIdx<this->mtbListBottle->size(); sensorIdx++)
+        for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
         {
-            Vector sensorMeas = readSensor->subVector(sensorIdx*3, sensorIdx*3+2);
-            invalidMeasErrorMessage
-            << this->mtbListBottle->get(sensorIdx).asString()
+            std::array<double,3> sensorMeas = sensorMeasList[sensorIdx];
+            invalidMeasErrMsg
+            << this->reordMtbList.get(sensorIdx).toString()
             << " sensor measurement is invalid";
-            RTF_TEST_FAIL_IF(sensorMeas(0) != -1.0
-                             || sensorMeas(1) != -1.0
-                             || sensorMeas(2) != -1.0, invalidMeasErrorMessage.str());
+
+            RTF_TEST_FAIL_IF(sensorMeas[0] != -1.0
+                             || sensorMeas[1] != -1.0
+                             || sensorMeas[2] != -1.0, invalidMeasErrMsg.str());
         }
 
         yarp::os::Time::delay(this->sampleTime);

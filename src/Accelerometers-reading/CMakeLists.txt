@@ -28,7 +28,13 @@ link_libraries(${RTF_LIBRARIES}
                ${YARP_LIBRARIES})
 
 # add the source codes to build the plugin library
-add_library(${PROJECTNAME} MODULE AccelerometersReading.h
+add_library(${PROJECTNAME} MODULE IMTBsensorParser.h
+                                  MTBsensorParserCan.h
+                                  MTBsensorParserEth.h
+                                  AccelerometersReading.h
+                                  InterfaceDestructors.cpp
+                                  MTBsensorParserCan.cpp
+                                  MTBsensorParserEth.cpp
                                   AccelerometersReading.cpp)
 
 # set the installation options
