@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 #include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include "IMTBsensorParser.h"
@@ -40,7 +41,8 @@ namespace yarp {
  * | bus            | string | -     | -             | Yes      | CAN or ETHERNET based robot. | - |
  * | part           | string | -     | -             | Yes      | The name of the robot part. | e.g. left_arm |
  * | mtbList        | string | -     | -             | Yes      | The sensors data mapping. | ordered list of sensor IDs |
- * | sampleTime     | double | s     | -             | Yes      | The sample time of the control thread | |
+ * | sampleTime     | double | s     | -             | No       | The sample time of the control thread | |
+ * | dataDumpFile   | string | -     | -             | Yes      | The file holding sensor data from the data dumper.| -  |
  *
  */
 class AccelerometersReading : public YarpTestCase {
@@ -62,6 +64,12 @@ private:
         BUSTYPE_UNKNOWN
     };
 
+    virtual bool setBusType(yarp::os::Property& configuration);
+
+    virtual void setupFromLogFile(yarp::os::Property& configuration);
+
+    virtual void setupFromYarpPort(yarp::os::Property& configuration);
+
     std::string robotName;
     busType_t busType;
     std::string portName; // source port we will read from
@@ -72,7 +80,7 @@ private:
     double sampleTime;
     const double sensoReadingCycles = 500; // read MTB sensors for 5s
     IMTBsensorParser* sensorParserPtr;
-
+    std::fstream dataDumpFileStr;
 };
 
 #endif //_ACCELEROMETERSREADING_H_

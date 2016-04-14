@@ -9,6 +9,7 @@
 
 #include <cstdlib>
 #include <sstream>
+#include <fstream>
 #include <rtf/dll/Plugin.h>
 #include <rtf/Asserter.h>
 #include <array>
@@ -39,58 +40,31 @@ sampleTime(0.010)
 AccelerometersReading::~AccelerometersReading() { }
 
 bool AccelerometersReading::setup(yarp::os::Property &configuration) {
+    // Debug
     std::cout << "properties...\n" << configuration.toString() << "\n";
     // initialization goes here ...
-    if(configuration.check("name"))
-        setName(configuration.find("name").asString());
+
+    /*===============================================================================
+     * Unconditional parameters
+     *===============================================================================*/
+    // std::vector<IMTBsensorParser::sensorTypeT> mtbTypeList;
 
     // check input parameters
     RTF_ASSERT_ERROR_IF(configuration.check("robot"), "Missing 'robot' parameter");
     RTF_ASSERT_ERROR_IF(configuration.check("bus"),"Missing 'bus' parameter");
-    RTF_ASSERT_ERROR_IF(configuration.check("part"),"Missing 'part' parameter");
     RTF_ASSERT_ERROR_IF(configuration.check("mtbList"),"Missing 'mtbList' parameter");
 
     // set class attributes accordingly
+
+    // Test name
+    if(configuration.check("name"))
+        setName(configuration.find("name").asString());
+
     // robot name
     this->robotName = configuration.find("robot").asString();
+
     // bus type and respective sensor parser
-    std::string busTypeStr = configuration.find("bus").asString();
-    if (!busTypeStr.compare("can")) {
-        this->busType = BUSTYPE_CAN;
-        this->sensorParserPtr = new MTBsensorParserCan();
-    }
-    else if (!busTypeStr.compare("eth")) {
-        this->busType = BUSTYPE_ETH;
-        this->sensorParserPtr = new MTBsensorParserEth();
-    }
-    else {
-        this->busType = BUSTYPE_UNKNOWN;
-    }
-
-    // port name
-    // (to be removed along with opening and connecting the port if wholeBodySensors API is used)
-    std::string partName = configuration.find("part").asString();
-    switch (this->busType) {
-        case BUSTYPE_CAN:
-            if (   partName.compare("torso")
-                || partName.compare("left_arm")
-                || partName.compare("right_arm"))
-            {
-                this->portName = "/" + this->robotName + "/" + partName + "_accelerometers/analog:o";
-            }
-            else
-            {
-                this->portName = "/" + this->robotName + "/" + partName + "_inertial/analog:o";
-            }
-            break;
-
-        case BUSTYPE_ETH:
-            this->portName = "/" + this->robotName + "/" + partName + "/inertialMTB";
-            break;
-
-        default:
-            break;
-    }
+    RTF_ASSERT_ERROR_IF(setBusType(configuration),"Robot bus type unknown");
 
     // parse the MTB sensors list
     this->mtbList = *configuration.find("mtbList").asList();
@@ -99,31 +73,55 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     this->mtbTypeList.resize(this->mtbList.size());
     this->mtbTypeList.assign(this->mtbTypeList.size(), IMTBsensorParser::SENSORTYPE_ACC);
 
-    // open the port
-    RTF_ASSERT_ERROR_IF(port.open("/iCubTest/" + partName + "/inertialMTB:i"),
-                        "opening port, is YARP network working?");
+    /*===============================================================================
+     * Conditional parameters (dump file or robot connection info)
+     *===============================================================================*/
 
-    // connect the port to our anonymous port
-    RTF_TEST_REPORT(Asserter::format("connecting from %s output port to %s input port.\n",
-                                     portName.c_str(), port.getName().c_str()));
-    RTF_ASSERT_ERROR_IF(Network::connect(portName, port.getName()),
-                        Asserter::format("could not connect to remote source port %s, MTB inertial sensor unavailable",
-                                         portName.c_str()));
-    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbList.toString().c_str()));
+    // check input parameters
+    RTF_ASSERT_ERROR_IF(configuration.check("dataDumpFile")
+                        || configuration.check("part"),
+                        "Missing 'part' and 'dataDumpFile' parameter. You should provide at least one of them");
+
+    if(configuration.check("dataDumFile"))
+    {
+        setupFromLogFile(configuration);
+    }
+    else
+    {
+        setupFromYarpPort(configuration);
+    }
+
 
     return true;
 }
 
 void AccelerometersReading::tearDown() {
     // finalization goes here ...
-    Network::disconnect(portName, port.getName());
-    port.close();
+    Network::disconnect(this->portName, this->port.getName());
+    this->port.close();
+    delete(this->sensorParserPtr);
+    this->dataDumpFileStr.close();
 }
 
 void AccelerometersReading::run() {
     std::string formatErrMsg;
+    Bottle availSensorList;
 
     RTF_TEST_REPORT("Reading MTB accelerometers:");
+
+    RTF_TEST_REPORT("Reading and parsing logged sensor data:");
+
+    /*
+     * Read data from log file and
+     * compute the data mapping.
+     */
+//
+//    for(int i=0; i<100; i++)
+//    {
+//        fs >> strFromFile;
+//        std::cout << strFromFile.c_str();
+//    }
+
 
     /*
      * Read data from sensors and
@@ -137,7 +135,7 @@ void AccelerometersReading::run() {
     // data (sensor IDs, types, ...)
     RTF_TEST_FAIL_IF(this->sensorParserPtr->mapSensorData(readSensor,
                                                           this->mtbTypeList, this->mtbList,
-                                                          this->reordMtbList, formatErrMsg), formatErrMsg);
+                                                          availSensorList, formatErrMsg), formatErrMsg);
 
     /*
      * Read data from sensors for about 5s
@@ -164,7 +162,7 @@ void AccelerometersReading::run() {
         {
             std::array<double,3> sensorMeas = sensorMeasList[sensorIdx];
             invalidMeasErrMsg
-            << this->reordMtbList.get(sensorIdx).toString()
+            << this->mtbList.get(sensorIdx).toString()
             << " sensor measurement is invalid";
 
             RTF_TEST_FAIL_IF(sensorMeas[0] != -1.0
@@ -175,4 +173,85 @@ void AccelerometersReading::run() {
         yarp::os::Time::delay(this->sampleTime);
     }
 }
+
+/*
+ * ===========================  LOCAL FUNCTIONS =====================================
+ */
+
+bool AccelerometersReading::setBusType(yarp::os::Property &configuration)
+{
+    std::string busTypeStr = configuration.find("bus").asString();
+    if (!busTypeStr.compare("can")) {
+        this->busType = BUSTYPE_CAN;
+        this->sensorParserPtr = new MTBsensorParserCan();
+        return true;
+    }
+    else if (!busTypeStr.compare("eth")) {
+        this->busType = BUSTYPE_ETH;
+        this->sensorParserPtr = new MTBsensorParserEth();
+        return true;
+    }
+    else {
+        this->busType = BUSTYPE_UNKNOWN;
+        return false;
+    }
+}
+
+void AccelerometersReading::setupFromLogFile(yarp::os::Property& configuration)
+{
+    // open log file
+    std::string logFileName = configuration.find("dataDumpFile").asString();
+    this->dataDumpFileStr.open(logFileName.c_str(), std::fstream::out);
+    
+    RTF_ASSERT_ERROR_IF(this->dataDumpFileStr.is_open(),"Failed to open file");
+}
+
+void AccelerometersReading::setupFromYarpPort(yarp::os::Property& configuration)
+{
+    // port name
+    // (to be removed along with opening and connecting the port if wholeBodySensors API is used)
+    std::string partName = configuration.find("part").asString();
+    switch (this->busType) {
+        case BUSTYPE_CAN:
+            if (   partName.compare("torso")
+                || partName.compare("left_arm")
+                || partName.compare("right_arm"))
+            {
+                this->portName = "/" + this->robotName + "/" + partName + "_accelerometers/analog:o";
+            }
+            else
+            {
+                this->portName = "/" + this->robotName + "/" + partName + "_inertial/analog:o";
+            }
+            break;
+
+        case BUSTYPE_ETH:
+            this->portName = "/" + this->robotName + "/" + partName + "/inertialMTB";
+            break;
+
+        default:
+            break;
+    }
+
+    // sample time
+    if(configuration.check("sampleTime"))
+        this->sampleTime = configuration.find("sampleTime").asDouble();
+
+    /*===============================================================================
+     * Process the inputs
+     *===============================================================================*/
+
+    // open the port
+    RTF_ASSERT_ERROR_IF(port.open("/iCubTest/" + partName + "/inertialMTB:i"),
+                        "opening port, is YARP network working?");
+
+    // connect the port to our anonymous port
+    RTF_TEST_REPORT(Asserter::format("connecting from %s output port to %s input port.\n",
+                                     this->portName.c_str(), this->port.getName().c_str()));
+    RTF_ASSERT_ERROR_IF(Network::connect(this->portName, this->port.getName()),
+                        Asserter::format("could not connect to remote source port %s, MTB inertial sensor unavailable",
+                                         this->portName.c_str()));
+    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbList.toString().c_str()));
+}
+
 

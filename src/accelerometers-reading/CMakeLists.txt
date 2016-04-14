@@ -9,7 +9,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 # set the project name
-set(PROJECTNAME AccelerometerReading)
+set(PROJECTNAME AccelerometersReading)
 project(${PROJECTNAME})
 
 # add the required cmake packages
