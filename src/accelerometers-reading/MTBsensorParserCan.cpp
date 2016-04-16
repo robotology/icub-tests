@@ -48,7 +48,7 @@ bool MTBsensorParserCan::mapSensorData(yarp::sig::Vector *readSensor,
 }
 
 void MTBsensorParserCan::parseSensorMeas(yarp::sig::Vector * readSensor,
-                                         std::vector< std::array<double,3> > sensorMeasList)
+                                         std::vector< std::array<double,3> > &sensorMeasList)
 {
     for(int sensorIdx=0,readIdx=0; sensorIdx<this->sensorListSize; sensorIdx++,readIdx+=3)
     {

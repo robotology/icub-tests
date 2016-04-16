@@ -56,7 +56,7 @@ Vector* DataLoaderFile::read()
     // read one string line from file
     string lineFromFile;
     getline(this->dataDumpFileStr, lineFromFile);
-    cout << "lineFromFile:\n" << lineFromFile.c_str() << endl;
+//    cout << "lineFromFile:\n" << lineFromFile.c_str() << endl;
 //    Bottle lineSerialized = Bottle(ConstString(lineFromFile));
 //    cout << "bottle:\n" << lineSerialized.toString().c_str() << endl;
 //    lineSerialized.write(this->yarpVecFromFile,false);
@@ -74,7 +74,6 @@ Vector* DataLoaderFile::read()
         iss >> wordVal;
         this->yarpVecFromFile.push_back(wordVal);
     }
-    cout << "yarpVecFromFile:\n" << yarpVecFromFile.toString().c_str() << endl;
 
     return &yarpVecFromFile;
 }

@@ -42,7 +42,7 @@ AccelerometersReading::~AccelerometersReading() { }
 
 bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     // Debug
-    std::cout << "properties...\n" << configuration.toString() << "\n";
+    RTF_TEST_REPORT(Asserter::format("properties...\n%s\n",configuration.toString().c_str()));
     // initialization goes here ...
 
     /*===============================================================================

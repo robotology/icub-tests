@@ -46,7 +46,7 @@ public:
      *
      */
     virtual void parseSensorMeas(yarp::sig::Vector * readSensor,
-                                 std::vector< std::array<double,3> > sensorMeasList);
+                                 std::vector< std::array<double,3> > &sensorMeasList);
 
     /**
      * Checks that control data didn't change

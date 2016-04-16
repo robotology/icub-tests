@@ -41,9 +41,6 @@ bool MTBsensorParserEth::mapSensorData(yarp::sig::Vector *readSensor,
         errorMsg = "Wrong total sensor data size!";
         return false;
     }
-    else {
-        this->sensorListSize = (*readSensor)(0);
-    }
 
     // Check the format version number
     if ((*readSensor)(1) != this->version) {
@@ -75,7 +72,7 @@ bool MTBsensorParserEth::mapSensorData(yarp::sig::Vector *readSensor,
             if(eOas_inertial_type_t(typeList[reqIdx]) == bi)
             {
                 // ...and save offset
-                this->reqMTBsensOffsets[reqIdx] = readOff;
+                this->reqMTBsensOffsets[reqIdx] = readOff+3;
             }
             else
             {
@@ -104,14 +101,14 @@ bool MTBsensorParserEth::mapSensorData(yarp::sig::Vector *readSensor,
 }
 
 void MTBsensorParserEth::parseSensorMeas(yarp::sig::Vector * readSensor,
-                                         std::vector< std::array<double,3> > sensorMeasList)
+                                         std::vector< std::array<double,3> > &sensorMeasList)
 {
-    for(int sensorIdx=0,readIdx=5; sensorIdx<this->sensorListSize; sensorIdx++,readIdx+=6)
+    for(int sensorIdx=0; sensorIdx<this->reqMTBsensOffsets.size(); sensorIdx++)
     {
-        sensorMeasList.resize(this->sensorListSize);
-        sensorMeasList[sensorIdx][0]=(*readSensor)(readIdx+0);
-        sensorMeasList[sensorIdx][1]=(*readSensor)(readIdx+1);
-        sensorMeasList[sensorIdx][2]=(*readSensor)(readIdx+2);
+        sensorMeasList.resize(this->reqMTBsensOffsets.size());
+        sensorMeasList[sensorIdx][0]=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+0);
+        sensorMeasList[sensorIdx][1]=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+1);
+        sensorMeasList[sensorIdx][2]=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+2);
     }
 }
 
@@ -126,8 +123,6 @@ bool MTBsensorParserEth::checkControlData(yarp::sig::Vector * readSensor)
     {
         readSensConfig.setSubvector(destIdx,readSensor->subVector(srcIdx,srcIdx+1));
     }
-    cout << "Raw config is:\n" << this->rawSensorConfig.toString().c_str() << endl;
-    cout << "New Raw config is:\n" << readSensConfig.toString().c_str() << endl;
 
     // Compare last and current configurations
     return (this->rawSensorConfig == readSensConfig);

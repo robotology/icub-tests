@@ -49,7 +49,7 @@ public:
      *
      */
     virtual void parseSensorMeas(yarp::sig::Vector * readSensor,
-                                 std::vector< std::array<double,3> > sensorMeasList);
+                                 std::vector< std::array<double,3> > &sensorMeasList);
 
     /**
      * Checks that control data didn't change
@@ -161,7 +161,6 @@ private:
         "9B7","9B8","9B9","9B10",
         "","","",""};
 
-    int sensorListSize;
     const double version = 6.0;
     yarp::sig::Vector rawSensorConfig;
     std::map<std::string,int> availMTBsensIDs;
