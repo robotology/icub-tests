@@ -31,10 +31,15 @@ link_libraries(${RTF_LIBRARIES}
 add_library(${PROJECTNAME} MODULE IMTBsensorParser.h
                                   MTBsensorParserCan.h
                                   MTBsensorParserEth.h
+                                  IDataLoader.h
+                                  DataLoaderPort.h
+                                  DataLoaderFile.h
                                   AccelerometersReading.h
                                   InterfaceDestructors.cpp
                                   MTBsensorParserCan.cpp
                                   MTBsensorParserEth.cpp
+                                  DataLoaderPort.cpp
+                                  DataLoaderFile.cpp
                                   AccelerometersReading.cpp)
 
 # set the installation options

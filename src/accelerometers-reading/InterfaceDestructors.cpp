@@ -18,5 +18,8 @@
  */
 
 #include "IMTBsensorParser.h"
+#include "IDataLoader.h"
 
 IMTBsensorParser::~IMTBsensorParser() {}
+
+IDataLoader::~IDataLoader() {}

@@ -118,7 +118,7 @@ void MTBsensorParserEth::parseSensorMeas(yarp::sig::Vector * readSensor,
 bool MTBsensorParserEth::checkControlData(yarp::sig::Vector * readSensor)
 {
     // Get sensors configuration just read
-    yarp::sig::Vector readSensConfig;
+    yarp::sig::Vector readSensConfig(this->rawSensorConfig.size());
     readSensConfig.setSubvector(0,readSensor->subVector(0,1));
     for(int srcIdx=2, destIdx=2;
         srcIdx<readSensor->size();
@@ -126,6 +126,8 @@ bool MTBsensorParserEth::checkControlData(yarp::sig::Vector * readSensor)
     {
         readSensConfig.setSubvector(destIdx,readSensor->subVector(srcIdx,srcIdx+1));
     }
+    cout << "Raw config is:\n" << this->rawSensorConfig.toString().c_str() << endl;
+    cout << "New Raw config is:\n" << readSensConfig.toString().c_str() << endl;
 
     // Compare last and current configurations
     return (this->rawSensorConfig == readSensConfig);

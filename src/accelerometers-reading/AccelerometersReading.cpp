@@ -18,9 +18,10 @@
 #include <yarp/sig/Vector.h>
 
 #include "AccelerometersReading.h"
-#include "IMTBsensorParser.h"
 #include "MTBsensorParserCan.h"
 #include "MTBsensorParserEth.h"
+#include "DataLoaderPort.h"
+#include "DataLoaderFile.h"
 
 using namespace std;
 using namespace RTF;
@@ -33,8 +34,8 @@ PREPARE_PLUGIN(AccelerometersReading)
 AccelerometersReading::AccelerometersReading() : YarpTestCase("AccelerometersReading"),
 robotName(""),
 busType(BUSTYPE_UNKNOWN),
-portName(""),
-sampleTime(0.010)
+sensorParserPtr(NULL),
+dataLoader(NULL)
 {}
 
 AccelerometersReading::~AccelerometersReading() { }
@@ -82,52 +83,48 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
                         || configuration.check("part"),
                         "Missing 'part' and 'dataDumpFile' parameter. You should provide at least one of them");
 
-    if(configuration.check("dataDumFile"))
+    // select data loader (which will load data from a YARP port or a file)
+    if(configuration.check("dataDumpFile"))
     {
-        setupFromLogFile(configuration);
+        this->dataLoader = new DataLoaderFile();
     }
     else
     {
-        setupFromYarpPort(configuration);
+        this->dataLoader = new DataLoaderPort(*this);
     }
 
+    // Create the access to the sensor data (open the YARP port or file)
+    std::string statusMsg;
+    RTF_ASSERT_ERROR_IF(this->dataLoader->setup(configuration, statusMsg), statusMsg.c_str());
+    // connection succeded. Print message from data loader
+    RTF_TEST_REPORT(statusMsg.c_str());
+
+    RTF_TEST_REPORT(Asserter::format("Ready to read data from MTB sensors:\n%s",this->mtbList.toString().c_str()));
 
     return true;
 }
 
 void AccelerometersReading::tearDown() {
     // finalization goes here ...
-    Network::disconnect(this->portName, this->port.getName());
-    this->port.close();
-    delete(this->sensorParserPtr);
-    this->dataDumpFileStr.close();
+    if(this->sensorParserPtr) {delete(this->sensorParserPtr);}
+    if(this->dataLoader)
+    {
+        this->dataLoader->tearDown();
+        delete(this->dataLoader);
+    }
 }
 
 void AccelerometersReading::run() {
     std::string formatErrMsg;
     Bottle availSensorList;
 
-    RTF_TEST_REPORT("Reading MTB accelerometers:");
-
-    RTF_TEST_REPORT("Reading and parsing logged sensor data:");
-
-    /*
-     * Read data from log file and
-     * compute the data mapping.
-     */
-//
-//    for(int i=0; i<100; i++)
-//    {
-//        fs >> strFromFile;
-//        std::cout << strFromFile.c_str();
-//    }
-
+    RTF_TEST_REPORT("Reading data from the MTB accelerometers:");
 
     /*
      * Read data from sensors and
      * compute the data mapping.
      */
-    Vector *readSensor = port.read();
+    Vector *readSensor = this->dataLoader->read();
     // check for reading failure
     RTF_TEST_FAIL_IF(readSensor, "could not read inertial data from sensor");
 
@@ -146,7 +143,7 @@ void AccelerometersReading::run() {
         ostringstream invalidMeasErrMsg;
         std::vector< std::array<double,3> > sensorMeasList;
 
-        Vector *readSensor = port.read();
+        Vector *readSensor = this->dataLoader->read();
 
         // check for reading failure
         RTF_TEST_FAIL_IF(readSensor, "could not read inertial data from sensor");
@@ -170,13 +167,18 @@ void AccelerometersReading::run() {
                              || sensorMeas[2] != -1.0, invalidMeasErrMsg.str());
         }
 
-        yarp::os::Time::delay(this->sampleTime);
+        this->dataLoader->delayBeforeRead();
     }
 }
 
 /*
  * ===========================  LOCAL FUNCTIONS =====================================
  */
+
+busType_t AccelerometersReading::getBusType()
+{
+    return this->busType;
+}
 
 bool AccelerometersReading::setBusType(yarp::os::Property &configuration)
 {
@@ -196,62 +198,4 @@ bool AccelerometersReading::setBusType(yarp::os::Property &configuration)
         return false;
     }
 }
-
-void AccelerometersReading::setupFromLogFile(yarp::os::Property& configuration)
-{
-    // open log file
-    std::string logFileName = configuration.find("dataDumpFile").asString();
-    this->dataDumpFileStr.open(logFileName.c_str(), std::fstream::out);
-    
-    RTF_ASSERT_ERROR_IF(this->dataDumpFileStr.is_open(),"Failed to open file");
-}
-
-void AccelerometersReading::setupFromYarpPort(yarp::os::Property& configuration)
-{
-    // port name
-    // (to be removed along with opening and connecting the port if wholeBodySensors API is used)
-    std::string partName = configuration.find("part").asString();
-    switch (this->busType) {
-        case BUSTYPE_CAN:
-            if (   partName.compare("torso")
-                || partName.compare("left_arm")
-                || partName.compare("right_arm"))
-            {
-                this->portName = "/" + this->robotName + "/" + partName + "_accelerometers/analog:o";
-            }
-            else
-            {
-                this->portName = "/" + this->robotName + "/" + partName + "_inertial/analog:o";
-            }
-            break;
-
-        case BUSTYPE_ETH:
-            this->portName = "/" + this->robotName + "/" + partName + "/inertialMTB";
-            break;
-
-        default:
-            break;
-    }
-
-    // sample time
-    if(configuration.check("sampleTime"))
-        this->sampleTime = configuration.find("sampleTime").asDouble();
-
-    /*===============================================================================
-     * Process the inputs
-     *===============================================================================*/
-
-    // open the port
-    RTF_ASSERT_ERROR_IF(port.open("/iCubTest/" + partName + "/inertialMTB:i"),
-                        "opening port, is YARP network working?");
-
-    // connect the port to our anonymous port
-    RTF_TEST_REPORT(Asserter::format("connecting from %s output port to %s input port.\n",
-                                     this->portName.c_str(), this->port.getName().c_str()));
-    RTF_ASSERT_ERROR_IF(Network::connect(this->portName, this->port.getName()),
-                        Asserter::format("could not connect to remote source port %s, MTB inertial sensor unavailable",
-                                         this->portName.c_str()));
-    RTF_TEST_REPORT(Asserter::format("Ready to read from MTB sensors:\n%s",this->mtbList.toString().c_str()));
-}
-
 

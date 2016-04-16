@@ -14,8 +14,8 @@
 #include <vector>
 #include <fstream>
 #include <rtf/yarp/YarpTestCase.h>
-#include <yarp/os/BufferedPort.h>
 #include "IMTBsensorParser.h"
+#include "IDataLoader.h"
 
 namespace yarp {
     namespace sig {
@@ -26,6 +26,13 @@ namespace yarp {
         class Bottle;
     }
 }
+
+enum busType_t {
+    BUSTYPE_CAN,
+    BUSTYPE_ETH,
+    BUSTYPE_NTYPES,
+    BUSTYPE_UNKNOWN
+};
 
 /**
  * \ingroup icub-tests
@@ -56,31 +63,22 @@ public:
 
     virtual void run();
 
+    /*
+     * Getters
+     */
+    busType_t getBusType();
+
 private:
-    enum busType_t {
-        BUSTYPE_CAN,
-        BUSTYPE_ETH,
-        BUSTYPE_NTYPES,
-        BUSTYPE_UNKNOWN
-    };
-
     virtual bool setBusType(yarp::os::Property& configuration);
-
-    virtual void setupFromLogFile(yarp::os::Property& configuration);
-
-    virtual void setupFromYarpPort(yarp::os::Property& configuration);
 
     std::string robotName;
     busType_t busType;
-    std::string portName; // source port we will read from
-    yarp::os::BufferedPort<yarp::sig::Vector> port; // anonymous destination port
     yarp::os::Bottle mtbList;
     std::vector<IMTBsensorParser::sensorTypeT> mtbTypeList;
     yarp::os::Bottle reordMtbList;
-    double sampleTime;
     const double sensoReadingCycles = 500; // read MTB sensors for 5s
     IMTBsensorParser* sensorParserPtr;
-    std::fstream dataDumpFileStr;
+    IDataLoader* dataLoader;
 };
 
 #endif //_ACCELEROMETERSREADING_H_
