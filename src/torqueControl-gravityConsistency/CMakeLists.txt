@@ -1,0 +1,33 @@
+#  RTF
+#  Copyright: (C) 2015 Ali Paikan
+#  Authors: Ali Paikan <ali.paikan@gmail.com>
+#
+#  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#
+
+
+cmake_minimum_required(VERSION 2.8.11)
+set(PROJECTNAME TorqueControlGravityConsistency)
+project(${PROJECTNAME})
+
+find_package(RTF)
+find_package(RTF COMPONENTS DLL)
+find_package(YARP)
+find_package(yarpWholeBodyInterface REQUIRED)
+
+include_directories(${CMAKE_SOURCE_DIR}
+                    ${RTF_INCLUDE_DIRS}
+                    ${YARP_INCLUDE_DIRS}
+                    ${YARP_HELPERS_INCLUDE_DIR})
+
+add_library(${PROJECTNAME} SHARED TorqueControlGravityConsistency.h
+                                  TorqueControlGravityConsistency.cpp)
+
+target_link_libraries(${PROJECTNAME} LINK_PUBLIC ${RTF_LIBRARIES}
+                                            ${YARP_LIBRARIES}
+                                            ${yarpWholeBodyInterface_LIBRARIES})
+
+install(TARGETS ${PROJECTNAME}
+        EXPORT ${PROJECTNAME}
+        COMPONENT runtime
+        LIBRARY DESTINATION lib)

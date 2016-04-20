@@ -3,4 +3,4 @@ build
 *.*~
 CMakeLists.txt.user
 result.txt
-
+.DS_Store

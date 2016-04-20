@@ -19,6 +19,7 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 
 # options
 option(ICUB_TESTS_USES_ICUB_MAIN "Turn on to compile the tests that depend on the icub-main repository" OFF)
+option(ICUB_TESTS_USES_CODYCO    "Turn on to compile the test that depend on the codyco-superbuil repository" OFF)
 
 # Build examples?
 add_subdirectory(example/cpp)
@@ -34,6 +35,10 @@ add_subdirectory(src/openloop-consistency)
 
 # Build torque control tests
 add_subdirectory(src/torqueControl-consistency)
+
+if(ICUB_TESTS_USES_CODYCO)
+    add_subdirectory(src/torqueControl-gravityConsistency)
+endif()
 
 # Build optical encoder tests
 add_subdirectory(src/motorEncoders-consistency)
