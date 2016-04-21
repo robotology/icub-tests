@@ -20,7 +20,7 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_INCLUDE_DIRS}
                     ${YARP_HELPERS_INCLUDE_DIR})
 
-add_library(${PROJECTNAME} SHARED TorqueControlGravityConsistency.h
+add_library(${PROJECTNAME} MODULE TorqueControlGravityConsistency.h
                                   TorqueControlGravityConsistency.cpp)
 
 target_link_libraries(${PROJECTNAME} LINK_PUBLIC ${RTF_LIBRARIES}
