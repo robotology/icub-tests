@@ -14,6 +14,8 @@
 #include "yarp/os/Bottle.h"
 #include "yarp/sig/Vector.h"
 
+#include <iDynTree/Core/VectorFixSize.h>
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -48,21 +50,20 @@ bool MTBsensorParserCan::mapSensorData(yarp::sig::Vector *readSensor,
 }
 
 void MTBsensorParserCan::parseSensorMeas(yarp::sig::Vector * readSensor,
-                                         std::vector< std::array<double,3> > &sensorMeasList)
+                                         std::vector<iDynTree::Vector3> &sensorMeasList)
 {
     for(int sensorIdx=0,readIdx=0; sensorIdx<this->sensorListSize; sensorIdx++,readIdx+=3)
     {
         sensorMeasList.resize(this->sensorListSize);
-        sensorMeasList[sensorIdx][0]=(*readSensor)(sensorIdx+0);
-        sensorMeasList[sensorIdx][1]=(*readSensor)(sensorIdx+1);
-        sensorMeasList[sensorIdx][2]=(*readSensor)(sensorIdx+2);
+        sensorMeasList[sensorIdx](0)=(*readSensor)(readIdx+0);
+        sensorMeasList[sensorIdx](1)=(*readSensor)(readIdx+1);
+        sensorMeasList[sensorIdx](2)=(*readSensor)(readIdx+2);
     }
 }
 
 bool MTBsensorParserCan::checkControlData(yarp::sig::Vector * readSensor)
 {
     // Check message size
-    if (readSensor->size() != 3*this->sensorListSize) {return false;}
-    else {return true;}
+    return (readSensor->size() == 3*this->sensorListSize);
 }
 

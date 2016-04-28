@@ -68,14 +68,14 @@ Vector* DataLoaderFile::read()
     iss >> wordVal; iss >> wordVal;
 
     // Read remaining elements until End Of Line
-    yarpVecFromFile.clear();
+    this->yarpVecFromFile.clear();
     while(!iss.eof())
     {
         iss >> wordVal;
         this->yarpVecFromFile.push_back(wordVal);
     }
 
-    return &yarpVecFromFile;
+    return &(this->yarpVecFromFile);
 }
 
 void DataLoaderFile::delayBeforeRead()

@@ -47,7 +47,7 @@ public:
     virtual bool setup(yarp::os::Property& configuration, std::string &errorMsg) = 0;
 
     /**
-     * It also handle the destruction of associated objects
+     * It also handles the destruction of associated objects
      * or the closure of opened files.
      */
     virtual void tearDown() = 0;

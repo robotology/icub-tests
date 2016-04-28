@@ -16,6 +16,7 @@
 #include <yarp/sig/Vector.h>
 #include "IMTBsensorParser.h"
 
+#include <iDynTree/Core/VectorFixSize.h>
 
 /**
  * \ingroup icub-tests
@@ -49,7 +50,7 @@ public:
      *
      */
     virtual void parseSensorMeas(yarp::sig::Vector * readSensor,
-                                 std::vector< std::array<double,3> > &sensorMeasList);
+                                 std::vector<iDynTree::Vector3> &sensorMeasList);
 
     /**
      * Checks that control data didn't change

@@ -14,6 +14,8 @@
 #include "yarp/os/Bottle.h"
 #include "yarp/sig/Vector.h"
 
+#include <iDynTree/Core/VectorFixSize.h>
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -101,30 +103,30 @@ bool MTBsensorParserEth::mapSensorData(yarp::sig::Vector *readSensor,
 }
 
 void MTBsensorParserEth::parseSensorMeas(yarp::sig::Vector * readSensor,
-                                         std::vector< std::array<double,3> > &sensorMeasList)
+                                         std::vector<iDynTree::Vector3> &sensorMeasList)
 {
     for(int sensorIdx=0; sensorIdx<this->reqMTBsensOffsets.size(); sensorIdx++)
     {
         sensorMeasList.resize(this->reqMTBsensOffsets.size());
-        sensorMeasList[sensorIdx][0]=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+0);
-        sensorMeasList[sensorIdx][1]=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+1);
-        sensorMeasList[sensorIdx][2]=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+2);
+        sensorMeasList[sensorIdx](0)=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+0);
+        sensorMeasList[sensorIdx](1)=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+1);
+        sensorMeasList[sensorIdx](2)=(*readSensor)(this->reqMTBsensOffsets[sensorIdx]+2);
     }
 }
 
 bool MTBsensorParserEth::checkControlData(yarp::sig::Vector * readSensor)
 {
     // Get sensors configuration just read
-    yarp::sig::Vector readSensConfig(this->rawSensorConfig.size());
-    readSensConfig.setSubvector(0,readSensor->subVector(0,1));
+    yarp::sig::Vector rawSensConfig(this->rawSensorConfig.size());
+    rawSensConfig.setSubvector(0,readSensor->subVector(0,1));
     for(int srcIdx=2, destIdx=2;
         srcIdx<readSensor->size();
         srcIdx+=6,destIdx+=2)
     {
-        readSensConfig.setSubvector(destIdx,readSensor->subVector(srcIdx,srcIdx+1));
+        rawSensConfig.setSubvector(destIdx,readSensor->subVector(srcIdx,srcIdx+1));
     }
 
     // Compare last and current configurations
-    return (this->rawSensorConfig == readSensConfig);
+    return (this->rawSensorConfig == rawSensConfig);
 }
 

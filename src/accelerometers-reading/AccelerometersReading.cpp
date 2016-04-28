@@ -12,7 +12,7 @@
 #include <fstream>
 #include <rtf/dll/Plugin.h>
 #include <rtf/Asserter.h>
-#include <array>
+#include <math.h>
 
 #include <yarp/os/Time.h>
 #include <yarp/sig/Vector.h>
@@ -22,11 +22,21 @@
 #include "MTBsensorParserEth.h"
 #include "DataLoaderPort.h"
 #include "DataLoaderFile.h"
+#include <iDynTree/Core/VectorFixSize.h>
+#include <iDynTree/Core/MatrixFixSize.h>
+#include <iDynTree/Core/MatrixDynSize.h>
+#include <iDynTree/Core/EigenHelpers.h>
+//#include "LinearMotionVector3.h"
 
 using namespace std;
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::sig;
+
+typedef Eigen::Matrix<double,3,1> EigenVector3d;
+
+static double norm(iDynTree::Vector3& vector);
+static double angleV1toV2(iDynTree::Vector3& vector1, iDynTree::Vector3& vector2);
 
 // prepare the plugin
 PREPARE_PLUGIN(AccelerometersReading)
@@ -35,10 +45,11 @@ AccelerometersReading::AccelerometersReading() : YarpTestCase("AccelerometersRea
 robotName(""),
 busType(BUSTYPE_UNKNOWN),
 sensorParserPtr(NULL),
-dataLoader(NULL)
+dataLoader(NULL),
+bins(50)
 {}
 
-AccelerometersReading::~AccelerometersReading() { }
+AccelerometersReading::~AccelerometersReading() {}
 
 bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     // Debug
@@ -69,6 +80,7 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
 
     // parse the MTB sensors list
     this->mtbList = *configuration.find("mtbList").asList();
+    this->sensorMeasMatList.resize(this->mtbList.size());
 
     // For now, sensor type will always be Accelerometers
     this->mtbTypeList.resize(this->mtbList.size());
@@ -100,6 +112,16 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     RTF_TEST_REPORT(statusMsg.c_str());
 
     RTF_TEST_REPORT(Asserter::format("Ready to read data from MTB sensors:\n%s",this->mtbList.toString().c_str()));
+
+    // check requested sub tests
+    if (configuration.check("subTests")) {
+        this->subTests = *configuration.find("subTests").asList();
+    }
+
+    // Get the number of bins for the norm and angle distributions
+    if (configuration.check("bins")) {
+        this->bins = configuration.find("bins").asInt();
+    }
 
     return true;
 }
@@ -135,50 +157,65 @@ void AccelerometersReading::run() {
                                                           availSensorList, formatErrMsg), formatErrMsg);
 
     /*
-     * Read data from sensors for about 5s
+     * Create distributions
      */
-    for(int cycleIdx=0; cycleIdx<this->sensoReadingCycles; cycleIdx++)
+    for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
     {
-        // error messages and sensor data buffer allocation
-        ostringstream invalidMeasErrMsg;
-        std::vector< std::array<double,3> > sensorMeasList;
+        ValueDistribution acc_i_measDistrib(this->sensorReadingCycles,9,11,this->bins);
+        this->normDistribList.push_back(acc_i_measDistrib);
+    }
 
-        Vector *readSensor = this->dataLoader->read();
+    /*
+     * Read data from sensors for about 200s
+     */
+    for(int cycleIdx=0; cycleIdx<this->sensorReadingCycles; cycleIdx++)
+    {
+        // Check there is no reading failure and no invalid data (0xFFFF...)
+        //and return parsed sensor data.
+        vector<iDynTree::Vector3> sensorMeasList;
+        if(!this->checkNparseSensors(sensorMeasList)) {break;}
 
-        // check for reading failure
-        RTF_TEST_FAIL_IF(readSensor, "could not read inertial data from sensor");
+        // Check norm and angle w.r.t. expected gravity theoretical vector
+        if(!this->checkDataConsistency(sensorMeasList)) {break;}
 
-        // Check that control data didn't change
-        RTF_TEST_FAIL_IF(this->sensorParserPtr->checkControlData(readSensor), "Message configuration changed");
+        // save parsed and computed data
+        this->bufferSensorData(sensorMeasList);
 
-        // Get data from sensors
-        this->sensorParserPtr->parseSensorMeas(readSensor, sensorMeasList);
-
-        // look for invalid data
-        for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
-        {
-            std::array<double,3> sensorMeas = sensorMeasList[sensorIdx];
-            invalidMeasErrMsg
-            << this->mtbList.get(sensorIdx).toString()
-            << " sensor measurement is invalid";
-
-            RTF_TEST_FAIL_IF(sensorMeas[0] != -1.0
-                             || sensorMeas[1] != -1.0
-                             || sensorMeas[2] != -1.0, invalidMeasErrMsg.str());
-        }
-
+        // Delay before next port or file line read
         this->dataLoader->delayBeforeRead();
     }
-}
 
-/*
- * ===========================  LOCAL FUNCTIONS =====================================
- */
+    /*
+     * Evaluate distributions
+     */
+    for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
+    {
+        this->normDistribList[sensorIdx].evalDistrParams();
+        RTF_TEST_REPORT(Asserter::format("\nAccelerometer %s :\n"
+                                         "gravity norm \t mean \t\t standard deviation\n"
+                                         "\t\t %g \t\t %g\n"
+                                         "gravity angle \t mean \t\t standard deviation\n"
+                                         "\t\t %g \t\t %g\n",
+                                         this->mtbList.get(sensorIdx).toString().c_str(),
+                                         this->normDistribList[sensorIdx].getMean(),
+                                         this->normDistribList[sensorIdx].getSigma(),
+                                         0.0,
+                                         0.0));
+        RTF_TEST_FAIL_IF(this->normDistribList[sensorIdx].getMean()-expectedGravityNorm<gravityNormMeanTolerance,
+                         Asserter::format("Average norm beyond tolerance of %f",gravityNormMeanTolerance));
+        RTF_TEST_FAIL_IF(this->normDistribList[sensorIdx].getSigma()<gravityNormDevTolerance,
+                         Asserter::format("Standard deviation of norm beyond tolerance of %f",gravityNormDevTolerance));
+    }
+}
 
 busType_t AccelerometersReading::getBusType()
 {
     return this->busType;
 }
+
+/*
+ * ===========================  LOCAL FUNCTIONS =====================================
+ */
 
 bool AccelerometersReading::setBusType(yarp::os::Property &configuration)
 {
@@ -198,4 +235,82 @@ bool AccelerometersReading::setBusType(yarp::os::Property &configuration)
         return false;
     }
 }
+
+bool AccelerometersReading::checkNparseSensors(std::vector<iDynTree::Vector3>& sensorMeasList)
+{
+    ostringstream invalidMeasErrMsg;
+
+    Vector *readSensor = this->dataLoader->read();
+
+    // check for reading failure
+    RTF_TEST_FAIL_IF(readSensor, "could not read inertial data from sensor");
+
+    // Check that control data didn't change
+    RTF_TEST_FAIL_IF(this->sensorParserPtr->checkControlData(readSensor), "Message configuration changed");
+
+    // Get data from sensors
+    this->sensorParserPtr->parseSensorMeas(readSensor, sensorMeasList);
+
+    // look for invalid data
+    for(int sensorIdx=0; sensorIdx<sensorMeasList.size(); sensorIdx++)
+    {
+        iDynTree::Vector3 sensorMeas = sensorMeasList[sensorIdx];
+        invalidMeasErrMsg
+        << this->mtbList.get(sensorIdx).toString()
+        << " sensor measurement is invalid";
+
+        RTF_TEST_FAIL_IF(sensorMeas(0) != -1.0
+                         || sensorMeas(1) != -1.0
+                         || sensorMeas(2) != -1.0, invalidMeasErrMsg.str());
+        cout << "Sensor " << this->mtbList.get(sensorIdx).toString() << " : " << sensorMeas.toString() << "  |  ";
+    }
+
+    cout << endl;
+    return true;
+}
+
+bool AccelerometersReading::checkDataConsistency(std::vector<iDynTree::Vector3>& sensorMeasList)
+{
+    bool status;
+
+    for (int sensorIdx=0; sensorIdx<sensorMeasList.size(); sensorIdx++)
+    {
+        // compute norm, check limits and add to distribution
+        double measGravityNorm = norm(sensorMeasList[sensorIdx]);
+        RTF_TEST_FAIL_IF(status = measGravityNorm<(expectedGravityNorm-gravityNormInstTolerance)
+                         || measGravityNorm>(expectedGravityNorm+gravityNormInstTolerance),
+                         "Measured gravity norm is out of limits");
+
+        this->normDistribList[sensorIdx].add(measGravityNorm);
+
+/*      // plot gravity norm
+
+        // compute angle, check limits w.r.t. gravity and add to distribution
+        double measGravityAngle = angleV1toV2(sensorMeasList[sensorIdx], grav0);
+        RTF_TEST_FAIL_IF(measGravityAngle>gravityAngleTolerance,
+                         "Measured gravity angle is out of limits");*/
+    }
+
+    return status;
+}
+
+void AccelerometersReading::bufferSensorData(std::vector<iDynTree::Vector3>& sensorMeasList)
+{
+    // save each sensor value into the respective measurements matrix;
+    for (int sensorIdx=0; sensorIdx<sensorMeasList.size(); sensorIdx++)
+    {
+        this->sensorMeasMatList[sensorIdx].push_back(sensorMeasList[sensorIdx]);
+    }
+}
+
+static double norm(iDynTree::Vector3& vector)
+{
+    return sqrt(iDynTree::toEigen(vector).transpose()*iDynTree::toEigen(vector));
+}
+
+static double angleV1toV2(iDynTree::Vector3& vector1, iDynTree::Vector3& vector2)
+{
+    return 0;
+}
+
 

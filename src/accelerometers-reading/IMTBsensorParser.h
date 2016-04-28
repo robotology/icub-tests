@@ -14,6 +14,8 @@
 #include <vector>
 #include <array>
 
+#include <iDynTree/Core/VectorFixSize.h>
+
 namespace yarp {
     namespace os {
         class Bottle;
@@ -22,6 +24,7 @@ namespace yarp {
         class Vector;
     }
 }
+
 
 /**
  * \ingroup icub-tests
@@ -60,7 +63,7 @@ public:
      *
      */
     virtual void parseSensorMeas(yarp::sig::Vector * readSensor,
-                                 std::vector< std::array<double,3> > &sensorMeasList) = 0;
+                                 std::vector<iDynTree::Vector3> &sensorMeasList) = 0;
 
     /**
      * Checks that control data didn't change
