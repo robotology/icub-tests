@@ -58,8 +58,16 @@ public:
      * Getters.
      */
     virtual double getElem(unsigned int index);
-    virtual double getMean();
-    virtual double getSigma();
+
+    typedef struct{
+        double mean;
+        double sigma;
+        double min;
+        double max;
+        std::vector<double> hist;
+    } distr_t;
+
+    virtual distr_t getDistr();
 
 private:
     std::vector<double> elemList;
@@ -69,8 +77,8 @@ private:
     double sumSigma;
     double min;
     double max;
-    std::vector<int> hist;
-    int histInterval[2];
+    std::vector<double> hist;
+    double histInterval[2];
 };
 
 #endif //_VALUEDISTRIBUTION_H_

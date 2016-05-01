@@ -44,9 +44,10 @@ PREPARE_PLUGIN(AccelerometersReading)
 AccelerometersReading::AccelerometersReading() : YarpTestCase("AccelerometersReading"),
 robotName(""),
 busType(BUSTYPE_UNKNOWN),
+bins(50),
+plot(false),
 sensorParserPtr(NULL),
-dataLoader(NULL),
-bins(50)
+dataLoader(NULL)
 {}
 
 AccelerometersReading::~AccelerometersReading() {}
@@ -122,7 +123,14 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     if (configuration.check("bins")) {
         this->bins = configuration.find("bins").asInt();
     }
-
+/*
+    // Get plotting option and plot command
+    if (configuration.check("plot")) {
+        this->plot = configuration.find("plot").asBool();
+        RTF_ASSERT_ERROR_IF(configuration.check("plotString"), "Missing 'plotString' parameter");
+        this->plotString = configuration.find("plotString").asString();
+    }
+*/
     return true;
 }
 
@@ -159,10 +167,11 @@ void AccelerometersReading::run() {
     /*
      * Create distributions
      */
+    this->normDistribList.resize(this->mtbList.size());
     for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
     {
         ValueDistribution acc_i_measDistrib(this->sensorReadingCycles,9,11,this->bins);
-        this->normDistribList.push_back(acc_i_measDistrib);
+        this->normDistribList[sensorIdx] = acc_i_measDistrib;
     }
 
     /*
@@ -191,21 +200,39 @@ void AccelerometersReading::run() {
     for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
     {
         this->normDistribList[sensorIdx].evalDistrParams();
+        ValueDistribution::distr_t distrParams = this->normDistribList[sensorIdx].getDistr();
         RTF_TEST_REPORT(Asserter::format("\nAccelerometer %s :\n"
-                                         "gravity norm \t mean \t\t standard deviation\n"
-                                         "\t\t %g \t\t %g\n"
-                                         "gravity angle \t mean \t\t standard deviation\n"
-                                         "\t\t %g \t\t %g\n",
+                                         "gravity norm \t mean \t\t standard deviation \t\t min \t\t max\n"
+                                         "\t\t %g \t\t %g \t\t %g \t\t %g\n"
+                                         "gravity angle \t mean \t\t standard deviation \t\t min \t\t max\n"
+                                         "\t\t %g \t\t %g \t\t %g \t\t %g\n",
                                          this->mtbList.get(sensorIdx).toString().c_str(),
-                                         this->normDistribList[sensorIdx].getMean(),
-                                         this->normDistribList[sensorIdx].getSigma(),
-                                         0.0,
-                                         0.0));
-        RTF_TEST_FAIL_IF(this->normDistribList[sensorIdx].getMean()-expectedGravityNorm<gravityNormMeanTolerance,
-                         Asserter::format("Average norm beyond tolerance of %f",gravityNormMeanTolerance));
-        RTF_TEST_FAIL_IF(this->normDistribList[sensorIdx].getSigma()<gravityNormDevTolerance,
-                         Asserter::format("Standard deviation of norm beyond tolerance of %f",gravityNormDevTolerance));
+                                         distrParams.mean,
+                                         distrParams.sigma,
+                                         distrParams.min,
+                                         distrParams.max,
+                                         0.0,0.0,0.0,0.0));
+        RTF_TEST_FAIL_IF(abs(distrParams.mean-GravityNorm)<GravNormMeanTol,
+                         Asserter::format("Average norm beyond tolerance of %f",GravNormMeanTol));
+        RTF_TEST_FAIL_IF(distrParams.sigma<GravNormDevTol,
+                         Asserter::format("Standard deviation of norm beyond tolerance of %f",GravNormDevTol));
+/*
+        // Plot distribution
+        Bottle histToFile;
+        for(int idx=0; idx<distrParams.hist.size(); idx++) {histToFile.add(distrParams.hist[idx]);}
+        saveToFile("plotAcc" + this->mtbList.get(sensorIdx).toString() + ".dat", histToFile);
+        if(this->plot)
+        {
+            system(this->plotString.c_str());
+        }
+        else
+        {
+            RTF_TEST_REPORT("Test is finished. Please check if collected date are ok, by using following command: ");
+            RTF_TEST_REPORT(RTF::Asserter::format("%s", this->plotString.c_str()));
+        }
+ */
     }
+    std::cout<<"\n\n";
 }
 
 busType_t AccelerometersReading::getBusType()
@@ -251,7 +278,7 @@ bool AccelerometersReading::checkNparseSensors(std::vector<iDynTree::Vector3>& s
     // Get data from sensors
     this->sensorParserPtr->parseSensorMeas(readSensor, sensorMeasList);
 
-    // look for invalid data
+    // look for invalid data and convert raw data
     for(int sensorIdx=0; sensorIdx<sensorMeasList.size(); sensorIdx++)
     {
         iDynTree::Vector3 sensorMeas = sensorMeasList[sensorIdx];
@@ -263,6 +290,9 @@ bool AccelerometersReading::checkNparseSensors(std::vector<iDynTree::Vector3>& s
                          || sensorMeas(1) != -1.0
                          || sensorMeas(2) != -1.0, invalidMeasErrMsg.str());
         cout << "Sensor " << this->mtbList.get(sensorIdx).toString() << " : " << sensorMeas.toString() << "  |  ";
+
+        // convert from raw to m/s^2 acceleration
+        iDynTree::toEigen(sensorMeasList[sensorIdx]) = iDynTree::toEigen(sensorMeas)*accGain;
     }
 
     cout << endl;
@@ -277,9 +307,8 @@ bool AccelerometersReading::checkDataConsistency(std::vector<iDynTree::Vector3>&
     {
         // compute norm, check limits and add to distribution
         double measGravityNorm = norm(sensorMeasList[sensorIdx]);
-        RTF_TEST_FAIL_IF(status = measGravityNorm<(expectedGravityNorm-gravityNormInstTolerance)
-                         || measGravityNorm>(expectedGravityNorm+gravityNormInstTolerance),
-                         "Measured gravity norm is out of limits");
+        RTF_TEST_FAIL_IF(status = (abs(measGravityNorm-GravityNorm)<GravNormInstTol),
+                         Asserter::format("Measured gravity norm is out of limits (%f).",measGravityNorm));
 
         this->normDistribList[sensorIdx].add(measGravityNorm);
 
@@ -301,6 +330,17 @@ void AccelerometersReading::bufferSensorData(std::vector<iDynTree::Vector3>& sen
     {
         this->sensorMeasMatList[sensorIdx].push_back(sensorMeasList[sensorIdx]);
     }
+}
+
+void AccelerometersReading::saveToFile(std::string filename, yarp::os::Bottle &b)
+{
+    std::fstream fs;
+    fs.open (filename.c_str(), std::fstream::out);
+
+    std::string s = b.toString();
+    fs << s << endl;
+
+    fs.close();
 }
 
 static double norm(iDynTree::Vector3& vector)

@@ -10,13 +10,13 @@
 //#include <cstdlib>
 //#include <sstream>
 //#include <string>
-//#include <vector>
-//#include <array>
+#include <vector>
 #include <math.h>
 
 #include "ValueDistribution.h"
+#include <iDynTree/Core/EigenHelpers.h>
 
-//using namespace std;
+static std::vector<double> linspace(const double min, const int nSteps, const double max);
 
 ValueDistribution::ValueDistribution() :
 sumMean(0),
@@ -32,6 +32,7 @@ hist(50,0)
 ValueDistribution::ValueDistribution(unsigned int size,
                                      double histIntervMin, double histIntervMax,
                                      unsigned int bins) :
+elemList(0,0),
 sumMean(0),
 sumSigma(0),
 min(10),
@@ -56,23 +57,31 @@ ValueDistribution::~ValueDistribution() {}
 
 void ValueDistribution::add(double elem)
 {
-    elemList.push_back(elem);
+    int binIdx ;
+    this->elemList.push_back(elem);
     this->sumMean += elem;
     this->sumSigma += pow(elem,2);
     this->min = fmin(this->min, elem);
     this->max = fmax(this->max, elem);
-    // Derive bin associated to 'elem'.
+    /*
     // We define a distribution in the interval [9,11]
-
-    int idx = 0;
+    std::vector<double> binEdges = linspace(this->histInterval[0], this->hist.size(), this->max);
+    for (binIdx=0; binIdx<binEdges.size(); binIdx++)
+    {
+        if (elem<binEdges[binIdx]) {break;}
+    }
     // increment history for respective bin
-    this->hist[idx]++;
+    this->hist[binIdx]++;*/
 }
 
 bool ValueDistribution::evalDistrParams()
 {
+    // compute mean and standard deviation
     this->mean = this->sumMean/this->elemList.size();
     this->sigma = sqrt((this->sumSigma/this->elemList.size()) - pow(this->mean,2));
+    // compute distribution
+    //Eigen::Map<Eigen::VectorXd>(this->hist.data(),this->hist.size()) =
+    //Eigen::Map<Eigen::VectorXd>(this->hist.data(),this->hist.size())/this->elemList.size();
     return true;
 }
 
@@ -81,13 +90,26 @@ double ValueDistribution::getElem(unsigned int index)
     return this->elemList[index];
 }
 
-double ValueDistribution::getMean()
+ValueDistribution::distr_t ValueDistribution::getDistr()
 {
-    return this->mean;
+    distr_t params;
+    params.mean = this->mean;
+    params.sigma = this->sigma;
+    params.min = this->min;
+    params.max = this->max;
+    params.hist = this->hist;
+    return params;
 }
 
-double ValueDistribution::getSigma()
+static std::vector<double> linspace(const double min, const int nSteps, const double max)
 {
-    return this->sigma;
+    std::vector<double> linSpace(nSteps+1,0);
+    double interv = (max-min)/nSteps;
+    for(int idx=0; idx<(nSteps+1); idx++)
+    {
+        linSpace[idx] = min+idx*interv;
+    }
+    return linSpace;
 }
+
 

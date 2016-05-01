@@ -2,7 +2,7 @@
 
 <suit name="Accelerometers Diagnosis Suite (ETHERNET Robot)">
     <description>Testing robot's MTB accelerometers</description>
-    <environment>--robotname icub --bustype eth --context icubEth</environment>
+    <environment>--robotname icub --bustype eth --context icubEth --dumpfilefolder /Users/nunoguedelha/dev/jointOffsetCalibInertial/data/calibration/dumper/iCubGenova02_#1</environment>
     <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture> -->
 
     <!-- Interfaces (wrappers) frequency -->
@@ -10,13 +10,15 @@
     <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test> -->
 
     <!-- Sensors -->
+    <!--
     <test type="dll" param="--from accelerometersReading_left_arm.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_right_arm.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_left_leg.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_right_leg.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_left_foot.ini"> AccelerometersReading </test>
     <test type="dll" param="--from accelerometersReading_right_foot.ini"> AccelerometersReading </test>
-    <test type="dll" param="--from accelerometersReading_torso.ini"> AccelerometersReading </test>
+    <test type="dll" param="--from accelerometersReading_torso.ini"> AccelerometersReading </test>-->
+    <test type="dll" param="--from accelerometersReading_left_leg.ini"> AccelerometersReading </test>
 
     <!-- Detect sensors that stream duplicate readings -->
     <!-- <test type="dll" param="--from sensor_duplicate_readings.ini"> SensorsDuplicateReadings </test> -->

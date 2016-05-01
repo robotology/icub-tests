@@ -24,13 +24,14 @@
 #include <iDynTree/Core/MatrixDynSize.h>
 
 #define defaultReadingCycles 2000
-#define expectedGravityNorm 9.8   // m/s^2
-#define gravityNormInstTolerance 0.5  // m/s^2
-#define gravityNormMeanTolerance 0.1  // m/s^2
-#define gravityNormDevTolerance 1  // m/s^2
-#define gravityAngleInstTolerance 20  // degrees
-#define gravityAngleMeanTolerance 20  // degrees
-#define gravityAngleDevTolerance 20  // degrees
+#define GravityNorm 9.80665   // m/s^2
+#define GravNormInstTol 2  // m/s^2
+#define GravNormMeanTol 0.2  // m/s^2
+#define GravNormDevTol 0.3  // m/s^2
+#define GravAngInstTol 30  // degrees
+#define GravAngMeanTol 20  // degrees
+#define GravAngDevTol 20  // degrees
+#define accGain (2*GravityNorm/32768)
 
 namespace yarp {
     namespace sig {
@@ -67,7 +68,9 @@ enum busType_t {
  * | sampleTime     | double | s     | 0.010         | No       | The sample time of the control thread | |
  * | dataDumpFile   | string | -     | -             | Yes      | The file holding sensor data from the data dumper.| -  |
  * | subTests       | string | -     | "basic"       | No       | List of subtests to run. | -   |
- * | bins           | int    | -     | 50            | No       | List of subtests to run. | -   |
+ * | bins           | int    | -     | 50            | No       | Number of bins in the meas. distributions. | -   |
+ * | plot           | bool   | -     | false         | No       | plotting option. | -   |
+ * | plotString     | string | -     | -             | Yes      | ...if 'plot' option present. | -   |
  *
  */
 class AccelerometersReading : public YarpTestCase {
@@ -95,10 +98,16 @@ private:
 
     virtual void bufferSensorData(std::vector<iDynTree::Vector3>& sensorMeasList);
 
+    virtual void saveToFile(std::string filename, yarp::os::Bottle &b);
+
     std::string robotName;
     busType_t busType;
     yarp::os::Bottle mtbList;
     yarp::os::Bottle subTests;
+    int bins;
+    bool plot;
+    std::string plotString;
+
     std::vector<IMTBsensorParser::sensorTypeT> mtbTypeList;
     yarp::os::Bottle reordMtbList;
     const double sensorReadingCycles = defaultReadingCycles; // read MTB sensors for 20s
@@ -107,8 +116,7 @@ private:
     std::vector< std::vector<iDynTree::Vector3> > sensorMeasMatList;
     std::vector<ValueDistribution> normDistribList;
 //    std::vector<ValueDistribution> angleToGravityDistribList;
-    int bins;
-    
+
 };
 
 #endif //_ACCELEROMETERSREADING_H_
