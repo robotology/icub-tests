@@ -42,6 +42,7 @@ hist(bins,0)
     this->elemList.reserve(size);
     this->histInterval[0]=histIntervMin;
     this->histInterval[1]=histIntervMax;
+    this->binEdges = linspace(this->histInterval[0], this->hist.size(), this->histInterval[1]);
 }
 
 void ValueDistribution::resizeBins(double histIntervMin, double histIntervMax,
@@ -51,6 +52,7 @@ void ValueDistribution::resizeBins(double histIntervMin, double histIntervMax,
     this->hist.clear();
     this->histInterval[0]=histIntervMin;
     this->histInterval[1]=histIntervMax;
+    this->binEdges = linspace(this->histInterval[0], this->hist.size(), this->histInterval[1]);
 }
 
 ValueDistribution::~ValueDistribution() {}
@@ -63,15 +65,14 @@ void ValueDistribution::add(double elem)
     this->sumSigma += pow(elem,2);
     this->min = fmin(this->min, elem);
     this->max = fmax(this->max, elem);
-    /*
+
     // We define a distribution in the interval [9,11]
-    std::vector<double> binEdges = linspace(this->histInterval[0], this->hist.size(), this->max);
     for (binIdx=0; binIdx<binEdges.size(); binIdx++)
     {
         if (elem<binEdges[binIdx]) {break;}
     }
     // increment history for respective bin
-    this->hist[binIdx]++;*/
+    this->hist[binIdx]++;
 }
 
 bool ValueDistribution::evalDistrParams()
@@ -80,8 +81,8 @@ bool ValueDistribution::evalDistrParams()
     this->mean = this->sumMean/this->elemList.size();
     this->sigma = sqrt((this->sumSigma/this->elemList.size()) - pow(this->mean,2));
     // compute distribution
-    //Eigen::Map<Eigen::VectorXd>(this->hist.data(),this->hist.size()) =
-    //Eigen::Map<Eigen::VectorXd>(this->hist.data(),this->hist.size())/this->elemList.size();
+    Eigen::Map<Eigen::VectorXd>(this->hist.data(),this->hist.size()) =
+    Eigen::Map<Eigen::VectorXd>(this->hist.data(),this->hist.size())/this->elemList.size();
     return true;
 }
 

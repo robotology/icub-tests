@@ -2,7 +2,7 @@
 
 <suit name="Accelerometers Diagnosis Suite (ETHERNET Robot)">
     <description>Testing robot's MTB accelerometers</description>
-    <environment>--robotname icub --bustype eth --context icubEth --dumpfilefolder /Users/nunoguedelha/dev/jointOffsetCalibInertial/data/calibration/dumper/iCubGenova02_#1</environment>
+    <environment>--robotname icub --bustype eth --context icubEth --plotall true --dumpfilefolder /Users/nunoguedelha/dev/jointOffsetCalibInertial/data/calibration/dumper/iCubGenova02_#1</environment>
     <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture> -->
 
     <!-- Interfaces (wrappers) frequency -->

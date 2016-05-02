@@ -79,6 +79,7 @@ private:
     double max;
     std::vector<double> hist;
     double histInterval[2];
+    std::vector<double> binEdges;
 };
 
 #endif //_VALUEDISTRIBUTION_H_

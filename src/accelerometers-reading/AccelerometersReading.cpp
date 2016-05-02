@@ -123,14 +123,14 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     if (configuration.check("bins")) {
         this->bins = configuration.find("bins").asInt();
     }
-/*
+
     // Get plotting option and plot command
     if (configuration.check("plot")) {
         this->plot = configuration.find("plot").asBool();
         RTF_ASSERT_ERROR_IF(configuration.check("plotString"), "Missing 'plotString' parameter");
         this->plotString = configuration.find("plotString").asString();
     }
-*/
+
     return true;
 }
 
@@ -216,22 +216,28 @@ void AccelerometersReading::run() {
                          Asserter::format("Average norm beyond tolerance of %f",GravNormMeanTol));
         RTF_TEST_FAIL_IF(distrParams.sigma<GravNormDevTol,
                          Asserter::format("Standard deviation of norm beyond tolerance of %f",GravNormDevTol));
-/*
+
         // Plot distribution
         Bottle histToFile;
-        for(int idx=0; idx<distrParams.hist.size(); idx++) {histToFile.add(distrParams.hist[idx]);}
+        for(int idx=0; idx<distrParams.hist.size(); idx++)
+        {
+            histToFile.addInt(idx+1);
+            histToFile.addDouble(distrParams.hist[idx]);
+            histToFile.addString("\n");
+        }
         saveToFile("plotAcc" + this->mtbList.get(sensorIdx).toString() + ".dat", histToFile);
-        if(this->plot)
-        {
-            system(this->plotString.c_str());
-        }
-        else
-        {
-            RTF_TEST_REPORT("Test is finished. Please check if collected date are ok, by using following command: ");
-            RTF_TEST_REPORT(RTF::Asserter::format("%s", this->plotString.c_str()));
-        }
- */
     }
+
+    if(this->plot)
+    {
+        system(this->plotString.c_str());
+    }
+    else
+    {
+        RTF_TEST_REPORT("Test is finished. Please check if collected date are ok, by using following command: ");
+        RTF_TEST_REPORT(RTF::Asserter::format("%s", this->plotString.c_str()));
+    }
+
     std::cout<<"\n\n";
 }
 

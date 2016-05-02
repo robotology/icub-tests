@@ -33,6 +33,7 @@ add_library(${PROJECTNAME} MODULE IMTBsensorParser.h
                                   DataLoaderFile.h
                                   ValueDistribution.h
                                   Plotter.h
+                                  GravityEstimator.h
                                   AccelerometersReading.h
                                   InterfaceDestructors.cpp
                                   MTBsensorParserCan.cpp
@@ -41,6 +42,7 @@ add_library(${PROJECTNAME} MODULE IMTBsensorParser.h
                                   DataLoaderFile.cpp
                                   ValueDistribution.cpp
                                   Plotter.cpp
+                                  GravityEstimator.cpp
                                   AccelerometersReading.cpp)
 
 target_link_libraries(${PROJECTNAME}
