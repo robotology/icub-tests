@@ -18,14 +18,21 @@
 
 using namespace std;
 
-Plotter::Plotter() {}
+Plotter::Plotter(){}
 
 Plotter::~Plotter() {}
 
-bool Plotter::setup(string partName, string var, string statusMsg)
+bool Plotter::setup(string plotName, string desc, string partName, yarp::os::Bottle& vars, string& statusMsg)
 {
-    // open the port
-    if(!this->port.open("/iCubTest/" + partName + "/yarpscope/" + var + ":o"))
+    // init parameters
+    this->plotName = plotName; this->partName = partName; this->varLabels = vars;
+    // open the ports
+    if(!this->labelsPort.open("/iCubTest/yarpscope/" + this->plotName + "/" + this->partName + "/labels:o"))
+    {
+        statusMsg = "opening port, is YARP network working?";
+        return false;
+    }
+    if(!this->rawDataPort.open("/iCubTest/yarpscope/" + this->plotName + "/" + this->partName + "/analog:o"))
     {
         statusMsg = "opening port, is YARP network working?";
         return false;
@@ -36,11 +43,21 @@ bool Plotter::setup(string partName, string var, string statusMsg)
 
 void Plotter::tear()
 {
-    this->port.close();
+    this->labelsPort.close();
+    this->rawDataPort.close();
 }
 
-void Plotter::plot(double value)
+void Plotter::plot(yarp::sig::Vector vec)
 {
+    // publish labels every 100 raw data instances
+    this->labelsPublishCounter = (this->labelsPublishCounter+1)%100;
+    if (this->labelsPublishCounter == 1) {
+        this->labelsPort.prepare() = this->varLabels;
+        this->labelsPort.write();
+    }
 
+    // publish raw data
+    this->rawDataPort.prepare() = vec;
+    this->rawDataPort.write();
 }
 

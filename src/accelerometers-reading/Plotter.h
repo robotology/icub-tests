@@ -22,15 +22,16 @@ namespace yarp {
 
 /**
  * \ingroup icub-tests
- * This class is not a YarpTestCase. It bilds the context for plotting a YARP vector in yarpscope
- * (open port, write YARP vector).
+ * This class is not a YarpTestCase. It builds the context for plotting a YARP vector in yarpscope.
+ * It opens the required ports and writes the data. It publishes the raw data in a port, and the 
+ * variable names in another.
  *
  */
 
 class Plotter {
 public:
     /**
-     * Constructor
+     * Constructors
      *
      */
     Plotter();
@@ -44,21 +45,25 @@ public:
     /**
      * Open/Close write port from where yarpscope will plot data
      */
-    virtual bool setup(std::string partName, std::string var, std::string statusMsg);
+    virtual bool setup(std::string plotName, std::string desc, std::string partName, yarp::os::Bottle& vars, std::string& statusMsg);
     virtual void tear();
 
     /**
      * Plot 1 scalar value
      */
-    virtual void plot(double value);
+    virtual void plot(yarp::sig::Vector vec);
 
     /**
      * Getters.
      */
 
 private:
-    std::string portName; // sink port we will write to
-    yarp::os::BufferedPort<yarp::sig::Vector> port; // anonymous destination port
+    std::string plotName; // this will be part of the destination port name
+    std::string partName;
+    yarp::os::BufferedPort<yarp::os::Bottle> labelsPort; // destination port for variable names
+    yarp::os::BufferedPort<yarp::sig::Vector> rawDataPort; // destination port for raw data
+    int labelsPublishCounter;
+    yarp::os::Bottle varLabels;
 };
 
 #endif //_PLOTTER_H_

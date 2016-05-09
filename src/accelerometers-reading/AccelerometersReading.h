@@ -18,10 +18,12 @@
 #include "IMTBsensorParser.h"
 #include "IDataLoader.h"
 #include "ValueDistribution.h"
+#include "Plotter.h"
 
 #include <iDynTree/Core/VectorFixSize.h>
 #include <iDynTree/Core/MatrixFixSize.h>
 #include <iDynTree/Core/MatrixDynSize.h>
+#include <iDynTree/Core/EigenHelpers.h>
 
 #define defaultReadingCycles 2000
 #define GravityNorm 9.80665   // m/s^2
@@ -32,6 +34,9 @@
 #define GravAngMeanTol 20  // degrees
 #define GravAngDevTol 20  // degrees
 #define accGain (2*GravityNorm/32768)
+#define refAveragingWindowSize 100 // size of averaging window
+#define relRefMeanTol 0.05 // tolerance for fixing a stable mean
+// for building the ref for relative angle computations
 
 namespace yarp {
     namespace sig {
@@ -42,6 +47,8 @@ namespace yarp {
         class Bottle;
     }
 }
+
+class Plotter;
 
 enum busType_t {
     BUSTYPE_CAN,
@@ -90,6 +97,50 @@ public:
     busType_t getBusType();
 
 private:
+    class RelAngle {
+    public:
+        typedef enum
+        {
+            setRefAccVecForTheta = 0,
+            setRefAccVecForPhi,
+            refAccsFixed
+        } refStatus_t;
+        static const std::string refStatus2string[3];
+
+        // Builder, destructor
+        RelAngle();
+        RelAngle(int sizeAveragingWindow);
+        virtual ~RelAngle();
+
+        // Update references for angle computation
+        virtual refStatus_t updateRef(iDynTree::Vector3 vec);
+
+        // Compute relative angle
+        virtual void getRelAngle(iDynTree::Vector3 vec, double& phi, double& theta);
+
+    private:
+        typedef enum
+        {
+            fillBuffer = 0,
+            computeStableMean
+        } circBufferStatus_t;
+
+        // Update mean with latest measurement and check for stable value
+        virtual bool setMean(iDynTree::Vector3 vec, iDynTree::Vector3& mean);
+
+        refStatus_t refStatus;
+        circBufferStatus_t circBufferStatus;
+        iDynTree::Vector3 refAccVecForTheta;
+        iDynTree::Vector3 refAccVecForPhi;
+        std::vector<iDynTree::Vector3> lastAccVec; // circular buffer
+        iDynTree::Vector3 lastMean;
+        int bufferIter;
+        iDynTree::Vector3 lastAccVecCumul;
+        double relPhi;
+        double relTheta;
+    };
+        
+
     virtual bool setBusType(yarp::os::Property& configuration);
 
     virtual bool checkNparseSensors(std::vector<iDynTree::Vector3>& sensorMeasList);
@@ -103,6 +154,7 @@ private:
     std::string robotName;
     busType_t busType;
     yarp::os::Bottle mtbList;
+    std::string part;
     yarp::os::Bottle subTests;
     int bins;
     bool plot;
@@ -116,6 +168,8 @@ private:
     std::vector< std::vector<iDynTree::Vector3> > sensorMeasMatList;
     std::vector<ValueDistribution> normDistribList;
 //    std::vector<ValueDistribution> angleToGravityDistribList;
+    std::vector<RelAngle> relAngleList;
+    Plotter relGravPlotter;
 
 };
 

@@ -33,7 +33,7 @@ using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-typedef Eigen::Matrix<double,3,1> EigenVector3d;
+typedef Eigen::Map<Eigen::Matrix<double,3,1> > EigenVector3d;
 
 static double norm(iDynTree::Vector3& vector);
 static double angleV1toV2(iDynTree::Vector3& vector1, iDynTree::Vector3& vector2);
@@ -66,6 +66,7 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     RTF_ASSERT_ERROR_IF(configuration.check("robot"), "Missing 'robot' parameter");
     RTF_ASSERT_ERROR_IF(configuration.check("bus"),"Missing 'bus' parameter");
     RTF_ASSERT_ERROR_IF(configuration.check("mtbList"),"Missing 'mtbList' parameter");
+    RTF_ASSERT_ERROR_IF(configuration.check("part"),"Missing 'part' parameter");
 
     // set class attributes accordingly
 
@@ -83,6 +84,9 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     this->mtbList = *configuration.find("mtbList").asList();
     this->sensorMeasMatList.resize(this->mtbList.size());
 
+    // parse the robot part (left_leg, right_arm, ...)
+    this->part = configuration.find("part").asString();
+
     // For now, sensor type will always be Accelerometers
     this->mtbTypeList.resize(this->mtbList.size());
     this->mtbTypeList.assign(this->mtbTypeList.size(), IMTBsensorParser::SENSORTYPE_ACC);
@@ -90,11 +94,6 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
     /*===============================================================================
      * Conditional parameters (dump file or robot connection info)
      *===============================================================================*/
-
-    // check input parameters
-    RTF_ASSERT_ERROR_IF(configuration.check("dataDumpFile")
-                        || configuration.check("part"),
-                        "Missing 'part' and 'dataDumpFile' parameter. You should provide at least one of them");
 
     // select data loader (which will load data from a YARP port or a file)
     if(configuration.check("dataDumpFile"))
@@ -131,6 +130,11 @@ bool AccelerometersReading::setup(yarp::os::Property &configuration) {
         this->plotString = configuration.find("plotString").asString();
     }
 
+    // create yarpscope plotter
+    RTF_ASSERT_ERROR_IF(this->relGravPlotter.setup("relGravPlotter",
+                                                   "Measured gravity norm and angle to reference gravity",
+                                                   this->part, mtbList, statusMsg),statusMsg.c_str());
+
     return true;
 }
 
@@ -165,13 +169,19 @@ void AccelerometersReading::run() {
                                                           availSensorList, formatErrMsg), formatErrMsg);
 
     /*
-     * Create distributions
+     * Create distributions and relative angle list
      */
     this->normDistribList.resize(this->mtbList.size());
+    this->relAngleList.resize(this->mtbList.size());
     for(int sensorIdx=0; sensorIdx<this->mtbList.size(); sensorIdx++)
     {
+        // size each distribution
         ValueDistribution acc_i_measDistrib(this->sensorReadingCycles,9,11,this->bins);
         this->normDistribList[sensorIdx] = acc_i_measDistrib;
+
+        // size the averaging window for the reference gravity computation. This reference
+        // is used for computing the relative angle of the measured gravity
+        this->relAngleList[sensorIdx] = RelAngle(refAveragingWindowSize);
     }
 
     /*
@@ -247,7 +257,7 @@ busType_t AccelerometersReading::getBusType()
 }
 
 /*
- * ===========================  LOCAL FUNCTIONS =====================================
+ * ===========================  PRIVATE FUNCTIONS =====================================
  */
 
 bool AccelerometersReading::setBusType(yarp::os::Property &configuration)
@@ -308,23 +318,49 @@ bool AccelerometersReading::checkNparseSensors(std::vector<iDynTree::Vector3>& s
 bool AccelerometersReading::checkDataConsistency(std::vector<iDynTree::Vector3>& sensorMeasList)
 {
     bool status;
+    yarp::sig::Vector relGravVec(sensorMeasList.size()*3);
+    RelAngle::refStatus_t refStatus;
+    relGravVec.zero();
 
     for (int sensorIdx=0; sensorIdx<sensorMeasList.size(); sensorIdx++)
     {
-        // compute norm, check limits and add to distribution
+        // compute norm and add to distribution
         double measGravityNorm = norm(sensorMeasList[sensorIdx]);
+        this->normDistribList[sensorIdx].add(measGravityNorm);
+
+        /*
+         * Relative comparison (use an arbitrary reference computed in a static pose)
+         */
+
+        // update reference gravity. If all references are computed, get the current
+        // relative angle to reference.
+        double measGravityPhi, measGravityTheta;
+        measGravityPhi = measGravityTheta = 0;
+        refStatus = this->relAngleList[sensorIdx].updateRef(sensorMeasList[sensorIdx]);
+        if (refStatus == RelAngle::refAccsFixed)
+        {
+            this->relAngleList[sensorIdx].getRelAngle(sensorMeasList[sensorIdx],
+                                                      measGravityPhi,
+                                                      measGravityTheta);
+        }
+        // Add refStatus, gravity norm, phi and theta to the vector to be plotted
+        double sensData[4] = {double(refStatus),measGravityNorm,measGravityPhi,measGravityTheta};
+        relGravVec.setSubvector(sensorIdx*4, yarp::sig::Vector(4,sensData));
+
+        /*
+         * Comparing with expected gravity
+         */
         RTF_TEST_FAIL_IF(status = (abs(measGravityNorm-GravityNorm)<GravNormInstTol),
                          Asserter::format("Measured gravity norm is out of limits (%f).",measGravityNorm));
 
-        this->normDistribList[sensorIdx].add(measGravityNorm);
-
-/*      // plot gravity norm
-
-        // compute angle, check limits w.r.t. gravity and add to distribution
-        double measGravityAngle = angleV1toV2(sensorMeasList[sensorIdx], grav0);
+/*      // compute angle, check limits w.r.t. gravity and add to distribution
+        double measGravityAngle = angleV1toV2(sensorMeasList[sensorIdx], gravRef);
         RTF_TEST_FAIL_IF(measGravityAngle>gravityAngleTolerance,
                          "Measured gravity angle is out of limits");*/
     }
+
+    // plot sensors data
+    this->relGravPlotter.plot(relGravVec);
 
     return status;
 }
@@ -349,6 +385,151 @@ void AccelerometersReading::saveToFile(std::string filename, yarp::os::Bottle &b
     fs.close();
 }
 
+AccelerometersReading::RelAngle::RelAngle():
+refStatus(setRefAccVecForTheta),
+circBufferStatus(fillBuffer)
+{}
+
+AccelerometersReading::RelAngle::RelAngle(int sizeAveragingWindow):
+refStatus(setRefAccVecForTheta),
+circBufferStatus(fillBuffer),
+bufferIter(0)
+{
+    this->refAccVecForTheta.zero();
+    this->refAccVecForPhi.zero();
+    iDynTree::Vector3 zeroVec3; zeroVec3.zero();
+    this->lastAccVec.resize(sizeAveragingWindow,zeroVec3);
+    this->lastAccVecCumul.zero();
+}
+
+AccelerometersReading::RelAngle::~RelAngle()
+{}
+
+const std::string AccelerometersReading::RelAngle::refStatus2string[3] = {"setRefAccVecForTheta","setRefAccVecForPhi","refAccsFixed"};
+
+AccelerometersReading::RelAngle::refStatus_t AccelerometersReading::RelAngle::updateRef(iDynTree::Vector3 vec)
+{
+    /* Algorithm:
+     * - in 'setRefAccVecForTheta' state, use 'vec' to comput the acceleration reference
+     * that will later be used to compute the relative angle THETA of any measured
+     * acceleration w.r.t. this reference.
+     * - in the 'setRefAccVecForPhi' state, do the same kind of processing but for the
+     * angle PHI.
+     * - in 'refAccsFixed' state, as both references are already fixed, do nothing.
+     */
+    switch (this->refStatus) {
+        case setRefAccVecForTheta:
+            if(this->setMean(vec, this->refAccVecForTheta)) {
+                this->refStatus = setRefAccVecForPhi;
+            }
+            break;
+
+        case setRefAccVecForPhi:
+            if(this->setMean(vec, this->refAccVecForPhi)) {
+                this->refStatus = refAccsFixed;
+            }
+            break;
+
+        case refAccsFixed:
+        default:
+            break;
+    }
+
+    return this->refStatus;
+}
+
+void AccelerometersReading::RelAngle::getRelAngle(iDynTree::Vector3 vec, double &phi, double &theta)
+{
+    // compute angle w.r.t. reference gravity vector
+    theta = angleV1toV2(this->refAccVecForTheta, vec);
+
+    // compute accForPhi = refAccForTheta x vec
+    iDynTree::Vector3 accForPhi;
+    iDynTree::toEigen(accForPhi) =
+    iDynTree::toEigen(this->refAccVecForTheta).cross(iDynTree::toEigen(vec));
+
+    // compute angle w.r.t. reference cardinal vector
+    theta = angleV1toV2(this->refAccVecForPhi, accForPhi);
+}
+
+bool AccelerometersReading::RelAngle::setMean(iDynTree::Vector3 vec, iDynTree::Vector3& mean)
+{
+    bool status = false;
+    mean.zero(); // default value
+
+    /* Algorithm:
+     * In 'fillBuffer' state, add the element 'vec'. Once the buffer is full,
+     * compute the mean and switch to next state.
+     * In the 'computeStableMean' state, add the element 'vec' and compute
+     * a new mean. If the delta w.r.t. the previous mean is below a given threshold,
+     * set the output 'mean' and return 'true', otherwise return 'false'.
+     */
+    switch (this->circBufferStatus) {
+        case fillBuffer:
+            // add an element to the circular buffer
+            iDynTree::toEigen(this->lastAccVecCumul) += iDynTree::toEigen(vec);
+            this->lastAccVec[this->bufferIter] = vec;
+            this->bufferIter += 1;
+            // if buffer is full, compute mean and go to next state
+            if(this->bufferIter == this->lastAccVec.size())
+            {
+                this->bufferIter = 0;
+                iDynTree::toEigen(this->lastMean) = iDynTree::toEigen(this->lastAccVecCumul) / this->lastAccVec.size();
+                this->circBufferStatus = computeStableMean;
+            }
+            break;
+
+        case computeStableMean:
+            // add an element to the circular buffer and update sum
+            iDynTree::toEigen(this->lastAccVecCumul) += iDynTree::toEigen(vec);
+            iDynTree::toEigen(this->lastAccVecCumul) -= iDynTree::toEigen(this->lastAccVec[this->bufferIter]);
+            this->lastAccVec[this->bufferIter] = vec;
+            this->bufferIter = ++this->bufferIter%this->lastAccVec.size();
+            // compute current mean
+            iDynTree::Vector3 currentMean;
+            iDynTree::toEigen(currentMean) = iDynTree::toEigen(this->lastAccVecCumul) / this->lastAccVec.size();
+            // if change w.r.t. last mean is below threshold return valid mean
+            if ((iDynTree::toEigen(this->lastMean) - iDynTree::toEigen(currentMean)).norm() < relRefMeanTol)
+            {
+                // return a valid mean
+                iDynTree::toEigen(mean) = iDynTree::toEigen(currentMean);
+                status = true;
+                // reset buffer
+                iDynTree::Vector3 zeroVec3; zeroVec3.zero();
+                this->lastAccVec.resize(this->lastAccVec.size(),zeroVec3);
+                this->lastAccVecCumul.zero();
+                this->bufferIter = 0;
+                this->lastMean.zero();
+                // reset state
+                this->circBufferStatus = fillBuffer;
+            }
+            else
+            {
+                this->lastMean = currentMean;
+            }
+            break;
+    }
+
+    return status;
+}
+
+
+//{
+//    if this->nbAccVecCumul < 100 {
+//        iDynTree::toEigen(this->accVecCumul) =
+//        iDynTree::toEigen(this->accVecCumul) + iDynTree::toEigen(vec);
+//        nbAccVecCumul++;
+//    }
+//        else if this->nbAccVecCumul <  {
+//
+//        }
+//        if vec
+//        }
+
+/*
+ * ===========================  LOCAL STATIC FUNCTIONS ================================
+ */
+
 static double norm(iDynTree::Vector3& vector)
 {
     return sqrt(iDynTree::toEigen(vector).transpose()*iDynTree::toEigen(vector));
@@ -356,7 +537,13 @@ static double norm(iDynTree::Vector3& vector)
 
 static double angleV1toV2(iDynTree::Vector3& vector1, iDynTree::Vector3& vector2)
 {
-    return 0;
-}
+    // convert to Eigen
+    EigenVector3d vec1map = iDynTree::toEigen(vector1);
+    EigenVector3d vec2map = iDynTree::toEigen(vector2);
 
+    // compute angle from v1 to v2
+    double sinAngle = (vec1map.cross(vec2map)).norm()/(vec1map.norm()*vec2map.norm());
+    double cosAngle = vec1map.dot(vec2map)/(vec1map.norm()*vec2map.norm());
+    return atan2(sinAngle, cosAngle);
+}
 
