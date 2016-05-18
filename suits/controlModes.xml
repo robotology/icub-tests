@@ -6,6 +6,7 @@
 
     <test type="dll" param="--from controlModes_head.ini"> ControlModes </test>
     <test type="dll" param="--from controlModes_face.ini"> ControlModes </test>
+    <test type="dll" param="--from controlModes_left_leg.ini"> ControlModes </test>
 
 </suit>
 
