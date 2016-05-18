@@ -17,6 +17,8 @@
     <!-- Openloop (until now used only on icubV3 head) -->
     <test type="dll" param="--from openloopConsistency_head.ini"> OpenLoopConsistency </test>
     <test type="dll" param="--from openLoopConsistency_face.ini"> OpenloopConsistency </test>
+    <!-- used also on icub genova 05 -->
+    <test type="dll" param="--from openLoopConsistency_left_leg.ini"> OpenloopConsistency </test>
 
 
 </suit>
