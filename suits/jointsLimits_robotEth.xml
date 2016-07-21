@@ -11,5 +11,7 @@
     <test type="dll" param="--from joint_limits_right_leg.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_left_leg.ini"> JointLimits </test>
     <test type="dll" param="--from joint_limits_torso.ini"> JointLimits </test>
-    <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test>
+    <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test> 
+    <!-- only for robot with mc4plus on forearm use following test 
+    <test type="dll" param="--from joint_limits_left_forearm.ini"> JointLimits </test>-->
 </suit>
