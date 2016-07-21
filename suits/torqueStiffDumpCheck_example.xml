@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Motor Control Interfaces Suite">
+    <description>Testing robots's Motor Control Interfaces</description>
+    <environment>--robotname icub</environment>
+
+<!-- ATTENTION : THIS TEST HAS NEVER BEEN LAUNCHED ON ROBOT" -->
+    <test type="dll" param="--from torque_stiffDumpCheck.ini"> TorqueControlStiffDumpCheck </test>
+    
+</suit>
+

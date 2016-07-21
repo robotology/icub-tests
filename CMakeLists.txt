@@ -35,6 +35,7 @@ add_subdirectory(src/openloop-consistency)
 
 # Build torque control tests
 add_subdirectory(src/torqueControl-consistency)
+add_subdirectory(src/torqueControl-stiffDumpCheck)
 
 if(ICUB_TESTS_USES_CODYCO)
     add_subdirectory(src/torqueControl-gravityConsistency)
