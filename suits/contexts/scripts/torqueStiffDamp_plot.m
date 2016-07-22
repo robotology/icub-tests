@@ -1,6 +1,5 @@
 #define function to plot one file
-function torqueStiffDump_plot(filename, linearfact)
-printf("sono nella plot");
+function torqueStiffDamp_plot(filename, linearfact)
 data = load(filename);
 m=min(data(:,1));
 mx=max(data(:,1));

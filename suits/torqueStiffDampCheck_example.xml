@@ -5,7 +5,7 @@
     <environment>--robotname icub</environment>
 
 <!-- ATTENTION : THIS TEST HAS NEVER BEEN LAUNCHED ON ROBOT" -->
-    <test type="dll" param="--from torque_stiffDumpCheck.ini"> TorqueControlStiffDumpCheck </test>
+    <test type="dll" param="--from torque_stiffDampCheck.ini"> TorqueControlStiffDampCheck </test>
     
 </suit>
 

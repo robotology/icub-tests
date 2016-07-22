@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef _TORQUECONTORLSTIFFDUMPCHECK_H_
-#define _TORQUECONTORLSTIFFDUMPCHECK_H_
+#ifndef _TORQUECONTORLSTIFFDAMPCHECK_H_
+#define _TORQUECONTORLSTIFFDAMPCHECK_H_
 
 #include <string>
 #include <rtf/yarp/YarpTestCase.h>
@@ -18,10 +18,10 @@
 
 using namespace yarp::os;
 
-class TorqueControlStiffDumpCheck : public YarpTestCase {
+class TorqueControlStiffDampCheck : public YarpTestCase {
 public:
-    TorqueControlStiffDumpCheck();
-    virtual ~TorqueControlStiffDumpCheck();
+    TorqueControlStiffDampCheck();
+    virtual ~TorqueControlStiffDampCheck();
 
     virtual bool setup(yarp::os::Property& property);
 
@@ -32,7 +32,7 @@ public:
     void goHome();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
-    bool setAndCheckImpedance(int joint, double stiffness, double dumping);
+    bool setAndCheckImpedance(int joint, double stiffness, double damping);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
     std::string getPath(const std::string& str);
 
@@ -43,7 +43,7 @@ private:
     int    n_part_joints;
     int    n_cmd_joints;
     double *stiffness;
-    double *dumping;
+    double *damping;
     double *home;
     double *pos_tot;
     double  testLen_sec;
@@ -63,4 +63,4 @@ private:
 
 };
 
-#endif //_TORQUECONTORLSTIFFDUMPCHECK_H
+#endif //_TORQUECONTORLSTIFFDAMPCHECK_H
