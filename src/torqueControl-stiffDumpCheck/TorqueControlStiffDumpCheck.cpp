@@ -13,11 +13,16 @@
 #include <rtf/yarp/YarpTestAsserter.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
-
+#include <yarp/os/LogStream.h>
+//#include <iostream>
+//#include <yarp/manager/localbroker.h>
 //#include <cstdlib>
+
+
+
 #include <fstream>
 #include <algorithm>    // std::replace
-//#include <iostream>
+
 
 #include "TorqueControlStiffDumpCheck.h"
 
@@ -44,6 +49,7 @@ TorqueControlStiffDumpCheck::TorqueControlStiffDumpCheck() : YarpTestCase("Torqu
     home=0;
     n_part_joints=0;
     n_cmd_joints=0;
+    plot_enabled = false;
 }
 
 TorqueControlStiffDumpCheck::~TorqueControlStiffDumpCheck() { }
@@ -87,6 +93,15 @@ bool TorqueControlStiffDumpCheck::setup(yarp::os::Property& property) {
 
     testLen_sec = property.find("duration").asDouble();
     RTF_ASSERT_ERROR_IF(testLen_sec>0, "duretion should be bigger than 0");
+
+    if(property.check("plot_enabled"))
+    {
+        plot_enabled = property.find("plot_enabled").asBool();
+    }
+    if(plot_enabled)
+        yInfo() << "Plot is enabled: the test will run octave and plot test result ";
+    else
+        yInfo() << "Plot is not enabled. The test collects only data. The user need to plot data to theck if test has successed.";
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -236,6 +251,15 @@ void TorqueControlStiffDumpCheck::saveToFile(std::string filename, yarp::os::Bot
     fs.close();
 }
 
+
+std::string TorqueControlStiffDumpCheck::getPath(const std::string& str)
+{
+  size_t found;
+  found=str.find_last_of("/\\");
+  return(str.substr(0,found));
+}
+
+
 void TorqueControlStiffDumpCheck::run()
 {
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
@@ -279,7 +303,7 @@ void TorqueControlStiffDumpCheck::run()
         b_pos_trq.clear();
 
 
-
+        RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
         RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
         RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, dumping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
@@ -308,27 +332,75 @@ void TorqueControlStiffDumpCheck::run()
         filename1 = testfilename + partName + "_j" + b1.toString().c_str() + ".txt";
         saveToFile(filename1,b_vel_trq);
         b_vel_trq.clear();
-
+        RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
 
     }//end for
 
+    RTF_TEST_REPORT("Test ended. Puts joints in pos stiff and moves them to home pos");
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
 
     goHome();
 
+    yarp::os::ResourceFinder rf;
+    rf.setDefaultContext("scripts");
+
+    //find octave scripts
+    std::string octaveFile = rf.findFile("torqueStiffDump_plotAll.m");
+    if(octaveFile.size() == 0)
+    {
+        yError()<<"Cannot find file encoderConsistencyPlotAll.m";
+        return;
+    }
+
+    //prepare octave command
+    std::string octaveCommand= "octave --path "+ getPath(octaveFile);
+
+    //transform stiffness, dumping and jointslist in a vector string for octave
+    stringstream ss_stifness, ss_dumping, ss_joints;
+    ss_stifness << "[";
+    ss_dumping << "[";
+    ss_joints << "[";
+    for(int j=0; j<n_cmd_joints-1; j++)
+    {
+        ss_stifness << stiffness[j] <<", ";
+        ss_dumping << dumping[j] <<", ";
+        ss_joints << jointsList[j] <<", ";
+
+    }
+    ss_stifness << stiffness[n_cmd_joints-1] << "]";
+    ss_dumping << dumping[n_cmd_joints-1] << "]";
+    ss_joints << jointsList[n_cmd_joints-1] << "]";
+
+    stringstream ss;
+    ss << n_cmd_joints <<  ", "<< ss_stifness.str() << ", " << ss_dumping.str() << ", " << ss_joints.str();
+    string str = ss.str();
+    octaveCommand+= " -q --eval \"torqueStiffDump_plotAll('" +partName +"'," + str +")\"  --persist";
+
+    yInfo() << "octave cmd= " << octaveCommand;
+    if(plot_enabled)
+    {
+        int ret = system (octaveCommand.c_str());
+    }
+    else
+    {
+         yInfo() << "Test has collected all data. You need to plot data to check is test is passed";
+         yInfo() << "Please run following command to plot data.";
+         yInfo() << octaveCommand;
+         yInfo() << "To exit from Octave application please type 'exit' command.";
+    }
 }
 
 
 //void TorqueControlStiffDumpCheck::run()
 //{
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-//   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
+////    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+////   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
 
-//    goHome();
+////    goHome();
 
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-//   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test1");
+////    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
+////   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test1");
 
 //    for (int i=0; i<n_cmd_joints; i++)
 //    {
@@ -401,9 +473,57 @@ void TorqueControlStiffDumpCheck::run()
 
 //    }//end for
 
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-//    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
+////    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+////    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
 
-//    goHome();
+////    goHome();
+
+//    yarp::os::ResourceFinder rf;
+//    rf.setDefaultContext("scripts");
+
+//    //find octave scripts
+//    std::string octaveFile = rf.findFile("torqueStiffDump_plotAll.m");
+//    if(octaveFile.size() == 0)
+//    {
+//        yError()<<"Cannot find file encoderConsistencyPlotAll.m";
+//        return;
+//    }
+
+//    //prepare octave command
+//    std::string octaveCommand= "octave --path "+ getPath(octaveFile);
+
+//    //transform stiffness, dumping and jointslist in a vector string for octave
+//    stringstream ss_stifness, ss_dumping, ss_joints;
+//    ss_stifness << "[";
+//    ss_dumping << "[";
+//    ss_joints << "[";
+//    for(int j=0; j<n_cmd_joints-1; j++)
+//    {
+//        ss_stifness << stiffness[j] <<", ";
+//        ss_dumping << dumping[j] <<", ";
+//        ss_joints << jointsList[j] <<", ";
+
+//    }
+//    ss_stifness << stiffness[n_cmd_joints-1] << "]";
+//    ss_dumping << dumping[n_cmd_joints-1] << "]";
+//    ss_joints << jointsList[n_cmd_joints-1] << "]";
+
+//    stringstream ss;
+//    ss << n_cmd_joints <<  ", "<< ss_stifness.str() << ", " << ss_dumping.str() << ", " << ss_joints.str();
+//    string str = ss.str();
+//    octaveCommand+= " -q --eval \"torqueStiffDump_plotAll('" +partName +"'," + str +")\"  --persist";
+
+//    yInfo() << "octave cmd= " << octaveCommand;
+//    if(plot_enabled)
+//    {
+//        int ret = system (octaveCommand.c_str());
+//    }
+//    else
+//    {
+//         yInfo() << "Test has collected all data. You need to plot data to check is test is passed";
+//         yInfo() << "Please run following command to plot data.";
+//         yInfo() << octaveCommand;
+//         yInfo() << "To exit from Octave application please type 'exit' command.";
+//    }
 
 //}

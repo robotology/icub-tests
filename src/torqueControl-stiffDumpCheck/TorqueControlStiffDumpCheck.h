@@ -34,6 +34,7 @@ public:
     void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
     bool setAndCheckImpedance(int joint, double stiffness, double dumping);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
+    std::string getPath(const std::string& str);
 
 private:
     std::string robotName;
@@ -48,6 +49,7 @@ private:
     double  testLen_sec;
     Bottle b_pos_trq;
     Bottle b_vel_trq;
+    bool plot_enabled;
 
 
     yarp::dev::PolyDriver        *dd;
