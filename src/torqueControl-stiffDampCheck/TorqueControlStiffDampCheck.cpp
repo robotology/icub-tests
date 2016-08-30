@@ -133,10 +133,12 @@ bool TorqueControlStiffDampCheck::setup(yarp::os::Property& property) {
     stiffness=new double[n_cmd_joints];
     damping=new double[n_cmd_joints];
     pos_tot=new double[n_cmd_joints];
+    home=new double[n_cmd_joints];
 
     for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
     for (int i=0; i <n_cmd_joints; i++) stiffness[i]=b_stiff->get(i).asDouble();
     for (int i=0; i <n_cmd_joints; i++) damping[i]=b_dump->get(i).asDouble();
+    for (int i=0; i <n_cmd_joints; i++) home[i]=b_home->get(i).asDouble();
     return true;
 }
 
@@ -176,15 +178,20 @@ void TorqueControlStiffDampCheck::verifyMode(int desired_control_mode, yarp::dev
         if (ok==n_cmd_joints) break;
         if (timeout>100)
         {
-            char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode,cmode,imode);
+            char sbuf[800];
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(),
+                    Vocab::decode((NetInt32)desired_control_mode).c_str(),
+                    Vocab::decode((NetInt32)desired_interaction_mode).c_str(),
+                    Vocab::decode((NetInt32)cmode).c_str(),
+                    Vocab::decode((NetInt32)imode).c_str());
             RTF_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),
+            Vocab::decode((NetInt32)desired_interaction_mode).c_str());
     RTF_TEST_REPORT(sbuf);
 }
 
@@ -202,8 +209,8 @@ void TorqueControlStiffDampCheck::goHome()
         int in_position=0;
         for (int i=0; i<n_cmd_joints; i++)
         {
-            ienc->getEncoder(jointsList[i],&pos_tot[jointsList[i]]);
-            if (fabs(pos_tot[jointsList[i]]-home[i])<0.5) in_position++;
+            ienc->getEncoder(jointsList[i],&pos_tot[i]);
+            if (fabs(pos_tot[i]-home[i])<0.8) in_position++;
         }
         if (in_position==n_cmd_joints) break;
         if (timeout>100)
@@ -260,174 +267,42 @@ std::string TorqueControlStiffDampCheck::getPath(const std::string& str)
 }
 
 
-//void TorqueControlStiffDampCheck::run()
-//{
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-//    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
-
-//    goHome();
-
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-//    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test1");
-
-//    for (int i=0; i<n_cmd_joints; i++)
-//    {
-
-//        RTF_TEST_REPORT(Asserter::format("***** Start first part of test on joint %d......", jointsList[i]));
-//        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
-
-//        RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
-//        char c;
-//        int unused = scanf("%c", &c);
-
-//        double start_time = yarp::os::Time::now();
-//        double curr_time = start_time;
-//        while(curr_time < start_time+testLen_sec)
-//        {
-//            double curr_pos, torque;
-//            ienc->getEncoder(jointsList[i], &curr_pos);
-//            itrq->getTorque(jointsList[i], &torque);
-
-//            Bottle& row = b_pos_trq.addList();
-//            row.addDouble(curr_pos-home[i]);
-//            row.addDouble(torque);
-//            yarp::os::Time::delay(0.01);
-//            curr_time = yarp::os::Time::now();
-//        }
-
-//        string testfilename = "posVStrq_";
-//        Bottle b;
-//        b.addInt(jointsList[i]);
-//        string filename1 = testfilename + partName + "_j" + b.toString().c_str() + ".txt";
-//        saveToFile(filename1,b_pos_trq);
-//        b_pos_trq.clear();
-
-
-//        RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
-//        RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
-//        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
-
-//        RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
-
-//        unused = scanf("%c", &c);
-
-//        start_time = yarp::os::Time::now();
-//        curr_time = start_time;
-//        while(curr_time < start_time+testLen_sec)
-//        {
-//            double curr_vel, torque;
-//            ienc->getEncoderSpeed(jointsList[i], &curr_vel);
-//            itrq->getTorque(jointsList[i], &torque);
-
-//            Bottle& row = b_vel_trq.addList();
-//            row.addDouble(curr_vel);
-//            row.addDouble(torque);
-//            yarp::os::Time::delay(0.01);
-//            curr_time = yarp::os::Time::now();
-//        }
-
-//        testfilename = "velVStrq_";
-//        Bottle b1;
-//        b1.addInt(jointsList[i]);
-//        filename1 = testfilename + partName + "_j" + b1.toString().c_str() + ".txt";
-//        saveToFile(filename1,b_vel_trq);
-//        b_vel_trq.clear();
-//        RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
-
-//    }//end for
-
-//    RTF_TEST_REPORT("Test ended. Puts joints in pos stiff and moves them to home pos");
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-//    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
-
-//    goHome();
-
-//    yarp::os::ResourceFinder rf;
-//    rf.setDefaultContext("scripts");
-
-//    //find octave scripts
-//    std::string octaveFile = rf.findFile("torqueStiffDamp_plotAll.m");
-//    if(octaveFile.size() == 0)
-//    {
-//        yError()<<"Cannot find file encoderConsistencyPlotAll.m";
-//        return;
-//    }
-
-//    //prepare octave command
-//    std::string octaveCommand= "octave --path "+ getPath(octaveFile);
-
-//    //transform stiffness, damping and jointslist in a vector string for octave
-//    stringstream ss_stifness, ss_damping, ss_joints;
-//    ss_stifness << "[";
-//    ss_damping << "[";
-//    ss_joints << "[";
-//    for(int j=0; j<n_cmd_joints-1; j++)
-//    {
-//        ss_stifness << stiffness[j] <<", ";
-//        ss_damping << damping[j] <<", ";
-//        ss_joints << jointsList[j] <<", ";
-
-//    }
-//    ss_stifness << stiffness[n_cmd_joints-1] << "]";
-//    ss_damping << damping[n_cmd_joints-1] << "]";
-//    ss_joints << jointsList[n_cmd_joints-1] << "]";
-
-//    stringstream ss;
-//    ss << n_cmd_joints <<  ", "<< ss_stifness.str() << ", " << ss_damping.str() << ", " << ss_joints.str();
-//    string str = ss.str();
-//    octaveCommand+= " -q --eval \"torqueStiffDamp_plotAll('" +partName +"'," + str +")\"  --persist";
-
-//    yInfo() << "octave cmd= " << octaveCommand;
-//    if(plot_enabled)
-//    {
-//        int ret = system (octaveCommand.c_str());
-//    }
-//    else
-//    {
-//         yInfo() << "Test has collected all data. You need to plot data to check is test is passed";
-//         yInfo() << "Please run following command to plot data.";
-//         yInfo() << octaveCommand;
-//         yInfo() << "To exit from Octave application please type 'exit' command.";
-//    }
-//}
-
-
 void TorqueControlStiffDampCheck::run()
 {
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-//   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
+    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
 
-//    goHome();
+    RTF_TEST_REPORT(Asserter::format("try to move joints in home positions"));
+    goHome();
 
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
-//   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test1");
+    RTF_TEST_REPORT(Asserter::format("try to set compliant mode"));
+    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test1");
 
     for (int i=0; i<n_cmd_joints; i++)
     {
 
         RTF_TEST_REPORT(Asserter::format("***** Start first part of test on joint %d......", jointsList[i]));
-        //RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
         RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
         char c;
-        scanf("%c", &c);
+        int unused = scanf("%c", &c);
+        RTF_TEST_REPORT(Asserter::format("startingto collact data of joint %d......", jointsList[i]));
 
         double start_time = yarp::os::Time::now();
         double curr_time = start_time;
-        int x=0;
         while(curr_time < start_time+testLen_sec)
         {
             double curr_pos, torque;
-            //ienc->getEncoder(jointsList[i], curr_pos);
-            //itrq->getTorque(jointsList[i], torque);
+            ienc->getEncoder(jointsList[i], &curr_pos);
+            itrq->getTorque(jointsList[i], &torque);
 
             Bottle& row = b_pos_trq.addList();
-            //row.addDouble(curr_pos-home[i], torque);
-            row.addDouble(x);
-            row.addDouble(10+x);
+            row.addDouble(curr_pos-home[i]);
+            row.addDouble(torque);
             yarp::os::Time::delay(0.01);
             curr_time = yarp::os::Time::now();
-            x++;
         }
 
         string testfilename = "posVStrq_";
@@ -438,29 +313,29 @@ void TorqueControlStiffDampCheck::run()
         b_pos_trq.clear();
 
 
-
-
+        RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
         RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
         RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
         RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
 
-        scanf("%c", &c);
-        x=1000;
+        unused = scanf("%c", &c);
+
+        RTF_TEST_REPORT(Asserter::format("startingto collact data of joint %d......", jointsList[i]));
+
         start_time = yarp::os::Time::now();
         curr_time = start_time;
         while(curr_time < start_time+testLen_sec)
         {
             double curr_vel, torque;
-            //ienc->getEncoderSpeed(jointsList[i], curr_vel);
-            //itrq->getTorque(jointsList[i], torque);
+            ienc->getEncoderSpeed(jointsList[i], &curr_vel);
+            itrq->getTorque(jointsList[i], &torque);
 
             Bottle& row = b_vel_trq.addList();
-            row.addDouble(x);
-            row.addDouble(x+20);
+            row.addDouble(curr_vel);
+            row.addDouble(torque);
             yarp::os::Time::delay(0.01);
             curr_time = yarp::os::Time::now();
-            x++;
         }
 
         testfilename = "velVStrq_";
@@ -469,14 +344,15 @@ void TorqueControlStiffDampCheck::run()
         filename1 = testfilename + partName + "_j" + b1.toString().c_str() + ".txt";
         saveToFile(filename1,b_vel_trq);
         b_vel_trq.clear();
-
+        RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
 
     }//end for
 
-//    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
-//    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
+    RTF_TEST_REPORT("Test ended. Puts joints in pos stiff and moves them to home pos");
+    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
 
-//    goHome();
+    goHome();
 
     yarp::os::ResourceFinder rf;
     rf.setDefaultContext("scripts");
@@ -525,5 +401,141 @@ void TorqueControlStiffDampCheck::run()
          yInfo() << octaveCommand;
          yInfo() << "To exit from Octave application please type 'exit' command.";
     }
-
 }
+
+
+//void TorqueControlStiffDampCheck::run()
+//{
+////    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+////   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
+
+////    goHome();
+
+////    setMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
+////   verifyMode(VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test1");
+
+//    for (int i=0; i<n_cmd_joints; i++)
+//    {
+
+//        RTF_TEST_REPORT(Asserter::format("***** Start first part of test on joint %d......", jointsList[i]));
+//        //RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+
+//        RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
+//        char c;
+//        scanf("%c", &c);
+
+//        double start_time = yarp::os::Time::now();
+//        double curr_time = start_time;
+//        int x=0;
+//        while(curr_time < start_time+testLen_sec)
+//        {
+//            double curr_pos, torque;
+//            //ienc->getEncoder(jointsList[i], curr_pos);
+//            //itrq->getTorque(jointsList[i], torque);
+
+//            Bottle& row = b_pos_trq.addList();
+//            //row.addDouble(curr_pos-home[i], torque);
+//            row.addDouble(x);
+//            row.addDouble(10+x);
+//            yarp::os::Time::delay(0.01);
+//            curr_time = yarp::os::Time::now();
+//            x++;
+//        }
+
+//        string testfilename = "posVStrq_";
+//        Bottle b;
+//        b.addInt(jointsList[i]);
+//        string filename1 = testfilename + partName + "_j" + b.toString().c_str() + ".txt";
+//        saveToFile(filename1,b_pos_trq);
+//        b_pos_trq.clear();
+
+
+
+
+//        RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
+//        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+
+//        RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
+
+//        scanf("%c", &c);
+//        x=1000;
+//        start_time = yarp::os::Time::now();
+//        curr_time = start_time;
+//        while(curr_time < start_time+testLen_sec)
+//        {
+//            double curr_vel, torque;
+//            //ienc->getEncoderSpeed(jointsList[i], curr_vel);
+//            //itrq->getTorque(jointsList[i], torque);
+
+//            Bottle& row = b_vel_trq.addList();
+//            row.addDouble(x);
+//            row.addDouble(x+20);
+//            yarp::os::Time::delay(0.01);
+//            curr_time = yarp::os::Time::now();
+//            x++;
+//        }
+
+//        testfilename = "velVStrq_";
+//        Bottle b1;
+//        b1.addInt(jointsList[i]);
+//        filename1 = testfilename + partName + "_j" + b1.toString().c_str() + ".txt";
+//        saveToFile(filename1,b_vel_trq);
+//        b_vel_trq.clear();
+
+
+//    }//end for
+
+////    setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
+////    verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test2");
+
+////    goHome();
+
+//    yarp::os::ResourceFinder rf;
+//    rf.setDefaultContext("scripts");
+
+//    //find octave scripts
+//    std::string octaveFile = rf.findFile("torqueStiffDamp_plotAll.m");
+//    if(octaveFile.size() == 0)
+//    {
+//        yError()<<"Cannot find file encoderConsistencyPlotAll.m";
+//        return;
+//    }
+
+//    //prepare octave command
+//    std::string octaveCommand= "octave --path "+ getPath(octaveFile);
+
+//    //transform stiffness, damping and jointslist in a vector string for octave
+//    stringstream ss_stifness, ss_damping, ss_joints;
+//    ss_stifness << "[";
+//    ss_damping << "[";
+//    ss_joints << "[";
+//    for(int j=0; j<n_cmd_joints-1; j++)
+//    {
+//        ss_stifness << stiffness[j] <<", ";
+//        ss_damping << damping[j] <<", ";
+//        ss_joints << jointsList[j] <<", ";
+
+//    }
+//    ss_stifness << stiffness[n_cmd_joints-1] << "]";
+//    ss_damping << damping[n_cmd_joints-1] << "]";
+//    ss_joints << jointsList[n_cmd_joints-1] << "]";
+
+//    stringstream ss;
+//    ss << n_cmd_joints <<  ", "<< ss_stifness.str() << ", " << ss_damping.str() << ", " << ss_joints.str();
+//    string str = ss.str();
+//    octaveCommand+= " -q --eval \"torqueStiffDamp_plotAll('" +partName +"'," + str +")\"  --persist";
+
+//    yInfo() << "octave cmd= " << octaveCommand;
+//    if(plot_enabled)
+//    {
+//        int ret = system (octaveCommand.c_str());
+//    }
+//    else
+//    {
+//         yInfo() << "Test has collected all data. You need to plot data to check is test is passed";
+//         yInfo() << "Please run following command to plot data.";
+//         yInfo() << octaveCommand;
+//         yInfo() << "To exit from Octave application please type 'exit' command.";
+//    }
+
+//}
