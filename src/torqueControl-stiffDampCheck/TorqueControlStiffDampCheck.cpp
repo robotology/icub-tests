@@ -225,6 +225,7 @@ void TorqueControlStiffDampCheck::goHome()
 bool TorqueControlStiffDampCheck::setAndCheckImpedance(int joint, double stiffness, double damping)
 {
     iimp->setImpedance(joint, stiffness, damping);
+    yarp::os::Time::delay(0.01);
     double readStiff, readDump;
     iimp->getImpedance(joint, &readStiff, &readDump);
 
@@ -285,6 +286,11 @@ void TorqueControlStiffDampCheck::run()
         RTF_TEST_REPORT(Asserter::format("***** Start first part of test on joint %d......", jointsList[i]));
         RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
+
+
+        //get initila torque
+        double init_torque;
+        itrq->getTorque(jointsList[i], &init_torque);
         RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
         char c;
         int unused = scanf("%c", &c);
@@ -294,13 +300,15 @@ void TorqueControlStiffDampCheck::run()
         double curr_time = start_time;
         while(curr_time < start_time+testLen_sec)
         {
-            double curr_pos, torque;
+            double curr_pos, torque, reftrq;
             ienc->getEncoder(jointsList[i], &curr_pos);
             itrq->getTorque(jointsList[i], &torque);
+            itrq->getRefTorque(jointsList[i], &reftrq);
 
             Bottle& row = b_pos_trq.addList();
             row.addDouble(curr_pos-home[i]);
-            row.addDouble(torque);
+            row.addDouble(torque- init_torque);
+            row.addDouble(reftrq);
             yarp::os::Time::delay(0.01);
             curr_time = yarp::os::Time::now();
         }
@@ -317,6 +325,7 @@ void TorqueControlStiffDampCheck::run()
         RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
         RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
+        itrq->getTorque(jointsList[i], &init_torque);
         RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
 
         unused = scanf("%c", &c);
@@ -327,13 +336,15 @@ void TorqueControlStiffDampCheck::run()
         curr_time = start_time;
         while(curr_time < start_time+testLen_sec)
         {
-            double curr_vel, torque;
+            double curr_vel, torque, reftrq;
             ienc->getEncoderSpeed(jointsList[i], &curr_vel);
             itrq->getTorque(jointsList[i], &torque);
+            itrq->getRefTorque(jointsList[i], &reftrq);
 
             Bottle& row = b_vel_trq.addList();
             row.addDouble(curr_vel);
-            row.addDouble(torque);
+            row.addDouble(torque- init_torque);
+            row.addDouble(reftrq);
             yarp::os::Time::delay(0.01);
             curr_time = yarp::os::Time::now();
         }
