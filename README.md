@@ -21,9 +21,11 @@ To update documentation follow these steps:
 
 ## Contributors
 
-* Ali Paikan 
-* Lorenzo Natale
-* Silvio Traversaro
-* Alessandro Scalzo
-* Marco Randazzo
-* Valentina Gaggero
+- [**Ali Paikan**](https://github.com/apaikan)
+- [**Lorenzo Natale**](https://github.com/lornat75)
+- [**Silvio Traversaro**](https://github.com/traversaro)
+- [**Alessandro Scalzo**](https://github.com/ale-git)
+- [**Marco Randazzo**](https://github.com/randaz81)
+- [**Valentina Gaggero**](https://github.com/valegagge)
+- [**Ugo Pattacini**](https://github.com/pattacini)
+

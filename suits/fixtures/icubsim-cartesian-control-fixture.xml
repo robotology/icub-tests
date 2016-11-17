@@ -1,0 +1,50 @@
+<application>
+    <name>iCub Simulator</name>
+    <description>A fixture to prepare iCub Simulator for testing Cartesian Controller</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ugo.pattacini@iit.it">Ugo Pattacini</author>
+    </authors>
+    <module>
+        <name>iCub_SIM</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <ensure>
+            <wait>10</wait>
+        </ensure>
+    </module>
+    <module>
+        <name>yarprobotinterface</name>
+        <parameters>--context simCartesianControl --config no_legs.xml</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/icubSim/left_arm/state:o</port>
+            <port timeout="20">/icubSim/right_arm/state:o</port>
+        </dependencies>
+    </module>
+    <module>
+        <name>iKinCartesianSolver</name>
+        <parameters>--context simCartesianControl --part right_arm</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/icubSim/right_arm/state:o</port>
+        </dependencies>
+    </module>
+    <module>
+        <name>iKinCartesianSolver</name>
+        <parameters>--context simCartesianControl --part left_arm</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/icubSim/left_arm/state:o</port>
+        </dependencies>
+    </module>
+    <module>
+        <name>iKinGazeCtrl</name>
+        <parameters>--from configSim.ini</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/icubSim/head/state:o</port>
+            <port timeout="20">/icubSim/inertial</port>
+        </dependencies>
+    </module>
+</application>
