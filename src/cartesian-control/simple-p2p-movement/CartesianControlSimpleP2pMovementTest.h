@@ -28,9 +28,9 @@
 * This test verifies the point-to-point cartesian movement.
 *
 * Accepts the following parameters:
-* | Parameter name | Type   | Units | Default Value | Required | Description  | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------:|:------------:|:-----:|
-* |    arm-type    | string |   -   |      left     |    No    | left | right |   -   |
+* | Parameter name | Type   | Units | Default Value | Required |  Description  | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
+* |    arm-type    | string |   -   |      left     |    No    | left or right |   -   |
 */
 class CartesianControlSimpleP2pMovementTest : public YarpTestCase
 {
