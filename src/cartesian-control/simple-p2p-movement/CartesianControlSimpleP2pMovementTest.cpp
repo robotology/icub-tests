@@ -57,7 +57,7 @@ bool CartesianControlSimpleP2pMovementTest::setup(Property &property)
     option.put("local",("/"+getName()+"/"+arm+"_arm"));
 
     RTF_TEST_REPORT(Asserter::format("Opening Cartesian Controller Client for %s_arm",arm.c_str()));
-    RTF_ASSERT_FAIL_IF(driver.open(option),"Unable to open the client!");
+    RTF_ASSERT_ERROR_IF(driver.open(option),"Unable to open the client!");
     return true;
 }
 
@@ -74,7 +74,7 @@ void CartesianControlSimpleP2pMovementTest::tearDown()
 void CartesianControlSimpleP2pMovementTest::run()
 {
     ICartesianControl *iarm;
-    RTF_ASSERT_FAIL_IF(driver.view(iarm),"Unable to correctly view the driver!");
+    RTF_TEST_CHECK(driver.view(iarm),"Opening the view on the device!");
 
     RTF_TEST_REPORT("Setting up the Controller");
     Vector dof;
@@ -91,6 +91,6 @@ void CartesianControlSimpleP2pMovementTest::run()
 
     bool done;
     iarm->checkMotionDone(&done);
-    RTF_TEST_FAIL_IF(done,"Unable to reach for the specified target!");
+    RTF_TEST_CHECK(done,"Target reached!");
 }
 
