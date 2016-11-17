@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Cartesian Control Tests Suite">
+    <description>Testing Cartesian Control functionalities</description>
+    <environment>--robotname icubSim</environment>
+    <fixture param="--fixture icubsim-cartesian-control-fixture.xml"> yarpmanager </fixture>
+
+    <test type="dll"> CartesianControlSimpleP2pMovementTest </test>
+</suit>
