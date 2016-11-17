@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Ugo Pattacini
  * email:  ugo.pattacini@iit.it
@@ -22,6 +22,16 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 
+/**
+* \ingroup icub-tests
+*
+* This test verifies the point-to-point cartesian movement.
+*
+* Accepts the following parameters:
+* | Parameter name | Type   | Units | Default Value | Required | Description  | Notes |
+* |:--------------:|:------:|:-----:|:-------------:|:--------:|:------------:|:-----:|
+* |    arm-type    | string |   -   |      left     |    No    | left | right |   -   |
+*/
 class CartesianControlSimpleP2pMovementTest : public YarpTestCase
 {
     yarp::dev::PolyDriver driver;
@@ -35,4 +45,3 @@ public:
 };
 
 #endif
-
