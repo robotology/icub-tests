@@ -37,6 +37,10 @@ add_subdirectory(src/openloop-consistency)
 add_subdirectory(src/torqueControl-consistency)
 add_subdirectory(src/torqueControl-stiffDampCheck)
 
+# Build cartesian controller tests
+add_subdirectory(src/cartesian-control)
+
+
 if(ICUB_TESTS_USES_CODYCO)
     add_subdirectory(src/torqueControl-gravityConsistency)
 endif()
