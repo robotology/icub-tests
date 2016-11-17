@@ -36,6 +36,9 @@ link_libraries(${RTF_LIBRARIES}
                ${YARP_LIBRARIES}
                iKin iDyn)
 
+# import math symbols from standard cmath
+add_definitions(-D_USE_MATH_DEFINES)
+
 # add the source codes to build the plugin library
 add_library(${PROJECTNAME} MODULE iKiniDynConsistencyTest.h
                                   iKiniDynConsistencyTest.cpp)

@@ -7,12 +7,14 @@
  *
  */
 
-#include <stdio.h>
+#include <cstdio>
+#include <ctime>
 #include <rtf/dll/Plugin.h>
 #include "ExampleFixture.h"
 #include <yarp/os/Property.h>
 #include <yarp/os/Random.h>
 
+using namespace std;
 using namespace RTF;
 using namespace yarp::os;
 

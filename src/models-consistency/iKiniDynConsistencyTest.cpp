@@ -7,6 +7,8 @@
  *
  */
 
+#include <cmath>
+
 #include <rtf/dll/Plugin.h>
 #include "iKiniDynConsistencyTest.h"
 
@@ -22,8 +24,6 @@
 // iDyn includes
 #include <iCub/iDyn/iDyn.h>
 #include <iCub/iDyn/iDynBody.h>
-
-#include <cmath>
 
 using namespace std;
 using namespace RTF;
