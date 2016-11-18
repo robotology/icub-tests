@@ -78,7 +78,7 @@ void CartesianControlSimpleP2pMovementTest::run()
 
     RTF_TEST_REPORT("Setting up the Controller");
     Vector dof;
-    iarm->getDOF(dof);
+    iarm->getDOF(dof); dof=1.0;
     iarm->setDOF(dof,dof);
     iarm->setTrajTime(1.0);
 
