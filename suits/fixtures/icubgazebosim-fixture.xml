@@ -8,7 +8,7 @@
     
      <module>
         <name>gzserver</name>
-        <parameters>--verbose world/icub_fixed.world</parameters>
+        <parameters>--verbose worlds/icub_fixed.world</parameters>
         <node>localhost</node>
         <ensure>
             <wait>20</wait>
