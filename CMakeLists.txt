@@ -40,6 +40,8 @@ add_subdirectory(src/torqueControl-stiffDampCheck)
 # Build cartesian controller tests
 add_subdirectory(src/cartesian-control)
 
+# Build gaze controller tests
+add_subdirectory(src/gaze-control)
 
 if(ICUB_TESTS_USES_CODYCO)
     add_subdirectory(src/torqueControl-gravityConsistency)

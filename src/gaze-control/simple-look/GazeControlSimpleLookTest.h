@@ -15,8 +15,8 @@
  * Public License for more details
 */
 
-#ifndef _CARTESIANCONTROLSIMPLEP2PMOVEMENT_H_
-#define _CARTESIANCONTROLSIMPLEP2PMOVEMENT_H_
+#ifndef _GAZECONTROLSIMPLELOOK_H_
+#define _GAZECONTROLSIMPLELOOK_H_
 
 #include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/Property.h>
@@ -25,21 +25,20 @@
 /**
 * \ingroup icub-tests
 *
-* This test verifies the point-to-point cartesian movement.
+* This test verifies the simple gaze movements.
 *
 * Accepts the following parameters:
 * | Parameter name | Type   | Units | Default Value | Required |  Description  | Notes |
 * |:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
-* |     robot      | string |   -   |    icubSim    |    No    |   robot name  |   -   |
-* |    arm-type    | string |   -   |      left     |    No    | left or right |   -   |
+* |       -        |    -   |   -   |      -        |    -     |       -       |   -   |
 */
-class CartesianControlSimpleP2pMovementTest : public YarpTestCase
+class GazeControlSimpleLookTest : public YarpTestCase
 {
     yarp::dev::PolyDriver driver;
 
 public:
-    CartesianControlSimpleP2pMovementTest();
-    virtual ~CartesianControlSimpleP2pMovementTest();
+    GazeControlSimpleLookTest();
+    virtual ~GazeControlSimpleLookTest();
     virtual bool setup(yarp::os::Property& property);
     virtual void tearDown();
     virtual void run();
