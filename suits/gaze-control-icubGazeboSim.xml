@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suit name="Cartesian Control Tests Suite">
+    <description>Testing Gaze Control functionalities</description>
+    <environment>--robotname icubSim</environment>
+    <fixture param="--fixture icubgazebosim-cartesian-control-fixture.xml"> yarpmanager </fixture>
+
+    <test type="dll"> GazeControlSimpleLookTest </test>
+</suit>
