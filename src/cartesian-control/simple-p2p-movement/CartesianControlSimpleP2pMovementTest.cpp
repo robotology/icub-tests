@@ -76,15 +76,21 @@ void CartesianControlSimpleP2pMovementTest::run()
     ICartesianControl *iarm;
     RTF_TEST_CHECK(driver.view(iarm),"Opening the view on the device!");
 
-    RTF_TEST_REPORT("Setting up the Controller");
+    Vector x,o;
+    iarm->getPose(x,o);
+
+    RTF_TEST_REPORT("Setting up the context");
+    int context;
+    iarm->storeContext(&context);
+
     Vector dof;
     iarm->getDOF(dof); dof=1.0;
     iarm->setDOF(dof,dof);
     iarm->setTrajTime(1.0);
 
     RTF_TEST_REPORT("Reaching for the target");
-    Vector x(3,0.0); x[0]=-0.4;
-    iarm->goToPositionSync(x);
+    Vector xd(3,0.0); xd[0]=-0.4;
+    iarm->goToPositionSync(xd);
 
     RTF_TEST_REPORT("Waiting");
     iarm->waitMotionDone(1.0,5.0);
@@ -92,5 +98,21 @@ void CartesianControlSimpleP2pMovementTest::run()
     bool done;
     iarm->checkMotionDone(&done);
     RTF_TEST_CHECK(done,"Target reached!");
+
+    RTF_TEST_REPORT("Going back to starting pose");
+    iarm->setLimits(0,0.0,0.0);
+    iarm->setLimits(1,0.0,0.0);
+    iarm->setLimits(2,0.0,0.0);
+    iarm->goToPoseSync(x,o);
+
+    RTF_TEST_REPORT("Waiting");
+    iarm->waitMotionDone(1.0,5.0);
+
+    iarm->checkMotionDone(&done);
+    RTF_TEST_CHECK(done,"Starting pose reached!");
+
+    RTF_TEST_REPORT("Cleaning up the context");
+    iarm->restoreContext(context);
+    iarm->deleteContext(context);
 }
 
