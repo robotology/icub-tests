@@ -16,6 +16,7 @@
 */
 
 #include <rtf/dll/Plugin.h>
+#include <yarp/os/Time.h>
 #include <yarp/dev/GazeControl.h>
 #include <yarp/sig/Vector.h>
 
@@ -72,8 +73,16 @@ void GazeControlSimpleLookTest::run()
     IGazeControl *igaze;
     RTF_TEST_CHECK(driver.view(igaze),"Opening the view on the device!");
 
+    bool done;
+
     Vector fp;
-    igaze->getFixationPoint(fp);
+    double t0=Time::now();
+    while (Time::now()-t0<5.0)
+    {
+        done=igaze->getFixationPoint(fp);
+        Time::delay(0.1);
+    }
+    RTF_TEST_CHECK(done,"Initial fixation-point retrieved!");
 
     RTF_TEST_REPORT("Setting up the context");
     int context;
@@ -86,7 +95,6 @@ void GazeControlSimpleLookTest::run()
     RTF_TEST_REPORT("Waiting");
     igaze->waitMotionDone(1.0,5.0);
 
-    bool done;
     igaze->checkMotionDone(&done);
     RTF_TEST_CHECK(done,"Target reached!");
 

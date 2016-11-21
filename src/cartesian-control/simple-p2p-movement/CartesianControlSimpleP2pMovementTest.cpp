@@ -17,6 +17,7 @@
 
 #include <string>
 #include <rtf/dll/Plugin.h>
+#include <yarp/os/Time.h>
 #include <yarp/dev/CartesianControl.h>
 #include <yarp/sig/Vector.h>
 
@@ -76,8 +77,16 @@ void CartesianControlSimpleP2pMovementTest::run()
     ICartesianControl *iarm;
     RTF_TEST_CHECK(driver.view(iarm),"Opening the view on the device!");
 
-    Vector x,o;
-    iarm->getPose(x,o);
+    bool done;
+
+    Vector x,o;    
+    double t0=Time::now();
+    while (Time::now()-t0<5.0)
+    {
+        done=iarm->getPose(x,o);
+        Time::delay(0.1);
+    }
+    RTF_TEST_CHECK(done,"Initial pose retrieved!");
 
     RTF_TEST_REPORT("Setting up the context");
     int context;
@@ -95,7 +104,6 @@ void CartesianControlSimpleP2pMovementTest::run()
     RTF_TEST_REPORT("Waiting");
     iarm->waitMotionDone(1.0,5.0);
 
-    bool done;
     iarm->checkMotionDone(&done);
     RTF_TEST_CHECK(done,"Target reached!");
 
