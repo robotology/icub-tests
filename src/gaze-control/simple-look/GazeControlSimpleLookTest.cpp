@@ -80,6 +80,8 @@ void GazeControlSimpleLookTest::run()
     while (Time::now()-t0<5.0)
     {
         done=igaze->getFixationPoint(fp);
+        if (done)
+            break;
         Time::delay(0.1);
     }
     RTF_TEST_CHECK(done,"Initial fixation-point retrieved!");

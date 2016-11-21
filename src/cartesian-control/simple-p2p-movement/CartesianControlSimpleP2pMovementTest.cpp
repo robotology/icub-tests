@@ -84,6 +84,8 @@ void CartesianControlSimpleP2pMovementTest::run()
     while (Time::now()-t0<5.0)
     {
         done=iarm->getPose(x,o);
+        if (done)
+            break;
         Time::delay(0.1);
     }
     RTF_TEST_CHECK(done,"Initial pose retrieved!");
