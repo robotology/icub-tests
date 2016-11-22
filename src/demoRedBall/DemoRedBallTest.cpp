@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ResourceFinder.h>
@@ -49,7 +50,11 @@ class DemoRedBallPosition : public RateThread
 
     bool threadInit()
     {
-        return port.open(("/"+name+"/redballpos:o"));
+        string dest="/demoRedBall/trackTarget:i";
+        port.open(("/"+name+"/redballpos:o"));
+        RTF_ASSERT_ERROR_IF(Network::connect(port.getName(),dest,"udp"),
+                            Asserter::format("Unable to connect to %s!",dest.c_str()));
+        return true;
     }
 
     void run()
