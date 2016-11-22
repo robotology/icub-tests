@@ -18,10 +18,14 @@
 #ifndef _DEMOREDBALL_H_
 #define _DEMOREDBALL_H_
 
+#include <string>
 #include <rtf/yarp/YarpTestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IEncoders.h>
+#include <yarp/dev/CartesianControl.h>
+#include <yarp/sig/Vector.h>
 
 /**
 * \ingroup icub-tests
@@ -36,6 +40,15 @@
 */
 class DemoRedBallTest : public YarpTestCase
 {
+    struct {
+        std::string robot;
+        std::string eye;
+        double reach_tol;
+        bool use_left;
+        bool use_right;
+        yarp::sig::Vector home_arm;
+    } params;
+
     yarp::dev::PolyDriver drvJointArmL;
     yarp::dev::PolyDriver drvJointArmR;
     yarp::dev::PolyDriver drvJointTorso;
@@ -44,7 +57,13 @@ class DemoRedBallTest : public YarpTestCase
     yarp::dev::PolyDriver drvCartArmR;
     yarp::dev::PolyDriver drvGaze;
 
+    struct {
+    yarp::dev::ICartesianControl *iarm;
+    yarp::dev::IEncoders         *ienc;
+    } arm_under_test;
+
     yarp::os::RateThread *redBallPos;
+    void testBallPosition(const yarp::sig::Vector &pos);
 
 public:
     DemoRedBallTest();
