@@ -49,11 +49,12 @@
     </module>
     <module>
         <name>iCubGui</name>
-        <parameters>--xpos 1500 --ypos 50 --width 370</parameters> 
+        <parameters>--xpos 800 --ypos 80 --width 370</parameters>
         <node>localhost</node>
    </module>
    <module>
         <name>demoRedBall</name>
+        <parameters>--from config-test.ini</parameters>
         <node>localhost</node>
         <dependencies>
             <port timeout="20">/icubSim/cartesianController/left_arm/state:o</port>
@@ -93,4 +94,3 @@
        <protocol>tcp</protocol>
    </connection>
 </application>
-

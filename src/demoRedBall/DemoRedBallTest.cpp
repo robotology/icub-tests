@@ -46,6 +46,7 @@ class DemoRedBallPosition : public RateThread
     IGazeControl *igaze;
     string eye;
     Vector pos;
+    bool visible;
     BufferedPort<Bottle> port;
 
     bool threadInit()
@@ -69,7 +70,7 @@ class DemoRedBallPosition : public RateThread
 
             Matrix T=axis2dcm(o);
             T.setSubcol(x,0,3);
-            Vector pos_=T*pos;
+            Vector pos_=SE3inv(T)*pos;
 
             Bottle &cmd=port.prepare();
             cmd.clear();
@@ -79,7 +80,7 @@ class DemoRedBallPosition : public RateThread
             cmd.addDouble(0.0);
             cmd.addDouble(0.0);
             cmd.addDouble(0.0);
-            cmd.addDouble(1.0);
+            cmd.addDouble(visible?1.0:0.0);
             port.write();
         }
     }
@@ -94,7 +95,8 @@ public:
                         PolyDriver &driver,
                         const string &eye_) :
                         RateThread(100), name(name_),
-                        eye(eye_), pos(4,0.0)
+                        eye(eye_), pos(4,0.0),
+                        visible(false)
     {
         if (!driver.view(igaze))
             igaze=NULL;
@@ -111,6 +113,9 @@ public:
         else
             return false;
     }
+
+    void setVisible()   { visible=true;  }
+    void setInvisible() { visible=false; }
 };
 
 
@@ -131,7 +136,7 @@ DemoRedBallTest::~DemoRedBallTest()
 bool DemoRedBallTest::setup(Property &property)
 {
     string context=property.check("context",Value("demoRedBall")).asString();
-    string from=property.check("from",Value("config.ini")).asString();
+    string from=property.check("from",Value("config-test.ini")).asString();
 
     // retrieve demoRedBall parameters
     ResourceFinder rf; rf.setVerbose();
@@ -227,6 +232,8 @@ bool DemoRedBallTest::setup(Property &property)
     }
 
     redBallPos=new DemoRedBallPosition(getName(),drvGaze,params.eye);
+    redBallPos->start();
+
     return true;
 }
 
@@ -252,17 +259,28 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
 {
     DemoRedBallPosition *ball=dynamic_cast<DemoRedBallPosition*>(redBallPos);
     ball->setPos(pos);
+    ball->setVisible();
 
-    if (!ball->isRunning())
-        ball->start();
-    else if (ball->isSuspended())
-        ball->resume();
-    
     Vector x,o,encs;
     int nEncs; IEncoders* ienc;
     bool done=false;
     double t0;
-        
+
+    IGazeControl* igaze;
+    drvGaze.view(igaze);
+    t0=Time::now();
+    while (Time::now()-t0<10.0)
+    {
+        igaze->getFixationPoint(x);
+        if (norm(pos-x)<2.0*params.reach_tol)
+        {
+            done=true;
+            break;
+        }
+        Time::delay(0.01);
+    }
+    RTF_TEST_CHECK(done,"Ball gazed at with the eyes!");
+
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
@@ -272,27 +290,12 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
             done=true;
             break;
         }
-        Time::delay(0.1);
+        Time::delay(0.01);
     }
     RTF_TEST_CHECK(done,"Ball reached with the hand!");
 
-    IGazeControl* igaze;
-    drvGaze.view(igaze);
-    t0=Time::now();
-    while (Time::now()-t0<5.0)
-    {
-        igaze->getFixationPoint(x);
-        if (norm(pos-x)<params.reach_tol)
-        {
-            done=true;
-            break;
-        }
-        Time::delay(0.1);
-    }
-    RTF_TEST_CHECK(done,"Ball gazed at with the eyes!");
-
     RTF_TEST_REPORT("Going home");
-    ball->suspend();
+    ball->setInvisible();
     
     arm_under_test.ienc->getAxes(&nEncs);
     encs.resize(nEncs,0.0);
@@ -300,12 +303,12 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     while (Time::now()-t0<10.0)
     {
         arm_under_test.ienc->getEncoders(encs.data());
-        if (norm(params.home_arm-encs.subVector(0,params.home_arm.length()-1))<1.0)
+        if (norm(params.home_arm-encs.subVector(0,params.home_arm.length()-1))<5.0)
         {
             done=true;
             break;
         }
-        Time::delay(0.1);
+        Time::delay(1.0);
     }
     RTF_TEST_CHECK(done,"Arm has reached home!");
 
@@ -316,12 +319,12 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     while (Time::now()-t0<10.0)
     {
         ienc->getEncoders(encs.data());
-        if (norm(encs.subVector(0,3))<1.0)
+        if (norm(encs.subVector(0,3))<5.0)
         {
             done=true;
             break;
         }
-        Time::delay(0.1);
+        Time::delay(1.0);
     }
     RTF_TEST_CHECK(done,"Head has reached home!");
 
@@ -332,12 +335,12 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     while (Time::now()-t0<10.0)
     {
         ienc->getEncoders(encs.data());
-        if (norm(encs.subVector(0,3))<1.0)
+        if (norm(encs.subVector(0,3))<5.0)
         {
             done=true;
             break;
         }
-        Time::delay(0.1);
+        Time::delay(1.0);
     }
     RTF_TEST_CHECK(done,"Torso has reached home!");
 }
@@ -347,15 +350,15 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
 void DemoRedBallTest::run()
 {
     Vector pos(3,0.0);
-    pos[0]=-0.4;
+    pos[0]=-0.3;
 
-    pos[1]=-0.2;
+    pos[1]=-0.15;
     drvJointArmL.view(arm_under_test.ienc);
     drvCartArmL.view(arm_under_test.iarm);
     RTF_TEST_REPORT("Reaching with the left hand");
     testBallPosition(pos);
 
-    pos[1]=+0.2;
+    pos[1]=+0.15;
     drvJointArmR.view(arm_under_test.ienc);
     drvCartArmR.view(arm_under_test.iarm);
     RTF_TEST_REPORT("Reaching with the right hand");

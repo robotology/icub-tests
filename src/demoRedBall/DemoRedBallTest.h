@@ -33,10 +33,10 @@
 * This test verifies the point-to-point cartesian movement.
 *
 * Accepts the following parameters:
-* | Parameter name | Type   | Units | Default Value | Required |  Description  | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
-* |     context    | string |   -   |  demoRedBall  |    No    |   context containing the demoRedBall conf file  |   -   |
-* |      from      | string |   -   |  config.ini   |    No    |   demoRedBall configuration file  |   -   |
+* | Parameter name | Type   | Units |  Default Value   | Required |  Description  | Notes |
+* |:--------------:|:------:|:-----:|:----------------:|:--------:|:-------------:|:-----:|
+* |     context    | string |   -   |  demoRedBall     |    No    |   context containing the demoRedBall conf file  |   -   |
+* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   |
 */
 class DemoRedBallTest : public YarpTestCase
 {
