@@ -43,6 +43,9 @@ add_subdirectory(src/cartesian-control)
 # Build gaze controller tests
 add_subdirectory(src/gaze-control)
 
+# Build demoRedBall test
+add_subdirectory(src/demoRedBall)
+
 if(ICUB_TESTS_USES_CODYCO)
     add_subdirectory(src/torqueControl-gravityConsistency)
 endif()
