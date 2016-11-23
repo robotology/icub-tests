@@ -36,7 +36,11 @@
 * | Parameter name | Type   | Units |  Default Value   | Required |  Description  | Notes |
 * |:--------------:|:------:|:-----:|:----------------:|:--------:|:-------------:|:-----:|
 * |     context    | string |   -   |  demoRedBall     |    No    |   context containing the demoRedBall conf file  |   -   |
-* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   |
+* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   | 
+* 
+* You can watch a <a
+* href="https://www.youtube.com/watch?v=ackQ5Bfk9jk">video</a>
+* of how this test will be running.
 */
 class DemoRedBallTest : public YarpTestCase
 {
