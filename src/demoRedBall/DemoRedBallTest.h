@@ -40,7 +40,7 @@
 * 
 * You can watch a <a
 * href="https://www.youtube.com/watch?v=ackQ5Bfk9jk">video</a>
-* of how this test will be running.
+* of how this test will be performing.
 */
 class DemoRedBallTest : public YarpTestCase
 {
