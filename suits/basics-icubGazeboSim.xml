@@ -2,7 +2,7 @@
 
 <suit name="Basic Tests Suite">
     <description>Testing robot's basic features</description>
-    <environment>--robotname icubGazeboSim</environment>
+    <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubgazebosim-fixture.xml"> yarpmanager </fixture>
 
     <!-- Interfaces (wrappers) frequency -->

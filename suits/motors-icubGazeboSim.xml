@@ -2,7 +2,7 @@
 
 <suit name="Motor Control Suite">
     <description>Testing robot motors</description>
-    <environment>--robotname icubGazeboSim</environment>
+    <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubgazebosim-fixture.xml"> yarpmanager </fixture>
 
     <!-- Motors -->
