@@ -2,7 +2,7 @@
 
 <suit name="Encoders Test Suit">
     <description> Testing encoders</description>
-    <environment>--robotname icubGazeboSim</environment>
+    <environment>--robotname icubSim</environment>
 
     <test type="dll" param="--from optical_encoders_consistency_left_arm.ini">  MotorEncodersConsistency </test>
     <test type="dll" param="--from optical_encoders_consistency_right_arm.ini"> MotorEncodersConsistency </test>
