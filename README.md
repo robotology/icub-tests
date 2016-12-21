@@ -1,8 +1,13 @@
 icub-tests
 ==========
 The `icub-tests` repository contains tests for the iCub robot.
+Tests are written using the [Robot Testing Framework](https://github.com/robotology/robot-testing) (RTF).
 
-See documentation at https://robotology.github.io/icub-tests/
+## Installation, tutorial and available tests
+
+See the [icub-test documentation](https://robotology.github.io/icub-tests/).
+
+## Update the documentation
 
 To update documentation follow these steps:
 
@@ -18,6 +23,7 @@ To update documentation follow these steps:
  git push --force-with-lease
  git checkout master
 ```
+For in-depth details about doxygen documentation and gh-pages, see [how-to-document-modules](https://github.com/robotology/how-to-document-modules).
 
 ## Contributors
 
@@ -28,4 +34,3 @@ To update documentation follow these steps:
 - [**Marco Randazzo**](https://github.com/randaz81)
 - [**Valentina Gaggero**](https://github.com/valegagge)
 - [**Ugo Pattacini**](https://github.com/pattacini)
-
