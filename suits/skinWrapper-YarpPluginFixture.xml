@@ -2,7 +2,7 @@
 
 <suit name="SkinWrapper Tests Suite">
     <description>Testing skinWrapper functionalities</description>
-    <environment>--robotname icubSim</environment>
+    <fixture param="--devices fakeAnalogSensor analogServer"> YarpPluginFixture </fixture>
 
     <test type="dll"> SkinWrapperTest </test>
 </suit>
