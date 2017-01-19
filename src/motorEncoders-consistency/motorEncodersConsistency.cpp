@@ -14,6 +14,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
@@ -34,7 +35,7 @@ using namespace yarp::math;
 // prepare the plugin
 PREPARE_PLUGIN(OpticalEncodersConsistency)
 
-OpticalEncodersConsistency::OpticalEncodersConsistency() : YarpTestCase("OpticalEncodersConsistency") {
+OpticalEncodersConsistency::OpticalEncodersConsistency() : yarp::rtf::TestCase("OpticalEncodersConsistency") {
     jointsList=0;
     dd=0;
     ipos=0;

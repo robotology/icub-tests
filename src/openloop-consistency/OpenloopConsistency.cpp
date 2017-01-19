@@ -26,7 +26,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(OpenLoopConsistency)
 
-OpenLoopConsistency::OpenLoopConsistency() : YarpTestCase("OpenLoopConsistency") {
+OpenLoopConsistency::OpenLoopConsistency() : yarp::rtf::TestCase("OpenLoopConsistency") {
     jointsList=0;
     pos_tot=0;
     dd=0;

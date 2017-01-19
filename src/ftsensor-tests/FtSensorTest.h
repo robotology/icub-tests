@@ -10,7 +10,7 @@
 #ifndef _FTSENSORTEST_H_
 #define _FTSENSORTEST_H_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
 
@@ -27,7 +27,7 @@
 * | portname       | string | -     | -             | Yes      | The yarp port name of the FT sensor to test. | - |
 *
 */
-class FtSensorTest : public YarpTestCase {
+class FtSensorTest : public yarp::rtf::TestCase {
 public:
     FtSensorTest();
     virtual ~FtSensorTest();

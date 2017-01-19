@@ -10,7 +10,7 @@
 #ifndef _MOTORTEST_H_
 #define _MOTORTEST_H_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 
 #include <yarp/os/Value.h>
 #include <yarp/sig/Vector.h>
@@ -45,7 +45,7 @@
 * | timeout         | vector of doubles of size joints | s | - | Yes | For each joint the maximum time to wait for the joint to reach the target. | |
 *
 */
-class MotorTest : public YarpTestCase {
+class MotorTest : public yarp::rtf::TestCase {
 public:
     MotorTest();
     virtual ~MotorTest();

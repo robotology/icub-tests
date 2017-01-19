@@ -11,11 +11,11 @@
 #define _OPENLOOPCONSISTENCY_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-class OpenLoopConsistency : public YarpTestCase {
+class OpenLoopConsistency : public yarp::rtf::TestCase {
 public:
     OpenLoopConsistency();
     virtual ~OpenLoopConsistency();

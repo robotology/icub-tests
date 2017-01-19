@@ -28,7 +28,7 @@ using namespace yarp::sig;
 // prepare the plugin
 PREPARE_PLUGIN(CameraTest)
 
-CameraTest::CameraTest() : YarpTestCase("CameraTest") {
+CameraTest::CameraTest() : yarp::rtf::TestCase("CameraTest") {
 }
 
 CameraTest::~CameraTest() { }

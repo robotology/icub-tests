@@ -9,7 +9,7 @@
 
 #include <cstdlib>
 #include <rtf/dll/Plugin.h>
-#include <rtf/Asserter.h>
+#include <rtf/TestAssert.h>
 
 #include <yarp/os/Time.h>
 
@@ -23,7 +23,7 @@ using namespace yarp::sig;
 // prepare the plugin
 PREPARE_PLUGIN(FtSensorTest)
 
-FtSensorTest::FtSensorTest() : YarpTestCase("FtSensorTest") {
+FtSensorTest::FtSensorTest() : yarp::rtf::TestCase("FtSensorTest") {
 }
 
 FtSensorTest::~FtSensorTest() { }

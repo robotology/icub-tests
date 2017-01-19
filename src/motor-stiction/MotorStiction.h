@@ -12,7 +12,7 @@
 
 #include <string>
 #include <vector>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -33,7 +33,7 @@ class stiction_data
     stiction_data() {jnt=0; cycle=0; pos_test_passed=false; neg_test_passed=false; pos_opl=0; neg_opl=0;}
 };
 
-class MotorStiction : public YarpTestCase
+class MotorStiction : public yarp::rtf::TestCase
 {
 public:
     MotorStiction();

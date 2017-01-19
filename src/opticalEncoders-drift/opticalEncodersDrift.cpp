@@ -28,7 +28,7 @@ using namespace yarp::math;
 // prepare the plugin
 PREPARE_PLUGIN(OpticalEncodersDrift)
 
-OpticalEncodersDrift::OpticalEncodersDrift() : YarpTestCase("OpticalEncodersDrift") {
+OpticalEncodersDrift::OpticalEncodersDrift() : yarp::rtf::TestCase("OpticalEncodersDrift") {
     jointsList=0;
     dd=0;
     ipos=0;

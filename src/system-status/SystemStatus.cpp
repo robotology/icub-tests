@@ -22,7 +22,7 @@ using namespace yarp::os;
 PREPARE_PLUGIN(SystemStatus)
 
 
-SystemStatus::SystemStatus() : YarpTestCase("SystemStatus") {
+SystemStatus::SystemStatus() : yarp::rtf::TestCase("SystemStatus") {
 }
 
 SystemStatus::~SystemStatus() { }

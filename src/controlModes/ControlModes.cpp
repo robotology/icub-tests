@@ -23,7 +23,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(ControlModes)
 
-ControlModes::ControlModes() : YarpTestCase("ControlModes") {
+ControlModes::ControlModes() : yarp::rtf::TestCase("ControlModes") {
     jointsList=0;
     pos_tot=0;
     dd=0;

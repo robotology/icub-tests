@@ -17,6 +17,7 @@
 
 #include <string>
 #include <rtf/dll/Plugin.h>
+#include <rtf/TestAssert.h>
 
 #include "SkinWrapperTest.h"
 
@@ -31,7 +32,7 @@ PREPARE_PLUGIN(SkinWrapperTest)
 
 /***********************************************************************************/
 SkinWrapperTest::SkinWrapperTest() :
-                                       YarpTestCase("SkinWrapperTest")
+                                       yarp::rtf::TestCase("SkinWrapperTest")
 {
 }
 

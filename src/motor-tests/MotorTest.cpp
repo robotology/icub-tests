@@ -11,19 +11,19 @@
 
 #include <rtf/dll/Plugin.h>
 #include <rtf/TestAssert.h>
-#include <rtf/yarp/YarpTestAsserter.h>
+#include <yarp/rtf/TestAsserter.h>
 
 #include "MotorTest.h"
 
 using namespace std;
 using namespace RTF;
-using namespace RTF::YARP;
+
 using namespace yarp::os;
 
 // prepare the plugin
 PREPARE_PLUGIN(MotorTest)
 
-MotorTest::MotorTest() : YarpTestCase("MotorTest") {
+MotorTest::MotorTest() : yarp::rtf::TestCase("MotorTest") {
 }
 
 MotorTest::~MotorTest() {
@@ -192,7 +192,7 @@ void MotorTest::run() {
         while(timeNow<timeStart+m_aTimeout[joint] && !reached) {
             double pos;
             iEncoders->getEncoder(joint,&pos);
-            reached = YarpTestAsserter::isApproxEqual(pos, m_aTargetVal[joint], m_aMinErr[joint], m_aMaxErr[joint]);
+            reached = yarp::rtf::TestAsserter::isApproxEqual(pos, m_aTargetVal[joint], m_aMinErr[joint], m_aMaxErr[joint]);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
         }
@@ -233,7 +233,7 @@ void MotorTest::run() {
     encoders=new double [m_NumJoints];
     while(timeNow<timeStart+timeout && !reached) {
             RTF_TEST_FAIL_IF(iEncoders->getEncoders(encoders), "getEncoders()");
-            reached = YarpTestAsserter::isApproxEqual(encoders, m_aHome, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = yarp::rtf::TestAsserter::isApproxEqual(encoders, m_aHome, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
@@ -290,7 +290,7 @@ void MotorTest::run() {
     reached=false;
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached = YarpTestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = yarp::rtf::TestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }

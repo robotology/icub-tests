@@ -10,14 +10,14 @@
 #ifndef _MOVEMENTREFERNCESTEST_
 #define _MOVEMENTREFERNCESTEST_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 
 #include <yarp/os/Value.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include "rtf/yarp/JointsPosMotion.h"
+#include "yarp/rtf/JointsPosMotion.h"
 
 /**
 * \ingroup icub-tests
@@ -42,7 +42,7 @@
 * | refacc         | vector of doubles of size joints | deg/s^2 | - | No | For each joint the reference acceleration value to set in the low level trajectory generator. | |
 *
 */
-class MovementReferencesTest : public YarpTestCase {
+class MovementReferencesTest : public yarp::rtf::TestCase {
 public:
     MovementReferencesTest();
     virtual ~MovementReferencesTest();
@@ -73,7 +73,7 @@ private:
 
     int numJointsInPart;
     int numJoints;
-    RTF::YARP::jointsPosMotion *jPosMotion;
+    yarp::rtf::jointsPosMotion *jPosMotion;
     yarp::sig::Vector jointsList;
     int *jList;
     

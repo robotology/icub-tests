@@ -16,6 +16,7 @@
 */
 
 #include <rtf/dll/Plugin.h>
+#include <rtf/TestAssert.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/GazeControl.h>
 #include <yarp/sig/Vector.h>
@@ -34,7 +35,7 @@ PREPARE_PLUGIN(GazeControlSimpleLookTest)
 
 /***********************************************************************************/
 GazeControlSimpleLookTest::GazeControlSimpleLookTest() :
-                           YarpTestCase("GazeControlSimpleLookTest")
+                           yarp::rtf::TestCase("GazeControlSimpleLookTest")
 {
 }
 

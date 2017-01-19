@@ -10,10 +10,11 @@
 #include <math.h>
 #include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
-#include <rtf/yarp/YarpTestAsserter.h>
+#include <yarp/rtf/TestAsserter.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/ResourceFinder.h>
 //#include <iostream>
 //#include <yarp/manager/localbroker.h>
 //#include <cstdlib>
@@ -28,14 +29,14 @@
 
 
 using namespace RTF;
-using namespace RTF::YARP;
+
 using namespace yarp::dev;
 using namespace std;
 
 // prepare the plugin
 PREPARE_PLUGIN(TorqueControlStiffDampCheck)
 
-TorqueControlStiffDampCheck::TorqueControlStiffDampCheck() : YarpTestCase("TorqueControlStiffDampCheck") {
+TorqueControlStiffDampCheck::TorqueControlStiffDampCheck() : yarp::rtf::TestCase("TorqueControlStiffDampCheck") {
     jointsList=0;
     dd=0;
     ipos=0;
@@ -230,9 +231,9 @@ bool TorqueControlStiffDampCheck::setAndCheckImpedance(int joint, double stiffne
     iimp->getImpedance(joint, &readStiff, &readDump);
 
     double th = stiffness/100;
-    bool r1 = YarpTestAsserter::isApproxEqual(readStiff, stiffness, th, th);
+    bool r1 = yarp::rtf::TestAsserter::isApproxEqual(readStiff, stiffness, th, th);
     th = damping/100;
-    bool r2 = YarpTestAsserter::isApproxEqual(readDump, damping, th, th);
+    bool r2 = yarp::rtf::TestAsserter::isApproxEqual(readDump, damping, th, th);
 
     if(!r1 || !r2)
     {

@@ -28,7 +28,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(MotorStiction)
 
-MotorStiction::MotorStiction() : YarpTestCase("MotorStiction") {
+MotorStiction::MotorStiction() : yarp::rtf::TestCase("MotorStiction") {
     jointsList=0;
     dd=0;
     ipos=0;

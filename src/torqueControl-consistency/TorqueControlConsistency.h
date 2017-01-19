@@ -11,11 +11,11 @@
 #define _TORQUECONTORLCONSISTENCY_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-class TorqueControlConsistency : public YarpTestCase {
+class TorqueControlConsistency : public yarp::rtf::TestCase {
 public:
     TorqueControlConsistency();
     virtual ~TorqueControlConsistency();

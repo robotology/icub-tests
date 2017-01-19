@@ -6,12 +6,12 @@
 #
 
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 project(iCub-Tests)
 
 # find a version of RTF higher then 1.0.1
 # and with yarp support enabled
-find_package(RTF 1.0.1 COMPONENTS YARP REQUIRED)
+find_package(RTF 1.1 REQUIRED)
 
 # set the output plugin directory to collect all the shared libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
@@ -79,9 +79,6 @@ add_subdirectory(src/movementReferencesTest)
 
 # Build skinWrapper tests
 add_subdirectory(src/skinWrapperTest)
-
-# Build YarpPluginFixture
-add_subdirectory(src/yarpPluginFixture)
 
 # Build system status tests (needs yarp newer than f0c9e83a66d1e2685361f82dd98b20ed6479ec04)
 #add_subdirectory(src/system-status)

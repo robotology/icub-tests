@@ -19,14 +19,14 @@
 
 
 using namespace RTF;
-using namespace RTF::YARP;
+
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
 PREPARE_PLUGIN(MotorEncodersSignCheck)
 
-MotorEncodersSignCheck::MotorEncodersSignCheck() : YarpTestCase("MotorEncodersSignCheck") {
+MotorEncodersSignCheck::MotorEncodersSignCheck() : yarp::rtf::TestCase("MotorEncodersSignCheck") {
     jointsList=0;
     dd=0;
     icmd=0;
@@ -132,7 +132,7 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
             opl_delay[i]=0.1;
     }
 
-    jPosMotion = new jointsPosMotion(dd, jointsList);
+    jPosMotion = new yarp::rtf::jointsPosMotion(dd, jointsList);
     jPosMotion->setTolerance(2.0);
     jPosMotion->setTimeout(10); //10 sec
 

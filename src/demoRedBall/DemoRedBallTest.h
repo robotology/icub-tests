@@ -19,7 +19,7 @@
 #define _DEMOREDBALL_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/PolyDriver.h>
@@ -42,7 +42,7 @@
 * href="https://www.youtube.com/watch?v=ackQ5Bfk9jk">video</a>
 * of how this test will be performing.
 */
-class DemoRedBallTest : public YarpTestCase
+class DemoRedBallTest : public yarp::rtf::TestCase
 {
     struct {
         std::string robot;

@@ -28,7 +28,7 @@ using namespace yarp::math;
 // prepare the plugin
 PREPARE_PLUGIN(JointLimits)
 
-JointLimits::JointLimits() : YarpTestCase("JointLimits") {
+JointLimits::JointLimits() : yarp::rtf::TestCase("JointLimits") {
     jointsList=0;
     dd=0;
     ipos=0;

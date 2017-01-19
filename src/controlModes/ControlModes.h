@@ -11,7 +11,7 @@
 #define _CONTROLMODES_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -39,7 +39,7 @@
 * | zero               | double | deg   | -             | Yes      | The home position for the tested joints. | |
 */
 
-class ControlModes : public YarpTestCase {
+class ControlModes : public yarp::rtf::TestCase {
 public:
     ControlModes();
     virtual ~ControlModes();

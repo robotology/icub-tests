@@ -5,15 +5,14 @@
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 # set the project name
 set(PROJECTNAME FtSensorTest)
 project(${PROJECTNAME})
 
 # add the required cmake packages
-find_package(RTF)
-find_package(RTF COMPONENTS DLL)
+find_package(RTF 1.1 COMPONENTS DLL)
 find_package(YARP)
 
 # add include directories
@@ -24,7 +23,7 @@ include_directories(${CMAKE_SOURCE_DIR}
 
 # add required libraries 
 link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES})
+               ${YARP_LIBRARIES} YARP::YARP_rtf)
 
 # add the source codes to build the plugin library
 add_library(${PROJECTNAME} MODULE FtSensorTest.h

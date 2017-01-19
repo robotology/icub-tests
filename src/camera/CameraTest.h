@@ -11,7 +11,7 @@
 #define _CAMERATEST_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Image.h>
 
@@ -30,7 +30,7 @@
 * | tolerance      | int    | Number of frames | 5    | No     | The tolerance on the total number of frames read during the period (expected_frequency*measure_time) to consider the test sucessful. |  |
 *
 */
-class CameraTest : public YarpTestCase {
+class CameraTest : public yarp::rtf::TestCase {
 public:
     CameraTest();
     virtual ~CameraTest();

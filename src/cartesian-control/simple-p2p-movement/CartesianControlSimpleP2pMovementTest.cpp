@@ -16,6 +16,7 @@
 */
 
 #include <string>
+#include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/CartesianControl.h>
@@ -35,7 +36,7 @@ PREPARE_PLUGIN(CartesianControlSimpleP2pMovementTest)
 
 /***********************************************************************************/
 CartesianControlSimpleP2pMovementTest::CartesianControlSimpleP2pMovementTest() :
-                                       YarpTestCase("CartesianControlSimpleP2pMovementTest")
+                                       yarp::rtf::TestCase("CartesianControlSimpleP2pMovementTest")
 {
 }
 

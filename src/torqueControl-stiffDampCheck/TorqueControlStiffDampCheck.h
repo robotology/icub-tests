@@ -11,14 +11,14 @@
 #define _TORQUECONTORLSTIFFDAMPCHECK_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
 
 using namespace yarp::os;
 
-class TorqueControlStiffDampCheck : public YarpTestCase {
+class TorqueControlStiffDampCheck : public yarp::rtf::TestCase {
 public:
     TorqueControlStiffDampCheck();
     virtual ~TorqueControlStiffDampCheck();

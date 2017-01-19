@@ -2,14 +2,14 @@
 # Authors: Nicolo' Genesio <nicolo.genesio@iit.it>
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 
 # set the project name
 project(SkinWrapperTest)
 
 # add the required cmake packages
-find_package(RTF COMPONENTS DLL YARP)
-find_package(YARP REQUIRED)
+find_package(RTF 1.1 COMPONENTS DLL)
+find_package(YARP)
 
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
@@ -20,7 +20,7 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_HELPERS_INCLUDE_DIR})
 
 # add required libraries
-link_libraries(${RTF_LIBRARIES} ${YARP_LIBRARIES})
+link_libraries(${RTF_LIBRARIES} ${YARP_LIBRARIES} YARP::YARP_rtf)
 
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)

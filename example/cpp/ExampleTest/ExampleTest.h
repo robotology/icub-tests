@@ -10,7 +10,7 @@
 #ifndef _EXAMPLE_TEST_H_
 #define _EXAMPLE_TEST_H_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 
 /**
 * \ingroup icub-tests
@@ -27,7 +27,7 @@
 * | name           | string | -     | "ExampleTest" | No       | The name of the test. | -     |
 * | example        | string | -     | default value | No       | An example value. | - | 
 */
-class ExampleTest : public YarpTestCase {
+class ExampleTest : public yarp::rtf::TestCase {
 public:
     ExampleTest();
     virtual ~ExampleTest();
