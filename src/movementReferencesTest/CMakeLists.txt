@@ -19,13 +19,14 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_HELPERS_INCLUDE_DIR}
                     )
 
-link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES} YARP::YARP_rtf
-               YARP::YARP_manager)
-
 add_library(${PROJECTNAME} MODULE movementReferencesTest.h
                                   movementReferencesTest.cpp
                                   )
+
+target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
+                      ${YARP_LIBRARIES} YARP::YARP_rtf
+                      YARP::YARP_manager)
+
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime

@@ -18,11 +18,11 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_INCLUDE_DIRS}
                     ${YARP_HELPERS_INCLUDE_DIR})
 
-link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES} YARP::YARP_rtf)
-
 add_library(${PROJECTNAME} MODULE ControlModes.h
                                   ControlModes.cpp)
+target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
+               ${YARP_LIBRARIES} YARP::YARP_rtf)
+
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime

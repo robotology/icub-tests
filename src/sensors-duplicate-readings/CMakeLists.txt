@@ -21,13 +21,13 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_INCLUDE_DIRS}
                     ${YARP_HELPERS_INCLUDE_DIR})
 
-# add required libraries
-link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES} YARP::YARP_rtf)
-
 # add the source codes to build the plugin library
 add_library(${PROJECTNAME} MODULE SensorsDuplicateReadings.h
                                   SensorsDuplicateReadings.cpp)
+
+# add required libraries
+target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
+                      ${YARP_LIBRARIES} YARP::YARP_rtf)
 
 # set the installation options
 install(TARGETS ${PROJECTNAME}

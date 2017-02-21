@@ -22,10 +22,9 @@ include_directories(${CMAKE_SOURCE_DIR}
 add_library(${PROJECTNAME} MODULE TorqueControlGravityConsistency.h
                                   TorqueControlGravityConsistency.cpp)
 
-target_link_libraries(${PROJECTNAME} LINK_PUBLIC ${RTF_LIBRARIES}
+target_link_libraries(${PROJECTNAME} ${PROJECTNAME} LINK_PUBLIC ${RTF_LIBRARIES}
                                             ${YARP_LIBRARIES} YARP::YARP_rtf
                                             ${yarpWholeBodyInterface_LIBRARIES})
-
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime
