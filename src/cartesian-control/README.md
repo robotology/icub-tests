@@ -7,3 +7,4 @@ component.
 ### Available tests
 
 - [`simple-p2p-movement`](https://github.com/robotology/icub-tests/blob/master/src/cartesian-control/simple-p2p-movement).
+- [`reaching-tolerance`](https://github.com/robotology/icub-tests/blob/master/src/cartesian-control/reaching-tolerance).

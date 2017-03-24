@@ -35,3 +35,4 @@ For in-depth details about doxygen documentation and gh-pages, see [how-to-docum
 - [**Valentina Gaggero**](https://github.com/valegagge)
 - [**Ugo Pattacini**](https://github.com/pattacini)
 - [**Nicolo' Genesio**](https://github.com/Nicogene)
+- [**Giulia Vezzani**](https://github.com/giuliavezzani)
