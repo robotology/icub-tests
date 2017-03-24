@@ -105,9 +105,7 @@ void CartesianControlSimpleP2pMovementTest::run()
     iarm->goToPositionSync(xd);
 
     RTF_TEST_REPORT("Waiting");
-    iarm->waitMotionDone(1.0,5.0);
-
-    iarm->checkMotionDone(&done);
+    done=iarm->waitMotionDone(1.0,5.0);
     RTF_TEST_CHECK(done,"Target reached!");
 
     RTF_TEST_REPORT("Going back to starting pose");
@@ -117,9 +115,7 @@ void CartesianControlSimpleP2pMovementTest::run()
     iarm->goToPoseSync(x,o);
 
     RTF_TEST_REPORT("Waiting");
-    iarm->waitMotionDone(1.0,5.0);
-
-    iarm->checkMotionDone(&done);
+    done=iarm->waitMotionDone(1.0,5.0);
     RTF_TEST_CHECK(done,"Starting pose reached!");
 
     RTF_TEST_REPORT("Cleaning up the context");

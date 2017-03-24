@@ -9,6 +9,7 @@
 
 #include <cmath>
 
+#include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
 #include "iKiniDynConsistencyTest.h"
 
@@ -91,11 +92,11 @@ Matrix iKiniDynConsistencyTest::getiKinTransform(const string part, int index)
     {
         return ikin_rleg.getH(index);
     }
-        if( part == "left_arm" )
+    if( part == "left_arm" )
     {
         return ikin_larm.getH(index);
     }
-        if( part == "right_arm" )
+    if( part == "right_arm" )
     {
         return ikin_rarm.getH(index);
     }
