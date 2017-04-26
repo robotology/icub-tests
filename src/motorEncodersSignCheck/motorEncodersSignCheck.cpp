@@ -87,7 +87,7 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
 
     dd = new PolyDriver(options);
     RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(iopl),"Unable to open openloop interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ipwm),"Unable to open pwm interface");
     RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
     RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
@@ -173,7 +173,7 @@ void MotorEncodersSignCheck::OplExecute(int i)
     bool not_moving = true;
     double opl=opl_start[i];
 
-    iopl->setRefOutput((int)jointsList[i],opl);
+    ipwm->setRefDutyCycle((int)jointsList[i], opl);
     double last_opl_cmd=yarp::os::Time::now();
     yarp::os::Time::delay(3.0); //i need to wait a while because when i set ref output zero, joint may move (due to stiction or gravity) and I should save the position when pwm=0
 
@@ -183,25 +183,25 @@ void MotorEncodersSignCheck::OplExecute(int i)
     while (not_moving)
     {
 
-        iopl->setRefOutput((int)jointsList[i],opl);
+        ipwm->setRefDutyCycle(jointsList[i], opl);
         imenc->getMotorEncoder((int)jointsList[i],&enc);
 
         if(enc > start_enc+pos_threshold[i])
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             sprintf(buff,"TEST SUCCESS (pwm=%f) enc=%f start_enc=%f",opl, enc, start_enc);
             RTF_TEST_REPORT(buff);
         }
         else if(enc < start_enc-pos_threshold[i])
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             RTF_TEST_FAIL_IF(0, RTF::Asserter::format("because enc readings drecrease enc=%f start_enc=%f (output=%f)", enc, start_enc, opl));
         }
         else if (jPosMotion->checkJointLimitsReached((int)jointsList[i]))
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed because hw limit was touched (enc=%f)",enc));
         }
@@ -213,7 +213,7 @@ void MotorEncodersSignCheck::OplExecute(int i)
         }
         if (opl>=opl_max[i])
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed failed because max output was reached(output=%f)",opl));
         }
@@ -242,8 +242,8 @@ void MotorEncodersSignCheck::run()
         RTF_TEST_FAIL_IF((ipid->getOutput((int)jointsList[i], &posout)),
                          RTF::Asserter::format(" getOutput j %d return false",(int)jointsList[i]));
 
-        setModeSingle(i,VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-        iopl->setRefOutput((int)jointsList[i],0.0);
+        setModeSingle(i,VOCAB_CM_PWM,VOCAB_IM_STIFF);
+        ipwm->setRefDutyCycle((int)jointsList[i],0.0);
 
         RTF_TEST_REPORT(RTF::Asserter::format("Testing joint %d with starting pwm = %.2f. In position j had pwm = %.2f",(int)jointsList[i], opl_start[i], posout));
         OplExecute(i);

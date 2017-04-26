@@ -19,7 +19,7 @@
 #include "MotorStiction.h"
 #include <yarp/manager/localbroker.h>
 
-//example1    -v -t MotorStiction.dll -p "--robot icub --part left_arm --joints ""(4)"" --home ""(45)"" --outputStep ""(20)"" --outputMax ""(3000)"" --outputDelay ""(2.0)""  --threshold ""(5.0)"" "
+//example1    -v -t MotorStiction.dll -p "--robot icub --part left_arm --joints ""(4)"" --home ""(45)"" --outputStep ""(0.5)"" --outputMax ""(50)"" --outputDelay ""(2.0)""  --threshold ""(5.0)"" "
 
 using namespace RTF;
 using namespace yarp::os;
@@ -36,7 +36,7 @@ MotorStiction::MotorStiction() : yarp::rtf::TestCase("MotorStiction") {
     icmd=0;
     iimd=0;
     ienc=0;
-    iopl=0;
+    ipwm = 0;
 }
 
 MotorStiction::~MotorStiction() { }
@@ -88,7 +88,7 @@ bool MotorStiction::setup(yarp::os::Property& property) {
 
     dd = new PolyDriver(options);
     RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(iopl),"Unable to open openloop interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ipwm),"Unable to open pwm control interface");
     RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
     RTF_ASSERT_ERROR_IF(dd->view(iamp),"Unable to open ampliefier interface");
     RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
@@ -234,8 +234,8 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
     ienc->getEncoder((int)jointsList[i],&start_enc);
     bool not_moving = true;
     double opl=0;
-    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-    iopl->setRefOutput((int)jointsList[i],opl);
+    setMode(VOCAB_CM_PWM, VOCAB_IM_STIFF);
+    ipwm->setRefDutyCycle((int)jointsList[i], opl);
     double last_opl_cmd=yarp::os::Time::now();
     Bottle dataToPlot;
 
@@ -245,14 +245,14 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
         Bottle& v1 = row.addList();
         Bottle& v2 = row.addList();
 
-        iopl->setRefOutput((int)jointsList[i],opl);
+        ipwm->setRefDutyCycle((int)jointsList[i],opl);
         ienc->getEncoder((int)jointsList[i],&enc);
 
         //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);RTF_TEST_REPORT(buff);
 
         if (fabs(enc-start_enc)>movement_threshold[i])
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=true;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=true;}
@@ -261,7 +261,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
         }
         else if (opl>=opl_max[i])
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
@@ -271,7 +271,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
         else if (fabs(enc-max_lims[i]) < 1.0 ||
                  fabs(enc-min_lims[i]) < 1.0 )
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
@@ -313,8 +313,8 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
     ienc->getEncoder((int)jointsList[i],&start_enc);
     bool not_moving = true;
     double opl=0;
-    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-    iopl->setRefOutput((int)jointsList[i],opl);
+    setMode(VOCAB_CM_PWM,VOCAB_IM_STIFF);
+    ipwm->setRefDutyCycle((int)jointsList[i], opl);
     double last_opl_cmd=yarp::os::Time::now();
     Bottle dataToPlot;
 
@@ -324,14 +324,14 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
         Bottle& v1 = row.addList();
         Bottle& v2 = row.addList();
 
-        iopl->setRefOutput((int)jointsList[i],opl);
+        ipwm->setRefDutyCycle((int)jointsList[i], opl);
         ienc->getEncoder((int)jointsList[i],&enc);
 
         //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);RTF_TEST_REPORT(buff);
 
         if (opl>=opl_max[i])
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
@@ -341,7 +341,7 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
         else if (fabs(enc-max_lims[i]) < 1.0 ||
                  fabs(enc-min_lims[i]) < 1.0 )
         {
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=true;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=true;}
@@ -390,8 +390,8 @@ void MotorStiction::run()
             current_test.jnt=(int)jointsList[i];
             current_test.cycle= repeat_count;
 
-            setModeSingle(i,VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            setModeSingle(i,VOCAB_CM_PWM,VOCAB_IM_STIFF);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
 
             sprintf(buff,"Testing joint %d, cycle %d, positive output",(int)jointsList[i],repeat_count);RTF_TEST_REPORT(buff);
             OplExecute(i,dataToPlotList,current_test, true);
@@ -399,8 +399,8 @@ void MotorStiction::run()
             setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
             goHome();
 
-            setModeSingle(i, VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-            iopl->setRefOutput((int)jointsList[i],0.0);
+            setModeSingle(i, VOCAB_CM_PWM,VOCAB_IM_STIFF);
+            ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
 
             sprintf(buff,"Testing joint %d, cycle %d, negative output",(int)jointsList[i],repeat_count);RTF_TEST_REPORT(buff);
             OplExecute(i,dataToPlotList,current_test, false);

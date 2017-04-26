@@ -79,7 +79,7 @@ private:
     yarp::dev::IControlMode2     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
-    yarp::dev::IOpenLoopControl  *iopl;
+    yarp::dev::IPWMControl       *ipwm;
     yarp::dev::IControlLimits    *ilim;
 };
 
