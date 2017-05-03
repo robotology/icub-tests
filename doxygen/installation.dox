@@ -35,7 +35,7 @@ Note: in case CMake fails to detect the RTF package check that you installed RTF
 We need to add the plug-ins path to the OS-specific dynamic linker environment variable
 
 \li \b Linux `LD_LIBRARY_PATH`
-\li \b macOS `DYLD_FALLBACK_LIBRARY_PATH`
+\li \b macOS `DYLD_LIBRARY_PATH`
 \li \b Windows `PATH`
 
 As an example, under Linux:
