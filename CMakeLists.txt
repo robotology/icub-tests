@@ -13,6 +13,11 @@ project(iCub-Tests)
 # and with yarp support enabled
 find_package(RTF 1.0.1 COMPONENTS YARP REQUIRED)
 
+# setting default compilation to release/optmized
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, recommanded options are: Debug or Release" FORCE)
+endif()
+
 # set the output plugin directory to collect all the shared libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 set(CMAKE_SHARED_MODULE_PREFIX "")
