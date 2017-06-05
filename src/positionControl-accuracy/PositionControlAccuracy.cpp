@@ -184,7 +184,10 @@ void PositionControlAccuracy::run()
             setMode(VOCAB_CM_POSITION_DIRECT);
             double start_time = yarp::os::Time::now();
 
-            std::string buff = "Testing Joint: " + std::to_string(i) + " cycle: " + std::to_string(cycle);
+            char cbuff[64];
+            sprintf(cbuff, "Testing Joint: %d cycle: %d", i, cycle);
+
+            std::string buff(cbuff);
             RTF_TEST_REPORT(buff);
 
             double time_zero = 0;
@@ -239,10 +242,14 @@ void PositionControlAccuracy::run()
         } //cycle loop
 
         //save data
-        std::string filename = "positionControlAccuracy_plot_";
-        filename += m_partName;
-        filename += std::to_string(i);
-        filename += ".txt";
+
+        char cfilename[128];
+        sprintf(cfilename, "positionControlAccuracy_plot_%s%d.txt", m_partName.c_str(), i);
+
+        std::string filename(cfilename);
+        //filename += m_partName;
+        //filename += std::to_string(i);
+        //filename += ".txt";
         saveToFile(filename, m_dataToSave);
     } //joint loop
 

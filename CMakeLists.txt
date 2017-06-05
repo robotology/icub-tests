@@ -30,6 +30,9 @@ add_subdirectory(src/camera)
 # Build position direct tests
 add_subdirectory(src/positionDirect)
 
+# Build positionControl-accuracy tests
+add_subdirectory(src/positionControl-accuracy)
+
 # Build openloop tests
 add_subdirectory(src/openloop-consistency)
 
