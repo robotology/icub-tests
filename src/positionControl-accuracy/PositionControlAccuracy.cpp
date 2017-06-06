@@ -201,7 +201,7 @@ void PositionControlAccuracy::run()
 
                 if (elapsed <= 1.0)
                 {
-                    m_cmd_single = 0.0;
+                    m_cmd_single = m_zeros[i]; //0.0;
                 }
                 else if (elapsed > 1.0 && elapsed <= 4.0)
                 {
