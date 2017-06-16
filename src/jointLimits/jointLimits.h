@@ -11,7 +11,7 @@
 #define _JOINTLIMITS_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -60,7 +60,7 @@
 *
 */
 
-class JointLimits : public YarpTestCase {
+class JointLimits : public yarp::rtf::TestCase {
 public:
     JointLimits();
     virtual ~JointLimits();

@@ -11,11 +11,11 @@
 #define _OPENLOOPCONSISTENCY_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-class OpenLoopConsistency : public YarpTestCase {
+class OpenLoopConsistency : public yarp::rtf::TestCase {
 public:
     OpenLoopConsistency();
     virtual ~OpenLoopConsistency();
@@ -57,7 +57,7 @@ private:
     yarp::dev::IControlMode2     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
-    yarp::dev::IOpenLoopControl  *iopl;
+    yarp::dev::IPWMControl       *ipwm;
 
     double  cmd_single;
     double* cmd_tot;

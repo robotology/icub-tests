@@ -6,12 +6,11 @@
 #
 
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.0)
 set(PROJECTNAME TorqueControlStiffDampCheck)
 project(${PROJECTNAME})
 
-find_package(RTF)
-find_package(RTF COMPONENTS DLL)
+find_package(RTF 1.1 COMPONENTS DLL)
 find_package(YARP)
 
 include_directories(${CMAKE_SOURCE_DIR}
@@ -19,11 +18,12 @@ include_directories(${CMAKE_SOURCE_DIR}
                     ${YARP_INCLUDE_DIRS}
                     ${YARP_HELPERS_INCLUDE_DIR})
 
-link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES})
-
 add_library(${PROJECTNAME} MODULE TorqueControlStiffDampCheck.h
                                   TorqueControlStiffDampCheck.cpp)
+
+target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
+                      ${YARP_LIBRARIES} YARP::YARP_rtf)
+
 install(TARGETS ${PROJECTNAME}
         EXPORT ${PROJECTNAME}
         COMPONENT runtime

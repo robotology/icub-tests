@@ -10,7 +10,7 @@
 #ifndef _IKINIDYNCONSISTENCYTEST_H_
 #define _IKINIDYNCONSISTENCYTEST_H_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 
 #include <yarp/sig/Matrix.h>
 

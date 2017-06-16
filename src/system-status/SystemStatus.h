@@ -11,7 +11,7 @@
 #define _SYSTEM_STATUS_H_
 
 #include <vector>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/os/SystemInfoSerializer.h>
 
 class HostInfo {
@@ -21,7 +21,7 @@ public:
 };
 
 
-class SystemStatus : public YarpTestCase {
+class SystemStatus : public yarp::rtf::TestCase {
 public:
     SystemStatus();
     virtual ~SystemStatus();

@@ -24,7 +24,7 @@ using namespace yarp::sig;
 // prepare the plugin
 PREPARE_PLUGIN(TorqueControlGravityConsistency)
 
-TorqueControlGravityConsistency::TorqueControlGravityConsistency() : YarpTestCase("TorqueControlGravityConsistency"),
+TorqueControlGravityConsistency::TorqueControlGravityConsistency() : yarp::rtf::TestCase("TorqueControlGravityConsistency"),
                                                                      yarpRobot(0)
 {
 

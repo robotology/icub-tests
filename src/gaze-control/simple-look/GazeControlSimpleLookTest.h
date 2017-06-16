@@ -18,7 +18,7 @@
 #ifndef _GAZECONTROLSIMPLELOOK_H_
 #define _GAZECONTROLSIMPLELOOK_H_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -32,7 +32,7 @@
 * |:--------------:|:------:|:-----:|:-------------:|:--------:|:-------------:|:-----:|
 * |       -        |    -   |   -   |      -        |    -     |       -       |   -   |
 */
-class GazeControlSimpleLookTest : public YarpTestCase
+class GazeControlSimpleLookTest : public yarp::rtf::TestCase
 {
     yarp::dev::PolyDriver driver;
 

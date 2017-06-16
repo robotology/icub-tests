@@ -9,10 +9,12 @@
 
 #include <math.h>
 #include <rtf/dll/Plugin.h>
+#include <rtf/TestAssert.h>
 #include "PortsFrequency.h"
 #include <yarp/os/Time.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/QosStyle.h>
+#include <yarp/os/Network.h>
 
 using namespace std;
 using namespace RTF;
@@ -21,7 +23,7 @@ using namespace yarp::os;
 // prepare the plugin
 PREPARE_PLUGIN(PortsFrequency)
 
-PortsFrequency::PortsFrequency() : YarpTestCase("PortsFrequency") {
+PortsFrequency::PortsFrequency() : yarp::rtf::TestCase("PortsFrequency") {
 }
 
 PortsFrequency::~PortsFrequency() { }

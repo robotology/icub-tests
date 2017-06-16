@@ -7,8 +7,9 @@
  *
  */
 
-#include <rtf/dll/Plugin.h>
 #include "ExampleTest.h"
+#include <rtf/dll/Plugin.h>
+#include <rtf/TestAssert.h>
 
 using namespace std;
 using namespace RTF;
@@ -17,7 +18,7 @@ using namespace yarp::os;
 // prepare the plugin
 PREPARE_PLUGIN(ExampleTest)
 
-ExampleTest::ExampleTest() : YarpTestCase("ExampleTest") {
+ExampleTest::ExampleTest() : yarp::rtf::TestCase("ExampleTest") {
 }
 
 ExampleTest::~ExampleTest() { }

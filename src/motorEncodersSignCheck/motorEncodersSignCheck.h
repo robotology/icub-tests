@@ -11,12 +11,12 @@
 #define _MOTORENCODERSSIGNCHECK_H_
 
 //#include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 //#include <yarp/sig/Matrix.h>
-#include "rtf/yarp/JointsPosMotion.h"
+#include "yarp/rtf/JointsPosMotion.h"
 
 
 /**
@@ -28,7 +28,7 @@
 * and increments pwm with step defined in parameter "pwmStep" until motor doesn't move of Posthreshold degree at least.
 *
 *
-* Note: This test uses RTF::YARP::jointsPosMotion class, a class for reduce time in developing test.
+* Note: This test uses yarp::rtf::jointsPosMotion class, a class for reduce time in developing test.
 *
 *
 *  Accepts the following parameters:
@@ -47,7 +47,7 @@
 * | commandDelay       | vector of doubles of size joints  | deg   | 0.1 | No  | The delay between two SetRefOpenLooop commands consecutive | |
 *
 */
-class MotorEncodersSignCheck : public YarpTestCase {
+class MotorEncodersSignCheck : public yarp::rtf::TestCase {
 public:
     MotorEncodersSignCheck();
     virtual ~MotorEncodersSignCheck();
@@ -62,7 +62,7 @@ public:
 
 private:
 
-    RTF::YARP::jointsPosMotion *jPosMotion;
+    yarp::rtf::jointsPosMotion *jPosMotion;
 
     std::string robotName;
     std::string partName;
@@ -82,7 +82,7 @@ private:
     yarp::dev::IControlMode2     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
-    yarp::dev::IOpenLoopControl  *iopl;
+    yarp::dev::IPWMControl       *ipwm;
     yarp::dev::IMotorEncoders    *imenc;
     yarp::dev::IPidControl       *ipid;
 };

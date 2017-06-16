@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <rtf/dll/Plugin.h>
+#include <rtf/TestAssert.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -120,7 +121,7 @@ public:
 
 
 /***********************************************************************************/
-DemoRedBallTest::DemoRedBallTest() : YarpTestCase("DemoRedBallTest"), redBallPos(NULL)
+DemoRedBallTest::DemoRedBallTest() : yarp::rtf::TestCase("DemoRedBallTest"), redBallPos(NULL)
 {
 }
 

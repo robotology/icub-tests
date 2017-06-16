@@ -10,24 +10,24 @@
 #ifndef _MOVEMENTREFERNCESTEST_
 #define _MOVEMENTREFERNCESTEST_
 
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 
 #include <yarp/os/Value.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include "rtf/yarp/JointsPosMotion.h"
+#include "yarp/rtf/JointsPosMotion.h"
 
 /**
 * \ingroup icub-tests
-* Check IPositionControl2, IVelocityControl2, IOpenLoopControl, IPositionDirect.
+* Check IPositionControl2, IVelocityControl2, IPWMControl, IPositionDirect.
 *
 * Check the following functions:
 * \li IPositionControl2::getPositionTarget()
 * \li IVelocityControl2::getRefVelocity()
 * \li IPositionDirect::getRefPosition()
-* \li IOpenLoopControl::getRefOutput()
+* \li IPWMControl::getRefDutyCycle()
 *
 *
 *  Accepts the following parameters:
@@ -42,7 +42,7 @@
 * | refacc         | vector of doubles of size joints | deg/s^2 | - | No | For each joint the reference acceleration value to set in the low level trajectory generator. | |
 *
 */
-class MovementReferencesTest : public YarpTestCase {
+class MovementReferencesTest : public yarp::rtf::TestCase {
 public:
     MovementReferencesTest();
     virtual ~MovementReferencesTest();
@@ -60,7 +60,7 @@ private:
     yarp::dev::PolyDriver *dd;
     yarp::dev::IEncoders *iEncoders;
     yarp::dev::IPositionControl2 *iPosition2;
-    yarp::dev::IOpenLoopControl *iOpenLoop;
+    yarp::dev::IPWMControl *iPWM;
     yarp::dev::IPositionDirect *iPosDirect;
     yarp::dev::IControlMode2 *iControlMode2;
     yarp::dev::IVelocityControl2 *iVelocity2;
@@ -73,7 +73,7 @@ private:
 
     int numJointsInPart;
     int numJoints;
-    RTF::YARP::jointsPosMotion *jPosMotion;
+    yarp::rtf::jointsPosMotion *jPosMotion;
     yarp::sig::Vector jointsList;
     int *jList;
     

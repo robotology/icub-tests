@@ -11,7 +11,7 @@
 #define _OPTICALENCODERSCONSISTENCY_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -66,7 +66,7 @@
 
 *
 */
-class OpticalEncodersConsistency : public YarpTestCase {
+class OpticalEncodersConsistency : public yarp::rtf::TestCase {
 public:
     OpticalEncodersConsistency();
     virtual ~OpticalEncodersConsistency();

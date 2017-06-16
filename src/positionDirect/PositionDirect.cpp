@@ -22,7 +22,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(PositionDirect)
 
-PositionDirect::PositionDirect() : YarpTestCase("PositionDirect") {
+PositionDirect::PositionDirect() : yarp::rtf::TestCase("PositionDirect") {
     jointsList=0;
     pos_tot=0;
     dd=0;

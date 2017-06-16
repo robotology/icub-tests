@@ -26,7 +26,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(OpenLoopConsistency)
 
-OpenLoopConsistency::OpenLoopConsistency() : YarpTestCase("OpenLoopConsistency") {
+OpenLoopConsistency::OpenLoopConsistency() : yarp::rtf::TestCase("OpenLoopConsistency") {
     jointsList=0;
     pos_tot=0;
     dd=0;
@@ -35,7 +35,7 @@ OpenLoopConsistency::OpenLoopConsistency() : YarpTestCase("OpenLoopConsistency")
     icmd=0;
     iimd=0;
     ienc=0;
-    iopl=0;
+    ipwm = 0;
     cmd_some=0;
     cmd_tot=0;
     prevcurr_some=0;
@@ -73,7 +73,7 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
 
     dd = new PolyDriver(options);
     RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(iopl),"Unable to open openloop interface");
+    RTF_ASSERT_ERROR_IF(dd->view(ipwm), "Unable to open pwm control interface");
     RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
     RTF_ASSERT_ERROR_IF(dd->view(iamp),"Unable to open ampliefier interface");
     RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
@@ -194,7 +194,7 @@ void OpenLoopConsistency::setRefOpenloop(double value)
     {
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->setRefOutput(jointsList[i],cmd_single);
+            ipwm->setRefDutyCycle(jointsList[i], cmd_single);
         }
     }
     else if (cmd_mode==some_joints)
@@ -202,7 +202,7 @@ void OpenLoopConsistency::setRefOpenloop(double value)
         //same of single_joint, since multiple joint is not currently supported
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->setRefOutput(jointsList[i],cmd_single);
+            ipwm->setRefDutyCycle(jointsList[i], cmd_single);
         }
     }
     else if (cmd_mode==all_joints)
@@ -211,7 +211,7 @@ void OpenLoopConsistency::setRefOpenloop(double value)
         {
             cmd_tot[i]=cmd_single;
         }
-        iopl->setRefOutputs(cmd_tot);
+        ipwm->setRefDutyCycles(cmd_tot);
     }
     else
     {
@@ -228,7 +228,7 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, yarp::os::ConstSt
     {
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->getRefOutput(jointsList[i],&value);
+            ipwm->getRefDutyCycle(jointsList[i], &value);
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed, j%d current reference is (%f)",title.c_str(),i, verify_val);
@@ -246,7 +246,7 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, yarp::os::ConstSt
         //same of single_joint, since multiple joint is not currently supported
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->getRefOutput(jointsList[i],&value);
+            ipwm->getRefDutyCycle(jointsList[i], &value);
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current reference is (%f)",title.c_str(),i, verify_val);
@@ -262,7 +262,7 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, yarp::os::ConstSt
     else if (cmd_mode==all_joints)
     {
         int ok=0;
-        iopl->getRefOutputs(cmd_tot);
+        ipwm->getRefDutyCycles(cmd_tot);
         for (int i=0; i<n_part_joints; i++)
         {
             if (verify_val==cmd_tot[i]) ok++;
@@ -293,7 +293,7 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstSt
     {
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->getOutput(jointsList[i],&value);
+            ipwm->getDutyCycle(jointsList[i], &value);
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed, j%d current output is (%f)",title.c_str(),i, verify_val);
@@ -311,7 +311,7 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstSt
         //same of single_joint, since multiple joint is not currently supported
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->getOutput(jointsList[i],&value);
+            ipwm->getDutyCycle(jointsList[i], &value);
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current output is (%f)",title.c_str(),i,verify_val);
@@ -327,7 +327,7 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstSt
     else if (cmd_mode==all_joints)
     {
         int ok=0;
-        iopl->getOutputs(cmd_tot);
+        ipwm->getDutyCycles(cmd_tot);
         for (int i=0; i<n_part_joints; i++)
         {
             if (verify_val==cmd_tot[i]) ok++;
@@ -362,7 +362,7 @@ void OpenLoopConsistency::verifyOutputDiff(double verify_val, yarp::os::ConstStr
     {
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->getOutput(jointsList[i],&value);
+            ipwm->getDutyCycle(jointsList[i], &value);
             if (value!=verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d, current output is (%f!=%f)",title.c_str(),i,value,verify_val);
@@ -380,7 +380,7 @@ void OpenLoopConsistency::verifyOutputDiff(double verify_val, yarp::os::ConstStr
         //same of single_joint, since multiple joint is not currently supported
         for (int i=0; i<n_cmd_joints; i++)
         {
-            iopl->getOutput(jointsList[i],&value);
+            ipwm->getDutyCycle(jointsList[i], &value);
             if (value!=verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current output is (%f!=%f)",title.c_str(), i,value,verify_val);
@@ -396,7 +396,7 @@ void OpenLoopConsistency::verifyOutputDiff(double verify_val, yarp::os::ConstStr
     else if (cmd_mode==all_joints)
     {
         int ok=0;
-        iopl->getOutputs(cmd_tot);
+        ipwm->getDutyCycles(cmd_tot);
         for (int i=0; i<n_part_joints; i++)
         {
             if (verify_val!=cmd_tot[i]) ok++;
@@ -427,29 +427,29 @@ void OpenLoopConsistency::run()
     //verifyRefOpenloop(0,"test0a"); if I get openLoop reference I get last given refrence
     //verifyOutputDiff(0,"test0b"); //TO BE CHECKED
 
-    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test1");
-    verifyRefOpenloop(0,"test0a"); //When joint swap in openloop mode, the reference should be 0.
-    verifyOutputEqual(0,"test1a");// here i can check that pos->openloop gives pwm 0.
-    setRefOpenloop(10);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test2");
-    verifyRefOpenloop(10,"test2a");
-    verifyOutputEqual(10,"test2b");
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test3");
+    setMode(VOCAB_CM_PWM,VOCAB_IM_STIFF);
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test1");
+    verifyRefOpenloop(0,"test0a"); //When joint swap in pwm control mode, the reference should be 0.
+    verifyOutputEqual(0,"test1a");// here i can check that iPwm reference = 0.
+    setRefOpenloop(1);
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test2");
+    verifyRefOpenloop(1,"test2a");
+    verifyOutputEqual(1,"test2b");
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test3");
     setRefOpenloop(0);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test4");
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test4");
     verifyRefOpenloop(0,"test3a");
     verifyOutputEqual(0,"test3b");
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test5");
-    setRefOpenloop(-10);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test6");
-    verifyRefOpenloop(-10,"test6a");
-    verifyOutputEqual(-10,"test6b");
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test5");
+    setRefOpenloop(-1);
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test6");
+    verifyRefOpenloop(-1,"test6a");
+    verifyOutputEqual(-1,"test6b");
 
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test7");
     goHome();
-    verifyRefOpenloop(-10,"test7a");
+    verifyRefOpenloop(-1,"test7a");
     //verifyOutputDiff(0,"test7b"); //TO BE CHECKED
 
 }

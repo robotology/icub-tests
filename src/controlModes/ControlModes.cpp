@@ -23,7 +23,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(ControlModes)
 
-ControlModes::ControlModes() : YarpTestCase("ControlModes") {
+ControlModes::ControlModes() : yarp::rtf::TestCase("ControlModes") {
     jointsList=0;
     pos_tot=0;
     dd=0;
@@ -424,8 +424,8 @@ void ControlModes::run()
     verifyMode(VOCAB_CM_MIXED,VOCAB_IM_STIFF,"test5");
     verifyAmplifier(0,"test5b");
 
-    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF);
-    verifyMode(VOCAB_CM_OPENLOOP,VOCAB_IM_STIFF,"test6");
+    setMode(VOCAB_CM_PWM,VOCAB_IM_STIFF);
+    verifyMode(VOCAB_CM_PWM, VOCAB_IM_STIFF, "test6");
     verifyAmplifier(0,"test6b");
 
     setMode(VOCAB_CM_IDLE,VOCAB_IM_STIFF);
@@ -475,7 +475,7 @@ void ControlModes::run()
     checkControlModeWithImCompliant(VOCAB_CM_MIXED,"test15");
     verifyAmplifier(0,"test15b");
 
-    checkControlModeWithImCompliant(VOCAB_CM_OPENLOOP,"test16");
+    checkControlModeWithImCompliant(VOCAB_CM_PWM, "test16");
     verifyAmplifier(0,"test16b");
 
     checkControlModeWithImCompliant(VOCAB_CM_IDLE,"test17");
@@ -518,7 +518,7 @@ void ControlModes::run()
     checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test26");
     verifyAmplifier(0,"test26b");
 
-    setMode(VOCAB_CM_OPENLOOP,VOCAB_IM_COMPLIANT);
+    setMode(VOCAB_CM_PWM, VOCAB_IM_COMPLIANT);
     checkControlModeWithImCompliant(VOCAB_CM_HW_FAULT,"test27");
     verifyAmplifier(0,"test27b");
 

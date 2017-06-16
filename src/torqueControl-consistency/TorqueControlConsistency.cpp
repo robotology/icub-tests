@@ -26,7 +26,7 @@ using namespace yarp::dev;
 // prepare the plugin
 PREPARE_PLUGIN(TorqueControlConsistency)
 
-TorqueControlConsistency::TorqueControlConsistency() : YarpTestCase("TorqueControlConsistency") {
+TorqueControlConsistency::TorqueControlConsistency() : yarp::rtf::TestCase("TorqueControlConsistency") {
     jointsList=0;
     pos_tot=0;
     dd=0;

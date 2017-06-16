@@ -11,7 +11,7 @@
 #define _POSITIONDIRECT_H_
 
 #include <string>
-#include <rtf/yarp/YarpTestCase.h>
+#include <yarp/rtf/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -46,7 +46,7 @@
 *
 */
 
-class PositionDirect : public YarpTestCase {
+class PositionDirect : public yarp::rtf::TestCase {
 public:
     PositionDirect();
     virtual ~PositionDirect();
