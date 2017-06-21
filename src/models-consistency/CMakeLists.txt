@@ -27,9 +27,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ICUB_LINK_FLAGS}")
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
                     ${YARP_INCLUDE_DIRS}
-                    ${ICUB_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
-
+                    ${ICUB_INCLUDE_DIRS})
 
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)

@@ -16,8 +16,7 @@ find_package(yarpWholeBodyInterface REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
+                    ${YARP_INCLUDE_DIRS})
 
 add_library(${PROJECTNAME} MODULE TorqueControlGravityConsistency.h
                                   TorqueControlGravityConsistency.cpp)

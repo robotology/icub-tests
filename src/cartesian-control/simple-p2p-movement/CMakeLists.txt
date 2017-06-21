@@ -16,8 +16,7 @@ list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 # add include directories
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
+                    ${YARP_INCLUDE_DIRS})
 
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)
