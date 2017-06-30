@@ -155,7 +155,7 @@ void CartesianControlReachingToleranceTest::run()
     Vector ori2reach=dcm2axis(dcm2reach);
 
     RTF_TEST_REPORT(Asserter::format("Reaching for the target: (%s, %s)",
-                                     pos2reach.toString(3,3),ori2reach.toString(3,3)));
+                                     pos2reach.toString(3,3).c_str(),ori2reach.toString(3,3).c_str()));
     Vector xh,oh,qh;
     iarm->goToPoseSync(pos2reach,ori2reach);
     iarm->getDesired(xh,oh,qh);
@@ -175,13 +175,13 @@ void CartesianControlReachingToleranceTest::run()
     RTF_TEST_CHECK(done,"Target reached!");
     RTF_TEST_REPORT(Asserter::format("Reaching tolerance: %g",tol));
     RTF_TEST_REPORT(Asserter::format("Solved pose: (%s, %s)",
-                                     xh.toString(3,3),oh.toString(3,3)));
+                                     xh.toString(3,3).c_str(),oh.toString(3,3).c_str()));
     RTF_TEST_REPORT(Asserter::format("Reached pose: (%s, %s)",
-                                     xf.toString(3,3),of.toString(3,3)));
+                                     xf.toString(3,3).c_str(),of.toString(3,3).c_str()));
     RTF_TEST_REPORT(Asserter::format("Solved joints qh: (%s)",
-                                     qh.subVector(3,dof.length()-1).toString(3,3)));
+                                     qh.subVector(3,dof.length()-1).toString(3,3).c_str()));
     RTF_TEST_REPORT(Asserter::format("Reached joints qf: (%s)",
-                                     qf.subVector(0,6).toString(3,3)));
+                                     qf.subVector(0,6).toString(3,3).c_str()));
     RTF_TEST_REPORT(Asserter::format("Error: %g",compute_error(xh,oh,xf,of)));
 
     RTF_TEST_REPORT("Going back to starting pose");
