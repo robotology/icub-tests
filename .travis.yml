@@ -19,12 +19,23 @@ before_script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get --assume-yes --force-yes install icub-common libeigen3-dev; fi
   
   - cd ..
+
+  # install robot-testing framework
+  - git clone https://github.com/robotology/robot-testing
+  - cd robot-testing
+  - mkdir build 
+  - cd build 
+  - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
+  - make 
+  - sudo make install 
+  - cd ../..
+
   # install yarp
   - git clone https://github.com/robotology/yarp
   - cd yarp
   - mkdir build
   - cd build
-  - cmake -DCREATE_LIB_MATH:BOOL=ON -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE}  ..
+  - cmake -DCREATE_LIB_MATH:BOOL=ON -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_COMPILE_RTF_ADDONS:BOOL=ON  ..
   - make
   - sudo make install
   - sudo ldconfig
@@ -39,16 +50,6 @@ before_script:
   - make
   - sudo make install
   - sudo ldconfig
-  - cd ../..
-  
-  # install robot-testing framework
-  - git clone https://github.com/robotology/robot-testing
-  - cd robot-testing
-  - mkdir build 
-  - cd build 
-  - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_MIDDLEWARE_PLUGINS:BOOL=ON -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
-  - make 
-  - sudo make install 
   - cd ../..
   
   # configure icub-tests
