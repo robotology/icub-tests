@@ -211,7 +211,7 @@ void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
         std::string s = b.get(i).toString();
         std::replace(s.begin(), s.end(), '(', ' ');
         std::replace(s.begin(), s.end(), ')', ' ');
-        fs << s << endl;
+        fs << s << std::endl;
     }
 
     fs.close();
@@ -307,7 +307,7 @@ void OpticalEncodersDrift::run()
     }
 
     
-    string filename = "encDrift_plot_";
+    std::string filename = "encDrift_plot_";
     filename += partName;
     filename += ".txt";
 
