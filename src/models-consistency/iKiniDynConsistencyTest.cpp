@@ -100,6 +100,7 @@ Matrix iKiniDynConsistencyTest::getiKinTransform(const string part, int index)
     {
         return ikin_rarm.getH(index);
     }
+    return Matrix();
 }
 
 Matrix iKiniDynConsistencyTest::getiDynTransform(const string part, int index)
@@ -122,6 +123,7 @@ Matrix iKiniDynConsistencyTest::getiDynTransform(const string part, int index)
     {
         //return ikin_rarm.getH(index);
     }
+    return Matrix();
 }
 
 void iKiniDynConsistencyTest::run() {
