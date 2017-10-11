@@ -197,13 +197,13 @@ void MotorEncodersSignCheck::OplExecute(int i)
         {
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
-            RTF_TEST_FAIL_IF(0, RTF::Asserter::format("because enc readings drecrease enc=%f start_enc=%f (output=%f)", enc, start_enc, opl));
+            RTF_TEST_FAIL_IF_FALSE(0, RTF::Asserter::format("because enc readings drecrease enc=%f start_enc=%f (output=%f)", enc, start_enc, opl));
         }
         else if (jPosMotion->checkJointLimitsReached((int)jointsList[i]))
         {
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
-            RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed because hw limit was touched (enc=%f)",enc));
+            RTF_TEST_FAIL_IF_FALSE(0,RTF::Asserter::format("Test failed because hw limit was touched (enc=%f)",enc));
         }
 
         if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
@@ -215,7 +215,7 @@ void MotorEncodersSignCheck::OplExecute(int i)
         {
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
-            RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed failed because max output was reached(output=%f)",opl));
+            RTF_TEST_FAIL_IF_FALSE(0,RTF::Asserter::format("Test failed failed because max output was reached(output=%f)",opl));
         }
 
         yarp::os::Time::delay(0.010);
@@ -239,7 +239,7 @@ void MotorEncodersSignCheck::run()
     for (unsigned int i=0 ; i<jointsList.size(); i++)
     {
         double posout=0;
-        RTF_TEST_FAIL_IF((ipid->getOutput((int)jointsList[i], &posout)),
+        RTF_TEST_FAIL_IF_FALSE((ipid->getOutput((int)jointsList[i], &posout)),
                          RTF::Asserter::format(" getOutput j %d return false",(int)jointsList[i]));
 
         setModeSingle(i,VOCAB_CM_PWM,VOCAB_IM_STIFF);

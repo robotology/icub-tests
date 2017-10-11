@@ -220,7 +220,7 @@ void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
 void OpticalEncodersDrift::run()
 {
     setMode(VOCAB_CM_POSITION);
-    RTF_ASSERT_FAIL_IF(goHome(), "Test can't run");
+    RTF_ASSERT_FAIL_IF_FALSE(goHome(), "Test can't run");
 
     bool go_to_max=false;
     for (unsigned int i=0; i<jointsList.size(); i++)

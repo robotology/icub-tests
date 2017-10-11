@@ -64,7 +64,7 @@ bool GazeControlSimpleLookTest::setup(Property &property)
 void GazeControlSimpleLookTest::tearDown()
 {
     RTF_TEST_REPORT("Closing Gaze Controller Client");
-    RTF_ASSERT_FAIL_IF(driver.close(),"Unable to close the client!");
+    RTF_ASSERT_FAIL_IF_FALSE(driver.close(),"Unable to close the client!");
 }
 
 

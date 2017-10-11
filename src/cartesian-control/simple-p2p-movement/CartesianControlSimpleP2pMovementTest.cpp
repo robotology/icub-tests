@@ -68,7 +68,7 @@ bool CartesianControlSimpleP2pMovementTest::setup(Property &property)
 void CartesianControlSimpleP2pMovementTest::tearDown()
 {
     RTF_TEST_REPORT("Closing Cartesian Controller Client");
-    RTF_ASSERT_FAIL_IF(driver.close(),"Unable to close the client!");
+    RTF_ASSERT_FAIL_IF_FALSE(driver.close(),"Unable to close the client!");
 }
 
 

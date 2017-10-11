@@ -56,13 +56,13 @@ void iKiniDynConsistencyTest::check_matrix_are_equal(const yarp::sig::Matrix & m
 {
     RTF_TEST_REPORT(Asserter::format("Comparing mat1: \n %s \n",mat1.toString().c_str()));
     RTF_TEST_REPORT(Asserter::format("with mat2: \n %s \n",mat2.toString().c_str()));
-    RTF_TEST_FAIL_IF(mat1.rows()==mat2.rows(),"matrix rows do not match");
-    RTF_TEST_FAIL_IF(mat1.cols()==mat2.cols(),"matrix cols do not match");
+    RTF_TEST_FAIL_IF_FALSE(mat1.rows()==mat2.rows(),"matrix rows do not match");
+    RTF_TEST_FAIL_IF_FALSE(mat1.cols()==mat2.cols(),"matrix cols do not match");
     for(int row=0; row < mat1.rows(); row++ )
     {
         for(int col=0; col < mat1.cols(); col++ )
         {
-            RTF_TEST_FAIL_IF(std::fabs(mat1(row,col)-mat2(row,col)) < tol,
+            RTF_TEST_FAIL_IF_FALSE(std::fabs(mat1(row,col)-mat2(row,col)) < tol,
                       Asserter::format("Element %d %d don't match",row,col));
         }
     }

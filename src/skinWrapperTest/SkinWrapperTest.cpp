@@ -95,7 +95,7 @@ bool SkinWrapperTest::setup(Property &property)
 void SkinWrapperTest::tearDown()
 {
     RTF_TEST_REPORT("Closing the skinWrapper");
-    RTF_ASSERT_FAIL_IF(dd1.close() && dd2.close() && dd3.close() && dd4.close(),"Unable to close the device!");
+    RTF_ASSERT_FAIL_IF_FALSE(dd1.close() && dd2.close() && dd3.close() && dd4.close(),"Unable to close the device!");
 }
 
 

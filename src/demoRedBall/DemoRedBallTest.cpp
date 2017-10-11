@@ -245,13 +245,13 @@ void DemoRedBallTest::tearDown()
     redBallPos->stop();
 
     RTF_TEST_REPORT("Closing Clients");
-    RTF_ASSERT_FAIL_IF(drvJointArmL.close()&&drvCartArmL.close(),
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
                        "Unable to close client for left_arm!");
-    RTF_ASSERT_FAIL_IF(drvJointArmR.close()&&drvCartArmR.close(),
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointArmR.close()&&drvCartArmR.close(),
                        "Unable to close client for right_arm!");
-    RTF_ASSERT_FAIL_IF(drvJointHead.close()&&drvGaze.close(),
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointHead.close()&&drvGaze.close(),
                        "Unable to close client for head!");
-    RTF_ASSERT_FAIL_IF(drvJointTorso.close(),"Unable to close client for left_arm!");
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointTorso.close(),"Unable to close client for left_arm!");
 }
 
 
