@@ -176,7 +176,7 @@ void iKiniDynConsistencyTest::run() {
     ikin_larm.releaseLink(1);
     ikin_larm.releaseLink(2);
     RTF_TEST_REPORT(Asserter::format("q_torso_larm : %d ikin_larm : %d",q_torso_larm.size(),ikin_larm.getDOF()));
-    RTF_ASSERT_ERROR_IF(q_torso_larm.size() == ikin_larm.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_torso_larm.size() == ikin_larm.getDOF(),"unexpected chain size");
     ikin_larm.setAng(q_torso_larm);
 
     transform_ikin = ikin_larm.getH();
@@ -196,7 +196,7 @@ void iKiniDynConsistencyTest::run() {
     ikin_rarm.releaseLink(0);
     ikin_rarm.releaseLink(1);
     ikin_rarm.releaseLink(2);
-    RTF_ASSERT_ERROR_IF(q_torso_rarm.size() == ikin_rarm.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_torso_rarm.size() == ikin_rarm.getDOF(),"unexpected chain size");
     ikin_rarm.setAng(q_torso_rarm);
 
     transform_ikin = ikin_rarm.getH();
@@ -213,7 +213,7 @@ void iKiniDynConsistencyTest::run() {
     new(&ikin_lleg) iCubLeg("left");
     ikin_lleg.setAllConstraints(false);
     RTF_TEST_REPORT(Asserter::format("q_lleg : %d ikin_lleg : %d",q_lleg.size(),ikin_lleg.getDOF()));
-    RTF_ASSERT_ERROR_IF(q_lleg.size() == ikin_lleg.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_lleg.size() == ikin_lleg.getDOF(),"unexpected chain size");
     ikin_lleg.setAng(q_lleg);
 
     transform_ikin = ikin_lleg.getH();
@@ -234,7 +234,7 @@ void iKiniDynConsistencyTest::run() {
     RTF_TEST_REPORT("Checking right leg end effector positions");
     new(&ikin_rleg) iCubLeg("right");
     ikin_rleg.setAllConstraints(false);
-    RTF_ASSERT_ERROR_IF(q_rleg.size() == ikin_rleg.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_rleg.size() == ikin_rleg.getDOF(),"unexpected chain size");
     ikin_rleg.setAng(q_rleg);
 
     transform_ikin = ikin_rleg.getH();

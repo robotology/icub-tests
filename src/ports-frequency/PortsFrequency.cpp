@@ -37,13 +37,13 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
     // updating parameters
    testTime = (property.check("time")) ? property.find("time").asDouble() : 2;
 
-    RTF_ASSERT_ERROR_IF(property.check("PORTS"),
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("PORTS"),
                         "A list of the ports must be given");
 
     yarp::os::Bottle portsSet = property.findGroup("PORTS").tail();
     for(unsigned int i=0; i<portsSet.size(); i++) {
         yarp::os::Bottle* btport = portsSet.get(i).asList();
-        RTF_ASSERT_ERROR_IF(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
+        RTF_ASSERT_ERROR_IF_FALSE(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
         MyPortInfo info;
         info.name = btport->get(0).asString();
         info.frequency = btport->get(1).asInt();
@@ -52,7 +52,7 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
     }
 
     // opening port
-    RTF_ASSERT_ERROR_IF(port.open("..."),
+    RTF_ASSERT_ERROR_IF_FALSE(port.open("..."),
                         "opening port, is YARP network available?");
     return true;
 }

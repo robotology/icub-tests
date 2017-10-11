@@ -46,15 +46,15 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     if(configuration.check("name"))
         setName(configuration.find("name").asString());
 
-    RTF_ASSERT_ERROR_IF(configuration.check("portname"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("portname"),
                         "Missing 'portname' parameter, cannot open device");
     m_portname = configuration.find("portname").asString();
 
-    RTF_ASSERT_ERROR_IF(configuration.check("joints"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("joints"),
                         "Missing 'joints' parameter, cannot open device");
     m_NumJoints=configuration.find("joints").asInt();
 
-    RTF_ASSERT_ERROR_IF(configuration.check("target"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("target"),
                         "Missing 'target' parameter, cannot open device");
     yarp::os::Bottle bot=configuration.findGroup("target").tail();
     int n = m_NumJoints<bot.size()? m_NumJoints:bot.size();
@@ -65,7 +65,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
         m_aHome[i]=0.0;
     }
 
-    RTF_ASSERT_ERROR_IF(configuration.check("min"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("min"),
                         "Missing 'min' parameter, cannot open device");
     bot = configuration.findGroup("min").tail();
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
@@ -73,7 +73,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     for (int i=0; i<n; ++i)
        m_aMinErr[i]=bot.get(i).asDouble();
 
-    RTF_ASSERT_ERROR_IF(configuration.check("max"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("max"),
                         "Missing 'max' parameter, cannot open device");
     bot=configuration.findGroup("max").tail();
     n = m_NumJoints<bot.size()? m_NumJoints:bot.size();
@@ -81,7 +81,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     for (int i=0; i<n; ++i)
          m_aMaxErr[i]=bot.get(i).asDouble();
 
-    RTF_ASSERT_ERROR_IF(configuration.check("refvel"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("refvel"),
                         "Missing 'max' parameter, cannot open device");
     bot = configuration.findGroup("refvel").tail();
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
@@ -97,7 +97,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
             m_aRefAcc[i]=bot.get(i).asDouble();
     }
 
-    RTF_ASSERT_ERROR_IF(configuration.check("timeout"),
+    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("timeout"),
                         "Missing 'timeout' parameter, cannot open device");
     bot = configuration.findGroup("timeout").tail();
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
@@ -111,12 +111,12 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     options.put("local",m_portname+"/client");
     options.put("remote",m_portname);
 
-    RTF_ASSERT_ERROR_IF(m_driver.open(options),
+    RTF_ASSERT_ERROR_IF_FALSE(m_driver.open(options),
                         "cannot open driver");
 
-    RTF_ASSERT_ERROR_IF(m_driver.view(iEncoders), "cannot view iEncoder");
-    RTF_ASSERT_ERROR_IF(m_driver.view(iPosition), "cannot view iPosition");
-    RTF_ASSERT_ERROR_IF(m_driver.view(iPosition2), "cannot view iPosition2");
+    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iEncoders), "cannot view iEncoder");
+    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition), "cannot view iPosition");
+    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition2), "cannot view iPosition2");
 
     return true;
 }

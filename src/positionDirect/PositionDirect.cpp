@@ -44,44 +44,44 @@ bool PositionDirect::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("zero"),    "The zero position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("frequency"), "The frequency of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("amplitude"), "The amplitude of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("cmdMode"), "the cmdType must be given as the test parameter! 0=single_joint, 1=all_joints, 2=some_joints");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("zero"),    "The zero position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("frequency"), "The frequency of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("amplitude"), "The amplitude of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("cmdMode"), "the cmdType must be given as the test parameter! 0=single_joint, 1=all_joints, 2=some_joints");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(n_cmd_joints>0,"invalid number of joints, it must be >0");
+    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
     frequency = property.find("frequency").asDouble();
-    RTF_ASSERT_ERROR_IF(frequency>0,"invalid frequency");
+    RTF_ASSERT_ERROR_IF_FALSE(frequency>0,"invalid frequency");
 
     amplitude = property.find("amplitude").asDouble();
-    RTF_ASSERT_ERROR_IF(amplitude>0,"invalid amplitude");
+    RTF_ASSERT_ERROR_IF_FALSE(amplitude>0,"invalid amplitude");
 
     zero = property.find("zero").asDouble();
 
     cycles = property.find("cycles").asDouble();
-    RTF_ASSERT_ERROR_IF(cycles>0,"invalid cycles");
+    RTF_ASSERT_ERROR_IF_FALSE(cycles>0,"invalid cycles");
 
     tolerance = property.find("tolerance").asDouble();
-    RTF_ASSERT_ERROR_IF(tolerance>0,"invalid tolerance");
+    RTF_ASSERT_ERROR_IF_FALSE(tolerance>0,"invalid tolerance");
 
     sampleTime = property.find("sampleTime").asDouble();
-    RTF_ASSERT_ERROR_IF(sampleTime>0,"invalid sampleTime");
+    RTF_ASSERT_ERROR_IF_FALSE(sampleTime>0,"invalid sampleTime");
 
     cmd_mode = (cmd_mode_t) property.find("cmdMode").asInt();
-    RTF_ASSERT_ERROR_IF(cmd_mode>=0 && cmd_mode<=2,"invalid cmdMode: can be 0=single_joint, 1=all_joints ,2=some_joints");
+    RTF_ASSERT_ERROR_IF_FALSE(cmd_mode>=0 && cmd_mode<=2,"invalid cmdMode: can be 0=single_joint, 1=all_joints ,2=some_joints");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -89,12 +89,12 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     options.put("local", "/positionDirectTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(idir),"Unable to open position direct interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(idir),"Unable to open position direct interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -233,7 +233,7 @@ void PositionDirect::run()
         double elapsed = curr_time-start_time;
         cmd_single = amplitude*(2*3.14159265359*frequency*elapsed)+zero;
 
-        RTF_ASSERT_ERROR_IF(fabs(prev_cmd-cmd_single)<max_step,
+        RTF_ASSERT_ERROR_IF_FALSE(fabs(prev_cmd-cmd_single)<max_step,
                             Asserter::format("error in signal generation: previous: %+6.3f current: %+6.3f max step:  %+6.3f",
                                              prev_cmd,cmd_single,max_step));
         ienc->getEncoders(pos_tot);

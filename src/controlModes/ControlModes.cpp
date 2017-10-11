@@ -49,10 +49,10 @@ bool ControlModes::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("home"),    "The home positions must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),    "The home positions must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -64,9 +64,9 @@ bool ControlModes::setup(yarp::os::Property& property) {
     RTF_TEST_REPORT(RTF::Asserter::format("Tolerance of %.2f is used to check home position", tolerance));
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(n_cmd_joints>0,"invalid number of joints, it must be >0");
+    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -74,16 +74,16 @@ bool ControlModes::setup(yarp::os::Property& property) {
     options.put("local", "/ControlModesTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(idir),"Unable to open position direct interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ivel),"Unable to open velocity control interface");
-    RTF_ASSERT_ERROR_IF(dd->view(itrq),"Unable to open torque control interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ivar),"Unable to open remote variables interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(idir),"Unable to open position direct interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ivel),"Unable to open velocity control interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(itrq),"Unable to open torque control interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open remote variables interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -253,9 +253,9 @@ void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::d
 void ControlModes::checkJointWithTorqueMode()
 {
     yarp::os::Bottle b;
-    RTF_ASSERT_ERROR_IF(ivar->getRemoteVariable("torqueControlEnabled", b), "unable to get torqueControlEnabled");
+    RTF_ASSERT_ERROR_IF_FALSE(ivar->getRemoteVariable("torqueControlEnabled", b), "unable to get torqueControlEnabled");
 
-    RTF_ASSERT_ERROR_IF((b.size() != n_part_joints), "torqueControlEnabled var returns joint num not corret.");
+    RTF_ASSERT_ERROR_IF_FALSE((b.size() != n_part_joints), "torqueControlEnabled var returns joint num not corret.");
 
     int j=0;
     for(int i=0; i<b.size() && j<n_part_joints; i++)

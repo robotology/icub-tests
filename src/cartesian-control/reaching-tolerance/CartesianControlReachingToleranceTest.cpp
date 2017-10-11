@@ -67,10 +67,10 @@ bool CartesianControlReachingToleranceTest::setup(Property &property)
     optJoint.put("local",("/"+getName()+"/joint/"+arm+"_arm"));
 
     RTF_TEST_REPORT(Asserter::format("Opening Cartesian Controller Client for %s_arm",arm.c_str()));
-    RTF_ASSERT_ERROR_IF(drvCart.open(optCart),"Unable to open the client!");
+    RTF_ASSERT_ERROR_IF_FALSE(drvCart.open(optCart),"Unable to open the client!");
 
     RTF_TEST_REPORT(Asserter::format("Opening Joint Controller Client for %s_arm",arm.c_str()));
-    RTF_ASSERT_ERROR_IF(drvJoint.open(optJoint),"Unable to open the client!");
+    RTF_ASSERT_ERROR_IF_FALSE(drvJoint.open(optJoint),"Unable to open the client!");
     return true;
 }
 
@@ -79,10 +79,10 @@ bool CartesianControlReachingToleranceTest::setup(Property &property)
 void CartesianControlReachingToleranceTest::tearDown()
 {
     RTF_TEST_REPORT("Closing Cartesian Controller Client");
-    RTF_ASSERT_FAIL_IF(drvCart.close(),"Unable to close the client!");
+    RTF_ASSERT_FAIL_IF_FALSE(drvCart.close(),"Unable to close the client!");
 
     RTF_TEST_REPORT("Closing Joint Controller Client");
-    RTF_ASSERT_FAIL_IF(drvJoint.close(),"Unable to close the client!");
+    RTF_ASSERT_FAIL_IF_FALSE(drvJoint.close(),"Unable to close the client!");
 }
 
 

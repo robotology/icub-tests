@@ -46,40 +46,40 @@ bool MotorStiction::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"),  "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"),   "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("home"),   "The home position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"),  "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"),   "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),   "The home position must be given as the test parameter!");
 
-    RTF_ASSERT_ERROR_IF(property.check("outputStep"),    "The output_step must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("outputDelay") ,  "The output_delay must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("outputMax"),     "The output_max must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("threshold"),     "The threshold must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("repeat"),        "The repeat must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputStep"),    "The output_step must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputDelay") ,  "The output_delay must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputMax"),     "The output_max must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("threshold"),     "The threshold must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("repeat"),        "The repeat must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
     
     repeat = property.find("repeat").asInt();
-    RTF_ASSERT_ERROR_IF(repeat>=0,"repeat must be greater than zero");
+    RTF_ASSERT_ERROR_IF_FALSE(repeat>=0,"repeat must be greater than zero");
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse zero parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* output_step_Bottle = property.find("outputStep").asList();
-    RTF_ASSERT_ERROR_IF(output_step_Bottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(output_step_Bottle!=0,"unable to parse joints parameter");
 
     Bottle* output_delay_Bottle = property.find("outputDelay").asList();
-    RTF_ASSERT_ERROR_IF(output_delay_Bottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(output_delay_Bottle!=0,"unable to parse joints parameter");
     
     Bottle* output_max_Bottle = property.find("outputMax").asList();
-    RTF_ASSERT_ERROR_IF(output_max_Bottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(output_max_Bottle!=0,"unable to parse joints parameter");
 
     Bottle* threshold_Bottle = property.find("threshold").asList();
-    RTF_ASSERT_ERROR_IF(threshold_Bottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(threshold_Bottle!=0,"unable to parse joints parameter");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -87,14 +87,14 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     options.put("local", "/MotorStictionTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(ipwm),"Unable to open pwm control interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ilim),"Unable to open limits interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipwm),"Unable to open pwm control interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ilim),"Unable to open limits interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -102,7 +102,7 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     }
 
     int n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
     home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();

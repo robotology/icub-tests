@@ -48,14 +48,14 @@ bool JointLimits::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"),       "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"),        "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"),      "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("home"),        "The home position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("speed"),       "The positionMove reference speed must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("outOfBoundPosition"), "The outOfBoundPosition parameter must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("outputLimitPercent"),  "The outputLimitPercent must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("tolerance"), "  The max error tolerance must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"),       "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"),        "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"),      "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),        "The home position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("speed"),       "The positionMove reference speed must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("outOfBoundPosition"), "The outOfBoundPosition parameter must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputLimitPercent"),  "The outputLimitPercent must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "  The max error tolerance must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -65,22 +65,22 @@ bool JointLimits::setup(yarp::os::Property& property) {
     RTF_TEST_REPORT(buff);
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse zero parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
 
     Bottle* speedBottle = property.find("speed").asList();
-    RTF_ASSERT_ERROR_IF(speedBottle!=0,"unable to parse speed parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(speedBottle!=0,"unable to parse speed parameter");
 
     Bottle* outOfBoundPosition = property.find("outOfBoundPosition").asList();
-    RTF_ASSERT_ERROR_IF(outOfBoundPosition != 0, "unable to parse outOfBoundPosition parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(outOfBoundPosition != 0, "unable to parse outOfBoundPosition parameter");
 
     Bottle* outputLimitBottle = property.find("outputLimitPercent").asList();
-    RTF_ASSERT_ERROR_IF(outputLimitBottle!=0,"unable to parse speed parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(outputLimitBottle!=0,"unable to parse speed parameter");
 
     tolerance = property.find("tolerance").asDouble();
-    RTF_ASSERT_ERROR_IF(tolerance>=0,"invalid tolerance");
+    RTF_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
 
     Bottle* toleranceListBottle = property.find("toleranceList").asList(); //optional param
 
@@ -90,13 +90,13 @@ bool JointLimits::setup(yarp::os::Property& property) {
     options.put("local", "/jointsLimitsTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ilim),"Unable to open limits interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipid),"Unable to open pid interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ilim),"Unable to open limits interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -104,7 +104,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
     }
 
     int n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
     enc_jnt.resize(n_part_joints);
@@ -114,14 +114,14 @@ bool JointLimits::setup(yarp::os::Property& property) {
     home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
     speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
     outputLimit.resize(n_cmd_joints);for (int i=0; i< n_cmd_joints; i++) outputLimit[i]=outputLimitBottle->get(i).asDouble();
-    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asDouble(); RTF_ASSERT_ERROR_IF(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
+    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asDouble(); RTF_ASSERT_ERROR_IF_FALSE(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
     toleranceList.resize(n_cmd_joints);
     for (int i = 0; i < n_cmd_joints; i++)
     { 
         if(toleranceListBottle)
         {
             toleranceList[i] = toleranceListBottle->get(i).asDouble(); 
-            RTF_ASSERT_ERROR_IF(toleranceList[i] >= 0 , "toleranceList must be > 0");
+            RTF_ASSERT_ERROR_IF_FALSE(toleranceList[i] >= 0 , "toleranceList must be > 0");
         }
         else
             toleranceList[i] = tolerance;
@@ -336,8 +336,8 @@ void JointLimits::run()
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
         ilim->getLimits((int)jointsList[i],&min_lims[i],&max_lims[i]);
-        RTF_ASSERT_ERROR_IF(max_lims[i]!=min_lims[i],"Invalid limit: max==min?");
-        RTF_ASSERT_ERROR_IF(max_lims[i]>min_lims[i],"Invalid limit: max<min?");
+        RTF_ASSERT_ERROR_IF_FALSE(max_lims[i]!=min_lims[i],"Invalid limit: max==min?");
+        RTF_ASSERT_ERROR_IF_FALSE(max_lims[i]>min_lims[i],"Invalid limit: max<min?");
         if (max_lims[i] == 0 && min_lims[i] == 0) RTF_ASSERT_ERROR("Invalid limit: max==min==0");
     }
     

@@ -55,11 +55,11 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
         
         
     // updating parameters
-    RTF_ASSERT_ERROR_IF(config.check("robot"),  "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(config.check("part"),   "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(config.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(config.check("home"),   "The home position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(config.check("target"), "Missing 'target' parameter, cannot open device");
+    RTF_ASSERT_ERROR_IF_FALSE(config.check("robot"),  "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(config.check("part"),   "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(config.check("joints"), "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(config.check("home"),   "The home position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(config.check("target"), "Missing 'target' parameter, cannot open device");
     
     robotName = config.find("robot").asString();
     partName  = config.find("part").asString();
@@ -71,13 +71,13 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     options.put("local", "/moveRefTest/"+robotName+"/"+partName);
 
     dd = new yarp::dev::PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(iPosition2),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iEncoders),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iControlMode2),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iPWM), "Unable to open PWM interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iPosDirect),"Unable to open OpnLoop interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iVelocity2),"Unable to open velocity2 interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosition2),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iEncoders),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode2),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPWM), "Unable to open PWM interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosDirect),"Unable to open OpnLoop interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity2),"Unable to open velocity2 interface");
     
 
 
@@ -98,27 +98,27 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
         RTF_TEST_REPORT("home bottle is not null");
     }
 
-    RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse home parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
 
     Bottle* jointsBottle = config.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* targetBottle = config.find("target").asList();
-    RTF_ASSERT_ERROR_IF(targetBottle!=0,"unable to parse target parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(targetBottle!=0,"unable to parse target parameter");
     
     Bottle* refAccBottle = config.find("refAcc").asList();
     if(refAccBottle == NULL)
         RTF_TEST_REPORT("refAcc param not present. Test will use deafoult values.");
     
     Bottle* refVelBottle = config.find("refVel").asList();
-    RTF_ASSERT_ERROR_IF(refVelBottle!=0,"unable to parse refVel parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(refVelBottle!=0,"unable to parse refVel parameter");
     
 
     numJoints = jointsBottle->size();
     RTF_TEST_REPORT(Asserter::format("num joints: %d", numJoints));
 
 
-    RTF_ASSERT_ERROR_IF(numJoints>0 && numJoints<=numJointsInPart,"invalid number of joints, it must be >0 & <= number of part joints");
+    RTF_ASSERT_ERROR_IF_FALSE(numJoints>0 && numJoints<=numJointsInPart,"invalid number of joints, it must be >0 & <= number of part joints");
 
     //jointsList.clear();
     targetPos.clear();

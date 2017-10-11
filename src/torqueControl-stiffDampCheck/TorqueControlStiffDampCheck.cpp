@@ -62,13 +62,13 @@ bool TorqueControlStiffDampCheck::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"),    "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"),     "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"),   "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("home"),     "The home position list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("stiffness"),"The stiffness list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("damping"),  "The damping listmust be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("duration"), "The duration must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"),    "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"),     "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"),   "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),     "The home position list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("stiffness"),"The stiffness list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("damping"),  "The damping listmust be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("duration"), "The duration must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -76,24 +76,24 @@ bool TorqueControlStiffDampCheck::setup(yarp::os::Property& property) {
 
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(n_cmd_joints>0,"invalid number of joints, it must be >0");
+    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
     Bottle *b_stiff = property.find("stiffness").asList();
-    RTF_ASSERT_ERROR_IF(b_stiff!=0,"unable to parse stiffness parameter");
-    RTF_ASSERT_ERROR_IF((b_stiff->size()==n_cmd_joints), Asserter::format("invalid number of stiffness values %d %d", b_stiff->size(), n_cmd_joints));
+    RTF_ASSERT_ERROR_IF_FALSE(b_stiff!=0,"unable to parse stiffness parameter");
+    RTF_ASSERT_ERROR_IF_FALSE((b_stiff->size()==n_cmd_joints), Asserter::format("invalid number of stiffness values %d %d", b_stiff->size(), n_cmd_joints));
 
     Bottle *b_dump = property.find("damping").asList();
-    RTF_ASSERT_ERROR_IF(b_dump!=0,"unable to parse damping parameter");
-    RTF_ASSERT_ERROR_IF(b_dump->size()==n_cmd_joints,"invalid number of damping values");
+    RTF_ASSERT_ERROR_IF_FALSE(b_dump!=0,"unable to parse damping parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(b_dump->size()==n_cmd_joints,"invalid number of damping values");
 
     Bottle *b_home = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF(b_home!=0,"unable to parse home parameter");
-    RTF_ASSERT_ERROR_IF(b_home->size()==n_cmd_joints,"invalid number of home values");
+    RTF_ASSERT_ERROR_IF_FALSE(b_home!=0,"unable to parse home parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(b_home->size()==n_cmd_joints,"invalid number of home values");
 
     testLen_sec = property.find("duration").asDouble();
-    RTF_ASSERT_ERROR_IF(testLen_sec>0, "duretion should be bigger than 0");
+    RTF_ASSERT_ERROR_IF_FALSE(testLen_sec>0, "duretion should be bigger than 0");
 
     if(property.check("plot_enabled"))
     {
@@ -110,14 +110,14 @@ bool TorqueControlStiffDampCheck::setup(yarp::os::Property& property) {
     options.put("local", "/TorqueControlStiffDampCheckTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(itrq),"Unable to open torque control interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimp),"Unable to open impedence control interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(itrq),"Unable to open torque control interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimp),"Unable to open impedence control interface");
 
 
     if (!ienc->getAxes(&n_part_joints))
@@ -285,7 +285,7 @@ void TorqueControlStiffDampCheck::run()
     {
 
         RTF_TEST_REPORT(Asserter::format("***** Start first part of test on joint %d......", jointsList[i]));
-        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+        RTF_ASSERT_ERROR_IF_FALSE(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
 
 
@@ -324,7 +324,7 @@ void TorqueControlStiffDampCheck::run()
 
         RTF_TEST_REPORT(Asserter::format("....DONE on joint %d", jointsList[i]));
         RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
-        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+        RTF_ASSERT_ERROR_IF_FALSE(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
         itrq->getTorque(jointsList[i], &init_torque);
         RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
@@ -430,7 +430,7 @@ void TorqueControlStiffDampCheck::run()
 //    {
 
 //        RTF_TEST_REPORT(Asserter::format("***** Start first part of test on joint %d......", jointsList[i]));
-//        //RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+//        //RTF_ASSERT_ERROR_IF_FALSE(setAndCheckImpedance(jointsList[i], stiffness[i], 0) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
 //        RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
 //        char c;
@@ -465,7 +465,7 @@ void TorqueControlStiffDampCheck::run()
 
 
 //        RTF_TEST_REPORT(Asserter::format("***** Start second part of test on joint %d......", jointsList[i]));
-//        RTF_ASSERT_ERROR_IF(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
+//        RTF_ASSERT_ERROR_IF_FALSE(setAndCheckImpedance(jointsList[i], 0, damping[i]) , Asserter::format("Error setting impedance on j %d", jointsList[i]));
 
 //        RTF_TEST_REPORT("Now the user should move the joint....the test will collect values of position and torque. Press a char to continue....");
 
