@@ -11,54 +11,54 @@ env:
   - TRAVIS_BUILD_TYPE=Release
 
 before_script:
-  # install a recent cmake and lua 5.1 
+  # install a recent cmake and lua 5.1
   #ubuntu dependencies
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo sh -c 'echo "deb http://www.icub.org/ubuntu trusty contrib/science" > /etc/apt/sources.list.d/icub.list'; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get update; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install cmake liblua5.1-dev; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install cmake3 liblua5.1-dev; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get --assume-yes --force-yes install icub-common libeigen3-dev; fi
-  
+
   - cd ..
 
   # install robot-testing framework
-  - git clone https://github.com/robotology/robot-testing
+  - git clone --depth=1 --branch devel https://github.com/robotology/robot-testing
   - cd robot-testing
-  - mkdir build 
-  - cd build 
+  - mkdir build
+  - cd build
   - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
-  - make 
-  - sudo make install 
+  - make
+  - sudo make install
   - cd ../..
 
   # install yarp
-  - git clone https://github.com/robotology/yarp
+  - git clone --depth=1 --branch devel https://github.com/robotology/yarp
   - cd yarp
   - mkdir build
   - cd build
-  - cmake -DCREATE_LIB_MATH:BOOL=ON -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_COMPILE_RTF_ADDONS:BOOL=ON  ..
+  - cmake -DCREATE_LIB_MATH:BOOL=ON -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_COMPILE_RTF_ADDONS:BOOL=ON ..
   - make
   - sudo make install
   - sudo ldconfig
   - cd ../..
-  
-   # install icub-main 
-  - git clone https://github.com/robotology/icub-main
+
+   # install icub-main
+  - git clone --depth=1 --branch devel https://github.com/robotology/icub-main
   - cd icub-main
   - mkdir build
   - cd build
-  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE}  ..
+  - cmake -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..
   - make
   - sudo make install
   - sudo ldconfig
   - cd ../..
-  
+
   # configure icub-tests
   - cd icub-tests
-  - mkdir build 
-  - cd build 
+  - mkdir build
+  - cd build
   - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} ..
-  
-script: 
+
+script:
   - make
   # test install/uninstall
 
