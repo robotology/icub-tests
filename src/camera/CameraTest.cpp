@@ -39,7 +39,7 @@ bool CameraTest::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("portname"),
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("portname"),
                         "The portname must be given as the test paramter!");
     cameraPortName = property.find("portname").asString();
     measure_time = property.check("measure_time") ? property.find("measure_time").asInt() : TIMES;
@@ -47,7 +47,7 @@ bool CameraTest::setup(yarp::os::Property& property) {
     tolerance = property.check("tolerance") ? property.find("tolerance").asInt() : TOLERANCE;
 
     // opening port
-    RTF_ASSERT_ERROR_IF(port.open("/CameraTest/image:i"),
+    RTF_ASSERT_ERROR_IF_FALSE(port.open("/CameraTest/image:i"),
                         "opening port, is YARP network available?");
 
     RTF_TEST_REPORT(Asserter::format("Listening to camera for %d seconds",
@@ -56,7 +56,7 @@ bool CameraTest::setup(yarp::os::Property& property) {
     // connecting
     RTF_TEST_REPORT(Asserter::format("connecting from %s to %s",
                                        port.getName().c_str(), cameraPortName.c_str()));
-    RTF_ASSERT_ERROR_IF(Network::connect(cameraPortName, port.getName()),
+    RTF_ASSERT_ERROR_IF_FALSE(Network::connect(cameraPortName, port.getName()),
                      "could not connect to remote port, camera unavailable");
     return true;
 }
@@ -84,6 +84,6 @@ void CameraTest::run() {
     RTF_TEST_REPORT(Asserter::format("Received %d frames, expecting %d",
                                        frames,
                                        expectedFrames));
-    RTF_TEST_FAIL_IF(abs(frames-expectedFrames)<tolerance,
+    RTF_TEST_FAIL_IF_FALSE(abs(frames-expectedFrames)<tolerance,
                      "checking number of received frames");
 }

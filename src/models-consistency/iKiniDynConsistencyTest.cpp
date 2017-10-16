@@ -56,13 +56,13 @@ void iKiniDynConsistencyTest::check_matrix_are_equal(const yarp::sig::Matrix & m
 {
     RTF_TEST_REPORT(Asserter::format("Comparing mat1: \n %s \n",mat1.toString().c_str()));
     RTF_TEST_REPORT(Asserter::format("with mat2: \n %s \n",mat2.toString().c_str()));
-    RTF_TEST_FAIL_IF(mat1.rows()==mat2.rows(),"matrix rows do not match");
-    RTF_TEST_FAIL_IF(mat1.cols()==mat2.cols(),"matrix cols do not match");
+    RTF_TEST_FAIL_IF_FALSE(mat1.rows()==mat2.rows(),"matrix rows do not match");
+    RTF_TEST_FAIL_IF_FALSE(mat1.cols()==mat2.cols(),"matrix cols do not match");
     for(int row=0; row < mat1.rows(); row++ )
     {
         for(int col=0; col < mat1.cols(); col++ )
         {
-            RTF_TEST_FAIL_IF(std::fabs(mat1(row,col)-mat2(row,col)) < tol,
+            RTF_TEST_FAIL_IF_FALSE(std::fabs(mat1(row,col)-mat2(row,col)) < tol,
                       Asserter::format("Element %d %d don't match",row,col));
         }
     }
@@ -100,6 +100,7 @@ Matrix iKiniDynConsistencyTest::getiKinTransform(const string part, int index)
     {
         return ikin_rarm.getH(index);
     }
+    return Matrix();
 }
 
 Matrix iKiniDynConsistencyTest::getiDynTransform(const string part, int index)
@@ -122,6 +123,7 @@ Matrix iKiniDynConsistencyTest::getiDynTransform(const string part, int index)
     {
         //return ikin_rarm.getH(index);
     }
+    return Matrix();
 }
 
 void iKiniDynConsistencyTest::run() {
@@ -176,7 +178,7 @@ void iKiniDynConsistencyTest::run() {
     ikin_larm.releaseLink(1);
     ikin_larm.releaseLink(2);
     RTF_TEST_REPORT(Asserter::format("q_torso_larm : %d ikin_larm : %d",q_torso_larm.size(),ikin_larm.getDOF()));
-    RTF_ASSERT_ERROR_IF(q_torso_larm.size() == ikin_larm.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_torso_larm.size() == ikin_larm.getDOF(),"unexpected chain size");
     ikin_larm.setAng(q_torso_larm);
 
     transform_ikin = ikin_larm.getH();
@@ -196,7 +198,7 @@ void iKiniDynConsistencyTest::run() {
     ikin_rarm.releaseLink(0);
     ikin_rarm.releaseLink(1);
     ikin_rarm.releaseLink(2);
-    RTF_ASSERT_ERROR_IF(q_torso_rarm.size() == ikin_rarm.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_torso_rarm.size() == ikin_rarm.getDOF(),"unexpected chain size");
     ikin_rarm.setAng(q_torso_rarm);
 
     transform_ikin = ikin_rarm.getH();
@@ -213,7 +215,7 @@ void iKiniDynConsistencyTest::run() {
     new(&ikin_lleg) iCubLeg("left");
     ikin_lleg.setAllConstraints(false);
     RTF_TEST_REPORT(Asserter::format("q_lleg : %d ikin_lleg : %d",q_lleg.size(),ikin_lleg.getDOF()));
-    RTF_ASSERT_ERROR_IF(q_lleg.size() == ikin_lleg.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_lleg.size() == ikin_lleg.getDOF(),"unexpected chain size");
     ikin_lleg.setAng(q_lleg);
 
     transform_ikin = ikin_lleg.getH();
@@ -234,7 +236,7 @@ void iKiniDynConsistencyTest::run() {
     RTF_TEST_REPORT("Checking right leg end effector positions");
     new(&ikin_rleg) iCubLeg("right");
     ikin_rleg.setAllConstraints(false);
-    RTF_ASSERT_ERROR_IF(q_rleg.size() == ikin_rleg.getDOF(),"unexpected chain size");
+    RTF_ASSERT_ERROR_IF_FALSE(q_rleg.size() == ikin_rleg.getDOF(),"unexpected chain size");
     ikin_rleg.setAng(q_rleg);
 
     transform_ikin = ikin_rleg.getH();

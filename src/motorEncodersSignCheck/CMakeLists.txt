@@ -10,16 +10,13 @@ cmake_minimum_required(VERSION 3.0)
 set(PROJECTNAME MotorEncodersSignCheck)
 project(${PROJECTNAME})
 
-find_package(RTF 1.1 COMPONENTS DLL)
-find_package(YARP)
-
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
                     ${YARP_INCLUDE_DIRS}
                     )
 
-add_library(${PROJECTNAME} MODULE motorEncodersSignCheck.h
-                                  motorEncodersSignCheck.cpp
+rtf_add_plugin(${PROJECT_NAME}    HEADERS motorEncodersSignCheck.h
+                                  SOURCES motorEncodersSignCheck.cpp
                                   )
 
 target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
