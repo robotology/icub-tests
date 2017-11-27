@@ -217,7 +217,7 @@ void MotorStiction::saveToFile(std::string filename, yarp::os::Bottle &b)
         std::string s = b.get(i).toString();
         std::replace(s.begin(), s.end(), '(', ' ');
         std::replace(s.begin(), s.end(), ')', ' ');
-        fs << s << endl;
+        fs << s << std::endl;
     }
 
     fs.close();
