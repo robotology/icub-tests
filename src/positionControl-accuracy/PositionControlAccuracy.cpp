@@ -35,6 +35,8 @@ PositionControlAccuracy::PositionControlAccuracy() : yarp::rtf::TestCase("Positi
     iimd=0;
     ienc=0;
     idir=0;
+    m_home_tolerance=0.5;
+    m_step_duration=4;
 }
 
 PositionControlAccuracy::~PositionControlAccuracy() { }
@@ -53,6 +55,12 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF_FALSE(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF_FALSE(property.check("step"), "The amplitude of the step reference signal expressed in degrees!");
     RTF_ASSERT_ERROR_IF_FALSE(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
+    if(property.check("filename"))
+      {m_requested_filename = property.find("filename").asString();}
+    if(property.check("home_tolerance"))
+      {m_home_tolerance = property.find("home_tolerance").asDouble();}
+    if(property.check("step_duration"))
+      {m_step_duration = property.find("step_duration").asDouble();}
 
     m_robotName = property.find("robot").asString();
     m_partName = property.find("part").asString();
@@ -154,7 +162,7 @@ bool PositionControlAccuracy::goHome()
         for (int i = 0; i<m_n_cmd_joints; i++)
         {
             ienc->getEncoder(m_jointsList[i], &m_encoders[m_jointsList[i]]);
-            if (fabs(m_encoders[m_jointsList[i]] - m_zeros[i])<0.5) in_position++;
+            if (fabs(m_encoders[m_jointsList[i]] - m_zeros[i])<m_home_tolerance) in_position++;
         }
         if (in_position == m_n_cmd_joints) break;
         if (timeout>100)
@@ -165,7 +173,7 @@ bool PositionControlAccuracy::goHome()
         yarp::os::Time::delay(0.2);
         timeout++;
     }
-    //sleep some additional time to complete movement from 0.5 to 0
+    //sleep some additional time to complete movement from m_home_tolerance to 0
     yarp::os::Time::delay(0.5);
     return true;
 }
@@ -203,7 +211,7 @@ void PositionControlAccuracy::run()
                 {
                     m_cmd_single = m_zeros[i]; //0.0;
                 }
-                else if (elapsed > 1.0 && elapsed <= 4.0)
+                else if (elapsed > 1.0 && elapsed <= m_step_duration)
                 {
                     m_cmd_single = m_zeros[i] + m_step;
                     if (time_zero == 0) time_zero = elapsed;
@@ -242,14 +250,21 @@ void PositionControlAccuracy::run()
         } //cycle loop
 
         //save data
-
-        char cfilename[128];
-        sprintf(cfilename, "positionControlAccuracy_plot_%s%d.txt", m_partName.c_str(), i);
-
-        std::string filename(cfilename);
-        //filename += m_partName;
-        //filename += std::to_string(i);
-        //filename += ".txt";
+        std::string filename;
+        if (m_requested_filename=="")
+        {
+            char cfilename[128];
+            sprintf(cfilename, "positionControlAccuracy_plot_%s%d.txt", m_partName.c_str(), i);
+            filename = cfilename;
+            //filename += m_partName;
+            //filename += std::to_string(i);
+            //filename += ".txt";
+        }
+        else
+        {
+            filename=m_requested_filename;
+        }
+        yInfo() << "Saving file to: "<< filename;
         saveToFile(filename, m_dataToSave);
     } //joint loop
 
