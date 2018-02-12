@@ -7,17 +7,19 @@
 
 
 cmake_minimum_required(VERSION 3.0)
-set(PROJECTNAME OpenloopConsistency)
+set(PROJECTNAME PositionControlAccuracyExternalPid)
 project(${PROJECTNAME})
+find_package(ICUB REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
+                    ${YARP_INCLUDE_DIRS}
+                    ${ICUB_INCLUDE_DIRS})
 
-rtf_add_plugin(${PROJECT_NAME}    HEADERS OpenloopConsistency.h
-                                  SOURCES OpenloopConsistency.cpp)
+rtf_add_plugin(${PROJECT_NAME}    HEADERS PositionControlAccuracyExternalPid.h
+                                  SOURCES PositionControlAccuracyExternalPid.cpp)
 
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
+target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES} ctrlLib
                       ${YARP_LIBRARIES} YARP::YARP_rtf)
 
 install(TARGETS ${PROJECTNAME}

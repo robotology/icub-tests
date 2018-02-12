@@ -18,8 +18,7 @@ find_package(YARP)
 # add include directories
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
+                    ${YARP_INCLUDE_DIRS})
 
 # add required libraries 
 link_libraries(${RTF_LIBRARIES}

@@ -55,7 +55,7 @@ bool GazeControlSimpleLookTest::setup(Property &property)
     option.put("local",("/"+getName()+"/gaze"));
 
     RTF_TEST_REPORT("Opening Gaze Controller Client");
-    RTF_ASSERT_ERROR_IF(driver.open(option),"Unable to open the client!");
+    RTF_ASSERT_ERROR_IF_FALSE(driver.open(option),"Unable to open the client!");
     return true;
 }
 
@@ -64,7 +64,7 @@ bool GazeControlSimpleLookTest::setup(Property &property)
 void GazeControlSimpleLookTest::tearDown()
 {
     RTF_TEST_REPORT("Closing Gaze Controller Client");
-    RTF_ASSERT_FAIL_IF(driver.close(),"Unable to close the client!");
+    RTF_ASSERT_FAIL_IF_FALSE(driver.close(),"Unable to close the client!");
 }
 
 

@@ -10,16 +10,12 @@ cmake_minimum_required(VERSION 3.0)
 set(PROJECTNAME CameraTest)
 project(${PROJECTNAME})
 
-find_package(RTF 1.1 COMPONENTS DLL)
-find_package(YARP)
-
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
+                    ${YARP_INCLUDE_DIRS})
 
-add_library(${PROJECTNAME} MODULE CameraTest.h
-                                  CameraTest.cpp)
+rtf_add_plugin(${PROJECTNAME}     HEADERS CameraTest.h
+                                  SOURCES CameraTest.cpp)
  
 target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
                       ${YARP_LIBRARIES} YARP::YARP_rtf)

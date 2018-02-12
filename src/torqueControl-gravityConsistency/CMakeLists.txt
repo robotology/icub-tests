@@ -10,17 +10,14 @@ cmake_minimum_required(VERSION 2.8.11)
 set(PROJECTNAME TorqueControlGravityConsistency)
 project(${PROJECTNAME})
 
-find_package(RTF 1.1 COMPONENTS DLL)
-find_package(YARP)
 find_package(yarpWholeBodyInterface REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${YARP_HELPERS_INCLUDE_DIR})
+                    ${YARP_INCLUDE_DIRS})
 
-add_library(${PROJECTNAME} MODULE TorqueControlGravityConsistency.h
-                                  TorqueControlGravityConsistency.cpp)
+add_library(${PROJECTNAME} HEADERS TorqueControlGravityConsistency.h
+                           SOURCES TorqueControlGravityConsistency.cpp)
 
 target_link_libraries(${PROJECTNAME} ${PROJECTNAME} LINK_PUBLIC ${RTF_LIBRARIES}
                                             ${YARP_LIBRARIES} YARP::YARP_rtf

@@ -9,9 +9,10 @@
 cmake_minimum_required(VERSION 3.0)
 project(iCub-Tests)
 
-# find a version of RTF higher then 1.0.1
+# find a version of RTF higher then 1.3.2
 # and with yarp support enabled
-find_package(RTF 1.2 REQUIRED)
+find_package(RTF 1.3.3 COMPONENTS DLL REQUIRED)
+find_package(YARP REQUIRED)
 
 # set the output plugin directory to collect all the shared libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)

@@ -16,16 +16,16 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "PositionControlAccuracy.h"
+#include "PositionControlAccuracyExternalPid.h"
 
 using namespace RTF;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(PositionControlAccuracy)
+PREPARE_PLUGIN(PositionControlAccuracyExernalPid)
 
-PositionControlAccuracy::PositionControlAccuracy() : yarp::rtf::TestCase("PositionControlAccuracy") {
+PositionControlAccuracyExernalPid::PositionControlAccuracyExernalPid() : yarp::rtf::TestCase("PositionControlAccuracyExernalPid") {
     m_jointsList = 0;
     m_encoders = 0;
     m_zeros = 0;
@@ -35,13 +35,14 @@ PositionControlAccuracy::PositionControlAccuracy() : yarp::rtf::TestCase("Positi
     iimd=0;
     ienc=0;
     idir=0;
+    ipwm=0;
     m_home_tolerance=0.5;
     m_step_duration=4;
 }
 
-PositionControlAccuracy::~PositionControlAccuracy() { }
+PositionControlAccuracyExernalPid::~PositionControlAccuracyExernalPid() { }
 
-bool PositionControlAccuracy::setup(yarp::os::Property& property) {
+bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
 
     //updating the test name
     if(property.check("name"))
@@ -55,6 +56,7 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF_FALSE(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
     RTF_ASSERT_ERROR_IF_FALSE(property.check("step"), "The amplitude of the step reference signal expressed in degrees!");
     RTF_ASSERT_ERROR_IF_FALSE(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
+
     if(property.check("filename"))
       {m_requested_filename = property.find("filename").asString();}
     if(property.check("home_tolerance"))
@@ -92,6 +94,7 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipwm),"Unable to open pwm mode interface");
 
     if (!ienc->getAxes(&m_n_part_joints))
     {
@@ -104,10 +107,34 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt();
     for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asDouble();
 
+    double  p_Ts = m_sampleTime;
+    yarp::sig::Vector p_Kp(1,0.0);
+    yarp::sig::Vector p_Ki(1,0.0);
+    yarp::sig::Vector p_Kd(1,0.0);
+    if(property.check("Kp"))
+      {p_Kp = property.find("Kp").asDouble();}
+    if(property.check("Ki"))
+      {p_Ki = property.find("Ki").asDouble();}
+    if(property.check("Kd"))
+      {p_Kd = property.find("Kd").asDouble();}
+    double p_Max=100;
+    if(property.check("MaxValue"))
+      {p_Max = property.find("MaxValue").asDouble();}
+    yarp::sig::Vector p_Wp(1,1);
+    yarp::sig::Vector p_Wi(1,1);
+    yarp::sig::Vector p_Wd(1,1);
+    yarp::sig::Vector p_N (1,10);
+    yarp::sig::Vector p_Tt (1,1);
+    yarp::sig::Matrix p_Lim (1,2);
+    yInfo() << "Using gains Kp:" << p_Kp[0] << " Ki:"<<p_Ki[0] << " Kd:"<<p_Kd[0] << " Max:" << p_Max;
+    p_Lim[0][0]=-p_Max;
+    p_Lim[0][1]=+p_Max;
+    ppid = new iCub::ctrl::parallelPID(p_Ts, p_Kp, p_Ki, p_Kd, p_Wp, p_Wi, p_Wd, p_N, p_Tt, p_Lim);
+
     return true;
 }
 
-void PositionControlAccuracy::tearDown()
+void PositionControlAccuracyExernalPid::tearDown()
 {
     if (m_jointsList) { delete [] m_jointsList; m_jointsList = 0; }
     if (m_zeros) { delete [] m_zeros; m_zeros = 0; }
@@ -115,7 +142,7 @@ void PositionControlAccuracy::tearDown()
     if (dd) {delete dd; dd =0;}
 }
 
-void PositionControlAccuracy::setMode(int desired_mode)
+void PositionControlAccuracyExernalPid::setMode(int desired_mode)
 {
     for (int i = 0; i<m_n_cmd_joints; i++)
     {
@@ -147,7 +174,7 @@ void PositionControlAccuracy::setMode(int desired_mode)
     }
 }
 
-bool PositionControlAccuracy::goHome()
+bool PositionControlAccuracyExernalPid::goHome()
 {
     for (int i = 0; i<m_n_cmd_joints; i++)
     {
@@ -178,7 +205,7 @@ bool PositionControlAccuracy::goHome()
     return true;
 }
 
-void PositionControlAccuracy::run()
+void PositionControlAccuracyExernalPid::run()
 {
     for (int i = 0; i < m_n_cmd_joints; i++)
     {
@@ -189,7 +216,7 @@ void PositionControlAccuracy::run()
             {
                 RTF_ASSERT_FAIL("Test stopped");
             };
-            setMode(VOCAB_CM_POSITION_DIRECT);
+            setMode(VOCAB_CM_PWM);
             double start_time = yarp::os::Time::now();
 
             char cbuff[64];
@@ -201,19 +228,22 @@ void PositionControlAccuracy::run()
             double time_zero = 0;
             yarp::os::Bottle      dataToPlotRaw;
             yarp::os::Bottle      dataToPlotSync; 
+            ienc->getEncoders(m_encoders);
 
             while (1)
             {
                 double curr_time = yarp::os::Time::now();
                 double elapsed = curr_time - start_time;
-
+                double ref=0;
                 if (elapsed <= 1.0)
                 {
-                    m_cmd_single = m_zeros[i]; //0.0;
+                    ref=m_zeros[i];
+                    m_cmd_single = ppid->compute(yarp::sig::Vector(1,ref),yarp::sig::Vector(1,m_encoders[m_jointsList[i]]))[0]; //0.0;
                 }
                 else if (elapsed > 1.0 && elapsed <= m_step_duration)
                 {
-                    m_cmd_single = m_zeros[i] + m_step;
+                    ref=m_zeros[i]+m_step;
+                    m_cmd_single = ppid->compute(yarp::sig::Vector(1,ref),yarp::sig::Vector(1,m_encoders[m_jointsList[i]]))[0];
                     if (time_zero == 0) time_zero = elapsed;
                 }
                 else
@@ -222,13 +252,13 @@ void PositionControlAccuracy::run()
                 }
 
                 ienc->getEncoders(m_encoders);
-                idir->setPosition(m_jointsList[i], m_cmd_single);
+                ipwm->setRefDutyCycle(m_jointsList[i], m_cmd_single);
 
                 Bottle& b1 = dataToPlotRaw.addList();
                 b1.addInt(cycle);
                 b1.addDouble(elapsed);
                 b1.addDouble(m_encoders[m_jointsList[i]]);
-                b1.addDouble(m_cmd_single);
+                b1.addDouble(ref);
                 yarp::os::Time::delay(m_sampleTime);
             }
 
@@ -254,7 +284,7 @@ void PositionControlAccuracy::run()
         if (m_requested_filename=="")
         {
             char cfilename[128];
-            sprintf(cfilename, "positionControlAccuracy_plot_%s%d.txt", m_partName.c_str(), i);
+            sprintf(cfilename, "positionControlAccuracyExternalPid_plot_%s%d.txt", m_partName.c_str(), i);
             filename = cfilename;
             //filename += m_partName;
             //filename += std::to_string(i);
@@ -286,7 +316,7 @@ void PositionControlAccuracy::run()
     }*/
 }
 
-void PositionControlAccuracy::saveToFile(std::string filename, yarp::os::Bottle &b)
+void PositionControlAccuracyExernalPid::saveToFile(std::string filename, yarp::os::Bottle &b)
 {
     std::fstream fs;
     fs.open(filename.c_str(), std::fstream::out);

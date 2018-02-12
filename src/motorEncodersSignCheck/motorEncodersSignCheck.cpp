@@ -44,25 +44,25 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF(property.check("robot"),  "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("part"),   "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("home"),   "The home position must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"),  "The robot name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"),   "The part name must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),   "The home position must be given as the test parameter!");
 
-    RTF_ASSERT_ERROR_IF(property.check("pwmStep"),    "The output_step must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF(property.check("pwmMax"),     "The output_max must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("pwmStep"),    "The output_step must be given as the test parameter!");
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("pwmMax"),     "The output_max must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF(homeBottle!=0,"unable to parse zero parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF(jointsBottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* pwm_step_Bottle = property.find("pwmStep").asList();
-    RTF_ASSERT_ERROR_IF(pwm_step_Bottle!=0,"unable to parse pwmStep parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(pwm_step_Bottle!=0,"unable to parse pwmStep parameter");
 
     Bottle* command_delay_Bottle = property.find("commandDelay").asList();
     if(command_delay_Bottle==0)
@@ -70,14 +70,14 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
 
 
     Bottle* pwm_max_Bottle = property.find("pwmMax").asList();
-    RTF_ASSERT_ERROR_IF(pwm_max_Bottle!=0,"unable to parse joints parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(pwm_max_Bottle!=0,"unable to parse joints parameter");
 
     Bottle* threshold_Bottle = property.find("PosThreshold").asList();
     if(threshold_Bottle==0)
         RTF_TEST_REPORT("Position threshold not configured. default value (5 deg) will be used ");
 
     Bottle* pwm_start_Bottle = property.find("pwmStart").asList();
-    RTF_ASSERT_ERROR_IF(pwm_start_Bottle!=0,"unable to parse pwmStart parameter");
+    RTF_ASSERT_ERROR_IF_FALSE(pwm_start_Bottle!=0,"unable to parse pwmStart parameter");
 
 
     Property options;
@@ -86,13 +86,13 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     options.put("local", "/mEncSignCheckTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF(dd->view(ipwm),"Unable to open pwm interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(imenc),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF(dd->view(ipid),"Unable to open ipidcontrol interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipwm),"Unable to open pwm interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(imenc),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open ipidcontrol interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -100,7 +100,7 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     }
 
     int n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     jointsList.clear();
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
@@ -197,13 +197,13 @@ void MotorEncodersSignCheck::OplExecute(int i)
         {
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
-            RTF_TEST_FAIL_IF(0, RTF::Asserter::format("because enc readings drecrease enc=%f start_enc=%f (output=%f)", enc, start_enc, opl));
+            RTF_TEST_FAIL_IF_FALSE(0, RTF::Asserter::format("because enc readings drecrease enc=%f start_enc=%f (output=%f)", enc, start_enc, opl));
         }
         else if (jPosMotion->checkJointLimitsReached((int)jointsList[i]))
         {
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
-            RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed because hw limit was touched (enc=%f)",enc));
+            RTF_TEST_FAIL_IF_FALSE(0,RTF::Asserter::format("Test failed because hw limit was touched (enc=%f)",enc));
         }
 
         if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
@@ -215,7 +215,7 @@ void MotorEncodersSignCheck::OplExecute(int i)
         {
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
             not_moving=false;
-            RTF_TEST_FAIL_IF(0,RTF::Asserter::format("Test failed failed because max output was reached(output=%f)",opl));
+            RTF_TEST_FAIL_IF_FALSE(0,RTF::Asserter::format("Test failed failed because max output was reached(output=%f)",opl));
         }
 
         yarp::os::Time::delay(0.010);
@@ -239,7 +239,7 @@ void MotorEncodersSignCheck::run()
     for (unsigned int i=0 ; i<jointsList.size(); i++)
     {
         double posout=0;
-        RTF_TEST_FAIL_IF((ipid->getOutput((int)jointsList[i], &posout)),
+        RTF_TEST_FAIL_IF_FALSE((ipid->getOutput((int)jointsList[i], &posout)),
                          RTF::Asserter::format(" getOutput j %d return false",(int)jointsList[i]));
 
         setModeSingle(i,VOCAB_CM_PWM,VOCAB_IM_STIFF);

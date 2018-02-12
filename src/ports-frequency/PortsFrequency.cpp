@@ -37,13 +37,13 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
     // updating parameters
    testTime = (property.check("time")) ? property.find("time").asDouble() : 2;
 
-    RTF_ASSERT_ERROR_IF(property.check("PORTS"),
+    RTF_ASSERT_ERROR_IF_FALSE(property.check("PORTS"),
                         "A list of the ports must be given");
 
     yarp::os::Bottle portsSet = property.findGroup("PORTS").tail();
     for(unsigned int i=0; i<portsSet.size(); i++) {
         yarp::os::Bottle* btport = portsSet.get(i).asList();
-        RTF_ASSERT_ERROR_IF(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
+        RTF_ASSERT_ERROR_IF_FALSE(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
         MyPortInfo info;
         info.name = btport->get(0).asString();
         info.frequency = btport->get(1).asInt();
@@ -52,7 +52,7 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
     }
 
     // opening port
-    RTF_ASSERT_ERROR_IF(port.open("..."),
+    RTF_ASSERT_ERROR_IF_FALSE(port.open("..."),
                         "opening port, is YARP network available?");
     return true;
 }
@@ -68,7 +68,7 @@ void PortsFrequency::run() {
         port.reset();
         RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
         bool connected = Network::connect(ports[i].name.c_str(), port.getName());
-        RTF_TEST_FAIL_IF(connected,
+        RTF_TEST_FAIL_IF_FALSE(connected,
                        Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
         if(connected) {
             // setting QOS
@@ -93,7 +93,7 @@ void PortsFrequency::run() {
             RTF_TEST_REPORT(Asserter::format("Receiver frequency %d hrz. (min: %d, max: %d)",
                             (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
             double diff = fabs(freq - ports[i].frequency);
-            RTF_TEST_FAIL_IF(diff < ports[i].tolerance,
+            RTF_TEST_FAIL_IF_FALSE(diff < ports[i].tolerance,
                            Asserter::format("Receiver frequency is outside the desired range [%d .. %d]",
                                             ports[i].frequency-ports[i].tolerance,
                                             ports[i].frequency+ports[i].tolerance));

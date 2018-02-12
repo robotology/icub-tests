@@ -59,7 +59,7 @@ bool CartesianControlSimpleP2pMovementTest::setup(Property &property)
     option.put("local",("/"+getName()+"/"+arm+"_arm"));
 
     RTF_TEST_REPORT(Asserter::format("Opening Cartesian Controller Client for %s_arm",arm.c_str()));
-    RTF_ASSERT_ERROR_IF(driver.open(option),"Unable to open the client!");
+    RTF_ASSERT_ERROR_IF_FALSE(driver.open(option),"Unable to open the client!");
     return true;
 }
 
@@ -68,7 +68,7 @@ bool CartesianControlSimpleP2pMovementTest::setup(Property &property)
 void CartesianControlSimpleP2pMovementTest::tearDown()
 {
     RTF_TEST_REPORT("Closing Cartesian Controller Client");
-    RTF_ASSERT_FAIL_IF(driver.close(),"Unable to close the client!");
+    RTF_ASSERT_FAIL_IF_FALSE(driver.close(),"Unable to close the client!");
 }
 
 

@@ -54,7 +54,7 @@ class DemoRedBallPosition : public RateThread
     {
         string dest="/demoRedBall/trackTarget:i";
         port.open(("/"+name+"/redballpos:o"));
-        RTF_ASSERT_ERROR_IF(Network::connect(port.getName(),dest,"udp"),
+        RTF_ASSERT_ERROR_IF_FALSE(Network::connect(port.getName(),dest,"udp"),
                             Asserter::format("Unable to connect to %s!",dest.c_str()));
         return true;
     }
@@ -187,7 +187,7 @@ bool DemoRedBallTest::setup(Property &property)
         optCart.put("remote",("/"+params.robot+"/"+"cartesianController/left_arm"));
         optCart.put("local",("/"+getName()+"/cartesian/left_arm"));
 
-        RTF_ASSERT_ERROR_IF(drvJointArmL.open(optJoint)&&drvCartArmL.open(optCart),
+        RTF_ASSERT_ERROR_IF_FALSE(drvJointArmL.open(optJoint)&&drvCartArmL.open(optCart),
                             "Unable to open clients for left_arm!");
     }
 
@@ -203,7 +203,7 @@ bool DemoRedBallTest::setup(Property &property)
         optCart.put("remote",("/"+params.robot+"/"+"cartesianController/right_arm"));
         optCart.put("local",("/"+getName()+"/cartesian/right_arm"));
 
-        RTF_ASSERT_ERROR_IF(drvJointArmR.open(optJoint)&&drvCartArmR.open(optCart),
+        RTF_ASSERT_ERROR_IF_FALSE(drvJointArmR.open(optJoint)&&drvCartArmR.open(optCart),
                             "Unable to open clients for right_arm!");
     }
 
@@ -218,7 +218,7 @@ bool DemoRedBallTest::setup(Property &property)
         optGaze.put("remote","/iKinGazeCtrl");
         optGaze.put("local",("/"+getName()+"/gaze"));
 
-        RTF_ASSERT_ERROR_IF(drvJointHead.open(optJoint)&&drvGaze.open(optGaze),
+        RTF_ASSERT_ERROR_IF_FALSE(drvJointHead.open(optJoint)&&drvGaze.open(optGaze),
                             "Unable to open clients for head!");
     }
 
@@ -228,7 +228,7 @@ bool DemoRedBallTest::setup(Property &property)
         optJoint.put("remote",("/"+params.robot+"/"+"torso"));
         optJoint.put("local",("/"+getName()+"/joint/torso"));
 
-        RTF_ASSERT_ERROR_IF(drvJointTorso.open(optJoint),
+        RTF_ASSERT_ERROR_IF_FALSE(drvJointTorso.open(optJoint),
                             "Unable to open clients for torso!");
     }
 
@@ -245,13 +245,13 @@ void DemoRedBallTest::tearDown()
     redBallPos->stop();
 
     RTF_TEST_REPORT("Closing Clients");
-    RTF_ASSERT_FAIL_IF(drvJointArmL.close()&&drvCartArmL.close(),
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
                        "Unable to close client for left_arm!");
-    RTF_ASSERT_FAIL_IF(drvJointArmR.close()&&drvCartArmR.close(),
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointArmR.close()&&drvCartArmR.close(),
                        "Unable to close client for right_arm!");
-    RTF_ASSERT_FAIL_IF(drvJointHead.close()&&drvGaze.close(),
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointHead.close()&&drvGaze.close(),
                        "Unable to close client for head!");
-    RTF_ASSERT_FAIL_IF(drvJointTorso.close(),"Unable to close client for left_arm!");
+    RTF_ASSERT_FAIL_IF_FALSE(drvJointTorso.close(),"Unable to close client for left_arm!");
 }
 
 
