@@ -122,13 +122,13 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
       {p_Kd = property.find("Kd").asDouble();}
     //if(property.check("MaxValue"))
     //  {p_Max = property.find("MaxValue").asDouble();}
-    if (isnan(p_Kp)==false) {pid.kp=p_Kp;}
-    if (isnan(p_Kd)==false) {pid.kd=p_Kd;}
-    if (isnan(p_Ki)==false) {pid.ki=p_Ki;}
+    if (std::isnan(p_Kp)==false) {pid.kp=p_Kp;}
+    if (std::isnan(p_Kd)==false) {pid.kd=p_Kd;}
+    if (std::isnan(p_Ki)==false) {pid.ki=p_Ki;}
 
-    if (isnan(p_Kp)==false ||
-        isnan(p_Ki)==false ||
-        isnan(p_Kd)==false)
+    if (std::isnan(p_Kp)==false ||
+        std::isnan(p_Ki)==false ||
+        std::isnan(p_Kd)==false)
     {
         ipid->setPid(cj,pid);
     }
