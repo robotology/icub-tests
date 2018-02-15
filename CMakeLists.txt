@@ -33,6 +33,7 @@ add_subdirectory(src/positionDirect)
 
 # Build positionControl-accuracy tests
 add_subdirectory(src/positionControl-accuracy)
+add_subdirectory(src/positionControl-accuracy-ExternalPid)
 
 # Build openloop tests
 add_subdirectory(src/openloop-consistency)

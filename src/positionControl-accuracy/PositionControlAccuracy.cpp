@@ -92,6 +92,7 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
 
     if (!ienc->getAxes(&m_n_part_joints))
     {
@@ -103,6 +104,34 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     m_jointsList = new int[m_n_cmd_joints];
     for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt();
     for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asDouble();
+
+    double p_Kp=std::nanf("");
+    double p_Ki=std::nanf("");
+    double p_Kd=std::nanf("");
+    double p_Max=std::nanf("");
+
+    int cj=m_jointsList[0];
+    yarp::dev::Pid pid;
+    ipid->getPid(cj,&pid);
+
+    if(property.check("Kp"))
+      {p_Kp = property.find("Kp").asDouble();}
+    if(property.check("Ki"))
+      {p_Ki = property.find("Ki").asDouble();}
+    if(property.check("Kd"))
+      {p_Kd = property.find("Kd").asDouble();}
+    //if(property.check("MaxValue"))
+    //  {p_Max = property.find("MaxValue").asDouble();}
+    if (isnan(p_Kp)==false) {pid.kp=p_Kp;}
+    if (isnan(p_Kd)==false) {pid.kd=p_Kd;}
+    if (isnan(p_Ki)==false) {pid.ki=p_Ki;}
+
+    if (isnan(p_Kp)==false ||
+        isnan(p_Ki)==false ||
+        isnan(p_Kd)==false)
+    {
+        ipid->setPid(cj,pid);
+    }
 
     return true;
 }

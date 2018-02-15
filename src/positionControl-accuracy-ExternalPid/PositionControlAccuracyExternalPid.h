@@ -86,6 +86,10 @@ private:
 
     iCub::ctrl::parallelPID      *ppid;
 
+    double m_pospid_vup;
+    double m_pospid_vdown;
+
+
     double  m_cmd_single;
     double* m_encoders;
     std::string  m_requested_filename;

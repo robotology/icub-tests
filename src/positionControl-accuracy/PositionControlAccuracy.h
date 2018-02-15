@@ -75,6 +75,7 @@ private:
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPositionDirect   *idir;
+    yarp::dev::IPidControl       *ipid;
 
     double  m_cmd_single;
     double* m_encoders;
