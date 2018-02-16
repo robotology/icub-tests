@@ -152,7 +152,9 @@ bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
         sprintf(buff,"%.3f",m_pospid_vup);
         m_requested_filename+=("Vup_"+std::string(buff)+"_");
         sprintf(buff,"%.3f",m_pospid_vdown);
-        m_requested_filename+=("Vdown_"+std::string(buff)+".txt");
+        m_requested_filename+=("Vdown_"+std::string(buff)+"_");
+        sprintf(buff,"%.1f",m_step);
+        m_requested_filename+=("step_"+std::string(buff)+".txt");
     }
     yDebug() << "File: " << m_requested_filename << " will be used";
 
@@ -296,6 +298,7 @@ void PositionControlAccuracyExernalPid::run()
                 b1.addDouble(elapsed);
                 b1.addDouble(m_encoders[m_jointsList[i]]);
                 b1.addDouble(ref);
+                b1.addDouble(m_cmd_single);
                 yarp::os::Time::delay(m_sampleTime);
             }
 
@@ -306,11 +309,13 @@ void PositionControlAccuracyExernalPid::run()
                 double time = dataToPlotRaw.get(t).asList()->get(1).asDouble();
                 double val = dataToPlotRaw.get(t).asList()->get(2).asDouble();
                 double cmd = dataToPlotRaw.get(t).asList()->get(3).asDouble();
+                double duty = dataToPlotRaw.get(t).asList()->get(4).asDouble();
                 Bottle& b1 = dataToPlotSync.addList();
                 b1.addInt(cycle);
                 b1.addDouble(time - time_zero);
                 b1.addDouble(val);
                 b1.addDouble(cmd);
+                b1.addDouble(duty);
             }
 
             m_dataToSave.append(dataToPlotSync);
