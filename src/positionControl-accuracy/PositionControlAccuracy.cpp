@@ -298,6 +298,7 @@ void PositionControlAccuracy::run()
         }
         yInfo() << "Saving file to: "<< filename;
         saveToFile(filename, m_dataToSave);
+        ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_orig_pid);
     } //joint loop
 
     //data acquisition ends here
