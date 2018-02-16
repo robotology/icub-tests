@@ -82,6 +82,8 @@ private:
     std::string m_requested_filename;
     double m_home_tolerance;
     double m_step_duration;
+    yarp::dev::Pid m_orig_pid;
+    yarp::dev::Pid m_new_pid;    
 };
 
 #endif

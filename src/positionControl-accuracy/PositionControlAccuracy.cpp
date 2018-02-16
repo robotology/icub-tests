@@ -111,8 +111,8 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     double p_Max=std::nanf("");
 
     int cj=m_jointsList[0];
-    yarp::dev::Pid pid;
-    ipid->getPid(cj,&pid);
+    ipid->getPid(VOCAB_PIDTYPE_POSITION,cj,&m_orig_pid);
+    m_new_pid=m_orig_pid;
 
     if(property.check("Kp"))
       {p_Kp = property.find("Kp").asDouble();}
@@ -122,16 +122,16 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
       {p_Kd = property.find("Kd").asDouble();}
     //if(property.check("MaxValue"))
     //  {p_Max = property.find("MaxValue").asDouble();}
-    if (std::isnan(p_Kp)==false) {pid.kp=p_Kp;}
-    if (std::isnan(p_Kd)==false) {pid.kd=p_Kd;}
-    if (std::isnan(p_Ki)==false) {pid.ki=p_Ki;}
+    if (std::isnan(p_Kp)==false) {m_new_pid.kp=p_Kp;}
+    if (std::isnan(p_Kd)==false) {m_new_pid.kd=p_Kd;}
+    if (std::isnan(p_Ki)==false) {m_new_pid.ki=p_Ki;}
 
-    if (std::isnan(p_Kp)==false ||
+    /*if (std::isnan(p_Kp)==false ||
         std::isnan(p_Ki)==false ||
         std::isnan(p_Kd)==false)
     {
-        ipid->setPid(cj,pid);
-    }
+        ipid->setPid(cj,m_new_pid);
+    }*/
 
     return true;
 }
@@ -213,11 +213,14 @@ void PositionControlAccuracy::run()
     {
         for (int cycle = 0; cycle < m_cycles; cycle++)
         {
+			ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_orig_pid);
             setMode(VOCAB_CM_POSITION);
             if (goHome() == false)
             {
                 RTF_ASSERT_FAIL("Test stopped");
             };
+            
+            ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_new_pid);
             setMode(VOCAB_CM_POSITION_DIRECT);
             double start_time = yarp::os::Time::now();
 
