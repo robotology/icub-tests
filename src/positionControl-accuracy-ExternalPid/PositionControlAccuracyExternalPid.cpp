@@ -243,6 +243,9 @@ void PositionControlAccuracyExernalPid::run()
             {
                 RTF_ASSERT_FAIL("Test stopped");
             };
+            
+            ppid->reset(yarp::sig::Vector(1,0.0));
+            
             setMode(VOCAB_CM_PWM);
             double start_time = yarp::os::Time::now();
 
