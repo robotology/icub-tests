@@ -130,7 +130,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
     original_pids = new yarp::dev::Pid[n_cmd_joints];
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
-        ipid->getPid((int)jointsList[i],&original_pids[i]);
+        ipid->getPid(VOCAB_PIDTYPE_POSITION, (int)jointsList[i],&original_pids[i]);
     }
     pids_saved=true;
     
@@ -139,17 +139,17 @@ bool JointLimits::setup(yarp::os::Property& property) {
         yarp::dev::Pid p = original_pids[i];
         p.max_output = p.max_output/100*outputLimit[i];
         p.max_int =    p.max_int/100*outputLimit[i];
-        ipid->setPid((int)jointsList[i],p);
+        ipid->setPid(VOCAB_PIDTYPE_POSITION, (int)jointsList[i],p);
         yarp::os::Time::delay(0.010);
         yarp::dev::Pid t;
-        ipid->getPid((int)jointsList[i],&t);
+        ipid->getPid(VOCAB_PIDTYPE_POSITION, (int)jointsList[i],&t);
 
         //since pid values are double, the returned values may differ from those sent due to conversion.
-        if (fabs(t.max_output-p.max_output) > 0.5  ||
-            fabs(t.max_int-p.max_int) > 0.5  ||
-            fabs(t.kp-p.kp) > 0.5 ||
-            fabs(t.kd-p.kd) > 0.5 ||
-            fabs(t.ki-p.ki) > 0.5)
+        if (fabs(t.max_output-p.max_output) > 1.0  ||
+            fabs(t.max_int-p.max_int) > 1.0  ||
+            fabs(t.kp-p.kp) > 1.0 ||
+            fabs(t.kd-p.kd) > 1.0 ||
+            fabs(t.ki-p.ki) > 1.0)
         {
             RTF_ASSERT_ERROR("Unable to set output limits");
         }
@@ -166,7 +166,7 @@ void JointLimits::tearDown()
         {
             for (unsigned int i=0; i<jointsList.size(); i++)
             {
-                ipid->setPid((int)jointsList[i],original_pids[i]);
+                ipid->setPid(VOCAB_PIDTYPE_POSITION, (int)jointsList[i],original_pids[i]);
             }
         }
         delete[] original_pids; original_pids=0;
