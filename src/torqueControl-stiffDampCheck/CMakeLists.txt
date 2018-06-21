@@ -10,10 +10,6 @@ cmake_minimum_required(VERSION 3.0)
 set(PROJECTNAME TorqueControlStiffDampCheck)
 project(${PROJECTNAME})
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
-
 rtf_add_plugin(${PROJECT_NAME}    HEADERS TorqueControlStiffDampCheck.h
                                   SOURCES TorqueControlStiffDampCheck.cpp)
 

@@ -15,11 +15,6 @@ project(${PROJECTNAME})
 find_package(RTF 1.1 COMPONENTS DLL)
 find_package(YARP)
 
-# add include directories
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
-
 # add required libraries 
 link_libraries(${RTF_LIBRARIES}
                ${YARP_LIBRARIES} YARP::YARP_rtf)

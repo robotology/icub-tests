@@ -11,11 +11,6 @@ cmake_minimum_required(VERSION 3.0)
 set(PROJECTNAME PortsFrequency)
 project(${PROJECTNAME})
 
-# add include directories
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
-
 # add the source codes to build the plugin library
 rtf_add_plugin(${PROJECT_NAME}    HEADERS PortsFrequency.h
                                   SOURCES PortsFrequency.cpp)
