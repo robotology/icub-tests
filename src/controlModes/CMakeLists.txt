@@ -10,10 +10,6 @@ cmake_minimum_required(VERSION 3.0)
 set(PROJECTNAME ControlModes)
 project(${PROJECTNAME})
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
-
 rtf_add_plugin(${PROJECT_NAME} HEADERS ControlModes.h
                                SOURCES ControlModes.cpp)
 target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
