@@ -7,7 +7,7 @@
  *
  */
 
-#include <math.h>
+
 #include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
@@ -15,6 +15,7 @@
 #include <fstream>
 #include <algorithm>
 #include <cstdlib>
+#include <cmath>
 
 #include "PositionControlAccuracy.h"
 
