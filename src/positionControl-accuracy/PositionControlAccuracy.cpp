@@ -7,7 +7,7 @@
  *
  */
 
-#include <math.h>
+
 #include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
 #include <yarp/os/Time.h>
@@ -15,6 +15,7 @@
 #include <fstream>
 #include <algorithm>
 #include <cstdlib>
+#include <cmath>
 
 #include "PositionControlAccuracy.h"
 
@@ -92,6 +93,7 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
 
     if (!ienc->getAxes(&m_n_part_joints))
     {
@@ -103,6 +105,34 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     m_jointsList = new int[m_n_cmd_joints];
     for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt();
     for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asDouble();
+
+    double p_Kp=std::nanf("");
+    double p_Ki=std::nanf("");
+    double p_Kd=std::nanf("");
+    double p_Max=std::nanf("");
+
+    int cj=m_jointsList[0];
+    ipid->getPid(VOCAB_PIDTYPE_POSITION,cj,&m_orig_pid);
+    m_new_pid=m_orig_pid;
+
+    if(property.check("Kp"))
+      {p_Kp = property.find("Kp").asDouble();}
+    if(property.check("Ki"))
+      {p_Ki = property.find("Ki").asDouble();}
+    if(property.check("Kd"))
+      {p_Kd = property.find("Kd").asDouble();}
+    //if(property.check("MaxValue"))
+    //  {p_Max = property.find("MaxValue").asDouble();}
+    if (std::isnan(p_Kp)==false) {m_new_pid.kp=p_Kp;}
+    if (std::isnan(p_Kd)==false) {m_new_pid.kd=p_Kd;}
+    if (std::isnan(p_Ki)==false) {m_new_pid.ki=p_Ki;}
+
+    /*if (std::isnan(p_Kp)==false ||
+        std::isnan(p_Ki)==false ||
+        std::isnan(p_Kd)==false)
+    {
+        ipid->setPid(cj,m_new_pid);
+    }*/
 
     return true;
 }
@@ -184,11 +214,14 @@ void PositionControlAccuracy::run()
     {
         for (int cycle = 0; cycle < m_cycles; cycle++)
         {
+			ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_orig_pid);
             setMode(VOCAB_CM_POSITION);
             if (goHome() == false)
             {
                 RTF_ASSERT_FAIL("Test stopped");
             };
+            
+            ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_new_pid);
             setMode(VOCAB_CM_POSITION_DIRECT);
             double start_time = yarp::os::Time::now();
 
@@ -266,6 +299,7 @@ void PositionControlAccuracy::run()
         }
         yInfo() << "Saving file to: "<< filename;
         saveToFile(filename, m_dataToSave);
+        ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_orig_pid);
     } //joint loop
 
     //data acquisition ends here

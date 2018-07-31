@@ -38,6 +38,8 @@ PositionControlAccuracyExernalPid::PositionControlAccuracyExernalPid() : yarp::r
     ipwm=0;
     m_home_tolerance=0.5;
     m_step_duration=4;
+    m_pospid_vup=0;
+    m_pospid_vdown=0;
 }
 
 PositionControlAccuracyExernalPid::~PositionControlAccuracyExernalPid() { }
@@ -63,6 +65,10 @@ bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
       {m_home_tolerance = property.find("home_tolerance").asDouble();}
     if(property.check("step_duration"))
       {m_step_duration = property.find("step_duration").asDouble();}
+    if(property.check("pid_vup"))
+      {m_pospid_vup = property.find("pid_vup").asDouble();}
+    if(property.check("pid_vdown"))
+      {m_pospid_vdown = property.find("pid_vdown").asDouble();}
 
     m_robotName = property.find("robot").asString();
     m_partName = property.find("part").asString();
@@ -130,6 +136,27 @@ bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
     p_Lim[0][0]=-p_Max;
     p_Lim[0][1]=+p_Max;
     ppid = new iCub::ctrl::parallelPID(p_Ts, p_Kp, p_Ki, p_Kd, p_Wp, p_Wi, p_Wd, p_N, p_Tt, p_Lim);
+
+    if (m_requested_filename=="auto")
+    {
+        char buff[50];
+        m_requested_filename="ext_";
+        m_requested_filename+=(m_robotName+"_");
+        m_requested_filename+=(m_partName+"_");
+        sprintf(buff,"%.3f",p_Kp[0]);
+        m_requested_filename+=("Kp_"+std::string(buff)+"_");
+        sprintf(buff,"%.3f",p_Ki[0]);
+        m_requested_filename+=("Ki_"+std::string(buff)+"_");
+        sprintf(buff,"%.3f",p_Kd[0]);
+        m_requested_filename+=("Kdi_"+std::string(buff)+"_");
+        sprintf(buff,"%.3f",m_pospid_vup);
+        m_requested_filename+=("Vup_"+std::string(buff)+"_");
+        sprintf(buff,"%.3f",m_pospid_vdown);
+        m_requested_filename+=("Vdown_"+std::string(buff)+"_");
+        sprintf(buff,"%.1f",m_step);
+        m_requested_filename+=("step_"+std::string(buff)+".txt");
+    }
+    yDebug() << "File: " << m_requested_filename << " will be used";
 
     return true;
 }
@@ -216,6 +243,9 @@ void PositionControlAccuracyExernalPid::run()
             {
                 RTF_ASSERT_FAIL("Test stopped");
             };
+            
+            ppid->reset(yarp::sig::Vector(1,0.0));
+            
             setMode(VOCAB_CM_PWM);
             double start_time = yarp::os::Time::now();
 
@@ -238,12 +268,10 @@ void PositionControlAccuracyExernalPid::run()
                 if (elapsed <= 1.0)
                 {
                     ref=m_zeros[i];
-                    m_cmd_single = ppid->compute(yarp::sig::Vector(1,ref),yarp::sig::Vector(1,m_encoders[m_jointsList[i]]))[0]; //0.0;
                 }
                 else if (elapsed > 1.0 && elapsed <= m_step_duration)
                 {
                     ref=m_zeros[i]+m_step;
-                    m_cmd_single = ppid->compute(yarp::sig::Vector(1,ref),yarp::sig::Vector(1,m_encoders[m_jointsList[i]]))[0];
                     if (time_zero == 0) time_zero = elapsed;
                 }
                 else
@@ -251,7 +279,21 @@ void PositionControlAccuracyExernalPid::run()
                     break;
                 }
 
+                //pid computation
                 ienc->getEncoders(m_encoders);
+                m_cmd_single = ppid->compute(yarp::sig::Vector(1,ref),yarp::sig::Vector(1,m_encoders[m_jointsList[i]]))[0];
+                
+                //stiction compensation
+                if (ref>m_encoders[m_jointsList[i]])
+                {
+                    m_cmd_single+=m_pospid_vup;
+                }
+                else
+                {
+                    m_cmd_single+=m_pospid_vdown;
+                }
+
+                //control
                 ipwm->setRefDutyCycle(m_jointsList[i], m_cmd_single);
 
                 Bottle& b1 = dataToPlotRaw.addList();
@@ -259,6 +301,7 @@ void PositionControlAccuracyExernalPid::run()
                 b1.addDouble(elapsed);
                 b1.addDouble(m_encoders[m_jointsList[i]]);
                 b1.addDouble(ref);
+                b1.addDouble(m_cmd_single);
                 yarp::os::Time::delay(m_sampleTime);
             }
 
@@ -269,11 +312,13 @@ void PositionControlAccuracyExernalPid::run()
                 double time = dataToPlotRaw.get(t).asList()->get(1).asDouble();
                 double val = dataToPlotRaw.get(t).asList()->get(2).asDouble();
                 double cmd = dataToPlotRaw.get(t).asList()->get(3).asDouble();
+                double duty = dataToPlotRaw.get(t).asList()->get(4).asDouble();
                 Bottle& b1 = dataToPlotSync.addList();
                 b1.addInt(cycle);
                 b1.addDouble(time - time_zero);
                 b1.addDouble(val);
                 b1.addDouble(cmd);
+                b1.addDouble(duty);
             }
 
             m_dataToSave.append(dataToPlotSync);

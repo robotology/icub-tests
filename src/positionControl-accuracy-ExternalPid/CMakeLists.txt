@@ -11,10 +11,7 @@ set(PROJECTNAME PositionControlAccuracyExternalPid)
 project(${PROJECTNAME})
 find_package(ICUB REQUIRED)
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${ICUB_INCLUDE_DIRS})
+include_directories(${ICUB_INCLUDE_DIRS})
 
 rtf_add_plugin(${PROJECT_NAME}    HEADERS PositionControlAccuracyExternalPid.h
                                   SOURCES PositionControlAccuracyExternalPid.cpp)

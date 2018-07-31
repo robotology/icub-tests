@@ -239,7 +239,7 @@ void MotorEncodersSignCheck::run()
     for (unsigned int i=0 ; i<jointsList.size(); i++)
     {
         double posout=0;
-        RTF_TEST_FAIL_IF_FALSE((ipid->getOutput((int)jointsList[i], &posout)),
+        RTF_TEST_FAIL_IF_FALSE((ipid->getPidOutput(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, (int)jointsList[i], &posout)),
                          RTF::Asserter::format(" getOutput j %d return false",(int)jointsList[i]));
 
         setModeSingle(i,VOCAB_CM_PWM,VOCAB_IM_STIFF);

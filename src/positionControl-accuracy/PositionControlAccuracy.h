@@ -75,12 +75,15 @@ private:
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPositionDirect   *idir;
+    yarp::dev::IPidControl       *ipid;
 
     double  m_cmd_single;
     double* m_encoders;
     std::string m_requested_filename;
     double m_home_tolerance;
     double m_step_duration;
+    yarp::dev::Pid m_orig_pid;
+    yarp::dev::Pid m_new_pid;    
 };
 
 #endif
