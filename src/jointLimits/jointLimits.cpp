@@ -145,11 +145,11 @@ bool JointLimits::setup(yarp::os::Property& property) {
         ipid->getPid(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, (int)jointsList[i],&t);
 
         //since pid values are double, the returned values may differ from those sent due to conversion.
-        if (fabs(t.max_output-p.max_output) > 0.5  ||
-            fabs(t.max_int-p.max_int) > 0.5  ||
-            fabs(t.kp-p.kp) > 0.5 ||
-            fabs(t.kd-p.kd) > 0.5 ||
-            fabs(t.ki-p.ki) > 0.5)
+        if (fabs(t.max_output-p.max_output) > 1.0  ||
+            fabs(t.max_int-p.max_int) > 1.0  ||
+            fabs(t.kp-p.kp) > 1.0 ||
+            fabs(t.kd-p.kd) > 1.0 ||
+            fabs(t.ki-p.ki) > 1.0)
         {
             RTF_ASSERT_ERROR("Unable to set output limits");
         }
