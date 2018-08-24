@@ -11,7 +11,7 @@
         <parameters>--verbose worlds/icub_fixed.world</parameters>
         <node>localhost</node>
         <ensure>
-            <wait>20</wait>
+            <wait>40</wait>
         </ensure>
     </module>
     
