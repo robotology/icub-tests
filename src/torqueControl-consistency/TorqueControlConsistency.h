@@ -29,9 +29,9 @@ public:
     void goHome();
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     void setRefTorque(double value);
-    void verifyRefTorque(double value, yarp::os::ConstString title);
+    void verifyRefTorque(double value, std::string title);
 
     void zeroCurrentLimits();
     void getOriginalCurrentLimits();

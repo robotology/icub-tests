@@ -145,7 +145,7 @@ void MotorStiction::setModeSingle(int i, int desired_control_mode, yarp::dev::In
     yarp::os::Time::delay(0.010);
 }
 
-void MotorStiction::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void MotorStiction::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode; 

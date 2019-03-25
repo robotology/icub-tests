@@ -130,7 +130,7 @@ void OpenLoopConsistency::setMode(int desired_control_mode, yarp::dev::Interacti
     }
 }
 
-void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode; 
@@ -220,7 +220,7 @@ void OpenLoopConsistency::setRefOpenloop(double value)
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsistency::verifyRefOpenloop(double verify_val, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyRefOpenloop(double verify_val, std::string title)
 {
     double value;
     char sbuf[500];
@@ -285,7 +285,7 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, yarp::os::ConstSt
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyOutputEqual(double verify_val, std::string title)
 {
     double value;
     char sbuf[500];
@@ -354,7 +354,7 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, yarp::os::ConstSt
     yarp::os::Time::delay(0.010);
 }
 
-void OpenLoopConsistency::verifyOutputDiff(double verify_val, yarp::os::ConstString title)
+void OpenLoopConsistency::verifyOutputDiff(double verify_val, std::string title)
 {
     double value;
     char sbuf[500];

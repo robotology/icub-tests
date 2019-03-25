@@ -29,12 +29,12 @@ public:
     void goHome();
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
 
     void setRefOpenloop(double value);
-    void verifyRefOpenloop(double value, yarp::os::ConstString title);
-    void verifyOutputEqual(double value, yarp::os::ConstString title);
-    void verifyOutputDiff(double value, yarp::os::ConstString title);
+    void verifyRefOpenloop(double value, std::string title);
+    void verifyOutputEqual(double value, std::string title);
+    void verifyOutputDiff(double value, std::string title);
 
 private:
     std::string robotName;

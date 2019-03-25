@@ -31,7 +31,7 @@ public:
 
     void goHome();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     bool setAndCheckImpedance(int joint, double stiffness, double damping);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
     std::string getPath(const std::string& str);

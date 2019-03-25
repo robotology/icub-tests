@@ -48,7 +48,7 @@ public:
     void goHome();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void setModeSingle(int i, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
     
     //ok if the joints moves of 5 degrees

@@ -53,16 +53,16 @@ public:
     void goHome();
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
-    void verifyAmplifier(int desired_amplifier_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
+    void verifyAmplifier(int desired_amplifier_mode, std::string title);
 
     void zeroCurrentLimits();
     void getOriginalCurrentLimits();
     void resetOriginalCurrentLimits();
-    void verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     void setModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void checkJointWithTorqueMode();
-    void checkControlModeWithImCompliant(int desired_control_mode, yarp::os::ConstString title);
+    void checkControlModeWithImCompliant(int desired_control_mode, std::string title);
 
 private:
     std::string robotName;

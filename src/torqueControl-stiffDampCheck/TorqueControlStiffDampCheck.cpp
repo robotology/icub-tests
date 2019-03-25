@@ -161,7 +161,7 @@ void TorqueControlStiffDampCheck::setMode(int desired_control_mode, yarp::dev::I
     }
 }
 
-void TorqueControlStiffDampCheck::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void TorqueControlStiffDampCheck::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode;

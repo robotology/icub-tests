@@ -123,7 +123,7 @@ void TorqueControlConsistency::setMode(int desired_control_mode, yarp::dev::Inte
     }
 }
 
-void TorqueControlConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void TorqueControlConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode;
@@ -213,7 +213,7 @@ void TorqueControlConsistency::setRefTorque(double value)
     yarp::os::Time::delay(0.010);
 }
 
-void TorqueControlConsistency::verifyRefTorque(double verify_val, yarp::os::ConstString title)
+void TorqueControlConsistency::verifyRefTorque(double verify_val, std::string title)
 {
     double value;
     char sbuf[500];
