@@ -6,7 +6,8 @@
 #
 
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
+
 project(iCub-Tests)
 
 # find a version of RTF higher then 1.3.2

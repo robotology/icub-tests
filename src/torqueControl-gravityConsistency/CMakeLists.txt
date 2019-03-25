@@ -5,8 +5,10 @@
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.5)
+endif()
 
-cmake_minimum_required(VERSION 2.8.11)
 set(PROJECTNAME TorqueControlGravityConsistency)
 project(${PROJECTNAME})
 

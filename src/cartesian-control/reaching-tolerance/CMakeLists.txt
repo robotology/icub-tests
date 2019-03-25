@@ -3,7 +3,9 @@
 #          Giulia Vezzani <giulia.vezzani@iit.it>
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 3.0)
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.5)
+endif()
 
 # set the project name
 project(CartesianControlReachingToleranceTest)

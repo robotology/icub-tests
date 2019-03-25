@@ -5,7 +5,9 @@
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 
-cmake_minimum_required(VERSION 3.0)
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.5)
+endif()
 
 # set the project name
 set(PROJECTNAME SystemStatus)
