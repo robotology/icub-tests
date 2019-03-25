@@ -1,4 +1,4 @@
-# iCub Robot Unit Tests (Robot Testing Framework)
+# Robot Testing Framework
 #
 # Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
 #
@@ -16,22 +16,9 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-
-if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  cmake_minimum_required(VERSION 3.5)
+find_package(Perl QUIET)
+if(PERL_FOUND)
+  add_test(NAME misc::check_license
+           COMMAND "${PERL_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/check_license.pl"
+           WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()
-
-set(PROJECTNAME MotorEncodersConsistency)
-project(${PROJECTNAME})
-
-rtf_add_plugin(${PROJECT_NAME}    HEADERS motorEncodersConsistency.h
-                                  SOURCES motorEncodersConsistency.cpp)
-
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
-                     ${YARP_LIBRARIES} YARP::YARP_rtf
-                     YARP::YARP_manager)
-
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
-        COMPONENT runtime
-        LIBRARY DESTINATION lib)

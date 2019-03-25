@@ -1,10 +1,21 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #ifndef _CONTROLMODES_H_
@@ -27,7 +38,7 @@
 * Example: testRunner -v -t ControlModes.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
 *
 * Check the following functions:
-* \li IControlMode2::getControlMode()/setControlMode()
+* \li IControlMode::getControlMode()/setControlMode()
 * \li IInteractionMode::getInteractionMode()/setInteractionMode()
 
 *  Accepts the following parameters:
@@ -53,16 +64,16 @@ public:
     void goHome();
     void executeCmd();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
-    void verifyAmplifier(int desired_amplifier_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
+    void verifyAmplifier(int desired_amplifier_mode, std::string title);
 
     void zeroCurrentLimits();
     void getOriginalCurrentLimits();
     void resetOriginalCurrentLimits();
-    void verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     void setModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void checkJointWithTorqueMode();
-    void checkControlModeWithImCompliant(int desired_control_mode, yarp::os::ConstString title);
+    void checkControlModeWithImCompliant(int desired_control_mode, std::string title);
 
 private:
     std::string robotName;
@@ -82,9 +93,9 @@ private:
     } cmd_mode;
 
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IPositionControl2 *ipos;
+    yarp::dev::IPositionControl *ipos;
     yarp::dev::IAmplifierControl *iamp;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPositionDirect   *idir;

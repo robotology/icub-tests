@@ -1,10 +1,21 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Alessandro Scalzo and Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <cmath>
@@ -116,7 +127,6 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
 
     RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iEncoders), "cannot view iEncoder");
     RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition), "cannot view iPosition");
-    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition2), "cannot view iPosition2");
 
     return true;
 }
@@ -274,13 +284,13 @@ void MotorTest::run() {
         jmap[kk]=m_NumJoints-kk-1;
     }
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition2->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
+    RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
             "setting reference speed on all joints using group interface");
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition2->positionMove(m_NumJoints, jmap, swapped_target),
+    RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(m_NumJoints, jmap, swapped_target),
             "moving all joints to home using group interface");
 
-    ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
+    ret=iPosition->checkMotionDone(m_NumJoints, jmap, &doneAll);
     RTF_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     timeStart=yarp::os::Time::now();
@@ -306,7 +316,7 @@ void MotorTest::run() {
         bool ret=false;
 
         while(times>0 && !doneAll) {
-            ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
+            ret=iPosition->checkMotionDone(m_NumJoints, jmap, &doneAll);
             if (!doneAll)
                 yarp::os::Time::delay(0.1);
             times--;

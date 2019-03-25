@@ -1,10 +1,21 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <math.h>
@@ -192,7 +203,7 @@ void ControlModes::setModeSingle(int joint, int desired_control_mode, yarp::dev:
     yarp::os::Time::delay(0.010);
 }
 
-void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode; 
@@ -222,7 +233,7 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
     RTF_TEST_REPORT(sbuf);
 }
 
-void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode;
@@ -269,7 +280,7 @@ void ControlModes::checkJointWithTorqueMode()
     }
 }
 
-void ControlModes::verifyAmplifier(int desired_amplifier_mode, yarp::os::ConstString title)
+void ControlModes::verifyAmplifier(int desired_amplifier_mode, std::string title)
 {
     int amode;
     int timeout = 0;
@@ -359,7 +370,7 @@ void ControlModes::goHome()
 }
 
 
-void ControlModes::checkControlModeWithImCompliant(int desired_control_mode, yarp::os::ConstString title)
+void ControlModes::checkControlModeWithImCompliant(int desired_control_mode, std::string title)
 {
     char buff[500];
     for (int i=0; i<n_cmd_joints; i++)

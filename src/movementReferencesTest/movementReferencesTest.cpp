@@ -1,10 +1,21 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2016 iCub Facility
- * Authors: Valentina Gaggero
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <cmath>
@@ -42,10 +53,10 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     jPosMotion=NULL;
 
     iEncoders=NULL;
-    iPosition2=NULL;
+    iPosition=NULL;
     iPosDirect=NULL;
-    iControlMode2=NULL;
-    iVelocity2=NULL;
+    iControlMode=NULL;
+    iVelocity=NULL;
     initialized=false;
 
     if(config.check("name"))
@@ -72,12 +83,12 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
 
     dd = new yarp::dev::PolyDriver(options);
     RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosition2),"Unable to open position interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosition),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iEncoders),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode2),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPWM), "Unable to open PWM interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosDirect),"Unable to open OpnLoop interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity2),"Unable to open velocity2 interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity),"Unable to open velocity2 interface");
     
 
 
@@ -201,12 +212,12 @@ void MovementReferencesTest::tearDown() {
 void MovementReferencesTest::setAndCheckControlMode(int j, int mode)
 {
     int rec_mode=VOCAB_CM_IDLE;
-    RTF_TEST_FAIL_IF_FALSE(iControlMode2->setControlMode(j, mode),
+    RTF_TEST_FAIL_IF_FALSE(iControlMode->setControlMode(j, mode),
             Asserter::format(("setting control mode for j %d"),j));
 
     yarp::os::Time::delay(0.1);
 
-    RTF_TEST_FAIL_IF_FALSE(iControlMode2->getControlMode(j, &rec_mode),
+    RTF_TEST_FAIL_IF_FALSE(iControlMode->getControlMode(j, &rec_mode),
            Asserter::format(("getting control mode for j %d"),j));
 
     RTF_ASSERT_FAIL_IF_FALSE((rec_mode == mode),
@@ -237,12 +248,12 @@ void MovementReferencesTest::run() {
     if(refAcc.size() != 0)
     {
         RTF_TEST_REPORT("setting acceleration refs for all joints...");
-        RTF_TEST_FAIL_IF_FALSE(iVelocity2->setRefAccelerations(numJoints, jList, refAcc.data()),
+        RTF_TEST_FAIL_IF_FALSE(iVelocity->setRefAccelerations(numJoints, jList, refAcc.data()),
                 Asserter::format("setting reference acceleration on joints"));
     }
 
     RTF_TEST_REPORT("setting velocity refs for all joints...");
-    RTF_TEST_FAIL_IF_FALSE(iPosition2->setRefSpeeds(numJoints, jList, refVel.data()),
+    RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(numJoints, jList, refVel.data()),
                 Asserter::format("setting reference speed on joints"));
     
 
@@ -284,12 +295,12 @@ void MovementReferencesTest::run() {
         
     yarp::os::Time::delay(0.5);
 
-        RTF_TEST_FAIL_IF_FALSE(iPosition2->getTargetPosition(jList[i], &rec_targetPos),
+        RTF_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
                 Asserter::format(("getting target pos for j %d"),jList[i]));
         
         bool res = yarp::rtf::TestAsserter::isApproxEqual(targetPos[i], rec_targetPos, res_th, res_th);
         RTF_TEST_CHECK(res, Asserter::format(
-                           ("IPositionControl2: getting target pos for j %d: setval =%.2f received %.2f"),
+                           ("IPositionControl: getting target pos for j %d: setval =%.2f received %.2f"),
                            jList[i], targetPos[i],rec_targetPos));
         
         //if(!res)
@@ -317,10 +328,10 @@ yarp::os::Time::delay(0.5);
         RTF_TEST_CHECK((output == rec_output),
                Asserter::format(("getting target output for j %d: setval =%.2f received %.2f"),jList[i], output,rec_output));
 
-        RTF_TEST_FAIL_IF_FALSE(iPosition2->positionMove(jList[i], homePos[i]),
+        RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(jList[i], homePos[i]),
                 Asserter::format(("go to home  for j %d"),jList[i]));
 yarp::os::Time::delay(0.5);
-        RTF_TEST_FAIL_IF_FALSE(iPosition2->getTargetPosition(jList[i], &rec_targetPos),
+        RTF_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
         
         //here I expect getTargetPosition returns targetPos[j] and not homePos[j] because joint is in pwm control mode and 
@@ -353,12 +364,12 @@ yarp::os::Time::delay(0.5);
                Asserter::format(("iDirect: getting target direct pos for j %d: setval =%.2f received %.2f"),jList[i], new_directPos,rec_targetPos));
 
         //here I'm going to check the position reference is not changed.
-        RTF_TEST_FAIL_IF_FALSE(iPosition2->getTargetPosition(jList[i], &rec_targetPos),
+        RTF_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
 
         res = yarp::rtf::TestAsserter::isApproxEqual(targetPos[i], rec_targetPos, res_th, res_th);
         RTF_TEST_CHECK(res, Asserter::format(
-                           ("IPositionControl2: getting target pos for j %d: setval =%.2f received %.2f"),
+                           ("IPositionControl: getting target pos for j %d: setval =%.2f received %.2f"),
                            jList[i], targetPos[i],rec_targetPos));
 
     //4) check get reference velocity (velocity mode) returns the target velocity set by velocityMove()
@@ -369,11 +380,11 @@ yarp::os::Time::delay(0.5);
 
         double vel= 0.5;
         double rec_vel;
-        RTF_TEST_FAIL_IF_FALSE(iVelocity2->velocityMove(jList[i], vel),
+        RTF_TEST_FAIL_IF_FALSE(iVelocity->velocityMove(jList[i], vel),
                Asserter::format(("IVelocity:velocityMove for j %d"),jList[i]));
 
 yarp::os::Time::delay(0.5);
-        RTF_TEST_FAIL_IF_FALSE(iVelocity2->getRefVelocity(jList[i], &rec_vel),
+        RTF_TEST_FAIL_IF_FALSE(iVelocity->getRefVelocity(jList[i], &rec_vel),
                Asserter::format(("IVelocity:getting target velocity for j %d"),jList[i]));
         res = yarp::rtf::TestAsserter::isApproxEqual(vel, rec_vel, res_th, res_th);
         RTF_TEST_CHECK(res,
