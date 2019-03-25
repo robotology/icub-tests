@@ -44,7 +44,7 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     iEncoders=NULL;
     iPosition=NULL;
     iPosDirect=NULL;
-    iControlMode2=NULL;
+    iControlMode=NULL;
     iVelocity2=NULL;
     initialized=false;
 
@@ -74,7 +74,7 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosition),"Unable to open position interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iEncoders),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode2),"Unable to open control mode interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPWM), "Unable to open PWM interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosDirect),"Unable to open OpnLoop interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity2),"Unable to open velocity2 interface");
@@ -201,12 +201,12 @@ void MovementReferencesTest::tearDown() {
 void MovementReferencesTest::setAndCheckControlMode(int j, int mode)
 {
     int rec_mode=VOCAB_CM_IDLE;
-    RTF_TEST_FAIL_IF_FALSE(iControlMode2->setControlMode(j, mode),
+    RTF_TEST_FAIL_IF_FALSE(iControlMode->setControlMode(j, mode),
             Asserter::format(("setting control mode for j %d"),j));
 
     yarp::os::Time::delay(0.1);
 
-    RTF_TEST_FAIL_IF_FALSE(iControlMode2->getControlMode(j, &rec_mode),
+    RTF_TEST_FAIL_IF_FALSE(iControlMode->getControlMode(j, &rec_mode),
            Asserter::format(("getting control mode for j %d"),j));
 
     RTF_ASSERT_FAIL_IF_FALSE((rec_mode == mode),

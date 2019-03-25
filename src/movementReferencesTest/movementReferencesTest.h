@@ -62,7 +62,7 @@ private:
     yarp::dev::IPositionControl *iPosition;
     yarp::dev::IPWMControl *iPWM;
     yarp::dev::IPositionDirect *iPosDirect;
-    yarp::dev::IControlMode2 *iControlMode2;
+    yarp::dev::IControlMode *iControlMode;
     yarp::dev::IVelocityControl2 *iVelocity2;
     
     

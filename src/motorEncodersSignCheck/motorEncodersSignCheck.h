@@ -79,7 +79,7 @@ private:
     int    n_part_joints;
 
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPWMControl       *ipwm;

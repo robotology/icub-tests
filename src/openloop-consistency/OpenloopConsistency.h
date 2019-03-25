@@ -54,7 +54,7 @@ private:
     yarp::dev::PolyDriver        *dd;
     yarp::dev::IPositionControl *ipos;
     yarp::dev::IAmplifierControl *iamp;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPWMControl       *ipwm;

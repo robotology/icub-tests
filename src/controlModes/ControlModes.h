@@ -27,7 +27,7 @@
 * Example: testRunner -v -t ControlModes.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
 *
 * Check the following functions:
-* \li IControlMode2::getControlMode()/setControlMode()
+* \li IControlMode::getControlMode()/setControlMode()
 * \li IInteractionMode::getInteractionMode()/setInteractionMode()
 
 *  Accepts the following parameters:
@@ -84,7 +84,7 @@ private:
     yarp::dev::PolyDriver        *dd;
     yarp::dev::IPositionControl *ipos;
     yarp::dev::IAmplifierControl *iamp;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPositionDirect   *idir;
