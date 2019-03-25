@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Motor Control Suite">
+<suite name="Motor Control Suite">
     <description>Testing robot motors</description>
     <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubgazebosim-fixture.xml"> yarpmanager </fixture>
@@ -32,5 +32,5 @@
     <test type="dll" param="--from motor_stiction_torso.ini"> MotorStiction </test>
     <test type="dll" param="--from motor_stiction_head.ini"> MotorStiction </test>
 	
-</suit>
+</suite>
 

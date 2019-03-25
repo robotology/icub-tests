@@ -22,7 +22,7 @@
 #define _POSITIONDIRECT_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -57,7 +57,7 @@
 *
 */
 
-class PositionDirect : public yarp::rtf::TestCase {
+class PositionDirect : public yarp::robottestingframework::TestCase {
 public:
     PositionDirect();
     virtual ~PositionDirect();

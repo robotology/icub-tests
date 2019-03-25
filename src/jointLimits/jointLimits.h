@@ -22,7 +22,7 @@
 #define _JOINTLIMITS_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -40,7 +40,7 @@
 * If this limit is too small, the the joint may be unable to reach the limit (e.g. because of friction), so the value must be chosen accurately.
 * The test assumes the the position control is properly working and the position pid is properly tuned.
 * After testing the limits, this test also tries to move the joint out of the limits on puropose (adding to the joint limits the value of outOfBoundPosition).
-* The test is successfull if the position move command is correctly stopped at the limit. 
+* The test is successfull if the position move command is correctly stopped at the limit.
 *
 * Example: testRunner -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)"" --speed ""(20 20 20)"" --outputLimitPercent ""(30 30 30)"" --outOfBoundPosition ""(2 2 2)"" --tolerance 0.2"
 *
@@ -71,7 +71,7 @@
 *
 */
 
-class JointLimits : public yarp::rtf::TestCase {
+class JointLimits : public yarp::robottestingframework::TestCase {
 public:
     JointLimits();
     virtual ~JointLimits();

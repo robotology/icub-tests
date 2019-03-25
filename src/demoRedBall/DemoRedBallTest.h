@@ -22,7 +22,7 @@
 #define _DEMOREDBALL_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
@@ -39,13 +39,13 @@
 * | Parameter name | Type   | Units |  Default Value   | Required |  Description  | Notes |
 * |:--------------:|:------:|:-----:|:----------------:|:--------:|:-------------:|:-----:|
 * |     context    | string |   -   |  demoRedBall     |    No    |   context containing the demoRedBall conf file  |   -   |
-* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   | 
-* 
+* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   |
+*
 * You can watch a <a
 * href="https://www.youtube.com/watch?v=ackQ5Bfk9jk">video</a>
 * of how this test will be performing.
 */
-class DemoRedBallTest : public yarp::rtf::TestCase
+class DemoRedBallTest : public yarp::robottestingframework::TestCase
 {
     struct {
         std::string robot;

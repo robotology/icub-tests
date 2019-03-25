@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Control modes Tests Suite">
+<suite name="Control modes Tests Suite">
     <description>Testing control modes</description>
     <environment>--robotname icub </environment>
 
@@ -8,5 +8,5 @@
     <test type="dll" param="--from controlModes_face.ini"> ControlModes </test>
     <test type="dll" param="--from controlModes_left_leg.ini"> ControlModes </test>
 
-</suit>
+</suite>
 

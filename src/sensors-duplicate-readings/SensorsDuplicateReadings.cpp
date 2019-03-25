@@ -26,14 +26,14 @@
 #include <yarp/math/Math.h>
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::math;
 
 // prepare the plugin
-PREPARE_PLUGIN(SensorsDuplicateReadings)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(SensorsDuplicateReadings)
 
-SensorsDuplicateReadings::SensorsDuplicateReadings() : yarp::rtf::TestCase("SensorsDuplicateReadings") {
+SensorsDuplicateReadings::SensorsDuplicateReadings() : yarp::robottestingframework::TestCase("SensorsDuplicateReadings") {
 }
 
 SensorsDuplicateReadings::~SensorsDuplicateReadings() { }
@@ -47,13 +47,13 @@ bool SensorsDuplicateReadings::setup(yarp::os::Property &property) {
     // updating parameters
    testTime = (property.check("time")) ? property.find("time").asDouble() : 2;
 
-    RTF_ASSERT_ERROR_IF(property.check("PORTS"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(property.check("PORTS"),
                         "A list of the ports must be given");
 
     yarp::os::Bottle portsSet = property.findGroup("PORTS").tail();
     for(unsigned int i=0; i<portsSet.size(); i++) {
         yarp::os::Bottle* btport = portsSet.get(i).asList();
-        RTF_ASSERT_ERROR_IF(btport && btport->size()>=3, "The ports must be given as lists of <portname> <toleratedDuplicates>");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(btport && btport->size()>=3, "The ports must be given as lists of <portname> <toleratedDuplicates>");
         DuplicateReadingsPortInfo info;
         info.name = btport->get(0).asString();
         info.toleratedDuplicates = btport->get(1).asInt();
@@ -61,7 +61,7 @@ bool SensorsDuplicateReadings::setup(yarp::os::Property &property) {
     }
 
     // opening port
-    RTF_ASSERT_ERROR_IF(port.open("..."),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(port.open("..."),
                         "opening port, is YARP network available?");
     return true;
 }
@@ -74,21 +74,21 @@ void SensorsDuplicateReadings::tearDown() {
 void SensorsDuplicateReadings::run() {
     for(unsigned int i=0; i<ports.size(); i++) {
         port.reset();
-        RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
         bool connected = Network::connect(ports[i].name.c_str(), port.getName());
-        RTF_TEST_FAIL_IF(connected,
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF(connected,
                        Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
         if(connected) {
             port.useCallback();
             Time::delay(testTime);
             port.disableCallback();
 
-            RTF_TEST_REPORT(Asserter::format("Computed a total of %lu duplicates out of %lu samples.",
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Computed a total of %lu duplicates out of %lu samples.",
                             port.getTotalNrOfDuplicates(),port.getCount()));
-            RTF_TEST_REPORT(Asserter::format("Maximum number of consecutive duplicates: %lu Maximum jitter: %lf ",
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Maximum number of consecutive duplicates: %lu Maximum jitter: %lf ",
                                               port.getMaxNrOfDuplicates(), port.getMaxJitter()));
 
-            RTF_TEST_FAIL_IF(port.getTotalNrOfDuplicates() > ports[i].toleratedDuplicates,
+            ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF(port.getTotalNrOfDuplicates() > ports[i].toleratedDuplicates,
                            Asserter::format("Number of duplicates (%lu) is higher than the tolerated (%d)",
                                             port.getTotalNrOfDuplicates(),
                                             ports[i].toleratedDuplicates));

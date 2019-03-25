@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Demo Red Ball Test Suite">
+<suite name="Demo Red Ball Test Suite">
     <description>Testing Red Ball Demo functionalities</description>
     <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubsim-demoRedBall-fixture.xml"> yarpmanager </fixture>
 
     <test type="dll" param="--context demoRedBall --from config.ini"> DemoRedBallTest </test>
-</suit>
+</suite>

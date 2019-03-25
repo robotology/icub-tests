@@ -1,7 +1,7 @@
 icub-tests
 ==========
 The `icub-tests` repository contains tests for the iCub robot.
-Tests are written using the [Robot Testing Framework](https://github.com/robotology/robot-testing) (RTF).
+Tests are written using the [Robot Testing Framework](https://github.com/robotology/robot-testing-framework).
 
 ## Installation, tutorial and available tests
 

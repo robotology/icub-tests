@@ -21,43 +21,43 @@
 -- to invoke the corresponding methods:
 --
 -- TestCase.setup = function(options) ... return true end
--- TestCase.run = function() ... end 
--- TestCase.tearDown = function() ... end 
+-- TestCase.run = function() ... end
+-- TestCase.tearDown = function() ... end
 --
--- The following methods are for reporting, failures or assertions: 
+-- The following methods are for reporting, failures or assertions:
 --
--- RTF.setName(name)             : sets the test name (defualt is the test filename)
--- RTF.testReport(msg)           : reports a informative message
--- RTF.testCheck(condition, msg) : reports a failure message
--- RTF.assertError(msg)          : throws an error exception with message
--- RTF.asserFail(msg)            : throws a failure exception with message
--- RTF.getEnvironment()          : returns the test environment params
+-- robottestingframework.setName(name)             : sets the test name (defualt is the test filename)
+-- robottestingframework.testReport(msg)           : reports a informative message
+-- robottestingframework.testCheck(condition, msg) : reports a failure message
+-- robottestingframework.assertError(msg)          : throws an error exception with message
+-- robottestingframework.asserFail(msg)            : throws a failure exception with message
+-- robottestingframework.getEnvironment()          : returns the test environment params
 --
 
 --
--- e.g., testrunner -v -t position-stress.lua -e "--robotname icub" -p "--from motor_stress_head.ini" --repetition 3
+-- e.g., robottestingframework-testrunner -v -t position-stress.lua -e "--robotname icub" -p "--from motor_stress_head.ini" --repetition 3
 --
 
 require("yarp")
 
 function loadParameters(parameter)
 
-    local env = RTF.getEnvironment()
+    local env = robottestingframework.getEnvironment()
     envprop = yarp.Property()
     envprop:fromArguments(env)
-    useSuitContext = envprop:check("context")
+    useSuiteContext = envprop:check("context")
 
     -- load the config file and update the environment if available
     local rf = yarp.ResourceFinder()
     rf:setVerbose(false)
-    if useSuitContext then
+    if useSuiteContext then
         rf:setDefaultContext(envprop:find("context"):asString())
     else
         rf:setDefaultContext("RobotTesting")
     end
 
     -- rf:configure(argc, argv);
-    
+
     local property = yarp.Property()
     local paramprop = yarp.Property()
     paramprop:fromArguments(parameter)
@@ -66,7 +66,7 @@ function loadParameters(parameter)
 
         local cfgname = paramprop:find("from"):asString()
         if string.len(cfgname) == 0 then
-            RTF.assertError("Empty value was set for the '--from' property")
+            robottestingframework.assertError("Empty value was set for the '--from' property")
         end
 
         -- loading configuration file indicated by --from
@@ -75,17 +75,17 @@ function loadParameters(parameter)
 
         -- if the config file cannot be found from default context or
         -- there is not any context, use the robotname environment as context
-        if not useSuitContext and not useTestContext
+        if not useSuiteContext and not useTestContext
            and string.len(cfgfile) == 0 and envprop:check("robotname") then
             rf:setContext(envprop:find("robotname"):asString())
             cfgfile = rf:findFileByName(cfgname)
         end
 
         if string.len(cfgfile) == 0 then
-            RTF.assertError("Cannot find configuration file " .. cfgfile)
+            robottestingframework.assertError("Cannot find configuration file " .. cfgfile)
         end
         -- update the properties with environment
-        property:fromConfigFile(cfgfile, envprop);   
+        property:fromConfigFile(cfgfile, envprop);
     else
         property:fromString(parameter);
     end
@@ -96,7 +96,7 @@ end
 --
 -- Testcase startup()
 --
-TestCase.setup = function(parameter)   
+TestCase.setup = function(parameter)
     -- initialize yarp network
     yarp.Network()
 
@@ -104,15 +104,15 @@ TestCase.setup = function(parameter)
     local property = loadParameters(parameter)
 
     if property:check("name") then
-        RTF.setName(property:find("name"):asString())
-    end        
+        robottestingframework.setName(property:find("name"):asString())
+    end
 
-    if not property:check("robot") then RTF.assertError("The robot name must be given as the test parameter!") end
-    if not property:check("part") then RTF.assertError("The part name must be given as the test parameter!") end
-    if not property:check("joints") then RTF.assertError("The joints list must be given as the test parameter!") end
-    if not property:check("min") then RTF.assertError("The joints min position list must be given as the test parameter!") end
-    if not property:check("max") then RTF.assertError("The joints max postion list must be given as the test parameter!") end
-    if not property:check("speed") then RTF.assertError("The joints speed list must be given as the test parameter!") end
+    if not property:check("robot") then robottestingframework.assertError("The robot name must be given as the test parameter!") end
+    if not property:check("part") then robottestingframework.assertError("The part name must be given as the test parameter!") end
+    if not property:check("joints") then robottestingframework.assertError("The joints list must be given as the test parameter!") end
+    if not property:check("min") then robottestingframework.assertError("The joints min position list must be given as the test parameter!") end
+    if not property:check("max") then robottestingframework.assertError("The joints max postion list must be given as the test parameter!") end
+    if not property:check("speed") then robottestingframework.assertError("The joints speed list must be given as the test parameter!") end
 
     part = property:find("part"):asString()
     robot = property:find("robot"):asString()
@@ -120,11 +120,11 @@ TestCase.setup = function(parameter)
     minpos = property:find("min"):asList()
     maxpos = property:find("max"):asList()
     speed = property:find("speed"):asList()
-    if joints == nil then RTF.assertError("joints parameter are not given as a list") end
-    if minpos == nil then RTF.assertError("max parameter are not given as a list") end
-    if maxpos == nil then RTF.assertError("min parameter are not given as a list") end
-    if speed == nil then RTF.assertError("speed parameter are not given as a list") end
-    
+    if joints == nil then robottestingframework.assertError("joints parameter are not given as a list") end
+    if minpos == nil then robottestingframework.assertError("max parameter are not given as a list") end
+    if maxpos == nil then robottestingframework.assertError("min parameter are not given as a list") end
+    if speed == nil then robottestingframework.assertError("speed parameter are not given as a list") end
+
     options = yarp.Property()
     options:put("device", "remote_controlboard")
     options:put("local", "/posiotion-stress/"..part)
@@ -144,38 +144,38 @@ TestCase.setup = function(parameter)
     -- open the driver
     driver = yarp.PolyDriver(options)
     if driver:isValid() == false then
-        RTF.assertError("Cannot open the device")
+        robottestingframework.assertError("Cannot open the device")
     end
 
     -- open the interfaces
     ipos = driver:viewIPositionControl()
-    if ipos == nil then 
+    if ipos == nil then
         driver:close()
-        RTF.assertError("Cannot open the IPositionControl interface")
+        robottestingframework.assertError("Cannot open the IPositionControl interface")
     end
 
     ilimit = driver:viewIControlLimits()
-    if ilimit == nil then 
+    if ilimit == nil then
         driver:close()
-        RTF.assertError("Cannot open the IControlLimits interface")
+        robottestingframework.assertError("Cannot open the IControlLimits interface")
     end
 
     ienc = driver:viewIEncoders()
-    if ienc == nil then 
+    if ienc == nil then
         driver:close()
-        RTF.assertError("Cannot open the IEncoders interface")
+        robottestingframework.assertError("Cannot open the IEncoders interface")
     end
 
     imode = driver:viewIControlMode()
-    if imode == nil then 
+    if imode == nil then
         driver:close()
-        RTF.assertError("Cannot open the IControlMode interface")
+        robottestingframework.assertError("Cannot open the IControlMode interface")
     end
-    
+
     iamp = driver:viewIAmplifierControl()
-    if iamp == nil then 
+    if iamp == nil then
         driver:close()
-        RTF.assertError("Cannot open the IAmplifierControl interface")
+        robottestingframework.assertError("Cannot open the IAmplifierControl interface")
     end
 
     return true
@@ -194,40 +194,40 @@ TestCase.run = function()
         ipos:setPositionMode()
         ipos:setRefSpeed(i, speed:get(i):asInt())
 
-        -- move the joint 
-        RTF.testReport("setting position of joint ".. i.." to min : "..minpos:get(i):asDouble())
-        ipos:positionMove(i, minpos:get(i):asDouble())  
-        yarp.Time_delay(yarp.Random_uniform(2,20)/10.0)        
+        -- move the joint
+        robottestingframework.testReport("setting position of joint ".. i.." to min : "..minpos:get(i):asDouble())
+        ipos:positionMove(i, minpos:get(i):asDouble())
+        yarp.Time_delay(yarp.Random_uniform(2,20)/10.0)
         iamp:getCurrents(amps:data())
-        RTF.testReport("Currents: "..amps:toString(-1, -1))
+        robottestingframework.testReport("Currents: "..amps:toString(-1, -1))
 
-        RTF.testReport("setting position of joint ".. i.." to max : "..maxpos:get(i):asDouble())
+        robottestingframework.testReport("setting position of joint ".. i.." to max : "..maxpos:get(i):asDouble())
         ipos:positionMove(i, maxpos:get(i):asDouble())
         yarp.Time_delay(yarp.Random_uniform(2,20)/10.0)
         iamp:getCurrents(amps:data())
-        RTF.testReport("Currents: "..amps:toString(-1, -1))
+        robottestingframework.testReport("Currents: "..amps:toString(-1, -1))
 
-        RTF.testReport("setting position of joint ".. i.." to home : "..home)
+        robottestingframework.testReport("setting position of joint ".. i.." to home : "..home)
         ipos:positionMove(i, home)
         yarp.Time_delay(yarp.Random_uniform(2,20)/10.0)
         iamp:getCurrents(amps:data())
-        RTF.testReport("Currents: "..amps:toString(-1, -1))
+        robottestingframework.testReport("Currents: "..amps:toString(-1, -1))
 
         -- checking control mode
         local ret = imode:getControlModes(modes)
-        RTF.testCheck(ret, "Getting the control mode")
+        robottestingframework.testCheck(ret, "Getting the control mode")
         local mode_msg = ""
         local all_mode_pos = true
         for i=0,axes-1 do
             all_mode_pos = all_mode_pos and (yarp.Vocab_decode(modes[i]) == "pos")
             mode_msg = mode_msg .. yarp.Vocab_decode(modes[i]) .. " "
         end
-        RTF.testReport("Control Modes ("..mode_msg..")")
+        robottestingframework.testReport("Control Modes ("..mode_msg..")")
         if not all_mode_pos then
-            RTF.assertFail("some of the joints went in idle/hardware fault!")
-        end 
-    end 
-    RTF.testReport("")
+            robottestingframework.assertFail("some of the joints went in idle/hardware fault!")
+        end
+    end
+    robottestingframework.testReport("")
 end
 
 
@@ -235,7 +235,7 @@ end
 -- TestCase tearDown
 --
 TestCase.tearDown = function()
-    RTF.testReport("Tearing down...")
+    robottestingframework.testReport("Tearing down...")
     driver:close()
     yarp.Network_fini()
 end

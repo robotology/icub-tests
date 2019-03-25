@@ -21,15 +21,18 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-set(PROJECTNAME ControlModes)
-project(${PROJECTNAME})
+project(ControlModes)
 
-rtf_add_plugin(${PROJECT_NAME} HEADERS ControlModes.h
-                               SOURCES ControlModes.cpp)
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
-               ${YARP_LIBRARIES} YARP::YARP_rtf)
+robottestingframework_add_plugin(${PROJECT_NAME} HEADERS ControlModes.h
+                                                 SOURCES ControlModes.cpp)
 
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_robottestingframework)
+
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)

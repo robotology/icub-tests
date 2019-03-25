@@ -21,7 +21,7 @@
 #ifndef _IKINIDYNCONSISTENCYTEST_H_
 #define _IKINIDYNCONSISTENCYTEST_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 
 #include <yarp/sig/Matrix.h>
 
@@ -35,7 +35,7 @@ namespace iDyn
 }
 }
 
-class iKiniDynConsistencyTest : public RTF::TestCase  {
+class iKiniDynConsistencyTest : public robottestingframework::TestCase  {
 private:
     yarp::sig::Vector q_head, q_torso, q_larm, q_rarm, q_lleg, q_rleg;
     iCub::iKin::iCubArm ikin_larm, ikin_rarm;

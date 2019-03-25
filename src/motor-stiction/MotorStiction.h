@@ -23,7 +23,7 @@
 
 #include <string>
 #include <vector>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -44,7 +44,7 @@ class stiction_data
     stiction_data() {jnt=0; cycle=0; pos_test_passed=false; neg_test_passed=false; pos_opl=0; neg_opl=0;}
 };
 
-class MotorStiction : public yarp::rtf::TestCase
+class MotorStiction : public yarp::robottestingframework::TestCase
 {
 public:
     MotorStiction();
@@ -61,10 +61,10 @@ public:
     void setModeSingle(int i, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
-    
+
     //ok if the joints moves of 5 degrees
     void OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotList, stiction_data& current_test, bool positive_sign);
-    
+
     //ok if the joint reaches the hardware limit
     void OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlotList, stiction_data& current_test, bool positive_sign);
 

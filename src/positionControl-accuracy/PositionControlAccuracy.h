@@ -22,7 +22,7 @@
 #define _POSITIONACCURACY_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -52,7 +52,7 @@
 *
 */
 
-class PositionControlAccuracy : public yarp::rtf::TestCase {
+class PositionControlAccuracy : public yarp::robottestingframework::TestCase {
 public:
     PositionControlAccuracy();
     virtual ~PositionControlAccuracy();
@@ -94,7 +94,7 @@ private:
     double m_home_tolerance;
     double m_step_duration;
     yarp::dev::Pid m_orig_pid;
-    yarp::dev::Pid m_new_pid;    
+    yarp::dev::Pid m_new_pid;
 };
 
 #endif

@@ -22,7 +22,7 @@
 #define _TORQUEACCURACY_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -49,7 +49,7 @@
 *
 */
 
-class TorqueControlAccuracy : public yarp::rtf::TestCase {
+class TorqueControlAccuracy : public yarp::robottestingframework::TestCase {
 public:
     TorqueControlAccuracy();
     virtual ~TorqueControlAccuracy();

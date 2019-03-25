@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Encoders Test Suit">
+<suite name="Encoders Test Suite">
     <description> Testing encoders</description>
     <environment>--robotname icub</environment>
 
@@ -17,4 +17,4 @@
     <test type="dll" param="--from motorEncoderConsistency_torso.ini">     MotorEncodersConsistency </test>
     <test type="dll" param="--from motorEncodersConsistency_face.ini">     MotorEncodersConsistency </test> 
     <test type="dll" param="--from motorEncodersConsistency_head.ini">     MotorEncodersConsistency </test> 
-</suit>
+</suite>

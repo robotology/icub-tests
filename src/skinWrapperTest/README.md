@@ -6,5 +6,5 @@ component after its cleaning and after the removal of AnalogServer from icub-mai
 
 Usage
 -----
-`testrunner -v -s /icub-tests/suits/skinWrapper-YarpPluginFixture.xml`
+`robottestingframework-testrunner -v -s /icub-tests/suites/skinWrapper-YarpPluginFixture.xml`
 

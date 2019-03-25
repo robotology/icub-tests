@@ -21,7 +21,7 @@
 #ifndef _CARTESIANCONTROLREACHINGTOLERANCE_H_
 #define _CARTESIANCONTROLREACHINGTOLERANCE_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -37,7 +37,7 @@
 * |     robot      | string |   -   |    icubSim    |    No    |   robot name  |   -   |
 * |    arm-type    | string |   -   |      left     |    No    | left or right |   -   |
 */
-class CartesianControlReachingToleranceTest : public yarp::rtf::TestCase
+class CartesianControlReachingToleranceTest : public yarp::robottestingframework::TestCase
 {
     yarp::dev::PolyDriver drvCart;
     yarp::dev::PolyDriver drvJoint;

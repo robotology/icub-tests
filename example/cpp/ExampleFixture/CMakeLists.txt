@@ -21,25 +21,25 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-# set the project name
-set(PROJECTNAME ExampleFixture)
-project(${PROJECTNAME})
+project(ExampleFixture)
 
 # add the required cmake packages
-find_package(RTF 1.1 COMPONENTS DLL)
-find_package(YARP)
-
-# add required libraries 
-link_libraries(${RTF_LIBRARIES}
-               ${YARP_LIBRARIES} YARP::YARP_rtf)
+find_package(RobotTestingFramework 1.6.51 COMPONENTS DLL)
+find_package(YARP 3.1.100 COMPONENTS OS robottestingframework)
 
 # add the source codes to build the plugin library
-add_library(${PROJECTNAME} MODULE ExampleFixture.h
-                                  ExampleFixture.cpp)
+add_library(${PROJECT_NAME} MODULE ExampleFixture.h
+                                   ExampleFixture.cpp)
+
+# add required libraries
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_robottestingframework)
 
 # set the installation options
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)
-

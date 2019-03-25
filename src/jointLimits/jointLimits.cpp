@@ -19,8 +19,8 @@
  */
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
@@ -32,15 +32,15 @@
 
 #include <stdio.h>
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::math;
 
 // prepare the plugin
-PREPARE_PLUGIN(JointLimits)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(JointLimits)
 
-JointLimits::JointLimits() : yarp::rtf::TestCase("JointLimits") {
+JointLimits::JointLimits() : yarp::robottestingframework::TestCase("JointLimits") {
     jointsList=0;
     dd=0;
     ipos=0;
@@ -60,39 +60,39 @@ bool JointLimits::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"),       "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"),        "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"),      "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),        "The home position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("speed"),       "The positionMove reference speed must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("outOfBoundPosition"), "The outOfBoundPosition parameter must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputLimitPercent"),  "The outputLimitPercent must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "  The max error tolerance must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"),       "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"),        "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"),      "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("home"),        "The home position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("speed"),       "The positionMove reference speed must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("outOfBoundPosition"), "The outOfBoundPosition parameter must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("outputLimitPercent"),  "The outputLimitPercent must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "  The max error tolerance must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
     char buff[500];
     sprintf(buff, "setting up test for %s", partName.c_str());
-    RTF_TEST_REPORT(buff);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
 
     Bottle* speedBottle = property.find("speed").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(speedBottle!=0,"unable to parse speed parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(speedBottle!=0,"unable to parse speed parameter");
 
     Bottle* outOfBoundPosition = property.find("outOfBoundPosition").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(outOfBoundPosition != 0, "unable to parse outOfBoundPosition parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(outOfBoundPosition != 0, "unable to parse outOfBoundPosition parameter");
 
     Bottle* outputLimitBottle = property.find("outputLimitPercent").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(outputLimitBottle!=0,"unable to parse speed parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(outputLimitBottle!=0,"unable to parse speed parameter");
 
     tolerance = property.find("tolerance").asDouble();
-    RTF_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
 
     Bottle* toleranceListBottle = property.find("toleranceList").asList(); //optional param
 
@@ -102,21 +102,21 @@ bool JointLimits::setup(yarp::os::Property& property) {
     options.put("local", "/jointsLimitsTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ilim),"Unable to open limits interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ilim),"Unable to open limits interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     int n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
     enc_jnt.resize(n_part_joints);
@@ -126,14 +126,14 @@ bool JointLimits::setup(yarp::os::Property& property) {
     home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
     speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
     outputLimit.resize(n_cmd_joints);for (int i=0; i< n_cmd_joints; i++) outputLimit[i]=outputLimitBottle->get(i).asDouble();
-    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asDouble(); RTF_ASSERT_ERROR_IF_FALSE(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
+    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asDouble(); ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
     toleranceList.resize(n_cmd_joints);
     for (int i = 0; i < n_cmd_joints; i++)
-    { 
+    {
         if(toleranceListBottle)
         {
-            toleranceList[i] = toleranceListBottle->get(i).asDouble(); 
-            RTF_ASSERT_ERROR_IF_FALSE(toleranceList[i] >= 0 , "toleranceList must be > 0");
+            toleranceList[i] = toleranceListBottle->get(i).asDouble();
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(toleranceList[i] >= 0 , "toleranceList must be > 0");
         }
         else
             toleranceList[i] = tolerance;
@@ -145,9 +145,9 @@ bool JointLimits::setup(yarp::os::Property& property) {
         ipid->getPid(yarp::dev::PidControlTypeEnum::VOCAB_PIDTYPE_POSITION, (int)jointsList[i],&original_pids[i]);
     }
     pids_saved=true;
-    
+
     for (unsigned int i=0; i<jointsList.size(); i++)
-    { 
+    {
         yarp::dev::Pid p = original_pids[i];
         p.max_output = p.max_output/100*outputLimit[i];
         p.max_int =    p.max_int/100*outputLimit[i];
@@ -163,7 +163,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
             fabs(t.kd-p.kd) > 1.0 ||
             fabs(t.ki-p.ki) > 1.0)
         {
-            RTF_ASSERT_ERROR("Unable to set output limits");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Unable to set output limits");
         }
 
     }
@@ -211,7 +211,7 @@ void JointLimits::setMode(int desired_mode)
         if (ok==jointsList.size()) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Unable to set control mode/interaction mode");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Unable to set control mode/interaction mode");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -239,7 +239,7 @@ void JointLimits::goTo(yarp::sig::Vector position)
         if (in_position==jointsList.size()) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching desired position");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while reaching desired position");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -300,13 +300,13 @@ bool JointLimits::goToSingleExceed(int i, double position_to_reach, double limit
         if(fabs(tmp - limitToCheck)>toleranceList[i])
         {
             excededLimit = true;
-            //RTF_TEST_REPORT (Asserter::format("j %d exced limitTocheck %f: reached %f",(int)jointsList[i],  limitToCheck, tmp));
+            //ROBOTTESTINGFRAMEWORK_TEST_REPORT (Asserter::format("j %d exced limitTocheck %f: reached %f",(int)jointsList[i],  limitToCheck, tmp));
             break;
         }
         if (fabs(tmp - position_to_reach)<toleranceList[i])
         {
             excededLimit = true;
-            //RTF_TEST_REPORT (Asserter::format("j %d is near position_to_reach %f: reached %f",(int)jointsList[i],  position_to_reach, tmp));
+            //ROBOTTESTINGFRAMEWORK_TEST_REPORT (Asserter::format("j %d is near position_to_reach %f: reached %f",(int)jointsList[i],  position_to_reach, tmp));
             break;
         }
 
@@ -342,17 +342,17 @@ void JointLimits::run()
 {
     char buff[500];
     setMode(VOCAB_CM_POSITION);
-    RTF_TEST_REPORT("all joints are going to home....");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("all joints are going to home....");
     goTo(home);
 
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
         ilim->getLimits((int)jointsList[i],&min_lims[i],&max_lims[i]);
-        RTF_ASSERT_ERROR_IF_FALSE(max_lims[i]!=min_lims[i],"Invalid limit: max==min?");
-        RTF_ASSERT_ERROR_IF_FALSE(max_lims[i]>min_lims[i],"Invalid limit: max<min?");
-        if (max_lims[i] == 0 && min_lims[i] == 0) RTF_ASSERT_ERROR("Invalid limit: max==min==0");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(max_lims[i]!=min_lims[i],"Invalid limit: max==min?");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(max_lims[i]>min_lims[i],"Invalid limit: max<min?");
+        if (max_lims[i] == 0 && min_lims[i] == 0) ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid limit: max==min==0");
     }
-    
+
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
         bool res;
@@ -360,65 +360,65 @@ void JointLimits::run()
         double excededpos_reached = 0;
 
     //1) Check max limit
-        sprintf(buff,"Testing if max limit is reachable, joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);RTF_TEST_REPORT(buff);
+        sprintf(buff,"Testing if max limit is reachable, joint %d, max limit: %f",(int)jointsList[i],max_lims[i]);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         //check that max_limit is reachable
         res = goToSingle(i, max_lims[i], &reached_pos);
-        RTF_TEST_CHECK (res, Asserter::format("joint %d moved to max limit: %f reached: %f",  (int)jointsList[i], max_lims[i], reached_pos));
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK (res, Asserter::format("joint %d moved to max limit: %f reached: %f",  (int)jointsList[i], max_lims[i], reached_pos));
         //if(!res)
         //{
         //    goToSingle(i,home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
-        //    sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", max_lims[i], reached_pos);RTF_ASSERT_ERROR(buff);
+        //    sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", max_lims[i], reached_pos);ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         //}
-        //else { sprintf(buff, "Test successfull, joint %d, max limit: %f reached: %f", (int)jointsList[i], max_lims[i], reached_pos); RTF_TEST_REPORT(buff); }
-        
+        //else { sprintf(buff, "Test successfull, joint %d, max limit: %f reached: %f", (int)jointsList[i], max_lims[i], reached_pos); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff); }
+
     //2) check that max_limit + outOfBoundPos is NOT reachable
-        sprintf(buff, "Testing that max limit cannot be exceeded, joint %d, max limit: %f", (int)jointsList[i], max_lims[i]); RTF_TEST_REPORT(buff);
+        sprintf(buff, "Testing that max limit cannot be exceeded, joint %d, max limit: %f", (int)jointsList[i], max_lims[i]); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         res = goToSingleExceed(i, max_lims[i] + outOfBoundPos[i], max_lims[i], reached_pos, &excededpos_reached);
-        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced max limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], max_lims[i] + outOfBoundPos[i], excededpos_reached, max_lims[i]));
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced max limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], max_lims[i] + outOfBoundPos[i], excededpos_reached, max_lims[i]));
         //if (res)
         //{
         //    goToSingle(i, home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
-        //    sprintf(buff, "Limit execeeded! Limit was (%.2f). Reached pos=%.2f", max_lims[i], reached_pos); RTF_ASSERT_ERROR(buff);
+        //    sprintf(buff, "Limit execeeded! Limit was (%.2f). Reached pos=%.2f", max_lims[i], reached_pos); ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         //}
-        //else { sprintf(buff, "Test successfull, joint %d, target was: %f reached: %f, limit %f ", (int)jointsList[i], max_lims[i] + outOfBoundPos[i], reached_pos, max_lims[i]); RTF_TEST_REPORT(buff); }
+        //else { sprintf(buff, "Test successfull, joint %d, target was: %f reached: %f, limit %f ", (int)jointsList[i], max_lims[i] + outOfBoundPos[i], reached_pos, max_lims[i]); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff); }
 
     //3) Check min limit
         //check that min_limit is reachable
-        sprintf(buff,"Testing if min limit is reachable, joint %d, min limit: %f",(int)jointsList[i],min_lims[i]);RTF_TEST_REPORT(buff);
+        sprintf(buff,"Testing if min limit is reachable, joint %d, min limit: %f",(int)jointsList[i],min_lims[i]);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         res = goToSingle(i, min_lims[i], &reached_pos);
-        RTF_TEST_CHECK (res, Asserter::format("joint %d moved to min limit: %f reached: %f",  (int)jointsList[i], min_lims[i], reached_pos));
-        
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK (res, Asserter::format("joint %d moved to min limit: %f reached: %f",  (int)jointsList[i], min_lims[i], reached_pos));
+
         /*if(!res)
         {
             goToSingle(i,home[i], NULL);
-            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", min_lims[i], reached_pos);RTF_ASSERT_ERROR(buff);
+            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", min_lims[i], reached_pos);ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         }
-        else { sprintf(buff, "Test successfull, joint %d, min limit: %f reached: %f", (int)jointsList[i], min_lims[i], reached_pos); RTF_TEST_REPORT(buff); }*/
-        
+        else { sprintf(buff, "Test successfull, joint %d, min limit: %f reached: %f", (int)jointsList[i], min_lims[i], reached_pos); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff); }*/
+
     //4) check that min_limit - outOfBoundPos is NOT reachable
-        sprintf(buff, "Testing that min limit cannot be exceeded, joint %d, min limit: %f", (int)jointsList[i], min_lims[i]); RTF_TEST_REPORT(buff);
+        sprintf(buff, "Testing that min limit cannot be exceeded, joint %d, min limit: %f", (int)jointsList[i], min_lims[i]); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         res = goToSingleExceed(i, min_lims[i] - outOfBoundPos[i], min_lims[i], reached_pos, & excededpos_reached);
-        RTF_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced min limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], min_lims[i] - outOfBoundPos[i], excededpos_reached, min_lims[i]));
-        
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK (!res, Asserter::format("check if joint %d desn't exced min limit. target was: %f reached: %f, limit %f ",  (int)jointsList[i], min_lims[i] - outOfBoundPos[i], excededpos_reached, min_lims[i]));
+
         //if (res)
         //{
         //    goToSingle(i, home[i], NULL); //I need to go to home in order to leave joint in safe position for further tests (other body parts)
-        //    sprintf(buff, "Limit execeeded! Limit was (%.2f). Reached pos=%.2f", min_lims[i], reached_pos); RTF_ASSERT_ERROR(buff);
+        //    sprintf(buff, "Limit execeeded! Limit was (%.2f). Reached pos=%.2f", min_lims[i], reached_pos); ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         //}
-        //else { sprintf(buff, "Test successfull, joint %d, target was: %f reached: %f, limit %f ", (int)jointsList[i], min_lims[i] - outOfBoundPos[i], reached_pos, min_lims[i]); RTF_TEST_REPORT(buff); }
+        //else { sprintf(buff, "Test successfull, joint %d, target was: %f reached: %f, limit %f ", (int)jointsList[i], min_lims[i] - outOfBoundPos[i], reached_pos, min_lims[i]); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff); }
 
     //5) Check home position
-        sprintf(buff,"Testing joint %d, homing to: %f",(int)jointsList[i],home[i]);RTF_TEST_REPORT(buff);
+        sprintf(buff,"Testing joint %d, homing to: %f",(int)jointsList[i],home[i]);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         res = goToSingle(i, home[i], &reached_pos);
         if(!res)
         {
-            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", home[i], reached_pos);RTF_ASSERT_ERROR(buff);
+            sprintf(buff, "Timeout while reaching desired position(%.2f). Reached pos=%.2f", home[i], reached_pos);ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         }
-        else{ sprintf(buff, "Homing joint %d complete", (int)jointsList[i]); RTF_TEST_REPORT(buff); }
+        else{ sprintf(buff, "Homing joint %d complete", (int)jointsList[i]); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff); }
 
     }
     ienc->getEncoders(enc_jnt.data());
-    RTF_TEST_REPORT("Test ends. All joints are going to home....");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Test ends. All joints are going to home....");
     goTo(home);
     yarp::os::Time::delay(2.0);
 }

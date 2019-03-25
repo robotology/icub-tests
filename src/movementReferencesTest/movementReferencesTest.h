@@ -21,14 +21,14 @@
 #ifndef _MOVEMENTREFERNCESTEST_
 #define _MOVEMENTREFERNCESTEST_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 
 #include <yarp/os/Value.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include "yarp/rtf/JointsPosMotion.h"
+#include "yarp/robottestingframework/JointsPosMotion.h"
 
 /**
 * \ingroup icub-tests
@@ -53,7 +53,7 @@
 * | refacc         | vector of doubles of size joints | deg/s^2 | - | No | For each joint the reference acceleration value to set in the low level trajectory generator. | |
 *
 */
-class MovementReferencesTest : public yarp::rtf::TestCase {
+class MovementReferencesTest : public yarp::robottestingframework::TestCase {
 public:
     MovementReferencesTest();
     virtual ~MovementReferencesTest();
@@ -75,19 +75,19 @@ private:
     yarp::dev::IPositionDirect *iPosDirect;
     yarp::dev::IControlMode *iControlMode;
     yarp::dev::IVelocityControl *iVelocity;
-    
-    
-    
+
+
+
     bool initialized;
     std::string robotName;
     std::string partName;
 
     int numJointsInPart;
     int numJoints;
-    yarp::rtf::jointsPosMotion *jPosMotion;
+    yarp::robottestingframework::jointsPosMotion *jPosMotion;
     yarp::sig::Vector jointsList;
     int *jList;
-    
+
     yarp::sig::Vector targetPos;
     yarp::sig::Vector homePos;
     yarp::sig::Vector refVel;

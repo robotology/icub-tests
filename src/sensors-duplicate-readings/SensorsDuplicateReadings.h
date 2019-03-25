@@ -21,7 +21,7 @@
 #ifndef _SENSORSDUPLICATEREADINGS_H_
 #define _SENSORSDUPLICATEREADINGS_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Vector.h>
 #include <vector>
@@ -85,7 +85,7 @@ private:
  *
  *
  */
-class SensorsDuplicateReadings : public yarp::rtf::TestCase {
+class SensorsDuplicateReadings : public yarp::robottestingframework::TestCase {
 public:
     SensorsDuplicateReadings();
     virtual ~SensorsDuplicateReadings();

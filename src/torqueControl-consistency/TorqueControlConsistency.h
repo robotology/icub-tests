@@ -22,11 +22,11 @@
 #define _TORQUECONTORLCONSISTENCY_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-class TorqueControlConsistency : public yarp::rtf::TestCase {
+class TorqueControlConsistency : public yarp::robottestingframework::TestCase {
 public:
     TorqueControlConsistency();
     virtual ~TorqueControlConsistency();
@@ -57,7 +57,7 @@ private:
     int    n_part_joints;
     int    n_cmd_joints;
     enum cmd_mode_t
-    { 
+    {
       single_joint = 0,
       all_joints = 1,
       some_joints =2

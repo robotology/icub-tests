@@ -22,7 +22,7 @@
 #define _OPTICALENCODERSCONSISTENCY_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -30,7 +30,7 @@
 
 /**
 * \ingroup icub-tests
-* This tests checks if the motor encoder reading are consistent with the joint encoder readings. 
+* This tests checks if the motor encoder reading are consistent with the joint encoder readings.
 * Since the two sensors may be placed in different places, with gearboxes or tendon transmissions in between, a (signed) factor is needed to convert the two measurements.
 * The test performes a cyclic movement between two reference positions (min and max) and collects data from both the encoders during the movement.
 * The test generates four text data files, which are subsequently opened to generate plots. In all figures the joint and motor plots need to be reasonably aligned.
@@ -44,7 +44,7 @@
 * with kinematic_mj the joints coupling matrix and gearbox the gearbox reduction factor (e.g. 1:100)
 
 * Example: testRunner v -t motorEncodersConsistency.dll -p "--robot icub --part left_arm --joints ""(0 1 2)"" --home ""(-30 30 10)"" --speed ""(20 20 20)"" --max ""(-20 40 20)"" --min ""(-40 20 0)"" --cycles 10 --tolerance 1.0 "
-* Example: testRunner v -s "..\icub-tests\suits\encoders-icubSim.xml"
+* Example: testRunner v -s "..\icub-tests\suites\encoders-icubSim.xml"
 
 * Check the following functions:
 * \li IEncoders::getEncoders()
@@ -77,7 +77,7 @@
 
 *
 */
-class OpticalEncodersConsistency : public yarp::rtf::TestCase {
+class OpticalEncodersConsistency : public yarp::robottestingframework::TestCase {
 public:
     OpticalEncodersConsistency();
     virtual ~OpticalEncodersConsistency();

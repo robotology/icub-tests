@@ -22,7 +22,7 @@
 #define _POSITIONACCURACYEXTERNALPID_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 //#include <iCub/ctrl/math.h>
@@ -59,7 +59,7 @@
 *
 */
 
-class PositionControlAccuracyExernalPid : public yarp::rtf::TestCase {
+class PositionControlAccuracyExernalPid : public yarp::robottestingframework::TestCase {
 public:
     PositionControlAccuracyExernalPid();
     virtual ~PositionControlAccuracyExernalPid();

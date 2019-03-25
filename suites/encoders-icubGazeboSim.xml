@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Encoders Test Suit">
+<suite name="Encoders Test Suite">
     <description> Testing encoders</description>
     <environment>--robotname icubSim</environment>
 
@@ -9,5 +9,5 @@
     <test type="dll" param="--from optical_encoders_consistency_left_leg.ini">  MotorEncodersConsistency </test>
     <test type="dll" param="--from optical_encoders_consistency_right_leg.ini"> MotorEncodersConsistency </test>
     <test type="dll" param="--from optical_encoders_consistency_torso.ini">     MotorEncodersConsistency </test>
-</suit>
+</suite>
 
