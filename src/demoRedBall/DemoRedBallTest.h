@@ -21,7 +21,7 @@
 #include <string>
 #include <yarp/rtf/TestCase.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/CartesianControl.h>
@@ -66,7 +66,7 @@ class DemoRedBallTest : public yarp::rtf::TestCase
     yarp::dev::IEncoders         *ienc;
     } arm_under_test;
 
-    yarp::os::RateThread *redBallPos;
+    yarp::os::PeriodicThread *redBallPos;
     void testBallPosition(const yarp::sig::Vector &pos);
 
 public:

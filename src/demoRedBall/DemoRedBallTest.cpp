@@ -41,7 +41,7 @@ PREPARE_PLUGIN(DemoRedBallTest)
 
 
 /***********************************************************************************/ 
-class DemoRedBallPosition : public RateThread
+class DemoRedBallPosition : public PeriodicThread
 {
     string name;    
     IGazeControl *igaze;
@@ -95,7 +95,7 @@ public:
     DemoRedBallPosition(const string &name_,
                         PolyDriver &driver,
                         const string &eye_) :
-                        RateThread(100), name(name_),
+                        PeriodicThread(0.1), name(name_),
                         eye(eye_), pos(4,0.0),
                         visible(false)
     {
