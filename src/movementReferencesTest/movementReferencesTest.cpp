@@ -45,7 +45,7 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     iPosition=NULL;
     iPosDirect=NULL;
     iControlMode=NULL;
-    iVelocity2=NULL;
+    iVelocity=NULL;
     initialized=false;
 
     if(config.check("name"))
@@ -77,7 +77,7 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode),"Unable to open control mode interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPWM), "Unable to open PWM interface");
     RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosDirect),"Unable to open OpnLoop interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity2),"Unable to open velocity2 interface");
+    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity),"Unable to open velocity2 interface");
     
 
 
@@ -237,7 +237,7 @@ void MovementReferencesTest::run() {
     if(refAcc.size() != 0)
     {
         RTF_TEST_REPORT("setting acceleration refs for all joints...");
-        RTF_TEST_FAIL_IF_FALSE(iVelocity2->setRefAccelerations(numJoints, jList, refAcc.data()),
+        RTF_TEST_FAIL_IF_FALSE(iVelocity->setRefAccelerations(numJoints, jList, refAcc.data()),
                 Asserter::format("setting reference acceleration on joints"));
     }
 
@@ -369,11 +369,11 @@ yarp::os::Time::delay(0.5);
 
         double vel= 0.5;
         double rec_vel;
-        RTF_TEST_FAIL_IF_FALSE(iVelocity2->velocityMove(jList[i], vel),
+        RTF_TEST_FAIL_IF_FALSE(iVelocity->velocityMove(jList[i], vel),
                Asserter::format(("IVelocity:velocityMove for j %d"),jList[i]));
 
 yarp::os::Time::delay(0.5);
-        RTF_TEST_FAIL_IF_FALSE(iVelocity2->getRefVelocity(jList[i], &rec_vel),
+        RTF_TEST_FAIL_IF_FALSE(iVelocity->getRefVelocity(jList[i], &rec_vel),
                Asserter::format(("IVelocity:getting target velocity for j %d"),jList[i]));
         res = yarp::rtf::TestAsserter::isApproxEqual(vel, rec_vel, res_th, res_th);
         RTF_TEST_CHECK(res,

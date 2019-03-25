@@ -21,11 +21,11 @@
 
 /**
 * \ingroup icub-tests
-* Check IPositionControl, IVelocityControl2, IPWMControl, IPositionDirect.
+* Check IPositionControl, IVelocityControl, IPWMControl, IPositionDirect.
 *
 * Check the following functions:
 * \li IPositionControl::getPositionTarget()
-* \li IVelocityControl2::getRefVelocity()
+* \li IVelocityControl::getRefVelocity()
 * \li IPositionDirect::getRefPosition()
 * \li IPWMControl::getRefDutyCycle()
 *
@@ -63,7 +63,7 @@ private:
     yarp::dev::IPWMControl *iPWM;
     yarp::dev::IPositionDirect *iPosDirect;
     yarp::dev::IControlMode *iControlMode;
-    yarp::dev::IVelocityControl2 *iVelocity2;
+    yarp::dev::IVelocityControl *iVelocity;
     
     
     
