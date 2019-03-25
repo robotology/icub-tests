@@ -9,8 +9,6 @@ endif()
 # set the project name
 project(CartesianControlSimpleP2pMovementTest)
 
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)
 
