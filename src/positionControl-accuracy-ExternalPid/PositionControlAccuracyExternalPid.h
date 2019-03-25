@@ -77,7 +77,7 @@ private:
     yarp::os::Bottle      m_dataToSave;
 
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IPositionControl2 *ipos;
+    yarp::dev::IPositionControl *ipos;
     yarp::dev::IControlMode2     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;

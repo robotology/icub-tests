@@ -116,7 +116,6 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
 
     RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iEncoders), "cannot view iEncoder");
     RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition), "cannot view iPosition");
-    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition2), "cannot view iPosition2");
 
     return true;
 }
@@ -274,13 +273,13 @@ void MotorTest::run() {
         jmap[kk]=m_NumJoints-kk-1;
     }
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition2->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
+    RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
             "setting reference speed on all joints using group interface");
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition2->positionMove(m_NumJoints, jmap, swapped_target),
+    RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(m_NumJoints, jmap, swapped_target),
             "moving all joints to home using group interface");
 
-    ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
+    ret=iPosition->checkMotionDone(m_NumJoints, jmap, &doneAll);
     RTF_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     timeStart=yarp::os::Time::now();
@@ -306,7 +305,7 @@ void MotorTest::run() {
         bool ret=false;
 
         while(times>0 && !doneAll) {
-            ret=iPosition2->checkMotionDone(m_NumJoints, jmap, &doneAll);
+            ret=iPosition->checkMotionDone(m_NumJoints, jmap, &doneAll);
             if (!doneAll)
                 yarp::os::Time::delay(0.1);
             times--;
