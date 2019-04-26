@@ -10,6 +10,7 @@
 
 #include <rtf/TestAssert.h>
 #include <rtf/dll/Plugin.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 #include <fstream>
