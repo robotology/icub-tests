@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Motor Control Suite">
+<suite name="Motor Control Suite">
     <description>Testing robot motors</description>
     <environment>--robotname icub --context icubEth</environment>
     <!--fixture param="--fixture icub-fixture.xml"> yarpmanager </fixture-->
@@ -14,4 +14,4 @@
     <test type="dll" param="--from joint_limits_head.ini"> JointLimits </test> 
     <!-- only for robot with mc4plus on forearm use following test 
     <test type="dll" param="--from joint_limits_left_forearm.ini"> JointLimits </test>-->
-</suit>
+</suite>

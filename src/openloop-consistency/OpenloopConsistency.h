@@ -22,11 +22,11 @@
 #define _OPENLOOPCONSISTENCY_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-class OpenLoopConsistency : public yarp::rtf::TestCase {
+class OpenLoopConsistency : public yarp::robottestingframework::TestCase {
 public:
     OpenLoopConsistency();
     virtual ~OpenLoopConsistency();

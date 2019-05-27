@@ -21,7 +21,7 @@
 #ifndef _CARTESIANCONTROLSIMPLEP2PMOVEMENT_H_
 #define _CARTESIANCONTROLSIMPLEP2PMOVEMENT_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -36,7 +36,7 @@
 * |     robot      | string |   -   |    icubSim    |    No    |   robot name  |   -   |
 * |    arm-type    | string |   -   |      left     |    No    | left or right |   -   |
 */
-class CartesianControlSimpleP2pMovementTest : public yarp::rtf::TestCase
+class CartesianControlSimpleP2pMovementTest : public yarp::robottestingframework::TestCase
 {
     yarp::dev::PolyDriver driver;
 

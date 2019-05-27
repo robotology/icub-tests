@@ -33,8 +33,8 @@ google-chrome --user-data-dir=.G4 --window-size=$((w / 2 - 5)),$((h / 2 - 5)) --
 dt=`date +%Y-%m-%d`
 tm=`date +"%T"`
 mkdir -p $dt
-testrunner -w --web-port 8080 -o $dt/camera-icubSim_$tm.log   -s $ICUB_TESTS_ROOT/suits/camera-icubSim.xml
-#testrunner -w --web-port 8081 -o $dt/basics-icubSim_$tm.log   -s $ICUB_TESTS_ROOT/suits/basics-icubSim.xml
-#testrunner -w --web-port 8082 -o $dt/motors-icubSim_$tm.log   -s $ICUB_TESTS_ROOT/suits/motors-icubSim.xml
-#testrunner -w --web-port 8083 -o $dt/encoders-icubSim_$tm.log -s $ICUB_TESTS_ROOT/suits/encoders-icubSim.xml
+robottestingframework-testrunner -w --web-port 8080 -o $dt/camera-icubSim_$tm.log   -s $ICUB_TESTS_ROOT/suites/camera-icubSim.xml
+#robottestingframework-testrunner -w --web-port 8081 -o $dt/basics-icubSim_$tm.log   -s $ICUB_TESTS_ROOT/suites/basics-icubSim.xml
+#robottestingframework-testrunner -w --web-port 8082 -o $dt/motors-icubSim_$tm.log   -s $ICUB_TESTS_ROOT/suites/motors-icubSim.xml
+#robottestingframework-testrunner -w --web-port 8083 -o $dt/encoders-icubSim_$tm.log -s $ICUB_TESTS_ROOT/suites/encoders-icubSim.xml
 

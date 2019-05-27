@@ -21,21 +21,21 @@
 -- to invoke the corresponding methods:
 --
 -- TestCase.setup = function(options) ... return true end
--- TestCase.run = function() ... end 
--- TestCase.tearDown = function() ... end 
+-- TestCase.run = function() ... end
+-- TestCase.tearDown = function() ... end
 --
--- The following methods are for reporting, failures or assertions: 
+-- The following methods are for reporting, failures or assertions:
 --
--- RTF.setName(name)             : sets the test name (defualt is the test filename)
--- RTF.testReport(msg)           : reports a informative message
--- RTF.testCheck(condition, msg) : reports a failure message
--- RTF.assertError(msg)          : throws an error exception with message
--- RTF.asserFail(msg)            : throws a failure exception with message
--- RTF.getEnvironment()          : returns the test environment params
+-- robottestingframework.setName(name)             : sets the test name (defualt is the test filename)
+-- robottestingframework.testReport(msg)           : reports a informative message
+-- robottestingframework.testCheck(condition, msg) : reports a failure message
+-- robottestingframework.assertError(msg)          : throws an error exception with message
+-- robottestingframework.asserFail(msg)            : throws a failure exception with message
+-- robottestingframework.getEnvironment()          : returns the test environment params
 --
 
 --
--- setup is called before the test's run to setup 
+-- setup is called before the test's run to setup
 -- the user defined fixture
 -- @return Boolean (true/false uppon success or failure)
 --
@@ -48,44 +48,44 @@ function runRemoteCommand(host, cmd)
     return output
 end
 
-function checkPriorityLimits(host) 
-    RTF.testReport("Testing process hard priority limits (99)")
+function checkPriorityLimits(host)
+    robottestingframework.testReport("Testing process hard priority limits (99)")
     local result = runRemoteCommand(host, "ulimit -r")
     if result:len() == 0 then
-        RTF.testCheck(result:len() > 0, "cannot run 'ulimit -r' on '"..host.."'")
+        robottestingframework.testCheck(result:len() > 0, "cannot run 'ulimit -r' on '"..host.."'")
     else
-        RTF.testCheck(tonumber(result) == 99, "process soft prioirty is limited ("..tonumber(result)..")")
-    end 
-    RTF.testReport("Testing process soft priority limits (99)")
+        robottestingframework.testCheck(tonumber(result) == 99, "process soft prioirty is limited ("..tonumber(result)..")")
+    end
+    robottestingframework.testReport("Testing process soft priority limits (99)")
     local result = runRemoteCommand(host, "ulimit -Hr")
     if result:len() == 0 then
-        RTF.testCheck(result:len() > 0, "cannot run 'ulimit -Hr' on '"..host.."'")
+        robottestingframework.testCheck(result:len() > 0, "cannot run 'ulimit -Hr' on '"..host.."'")
     else
-        RTF.testCheck(tonumber(result) == 99, "process hard prioirty is limited ("..tonumber(result)..")")
-    end 
+        robottestingframework.testCheck(tonumber(result) == 99, "process hard prioirty is limited ("..tonumber(result)..")")
+    end
 end
 
-function checkUDPLimits(host) 
-    RTF.testReport("Testing UDP maximum read buffer limits (8388608)")
+function checkUDPLimits(host)
+    robottestingframework.testReport("Testing UDP maximum read buffer limits (8388608)")
     local result = runRemoteCommand(host, "cat /proc/sys/net/core/rmem_max")
     if result:len() == 0 then
-        RTF.testCheck(result:len() > 0, "cannot run 'cat /proc/sys/net/core/rmem_max' on '"..host.."'")
+        robottestingframework.testCheck(result:len() > 0, "cannot run 'cat /proc/sys/net/core/rmem_max' on '"..host.."'")
     else
-        RTF.testCheck(tonumber(result) == 8388608, "UDP maximum read buffer size is limited ("..tonumber(result)..")")
-    end 
+        robottestingframework.testCheck(tonumber(result) == 8388608, "UDP maximum read buffer size is limited ("..tonumber(result)..")")
+    end
 end
 
 --
 -- Testcase srtup()
 --
-TestCase.setup = function(parameter)   
-    RTF.setName("Cluster tests")
+TestCase.setup = function(parameter)
+    robottestingframework.setName("Cluster tests")
     -- get the hosts list in cluster
     for host in string.gmatch(parameter, "[^%s]+") do
        hosts[#hosts+1] = host
     end
     if #hosts == 0 then
-        RTF.assertError("no host is given! Please provide the hosts name as paramter (e.g. -p 'pc104 icub16').")
+        robottestingframework.assertError("no host is given! Please provide the hosts name as paramter (e.g. -p 'pc104 icub16').")
     end
     return true
 end
@@ -96,8 +96,8 @@ end
 TestCase.run = function()
     for i=1,#hosts do
         local host = hosts[i]
-        RTF.testReport("")
-        RTF.testReport("Checking host ["..host.."] ...")
+        robottestingframework.testReport("")
+        robottestingframework.testReport("Checking host ["..host.."] ...")
         checkPriorityLimits(host)
         checkUDPLimits(host)
     end
@@ -108,6 +108,6 @@ end
 -- TestCase tearDown
 --
 TestCase.tearDown = function()
-    RTF.testReport("Tearing down...")
+    robottestingframework.testReport("Tearing down...")
 end
 

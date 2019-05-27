@@ -21,38 +21,38 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-# set the project name
-set(PROJECTNAME iKiniDynConsistencyTest)
-project(${PROJECTNAME})
+project(iKiniDynConsistencyTest)
 
 find_package(ICUB REQUIRED)
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ICUB_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ICUB_MODULE_PATH})
 
-INCLUDE(iCubHelpers)
+include(iCubHelpers)
 
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ICUB_LINK_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ICUB_LINK_FLAGS}")
 
 # add include directories
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS}
-                    ${ICUB_INCLUDE_DIRS})
+include_directories(${ICUB_INCLUDE_DIRS})
 
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)
 
 # add the source codes to build the plugin library
-rtf_add_plugin(${PROJECT_NAME}    HEADERS iKiniDynConsistencyTest.h
-                                  SOURCES iKiniDynConsistencyTest.cpp)
+robottestingframework_add_plugin(${PROJECT_NAME} HEADERS iKiniDynConsistencyTest.h
+                                                 SOURCES iKiniDynConsistencyTest.cpp)
 # add required libraries
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
-               ${YARP_LIBRARIES} YARP::YARP_rtf
-               iKin iDyn)
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_math
+                                      YARP::YARP_robottestingframework
+                                      iKin
+                                      iDyn)
 
 # set the installation options
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)
 

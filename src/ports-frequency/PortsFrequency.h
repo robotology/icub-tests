@@ -21,7 +21,7 @@
 #ifndef _PORTSFREQUENCY_H_
 #define _PORTSFREQUENCY_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <vector>
@@ -68,7 +68,7 @@ private:
     double dmax, dmin, dsum;    // time delay
 };
 
-class PortsFrequency : public yarp::rtf::TestCase {
+class PortsFrequency : public yarp::robottestingframework::TestCase {
 public:
     PortsFrequency();
     virtual ~PortsFrequency();

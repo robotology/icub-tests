@@ -19,8 +19,8 @@
  */
 
 #include <math.h>
-#include <rtf/dll/Plugin.h>
-#include <rtf/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
 #include "PortsFrequency.h"
 #include <yarp/os/Time.h>
 #include <yarp/os/Stamp.h>
@@ -28,13 +28,13 @@
 #include <yarp/os/Network.h>
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 
 // prepare the plugin
-PREPARE_PLUGIN(PortsFrequency)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(PortsFrequency)
 
-PortsFrequency::PortsFrequency() : yarp::rtf::TestCase("PortsFrequency") {
+PortsFrequency::PortsFrequency() : yarp::robottestingframework::TestCase("PortsFrequency") {
 }
 
 PortsFrequency::~PortsFrequency() { }
@@ -48,13 +48,13 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
     // updating parameters
    testTime = (property.check("time")) ? property.find("time").asDouble() : 2;
 
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("PORTS"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("PORTS"),
                         "A list of the ports must be given");
 
     yarp::os::Bottle portsSet = property.findGroup("PORTS").tail();
     for(unsigned int i=0; i<portsSet.size(); i++) {
         yarp::os::Bottle* btport = portsSet.get(i).asList();
-        RTF_ASSERT_ERROR_IF_FALSE(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
         MyPortInfo info;
         info.name = btport->get(0).asString();
         info.frequency = btport->get(1).asInt();
@@ -63,7 +63,7 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
     }
 
     // opening port
-    RTF_ASSERT_ERROR_IF_FALSE(port.open("..."),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(port.open("..."),
                         "opening port, is YARP network available?");
     return true;
 }
@@ -75,11 +75,11 @@ void PortsFrequency::tearDown() {
 
 void PortsFrequency::run() {
     for(unsigned int i=0; i<ports.size(); i++) {
-        RTF_TEST_REPORT("");
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("");
         port.reset();
-        RTF_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking port %s ...", ports[i].name.c_str()));
         bool connected = Network::connect(ports[i].name.c_str(), port.getName());
-        RTF_TEST_FAIL_IF_FALSE(connected,
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(connected,
                        Asserter::format("could not connect to remote port %s.", ports[i].name.c_str()));
         if(connected) {
             // setting QOS
@@ -92,23 +92,23 @@ void PortsFrequency::run() {
             Time::delay(testTime);
             port.disableCallback();
             if(port.getSAvg() <= 0) {
-                RTF_TEST_REPORT("Sender frequency is not available");
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT("Sender frequency is not available");
             }
             else {
-                RTF_TEST_REPORT(Asserter::format("Time delay between sender/receiver is %.4f s. (min: %.4f, max: %.f4)",
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Time delay between sender/receiver is %.4f s. (min: %.4f, max: %.f4)",
                                 port.getDAvg(), port.getDMax(), port.getDMin()));
-                RTF_TEST_REPORT(Asserter::format("Sender frequency %d hrz. (min: %d, max: %d)",
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Sender frequency %d hrz. (min: %d, max: %d)",
                                                  (int)(1.0/port.getSAvg()), (int)(1.0/port.getSMax()), (int)(1.0/port.getSMin())));
             }
             double freq = 1.0/port.getAvg();
-            RTF_TEST_REPORT(Asserter::format("Receiver frequency %d hrz. (min: %d, max: %d)",
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Receiver frequency %d hrz. (min: %d, max: %d)",
                             (int)freq, (int)(1.0/port.getMax()), (int)(1.0/port.getMin())));
             double diff = fabs(freq - ports[i].frequency);
-            RTF_TEST_FAIL_IF_FALSE(diff < ports[i].tolerance,
+            ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(diff < ports[i].tolerance,
                            Asserter::format("Receiver frequency is outside the desired range [%d .. %d]",
                                             ports[i].frequency-ports[i].tolerance,
                                             ports[i].frequency+ports[i].tolerance));
-            RTF_TEST_REPORT(Asserter::format("Lost %ld packets. received (%ld)", 
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Lost %ld packets. received (%ld)",
                                              port.getPacketLostCount(), port.getCount()));
             Network::disconnect(ports[i].name.c_str(), port.getName());
         }

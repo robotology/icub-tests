@@ -20,23 +20,23 @@
 
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 #include <yarp/sig/Vector.h>
 
 #include "TorqueControlGravityConsistency.h"
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
 // prepare the plugin
-PREPARE_PLUGIN(TorqueControlGravityConsistency)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(TorqueControlGravityConsistency)
 
-TorqueControlGravityConsistency::TorqueControlGravityConsistency() : yarp::rtf::TestCase("TorqueControlGravityConsistency"),
+TorqueControlGravityConsistency::TorqueControlGravityConsistency() : yarp::robottestingframework::TestCase("TorqueControlGravityConsistency"),
                                                                      yarpRobot(0)
 {
 

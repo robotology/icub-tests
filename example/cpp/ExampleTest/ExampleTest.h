@@ -21,7 +21,7 @@
 #ifndef _EXAMPLE_TEST_H_
 #define _EXAMPLE_TEST_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 
 /**
 * \ingroup icub-tests
@@ -36,9 +36,9 @@
 * | Parameter name | Type   | Units | Default Value | Required | Description | Notes |
 * |:--------------:|:------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
 * | name           | string | -     | "ExampleTest" | No       | The name of the test. | -     |
-* | example        | string | -     | default value | No       | An example value. | - | 
+* | example        | string | -     | default value | No       | An example value. | - |
 */
-class ExampleTest : public yarp::rtf::TestCase {
+class ExampleTest : public yarp::robottestingframework::TestCase {
 public:
     ExampleTest();
     virtual ~ExampleTest();

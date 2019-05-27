@@ -19,8 +19,8 @@
  */
 
 
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
@@ -31,14 +31,14 @@
 
 #include "PositionControlAccuracy.h"
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(PositionControlAccuracy)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(PositionControlAccuracy)
 
-PositionControlAccuracy::PositionControlAccuracy() : yarp::rtf::TestCase("PositionControlAccuracy") {
+PositionControlAccuracy::PositionControlAccuracy() : yarp::robottestingframework::TestCase("PositionControlAccuracy") {
     m_jointsList = 0;
     m_encoders = 0;
     m_zeros = 0;
@@ -61,13 +61,13 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("zeros"),    "The zero position list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("step"), "The amplitude of the step reference signal expressed in degrees!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("zeros"),    "The zero position list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("cycles"), "The number of cycles of the control signal must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("step"), "The amplitude of the step reference signal expressed in degrees!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("sampleTime"), "The sampleTime of the control signal must be given as the test parameter!");
     if(property.check("filename"))
       {m_requested_filename = property.find("filename").asString();}
     if(property.check("home_tolerance"))
@@ -81,17 +81,17 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     Bottle* jointsBottle = property.find("joints").asList();
     Bottle* zerosBottle = property.find("zeros").asList();
 
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     m_n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(m_n_cmd_joints>0, "invalid number of joints, it must be >0");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_n_cmd_joints>0, "invalid number of joints, it must be >0");
 
     m_step = property.find("step").asDouble();
 
     m_cycles = property.find("cycles").asInt();
-    RTF_ASSERT_ERROR_IF_FALSE(m_cycles>0, "invalid cycles");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_cycles>0, "invalid cycles");
 
     m_sampleTime = property.find("sampleTime").asDouble();
-    RTF_ASSERT_ERROR_IF_FALSE(m_sampleTime>0, "invalid sampleTime");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_sampleTime>0, "invalid sampleTime");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -99,17 +99,17 @@ bool PositionControlAccuracy::setup(yarp::os::Property& property) {
     options.put("local", "/positionControlAccuracyTest/" + m_robotName + "/" + m_partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(idir),"Unable to open position direct interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(idir),"Unable to open position direct interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipid),"Unable to open pid interface");
 
     if (!ienc->getAxes(&m_n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     m_zeros = new double[m_n_part_joints];
@@ -182,7 +182,7 @@ void PositionControlAccuracy::setMode(int desired_mode)
         if (ok == m_n_cmd_joints) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Unable to set control mode/interaction mode");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Unable to set control mode/interaction mode");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -209,7 +209,7 @@ bool PositionControlAccuracy::goHome()
         if (in_position == m_n_cmd_joints) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching zero position");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while reaching zero position");
             return false;
         }
         yarp::os::Time::delay(0.2);
@@ -230,9 +230,9 @@ void PositionControlAccuracy::run()
             setMode(VOCAB_CM_POSITION);
             if (goHome() == false)
             {
-                RTF_ASSERT_FAIL("Test stopped");
+                ROBOTTESTINGFRAMEWORK_ASSERT_FAIL("Test stopped");
             };
-            
+
             ipid->setPid(VOCAB_PIDTYPE_POSITION,m_jointsList[i],m_new_pid);
             setMode(VOCAB_CM_POSITION_DIRECT);
             double start_time = yarp::os::Time::now();
@@ -241,11 +241,11 @@ void PositionControlAccuracy::run()
             sprintf(cbuff, "Testing Joint: %d cycle: %d", i, cycle);
 
             std::string buff(cbuff);
-            RTF_TEST_REPORT(buff);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
             double time_zero = 0;
             yarp::os::Bottle      dataToPlotRaw;
-            yarp::os::Bottle      dataToPlotSync; 
+            yarp::os::Bottle      dataToPlotSync;
 
             while (1)
             {
@@ -317,7 +317,7 @@ void PositionControlAccuracy::run()
     //data acquisition ends here
     setMode(VOCAB_CM_POSITION);
     goHome();
-    RTF_TEST_REPORT("Data acquisition complete");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Data acquisition complete");
 
     //plot data
     /*for (int i = 0; i < m_n_cmd_joints; i++)

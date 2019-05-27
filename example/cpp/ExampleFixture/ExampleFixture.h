@@ -21,9 +21,9 @@
 #ifndef _EXAMPLE_FIXTURE_H_
 #define _EXAMPLE_FIXTURE_H_
 
-#include <rtf/FixtureManager.h>
+#include <robottestingframework/FixtureManager.h>
 
-class ExampleFixture : public RTF::FixtureManager {
+class ExampleFixture : public robottestingframework::FixtureManager {
 public:
     virtual bool setup(int argc, char** argv);
     virtual bool check();

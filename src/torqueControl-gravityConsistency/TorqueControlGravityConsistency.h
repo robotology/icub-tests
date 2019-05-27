@@ -22,7 +22,7 @@
 #define TORQUECONTROLGRAVITYCONSISTENCY_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -42,7 +42,7 @@
  * Example: testRunner -v -t TorqueControlGravityConsistency.dll -p ""
  *
  */
-class TorqueControlGravityConsistency : public yarp::rtf::TestCase
+class TorqueControlGravityConsistency : public yarp::robottestingframework::TestCase
 {
 public:
     TorqueControlGravityConsistency();

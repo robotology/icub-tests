@@ -20,28 +20,28 @@
 
 #include <cmath>
 
-#include <rtf/dll/Plugin.h>
-#include <rtf/TestAssert.h>
-#include <yarp/rtf/TestAsserter.h>
+#include <robottestingframework/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <yarp/robottestingframework/TestAsserter.h>
 
 #include "movementReferencesTest.h"
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 
 using namespace yarp::os;
 
 
 // prepare the plugin
-PREPARE_PLUGIN(MovementReferencesTest)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(MovementReferencesTest)
 
-MovementReferencesTest::MovementReferencesTest() : yarp::rtf::TestCase("MovementReferencesTest") 
+MovementReferencesTest::MovementReferencesTest() : yarp::robottestingframework::TestCase("MovementReferencesTest")
 {
 
 
 }
 
-MovementReferencesTest::~MovementReferencesTest() 
+MovementReferencesTest::~MovementReferencesTest()
 {
 }
 
@@ -63,15 +63,15 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
         setName(config.find("name").asString());
     else
         setName("MovementReferencesTest");
-        
-        
+
+
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(config.check("robot"),  "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(config.check("part"),   "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(config.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(config.check("home"),   "The home position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(config.check("target"), "Missing 'target' parameter, cannot open device");
-    
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(config.check("robot"),  "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(config.check("part"),   "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(config.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(config.check("home"),   "The home position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(config.check("target"), "Missing 'target' parameter, cannot open device");
+
     robotName = config.find("robot").asString();
     partName  = config.find("part").asString();
 
@@ -82,54 +82,54 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     options.put("local", "/moveRefTest/"+robotName+"/"+partName);
 
     dd = new yarp::dev::PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosition),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iEncoders),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPWM), "Unable to open PWM interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iPosDirect),"Unable to open OpnLoop interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity),"Unable to open velocity2 interface");
-    
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iPosition),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iEncoders),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iControlMode),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iPWM), "Unable to open PWM interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iPosDirect),"Unable to open OpnLoop interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iVelocity),"Unable to open velocity2 interface");
+
 
 
     if (!iEncoders->getAxes(&numJointsInPart))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     Bottle* homeBottle = config.find("home").asList();
     if(homeBottle == NULL)
     {
 
-        RTF_TEST_REPORT("home bottle is null");
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("home bottle is null");
     }
     else
     {
 
-        RTF_TEST_REPORT("home bottle is not null");
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("home bottle is not null");
     }
 
-    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
 
     Bottle* jointsBottle = config.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* targetBottle = config.find("target").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(targetBottle!=0,"unable to parse target parameter");
-    
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(targetBottle!=0,"unable to parse target parameter");
+
     Bottle* refAccBottle = config.find("refAcc").asList();
     if(refAccBottle == NULL)
-        RTF_TEST_REPORT("refAcc param not present. Test will use deafoult values.");
-    
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("refAcc param not present. Test will use deafoult values.");
+
     Bottle* refVelBottle = config.find("refVel").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(refVelBottle!=0,"unable to parse refVel parameter");
-    
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(refVelBottle!=0,"unable to parse refVel parameter");
+
 
     numJoints = jointsBottle->size();
-    RTF_TEST_REPORT(Asserter::format("num joints: %d", numJoints));
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("num joints: %d", numJoints));
 
 
-    RTF_ASSERT_ERROR_IF_FALSE(numJoints>0 && numJoints<=numJointsInPart,"invalid number of joints, it must be >0 & <= number of part joints");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(numJoints>0 && numJoints<=numJointsInPart,"invalid number of joints, it must be >0 & <= number of part joints");
 
     //jointsList.clear();
     targetPos.clear();
@@ -160,28 +160,28 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     }
     else
     {
-        refAcc.resize (0); 
+        refAcc.resize (0);
     }
-    
-    jPosMotion = new yarp::rtf::jointsPosMotion(dd, jointsList);
+
+    jPosMotion = new yarp::robottestingframework::jointsPosMotion(dd, jointsList);
     jPosMotion->setTolerance(2.0);
     jPosMotion->setTimeout(5); //5 sec
 
-//    RTF_TEST_REPORT(jointsList.toString().c_str());
-//    RTF_TEST_REPORT(Asserter::format("startup num joints: %d partnj=%d", numJoints, numJointsInPart));
-//    RTF_TEST_REPORT(targetPos.toString().c_str());
-//    RTF_TEST_REPORT(refVel.toString().c_str());
-//    RTF_TEST_REPORT(refAcc.toString().c_str());
+//    ROBOTTESTINGFRAMEWORK_TEST_REPORT(jointsList.toString().c_str());
+//    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("startup num joints: %d partnj=%d", numJoints, numJointsInPart));
+//    ROBOTTESTINGFRAMEWORK_TEST_REPORT(targetPos.toString().c_str());
+//    ROBOTTESTINGFRAMEWORK_TEST_REPORT(refVel.toString().c_str());
+//    ROBOTTESTINGFRAMEWORK_TEST_REPORT(refAcc.toString().c_str());
 
 //    for(int k=0; k<numJoints; k++)
 //    {
-//        RTF_TEST_REPORT(Asserter::format("targetpos [%d]=%.2f", k, targetPos[k]));
+//        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("targetpos [%d]=%.2f", k, targetPos[k]));
 //    }
 
  /*   for(int k=0; k<numJoints; k++)
     {
-        RTF_TEST_REPORT(Asserter::format("jointlist [%d]=%d", k, (int)jointsList[k]));
-        RTF_TEST_REPORT(Asserter::format("jlist [%d]=%d", k, jList[k]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("jointlist [%d]=%d", k, (int)jointsList[k]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("jlist [%d]=%d", k, jList[k]));
     }*/
     return true;
 }
@@ -195,11 +195,11 @@ void MovementReferencesTest::tearDown() {
 
     // 1) check get reference position returns the target position set by positionMove(..)
 
-        RTF_TEST_REPORT(Asserter::format("tear down:  joint %d is going to home", jList[i]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("tear down:  joint %d is going to home", jList[i]));
 
         setAndCheckControlMode(jList[i], VOCAB_CM_POSITION);
 
-        RTF_TEST_FAIL_IF_FALSE(jPosMotion->goToSingle(jList[i], homePos[i]),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(jPosMotion->goToSingle(jList[i], homePos[i]),
                 Asserter::format(("go to target pos  for j %d"),jList[i]));
     }
 
@@ -212,15 +212,15 @@ void MovementReferencesTest::tearDown() {
 void MovementReferencesTest::setAndCheckControlMode(int j, int mode)
 {
     int rec_mode=VOCAB_CM_IDLE;
-    RTF_TEST_FAIL_IF_FALSE(iControlMode->setControlMode(j, mode),
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iControlMode->setControlMode(j, mode),
             Asserter::format(("setting control mode for j %d"),j));
 
     yarp::os::Time::delay(0.1);
 
-    RTF_TEST_FAIL_IF_FALSE(iControlMode->getControlMode(j, &rec_mode),
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iControlMode->getControlMode(j, &rec_mode),
            Asserter::format(("getting control mode for j %d"),j));
 
-    RTF_ASSERT_FAIL_IF_FALSE((rec_mode == mode),
+    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE((rec_mode == mode),
            Asserter::format(("joint %d: is not in position"),j));
 
 }
@@ -231,51 +231,51 @@ void MovementReferencesTest::run() {
     bool doneAll=false;
     bool ret=false;
 
-//    RTF_TEST_REPORT(jointsList.toString().c_str());
+//    ROBOTTESTINGFRAMEWORK_TEST_REPORT(jointsList.toString().c_str());
 //    for(int k=0; k<numJoints; k++)
 //    {
-//        RTF_TEST_REPORT(Asserter::format("targetpos [%d]=%.2f", k, targetPos[k]));
+//        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("targetpos [%d]=%.2f", k, targetPos[k]));
 //    }
 
 //    for(int k=0; k<numJoints; k++)
 //    {
-//        RTF_TEST_REPORT(Asserter::format("jointlist [%d]=%d", k, jointsList[k]));
+//        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("jointlist [%d]=%d", k, jointsList[k]));
 //    }
 
 
-    RTF_TEST_REPORT("setting velocity refs for all joints...");
-    
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("setting velocity refs for all joints...");
+
     if(refAcc.size() != 0)
     {
-        RTF_TEST_REPORT("setting acceleration refs for all joints...");
-        RTF_TEST_FAIL_IF_FALSE(iVelocity->setRefAccelerations(numJoints, jList, refAcc.data()),
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("setting acceleration refs for all joints...");
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iVelocity->setRefAccelerations(numJoints, jList, refAcc.data()),
                 Asserter::format("setting reference acceleration on joints"));
     }
 
-    RTF_TEST_REPORT("setting velocity refs for all joints...");
-    RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(numJoints, jList, refVel.data()),
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("setting velocity refs for all joints...");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(numJoints, jList, refVel.data()),
                 Asserter::format("setting reference speed on joints"));
-    
 
 
 
-    RTF_TEST_REPORT("all joints are going to home...");
+
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("all joints are going to home...");
     for (int i=0; i<numJoints; ++i)
     {
 
     // 1) check get reference position returns the target position set by positionMove(..)
 
-        RTF_TEST_REPORT(Asserter::format(" joint %d is going to home", jList[i]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format(" joint %d is going to home", jList[i]));
 
         setAndCheckControlMode(jList[i], VOCAB_CM_POSITION);
 
-        RTF_ASSERT_FAIL_IF_FALSE(jPosMotion->goToSingle(jList[i], homePos[i]),
+        ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(jPosMotion->goToSingle(jList[i], homePos[i]),
                 Asserter::format(("go to target pos  for j %d"),jList[i]));
     }
-    
+
     yarp::os::Time::delay(5);
 
-    RTF_TEST_REPORT("Checking individual joints...");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking individual joints...");
 
     const double res_th = 0.01; //resolution threshold
     //numJoints=numJointsInPart;
@@ -286,23 +286,23 @@ void MovementReferencesTest::run() {
 
     // 1) check get reference position returns the target position set by positionMove(..)
 
-        RTF_TEST_REPORT(Asserter::format("Checking PosReference joint %d with resolution threshold %.3f", jList[i], res_th));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking PosReference joint %d with resolution threshold %.3f", jList[i], res_th));
 
         setAndCheckControlMode(jList[i], VOCAB_CM_POSITION);
 
-        RTF_TEST_FAIL_IF_FALSE(jPosMotion->goToSingle(jList[i], targetPos[i]),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(jPosMotion->goToSingle(jList[i], targetPos[i]),
                 Asserter::format(("go to target pos  for j %d"),jList[i])); //Note: gotosingle use IPositioncontrol2::PositionMove
-        
+
     yarp::os::Time::delay(0.5);
 
-        RTF_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
                 Asserter::format(("getting target pos for j %d"),jList[i]));
-        
-        bool res = yarp::rtf::TestAsserter::isApproxEqual(targetPos[i], rec_targetPos, res_th, res_th);
-        RTF_TEST_CHECK(res, Asserter::format(
+
+        bool res = yarp::robottestingframework::TestAsserter::isApproxEqual(targetPos[i], rec_targetPos, res_th, res_th);
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(res, Asserter::format(
                            ("IPositionControl: getting target pos for j %d: setval =%.2f received %.2f"),
                            jList[i], targetPos[i],rec_targetPos));
-        
+
         //if(!res)
         //    std::cout <<"ERRORE: getTargetPosition: j " << jList[i] << "sent" << targetPos[i] << "rec" << rec_targetPos;
         //else
@@ -311,83 +311,83 @@ void MovementReferencesTest::run() {
         yarp::os::Time::delay(3);
 
     //2) check get reference output (pwm mode) returns the ouput set by setRefOutput
-        RTF_TEST_REPORT(Asserter::format("Checking pwm reference joint %d", jList[i]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking pwm reference joint %d", jList[i]));
 
 
         setAndCheckControlMode(jList[i], VOCAB_CM_PWM);
-        
+
         double output = 2;
         double rec_output = 0;
-        RTF_TEST_FAIL_IF_FALSE(iPWM->setRefDutyCycle(jList[i], output),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPWM->setRefDutyCycle(jList[i], output),
                Asserter::format(("set ref output for j %d"),jList[i]));
 yarp::os::Time::delay(0.5);
 
-        RTF_TEST_FAIL_IF_FALSE(iPWM->getRefDutyCycle(jList[i], &rec_output),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPWM->getRefDutyCycle(jList[i], &rec_output),
                Asserter::format(("get ref output for j %d"),jList[i]));
-        
-        RTF_TEST_CHECK((output == rec_output),
+
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK((output == rec_output),
                Asserter::format(("getting target output for j %d: setval =%.2f received %.2f"),jList[i], output,rec_output));
 
-        RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(jList[i], homePos[i]),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->positionMove(jList[i], homePos[i]),
                 Asserter::format(("go to home  for j %d"),jList[i]));
 yarp::os::Time::delay(0.5);
-        RTF_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
-        
-        //here I expect getTargetPosition returns targetPos[j] and not homePos[j] because joint is in pwm control mode and 
+
+        //here I expect getTargetPosition returns targetPos[j] and not homePos[j] because joint is in pwm control mode and
         //the positionMove(homepos) command should be discarded by firmware motor controller
-        res = yarp::rtf::TestAsserter::isApproxEqual(homePos[i], rec_targetPos, res_th, res_th);
-        RTF_TEST_CHECK(!res,
+        res = yarp::robottestingframework::TestAsserter::isApproxEqual(homePos[i], rec_targetPos, res_th, res_th);
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(!res,
                Asserter::format(("joint %d discards PosotinMove command while it is in opnLoop mode. Set=%.2f rec=%.2f"),jList[i], homePos[i], rec_targetPos));
 
     //3) check get reference pos (directPosition mode) returns the target position set by setPosition()
         //set direct mode
-        RTF_TEST_REPORT(Asserter::format("Checking directPos reference joint %d", jList[i]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking directPos reference joint %d", jList[i]));
 
         setAndCheckControlMode(jList[i], VOCAB_CM_POSITION_DIRECT);
-        
+
         double curr_pos=targetPos[i];
-        RTF_TEST_FAIL_IF_FALSE(iEncoders->getEncoder(jList[i], &curr_pos),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iEncoders->getEncoder(jList[i], &curr_pos),
                Asserter::format(("get encoders for j %d"),jList[i]));
-                
+
         double delta = 0.1;
         double new_directPos = curr_pos+delta;
-        RTF_TEST_FAIL_IF_FALSE(iPosDirect->setPosition(jList[i], new_directPos),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosDirect->setPosition(jList[i], new_directPos),
                Asserter::format(("Direct:setPosition for j %d"),jList[i]));
 yarp::os::Time::delay(0.5);
 
-        RTF_TEST_FAIL_IF_FALSE(iPosDirect->getRefPosition(jList[i], &rec_targetPos),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosDirect->getRefPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
-        
-        res = yarp::rtf::TestAsserter::isApproxEqual(new_directPos, rec_targetPos, res_th, res_th);
-        RTF_TEST_CHECK(res,
+
+        res = yarp::robottestingframework::TestAsserter::isApproxEqual(new_directPos, rec_targetPos, res_th, res_th);
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(res,
                Asserter::format(("iDirect: getting target direct pos for j %d: setval =%.2f received %.2f"),jList[i], new_directPos,rec_targetPos));
 
         //here I'm going to check the position reference is not changed.
-        RTF_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->getTargetPosition(jList[i], &rec_targetPos),
                Asserter::format(("getting target pos for j %d"),jList[i]));
 
-        res = yarp::rtf::TestAsserter::isApproxEqual(targetPos[i], rec_targetPos, res_th, res_th);
-        RTF_TEST_CHECK(res, Asserter::format(
+        res = yarp::robottestingframework::TestAsserter::isApproxEqual(targetPos[i], rec_targetPos, res_th, res_th);
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(res, Asserter::format(
                            ("IPositionControl: getting target pos for j %d: setval =%.2f received %.2f"),
                            jList[i], targetPos[i],rec_targetPos));
 
     //4) check get reference velocity (velocity mode) returns the target velocity set by velocityMove()
         //set velocity mode
-        RTF_TEST_REPORT(Asserter::format("Checking velocity reference joint %d", jList[i]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking velocity reference joint %d", jList[i]));
 
         setAndCheckControlMode(jList[i], VOCAB_CM_VELOCITY);
 
         double vel= 0.5;
         double rec_vel;
-        RTF_TEST_FAIL_IF_FALSE(iVelocity->velocityMove(jList[i], vel),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iVelocity->velocityMove(jList[i], vel),
                Asserter::format(("IVelocity:velocityMove for j %d"),jList[i]));
 
 yarp::os::Time::delay(0.5);
-        RTF_TEST_FAIL_IF_FALSE(iVelocity->getRefVelocity(jList[i], &rec_vel),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iVelocity->getRefVelocity(jList[i], &rec_vel),
                Asserter::format(("IVelocity:getting target velocity for j %d"),jList[i]));
-        res = yarp::rtf::TestAsserter::isApproxEqual(vel, rec_vel, res_th, res_th);
-        RTF_TEST_CHECK(res,
+        res = yarp::robottestingframework::TestAsserter::isApproxEqual(vel, rec_vel, res_th, res_th);
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(res,
                Asserter::format(("iVelocity: getting target vel for j %d: setval =%.2f received %.2f"),jList[i], vel,rec_vel));
     }
 

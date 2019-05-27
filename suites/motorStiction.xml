@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Motor Stiction">
+<suite name="Motor Stiction">
     <description>Get minimum pwm necesary to move motors</description>
     <environment>--robotname icub</environment>
 	
@@ -14,5 +14,5 @@
     <test type="dll" param="--from motorStiction_head.ini"> MotorStiction </test>
     <test type="dll" param="--from motorStiction_face.ini"> MotorStiction </test> 
 	
-</suit>
+</suite>
 

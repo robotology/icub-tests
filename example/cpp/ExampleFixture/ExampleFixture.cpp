@@ -20,16 +20,16 @@
 
 #include <cstdio>
 #include <ctime>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/dll/Plugin.h>
 #include "ExampleFixture.h"
 #include <yarp/os/Property.h>
 #include <yarp/os/Random.h>
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 
-PREPARE_FIXTURE_PLUGIN(ExampleFixture)
+ROBOTTESTINGFRAMEWORK_PREPARE_FIXTURE_PLUGIN(ExampleFixture)
 
 bool ExampleFixture::setup(int argc, char** argv) {
     printf("ExampleFixture: setupping fixture...\n");

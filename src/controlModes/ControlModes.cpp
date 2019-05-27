@@ -19,22 +19,22 @@
  */
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Vocab.h>
 
 #include "ControlModes.h"
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(ControlModes)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(ControlModes)
 
-ControlModes::ControlModes() : yarp::rtf::TestCase("ControlModes") {
+ControlModes::ControlModes() : yarp::robottestingframework::TestCase("ControlModes") {
     jointsList=0;
     pos_tot=0;
     dd=0;
@@ -60,10 +60,10 @@ bool ControlModes::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),    "The home positions must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("home"),    "The home positions must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -72,12 +72,12 @@ bool ControlModes::setup(yarp::os::Property& property) {
     else
         tolerance = 0.5;
 
-    RTF_TEST_REPORT(RTF::Asserter::format("Tolerance of %.2f is used to check home position", tolerance));
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(robottestingframework::Asserter::format("Tolerance of %.2f is used to check home position", tolerance));
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -85,24 +85,24 @@ bool ControlModes::setup(yarp::os::Property& property) {
     options.put("local", "/ControlModesTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(idir),"Unable to open position direct interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ivel),"Unable to open velocity control interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(itrq),"Unable to open torque control interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open remote variables interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(idir),"Unable to open position direct interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ivel),"Unable to open velocity control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(itrq),"Unable to open torque control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open remote variables interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     if      (n_part_joints<=0)
-        RTF_ASSERT_ERROR("Error this part has in invalid (<=0) number of jonits");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Error this part has in invalid (<=0) number of jonits");
     else if (jointsBottle->size() == 1)
         cmd_mode=single_joint;
     else if (jointsBottle->size() < n_part_joints)
@@ -110,7 +110,7 @@ bool ControlModes::setup(yarp::os::Property& property) {
     else if (jointsBottle->size() == n_part_joints)
         cmd_mode=all_joints;
     else
-        RTF_ASSERT_ERROR("invalid joint selection?");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("invalid joint selection?");
 
     cmd_tot = new double[n_part_joints];
     pos_tot=new double[n_part_joints];
@@ -183,7 +183,7 @@ void ControlModes::zeroCurrentLimits()
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }
@@ -206,7 +206,7 @@ void ControlModes::setModeSingle(int joint, int desired_control_mode, yarp::dev:
 void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)
@@ -223,14 +223,14 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
         {
             char sbuf[500];
             sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)cmode).c_str(), Vocab::decode((NetInt32)imode).c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab::decode((NetInt32)desired_control_mode).c_str(), Vocab::decode((NetInt32)desired_interaction_mode).c_str());
-    RTF_TEST_REPORT(sbuf);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
 void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
@@ -251,22 +251,22 @@ void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::d
         {
             char sbuf[500];
             sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)cmode).c_str(), Vocab::decode((NetInt32)imode).c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab::decode((NetInt32)desired_control_mode).c_str(), Vocab::decode((NetInt32)desired_interaction_mode).c_str());
-    RTF_TEST_REPORT(sbuf);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
 void ControlModes::checkJointWithTorqueMode()
 {
     yarp::os::Bottle b;
-    RTF_ASSERT_ERROR_IF_FALSE(ivar->getRemoteVariable("torqueControlEnabled", b), "unable to get torqueControlEnabled");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ivar->getRemoteVariable("torqueControlEnabled", b), "unable to get torqueControlEnabled");
 
-    RTF_ASSERT_ERROR_IF_FALSE((b.size() != n_part_joints), "torqueControlEnabled var returns joint num not corret.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE((b.size() != n_part_joints), "torqueControlEnabled var returns joint num not corret.");
 
     int j=0;
     for(int i=0; i<b.size() && j<n_part_joints; i++)
@@ -301,14 +301,14 @@ void ControlModes::verifyAmplifier(int desired_amplifier_mode, std::string title
         {
             char sbuf[500];
             sprintf(sbuf,"Test (%s) failed: amplifier mode is (%d), it should be (%d)",title.c_str(), amode, desired_amplifier_mode);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: amplifier mode is (%d)",title.c_str(), desired_amplifier_mode);
-    RTF_TEST_REPORT(sbuf);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
 void ControlModes::executeCmd()
@@ -338,7 +338,7 @@ void ControlModes::executeCmd()
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
 }
 
@@ -362,7 +362,7 @@ void ControlModes::goHome()
         if (in_position==n_cmd_joints) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching zero position");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while reaching zero position");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -378,14 +378,14 @@ void ControlModes::checkControlModeWithImCompliant(int desired_control_mode, std
         if(jointTorqueCtrlEnabled[jointsList[i]])
         {
             sprintf(buff, "joint %d has torque enabled. try to set %s and im_comp", jointsList[i], Vocab::decode((NetInt32)desired_control_mode).c_str());
-            RTF_TEST_REPORT(buff);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             setModeSingle(jointsList[i],desired_control_mode,VOCAB_IM_COMPLIANT);
             verifyModeSingle(jointsList[i], desired_control_mode,VOCAB_IM_COMPLIANT,title);
         }
         else
         {
             sprintf(buff, "joint %d doesn't support compliant interaction mode. test %s skipped", jointsList[i], title.c_str());
-            RTF_TEST_REPORT(buff);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
     }
 
@@ -418,7 +418,7 @@ void ControlModes::run()
         if(jointTorqueCtrlEnabled[jointsList[i]])
         {
             sprintf(buff, "joint %d has torque enabled. try to set cm_torque and im_stiff", jointsList[i]);
-            RTF_TEST_REPORT(buff);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             setModeSingle(jointsList[i],VOCAB_CM_TORQUE,VOCAB_IM_STIFF);
             verifyModeSingle(jointsList[i], VOCAB_CM_TORQUE,VOCAB_IM_STIFF,"test4");
             verifyAmplifier(0,"test4b");
@@ -426,7 +426,7 @@ void ControlModes::run()
         else
         {
             sprintf(buff, "joint %d doesn't support torque control mode. test test4 skipped", jointsList[i]);
-            RTF_TEST_REPORT(buff);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
     }
 
@@ -463,7 +463,7 @@ void ControlModes::run()
         if(jointTorqueCtrlEnabled[jointsList[i]])
         {
             sprintf(buff, "joint %d has torque enabled. try to set cm_torque and im_compliant", jointsList[i]);
-            RTF_TEST_REPORT(buff);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             setModeSingle(jointsList[i],VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT);
             verifyModeSingle(jointsList[i], VOCAB_CM_POSITION,VOCAB_IM_COMPLIANT,"test11");
         }

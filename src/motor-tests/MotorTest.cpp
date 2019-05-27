@@ -20,21 +20,21 @@
 
 #include <cmath>
 
-#include <rtf/dll/Plugin.h>
-#include <rtf/TestAssert.h>
-#include <yarp/rtf/TestAsserter.h>
+#include <robottestingframework/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <yarp/robottestingframework/TestAsserter.h>
 
 #include "MotorTest.h"
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 
 using namespace yarp::os;
 
 // prepare the plugin
-PREPARE_PLUGIN(MotorTest)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(MotorTest)
 
-MotorTest::MotorTest() : yarp::rtf::TestCase("MotorTest") {
+MotorTest::MotorTest() : yarp::robottestingframework::TestCase("MotorTest") {
 }
 
 MotorTest::~MotorTest() {
@@ -57,15 +57,15 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     if(configuration.check("name"))
         setName(configuration.find("name").asString());
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("portname"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("portname"),
                         "Missing 'portname' parameter, cannot open device");
     m_portname = configuration.find("portname").asString();
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("joints"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("joints"),
                         "Missing 'joints' parameter, cannot open device");
     m_NumJoints=configuration.find("joints").asInt();
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("target"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("target"),
                         "Missing 'target' parameter, cannot open device");
     yarp::os::Bottle bot=configuration.findGroup("target").tail();
     int n = m_NumJoints<bot.size()? m_NumJoints:bot.size();
@@ -76,7 +76,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
         m_aHome[i]=0.0;
     }
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("min"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("min"),
                         "Missing 'min' parameter, cannot open device");
     bot = configuration.findGroup("min").tail();
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
@@ -84,7 +84,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     for (int i=0; i<n; ++i)
        m_aMinErr[i]=bot.get(i).asDouble();
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("max"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("max"),
                         "Missing 'max' parameter, cannot open device");
     bot=configuration.findGroup("max").tail();
     n = m_NumJoints<bot.size()? m_NumJoints:bot.size();
@@ -92,7 +92,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     for (int i=0; i<n; ++i)
          m_aMaxErr[i]=bot.get(i).asDouble();
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("refvel"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("refvel"),
                         "Missing 'max' parameter, cannot open device");
     bot = configuration.findGroup("refvel").tail();
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
@@ -108,7 +108,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
             m_aRefAcc[i]=bot.get(i).asDouble();
     }
 
-    RTF_ASSERT_ERROR_IF_FALSE(configuration.check("timeout"),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("timeout"),
                         "Missing 'timeout' parameter, cannot open device");
     bot = configuration.findGroup("timeout").tail();
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
@@ -122,11 +122,11 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     options.put("local",m_portname+"/client");
     options.put("remote",m_portname);
 
-    RTF_ASSERT_ERROR_IF_FALSE(m_driver.open(options),
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_driver.open(options),
                         "cannot open driver");
 
-    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iEncoders), "cannot view iEncoder");
-    RTF_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition), "cannot view iPosition");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_driver.view(iEncoders), "cannot view iEncoder");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_driver.view(iPosition), "cannot view iPosition");
 
     return true;
 }
@@ -134,7 +134,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
 void MotorTest::tearDown() {
     // finalization goes her ...
     if(iPosition) {
-        RTF_TEST_REPORT("Homing robot");
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("Homing robot");
         iPosition->positionMove(m_aHome);
 
         bool reached=false;
@@ -162,19 +162,19 @@ void MotorTest::run() {
     bool doneAll=false;
     bool ret=false;
 
-    RTF_TEST_REPORT("checking joints number");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("checking joints number");
     iEncoders->getAxes(&nJoints);
-    RTF_TEST_FAIL_IF_FALSE(m_NumJoints==nJoints, "expected number of joints is inconsistent");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(m_NumJoints==nJoints, "expected number of joints is inconsistent");
 
-    RTF_TEST_REPORT("Checking individual joints...");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking individual joints...");
     for (int joint=0; joint<m_NumJoints; ++joint) {
-        RTF_TEST_REPORT(Asserter::format("Checking joint %d", joint));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking joint %d", joint));
         if (m_aRefAcc!=NULL) {
-            RTF_TEST_FAIL_IF_FALSE(iPosition->setRefAcceleration(joint, m_aRefAcc[joint]),
+            ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->setRefAcceleration(joint, m_aRefAcc[joint]),
                 Asserter::format("setting reference acceleration on joint %d", joint));
         }
 
-        RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeed(joint, m_aRefVel[joint]),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->setRefSpeed(joint, m_aRefVel[joint]),
             Asserter::format("setting reference speed on joint %d", joint));
 
         // wait some time
@@ -182,49 +182,49 @@ void MotorTest::run() {
         double timeNow=timeStart;
         bool read=false;
 
-        RTF_TEST_REPORT("Checking encoders");
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking encoders");
         while(timeNow<timeStart+m_aTimeout[joint] && !read) {
             // read encoders
             read=iEncoders->getEncoder(joint,m_aHome+joint);
             yarp::os::Time::delay(0.1);
         }
-        RTF_TEST_FAIL_IF_FALSE(read, "getEncoder() returned true");
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(read, "getEncoder() returned true");
 
-        RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(joint, m_aTargetVal[joint]),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->positionMove(joint, m_aTargetVal[joint]),
             Asserter::format("moving joint %d to %.2lf", joint, m_aTargetVal[joint]));
 
         doneAll=false;
         ret=iPosition->checkMotionDone(joint, &doneAll);
-        RTF_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
-        RTF_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", m_aTimeout[joint]));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", m_aTimeout[joint]));
         bool reached=false;
         while(timeNow<timeStart+m_aTimeout[joint] && !reached) {
             double pos;
             iEncoders->getEncoder(joint,&pos);
-            reached = yarp::rtf::TestAsserter::isApproxEqual(pos, m_aTargetVal[joint], m_aMinErr[joint], m_aMaxErr[joint]);
+            reached = yarp::robottestingframework::TestAsserter::isApproxEqual(pos, m_aTargetVal[joint], m_aMinErr[joint], m_aMaxErr[joint]);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
         }
-        RTF_TEST_FAIL_IF_FALSE(reached, "reached position");
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(reached, "reached position");
     }
 
     //////// check multiple joints
-    RTF_TEST_REPORT("Checking multiple joints...");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking multiple joints...");
     if (m_aRefAcc!=NULL) {
-        RTF_TEST_FAIL_IF_FALSE(iPosition->setRefAccelerations(m_aRefAcc),
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->setRefAccelerations(m_aRefAcc),
                 "setting reference acceleration on all joints");
     }
-    RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(m_aRefVel),
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(m_aRefVel),
             "setting reference speed on all joints");
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(m_aHome),
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->positionMove(m_aHome),
             "moving all joints to home");
 
     doneAll=false;
     // make sure that checkMotionDone return false right after a movement
     ret=iPosition->checkMotionDone(&doneAll);
-    RTF_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     // wait some time
     double timeStart=yarp::os::Time::now();
@@ -237,18 +237,18 @@ void MotorTest::run() {
             timeout=m_aTimeout[j];
     }
 
-    RTF_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", timeout));
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", timeout));
     bool reached=false;
     double *encoders;
     encoders=new double [m_NumJoints];
     while(timeNow<timeStart+timeout && !reached) {
-            RTF_TEST_FAIL_IF_FALSE(iEncoders->getEncoders(encoders), "getEncoders()");
-            reached = yarp::rtf::TestAsserter::isApproxEqual(encoders, m_aHome, m_aMinErr, m_aMaxErr, m_NumJoints);
+            ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iEncoders->getEncoders(encoders), "getEncoders()");
+            reached = yarp::robottestingframework::TestAsserter::isApproxEqual(encoders, m_aHome, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
 
-    RTF_TEST_FAIL_IF_FALSE(reached, "reached position");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(reached, "reached position");
 
     if(reached) {
         // check checkMotionDone.
@@ -266,11 +266,11 @@ void MotorTest::run() {
             times--;
         }
 
-        RTF_TEST_FAIL_IF_FALSE(doneAll&&ret, "checking checkMotionDone returns true");
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(doneAll&&ret, "checking checkMotionDone returns true");
     }
 
 
-    RTF_TEST_REPORT("Now checking group interface");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Now checking group interface");
 
     //shuffle encoders
     int *jmap=new int [m_NumJoints];
@@ -284,27 +284,27 @@ void MotorTest::run() {
         jmap[kk]=m_NumJoints-kk-1;
     }
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->setRefSpeeds(m_NumJoints, jmap, swapped_refvel),
             "setting reference speed on all joints using group interface");
 
-    RTF_TEST_FAIL_IF_FALSE(iPosition->positionMove(m_NumJoints, jmap, swapped_target),
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(iPosition->positionMove(m_NumJoints, jmap, swapped_target),
             "moving all joints to home using group interface");
 
     ret=iPosition->checkMotionDone(m_NumJoints, jmap, &doneAll);
-    RTF_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(!doneAll&&ret, "checking checkMotionDone returns false after position move");
 
     timeStart=yarp::os::Time::now();
     timeNow=timeStart;
 
-    RTF_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", timeout));
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Waiting timeout %.2lf", timeout));
     reached=false;
     while(timeNow<timeStart+timeout && !reached) {
             iEncoders->getEncoders(encoders);
-            reached = yarp::rtf::TestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
+            reached = yarp::robottestingframework::TestAsserter::isApproxEqual(encoders, m_aTargetVal, m_aMinErr, m_aMaxErr, m_NumJoints);
             timeNow=yarp::os::Time::now();
             yarp::os::Time::delay(0.1);
     }
-    RTF_TEST_FAIL_IF_FALSE(reached, "reached position");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(reached, "reached position");
 
     if (reached) {
         bool *done_vector=new bool [m_NumJoints];
@@ -322,7 +322,7 @@ void MotorTest::run() {
             times--;
         }
 
-        RTF_TEST_FAIL_IF_FALSE(doneAll&&ret, "checking checkMotionDone");
+        ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(doneAll&&ret, "checking checkMotionDone");
         delete [] done_vector;
     }
 

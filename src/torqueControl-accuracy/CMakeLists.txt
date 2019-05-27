@@ -21,20 +21,18 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-set(PROJECTNAME TorqueControlAccuracy)
-project(${PROJECTNAME})
+project(TorqueControlAccuracy)
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
+robottestingframework_add_plugin(${PROJECT_NAME} HEADERS TorqueControlAccuracy.h
+                                                 SOURCES TorqueControlAccuracy.cpp)
 
-add_library(${PROJECTNAME} HEADERS TorqueControlAccuracy.h
-                           SOURCES TorqueControlAccuracy.cpp)
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_robottestingframework)
 
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
-                      ${YARP_LIBRARIES} YARP::YARP_rtf)
-
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)

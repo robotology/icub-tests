@@ -21,7 +21,7 @@
 #ifndef _SKINWRAPPERTEST_H_
 #define _SKINWRAPPERTEST_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -31,7 +31,7 @@
 * This test verifies the functionalities of skinWrapper after the removal of analogServer from icub-main.
 *
 */
-class SkinWrapperTest : public yarp::rtf::TestCase
+class SkinWrapperTest : public yarp::robottestingframework::TestCase
 {
     yarp::dev::PolyDriver dd1;
     yarp::dev::PolyDriver dd2;

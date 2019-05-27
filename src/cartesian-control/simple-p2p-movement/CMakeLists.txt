@@ -21,18 +21,21 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-# set the project name
 project(CartesianControlSimpleP2pMovementTest)
 
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)
 
 # add the source codes to build the plugin library
-rtf_add_plugin(${PROJECT_NAME} HEADERS ${PROJECT_NAME}.h
-                               SOURCES ${PROJECT_NAME}.cpp)
+robottestingframework_add_plugin(${PROJECT_NAME} HEADERS ${PROJECT_NAME}.h
+                                                 SOURCES ${PROJECT_NAME}.cpp)
 
 # add required libraries
-target_link_libraries(${PROJECT_NAME} ${RTF_LIBRARIES} ${YARP_LIBRARIES} YARP::YARP_rtf)
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_robottestingframework)
 
 # set the installation options
 install(TARGETS ${PROJECT_NAME}

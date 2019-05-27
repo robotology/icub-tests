@@ -20,8 +20,8 @@
 
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
@@ -31,14 +31,14 @@
 //example2    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)"" "
 //example3    -v -t OpenLoopConsistency.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --home ""(0 0 0 0 0 10)"" "
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(OpenLoopConsistency)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(OpenLoopConsistency)
 
-OpenLoopConsistency::OpenLoopConsistency() : yarp::rtf::TestCase("OpenLoopConsistency") {
+OpenLoopConsistency::OpenLoopConsistency() : yarp::robottestingframework::TestCase("OpenLoopConsistency") {
     jointsList=0;
     pos_tot=0;
     dd=0;
@@ -62,21 +62,21 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),    "The home positions must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("home"),    "The home positions must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -84,21 +84,21 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
     options.put("local", "/OpenLoopConsistencyTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipwm), "Unable to open pwm control interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipwm), "Unable to open pwm control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     if      (n_part_joints<=0)
-        RTF_ASSERT_ERROR("Error this part has in invalid (<=0) number of jonits");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Error this part has in invalid (<=0) number of jonits");
     else if (jointsBottle->size() == 1)
         cmd_mode=single_joint;
     else if (jointsBottle->size() < n_part_joints)
@@ -106,7 +106,7 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
     else if (jointsBottle->size() == n_part_joints)
         cmd_mode=all_joints;
     else
-        RTF_ASSERT_ERROR("invalid joint selection?");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("invalid joint selection?");
 
     cmd_tot = new double[n_part_joints];
     pos_tot=new double[n_part_joints];
@@ -145,7 +145,7 @@ void OpenLoopConsistency::setMode(int desired_control_mode, yarp::dev::Interacti
 void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)
@@ -162,14 +162,14 @@ void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::Intera
         {
             char sbuf[500];
             sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str(), Vocab::decode((NetInt32)cmode).c_str(),Vocab::decode((NetInt32)imode).c_str());
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
-    RTF_TEST_REPORT(sbuf);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
 void OpenLoopConsistency::goHome()
@@ -192,7 +192,7 @@ void OpenLoopConsistency::goHome()
         if (in_position==n_cmd_joints) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching home position");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while reaching home position");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -227,7 +227,7 @@ void OpenLoopConsistency::setRefOpenloop(double value)
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }
@@ -244,12 +244,12 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, std::string title
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed, j%d current reference is (%f)",title.c_str(),i, verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current reference is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -262,12 +262,12 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, std::string title
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current reference is (%f)",title.c_str(),i, verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current reference is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -282,17 +282,17 @@ void OpenLoopConsistency::verifyRefOpenloop(double verify_val, std::string title
         if (ok==n_part_joints)
         {
             sprintf(sbuf,"Test (%s) passed, current reference is (%f)",title.c_str(), verify_val);
-            RTF_TEST_REPORT(sbuf);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
         }
         else
         {
             sprintf(sbuf,"Test (%s) failed: only %d joints (of %d) are ok",title.c_str(),ok,n_part_joints);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }
@@ -309,12 +309,12 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, std::string title
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed, j%d current output is (%f)",title.c_str(),i, verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current output is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -327,12 +327,12 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, std::string title
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current output is (%f)",title.c_str(),i,verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current output is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -345,23 +345,23 @@ void OpenLoopConsistency::verifyOutputEqual(double verify_val, std::string title
             if (verify_val==cmd_tot[i]) ok++;
             else
             {
-                RTF_TEST_REPORT(RTF::Asserter::format("verify_val=%.2f, read_val=%.2f j=%d",verify_val, cmd_tot[i], i ));
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(robottestingframework::Asserter::format("verify_val=%.2f, read_val=%.2f j=%d",verify_val, cmd_tot[i], i ));
             }
         }
         if (ok==n_part_joints)
         {
             sprintf(sbuf,"Test (%s) passed current output is (%f)",title.c_str(), verify_val);
-            RTF_TEST_REPORT(sbuf);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
         }
         else
         {
             sprintf(sbuf,"Test (%s) failed: only %d joints (of %d) are ok",title.c_str(),ok,n_part_joints);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }
@@ -378,12 +378,12 @@ void OpenLoopConsistency::verifyOutputDiff(double verify_val, std::string title)
             if (value!=verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d, current output is (%f!=%f)",title.c_str(),i,value,verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current output is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -396,12 +396,12 @@ void OpenLoopConsistency::verifyOutputDiff(double verify_val, std::string title)
             if (value!=verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current output is (%f!=%f)",title.c_str(), i,value,verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current output is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -416,17 +416,17 @@ void OpenLoopConsistency::verifyOutputDiff(double verify_val, std::string title)
         if (ok==n_part_joints)
         {
             sprintf(sbuf,"Test (%s) passed current output is (%f!=%f)",title.c_str(),value,verify_val);
-            RTF_TEST_REPORT(sbuf);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
         }
         else
         {
             sprintf(sbuf,"Test (%s) failed: only %d joints (of %d) are ok",title.c_str(),ok,n_part_joints);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }

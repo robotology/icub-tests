@@ -21,17 +21,18 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-set(PROJECTNAME CameraTest)
-project(${PROJECTNAME})
+project(CameraTest)
 
-rtf_add_plugin(${PROJECTNAME}     HEADERS CameraTest.h
-                                  SOURCES CameraTest.cpp)
- 
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
-                      ${YARP_LIBRARIES} YARP::YARP_rtf)
+robottestingframework_add_plugin(${PROJECT_NAME} HEADERS CameraTest.h
+                                                 SOURCES CameraTest.cpp)
 
-                                 
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_robottestingframework)
+
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)

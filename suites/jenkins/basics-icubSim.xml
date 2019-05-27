@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<suit name="Basic Tests Suite">
+<suite name="Basic Tests Suite">
     <description>Testing robot's basic features</description>
     <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubsim-fixture-jenkins.xml"> yarpmanager </fixture>
@@ -42,5 +42,5 @@
     <test type="dll" param="--from motor_stiction_torso.ini"> MotorStiction </test>
     <test type="dll" param="--from motor_stiction_head.ini"> MotorStiction </test>
 
-</suit>
+</suite>
 

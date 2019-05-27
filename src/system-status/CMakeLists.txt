@@ -21,26 +21,22 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.5)
 endif()
 
-# set the project name
-set(PROJECTNAME SystemStatus)
-project(${PROJECTNAME})
-
-# add include directories
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RTF_INCLUDE_DIRS}
-                    ${YARP_INCLUDE_DIRS})
+project(${SystemStatus})
 
 # add the source codes to build the plugin library
-add_library(${PROJECTNAME} MODULE HEADERS SystemStatus.h
-                                  SOURCES SystemStatus.cpp)
+robottestingframework_add_plugin(${PROJECT_NAME} HEADERS SystemStatus.h
+                                                SOURCES SystemStatus.cpp)
 
-# add required libraries 
-target_link_libraries(${PROJECTNAME} ${RTF_LIBRARIES}
-                      ${YARP_LIBRARIES} YARP::YARP_rtf)
-  
+# add required libraries
+target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+                                      RobotTestingFramework::RTF_dll
+                                      YARP::YARP_OS
+                                      YARP::YARP_init
+                                      YARP::YARP_robottestingframework)
+
 # set the installation options
-install(TARGETS ${PROJECTNAME}
-        EXPORT ${PROJECTNAME}
+install(TARGETS ${PROJECT_NAME}
+        EXPORT ${PROJECT_NAME}
         COMPONENT runtime
         LIBRARY DESTINATION lib)
 

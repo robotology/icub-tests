@@ -23,7 +23,7 @@
 #define _SYSTEM_STATUS_H_
 
 #include <vector>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/SystemInfoSerializer.h>
 
 class HostInfo {
@@ -33,7 +33,7 @@ public:
 };
 
 
-class SystemStatus : public yarp::rtf::TestCase {
+class SystemStatus : public yarp::robottestingframework::TestCase {
 public:
     SystemStatus();
     virtual ~SystemStatus();
