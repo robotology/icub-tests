@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(iCub-Tests)
 
-find_package(RobotTestingFramework 1.6.51 COMPONENTS DLL REQUIRED)
+find_package(RobotTestingFramework 2 COMPONENTS DLL REQUIRED)
 find_package(YARP 3.1.101 COMPONENTS math robottestingframework REQUIRED)
 
 # set the output plugin directory to collect all the shared libraries
