@@ -1,0 +1,58 @@
+\doxysection{Camera\+Test Class Reference}
+\label{classCameraTest}\index{CameraTest@{CameraTest}}
+
+
+Check if a camera is publishing images at desired framerate.  
+
+
+
+
+{\ttfamily \#include $<$Camera\+Test.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classCameraTest_ac059968960ce6deaee9c60623ba2266d}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classCameraTest_a9d99fe4d4b8929fbfaf280ed87388dc2}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classCameraTest_a1c55590d1e9b43051fa8a818559abff2}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check if a camera is publishing images at desired framerate. 
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering \char`\"{}\+Camera\+Test\char`\"{}   &\PBS\centering No   &\PBS\centering The name of the test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering portname   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The yarp port name of the camera to test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering measure\+\_\+time   &\PBS\centering int   &\PBS\centering s   &\PBS\centering 1   &\PBS\centering No   &\PBS\centering The duration of the test.   &\PBS\centering \\\cline{1-7}
+\PBS\centering expected\+\_\+frequency   &\PBS\centering int   &\PBS\centering Hz   &\PBS\centering 30   &\PBS\centering No   &\PBS\centering The expected framerate of the camera.   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering int   &\PBS\centering Number of frames   &\PBS\centering 5   &\PBS\centering No   &\PBS\centering The tolerance on the total number of frames read during the period (expected\+\_\+frequency$\ast$measure\+\_\+time) to consider the test sucessful.   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 44 of file Camera\+Test.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/camera/Camera\+Test.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/camera/Camera\+Test.\+cpp\end{DoxyCompactItemize}

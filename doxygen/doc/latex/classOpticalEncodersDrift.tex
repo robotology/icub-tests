@@ -1,0 +1,77 @@
+\doxysection{Optical\+Encoders\+Drift Class Reference}
+\label{classOpticalEncodersDrift}\index{OpticalEncodersDrift@{OpticalEncodersDrift}}
+
+
+This tests checks if the relative encoders measurements are consistent over time, by performing cyclic movements between two reference positions (min and max).  
+
+
+
+
+{\ttfamily \#include $<$optical\+Encoders\+Drift.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classOpticalEncodersDrift_aaf2fb9fd56a67ad676afb53110a7fadd}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classOpticalEncodersDrift_a54fbea332ba8cc678415595243daed45}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classOpticalEncodersDrift_a92d1a9549df738b811ac64d1606fb4d8}} 
+virtual void {\bfseries run} ()
+\item 
+\mbox{\label{classOpticalEncodersDrift_aa712ab13068e2b998519674dd806dfc6}} 
+bool {\bfseries go\+Home} ()
+\item 
+\mbox{\label{classOpticalEncodersDrift_a21d00ce0925d82329311b9f60b651c5b}} 
+void {\bfseries set\+Mode} (int desired\+\_\+mode)
+\item 
+\mbox{\label{classOpticalEncodersDrift_a0820fec65128490eaafed20d5d97466c}} 
+bool {\bfseries save\+To\+File} (const std\+::string \&filename, const yarp\+::os\+::\+Bottle \&b)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This tests checks if the relative encoders measurements are consistent over time, by performing cyclic movements between two reference positions (min and max). 
+
+The test collects data during the joint motion, saves data to a text file a plots the result. If the relative encoder is working correctly, the plot should have no drift. Otherwise, a drift in the plot may be caused by a damaged reflective encoder/ optical disk. For best reliability an high number of cycles (e.\+g. $>$100) is suggested.
+
+example\+: test\+Runner -\/v -\/t Optical\+Encoders\+Drift.\+dll -\/p \char`\"{}-\/-\/robot icub -\/-\/part head -\/-\/joints \char`\"{}\char`\"{}(0 1 2)\char`\"{}\char`\"{} -\/-\/home \char`\"{}\char`\"{}(0 0 0)\char`\"{} --speed \char`\"{}(20 20 20)\char`\"{} --max \char`\"{}(10 10 10)\char`\"{} --min \char`\"{}(-\/10 -\/10 -\/10)\char`\"{} --cycles 100 --tolerance 1.\+0 \char`\"{} example\+: test\+Runner -\/v -\/t Optical\+Encoders\+Drift.\+dll -\/p \char`\"{}--robot icub --part head --joints \char`\"{}\char`\"{}(2)\char`\"{}\char`\"{} --home \char`\"{}\char`\"{}(0)\char`\"{}\char`\"{} --speed \char`\"{}(20      )\char`\"{} --max \char`\"{}(10      )\char`\"{} --min \char`\"{}(-\/10)\char`\"{} --cycles 100 --tolerance 1.\+0 "{}
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IMotor\+Encoder\+::get\+Motor\+Encoders()\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of trhe robot part.   &\PBS\centering e.\+g. left\+\_\+arm    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering home   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering cycles   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The number of test cycles (going from max to min position and viceversa)   &\PBS\centering Use values $>$ 100    \\\cline{1-7}
+\PBS\centering max   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The max position using during the joint movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering min   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The min position using during the joint movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The tolerance used when moving from min to max reference position and viceversa   &\PBS\centering \\\cline{1-7}
+\PBS\centering speed   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The reference speed used during the movement   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 62 of file optical\+Encoders\+Drift.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/optical\+Encoders-\/drift/optical\+Encoders\+Drift.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/optical\+Encoders-\/drift/optical\+Encoders\+Drift.\+cpp\end{DoxyCompactItemize}

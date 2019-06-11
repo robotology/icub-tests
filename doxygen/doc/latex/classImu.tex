@@ -1,0 +1,71 @@
+\doxysection{Imu Class Reference}
+\label{classImu}\index{Imu@{Imu}}
+
+
+The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements.  
+
+
+
+
+{\ttfamily \#include $<$imu.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classImu_a2bd75f1be1f28fecbff074a7cb12ed8a}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classImu_aefc1351bbb75573d08c851a3d1d11a6d}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classImu_a8af2b1c07ac7950215df4d4ece2008c0}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements. 
+
+It takes as input the urdf of the robot and make a comparison between the expected values retrieved from the forward kinematics and the ones read from the IMU itself. The test involves the movements of the joints belonging to the part on which the sensor is mounted. The movements are executed sequentially, traversing from the home position to the lower limit, upper limit and back to the home position for each joint.
+
+Example\+: robottestingframework-\/testrunner --test plugins/imu.\+so --param \char`\"{}-\/-\/robot icub -\/-\/model model.\+urdf -\/-\/port /icub/head/inertials -\/-\/part head -\/-\/controlboards (\char`\"{}torso\char`\"{}, \char`\"{}head\char`\"{}) -\/-\/sensor head\+\_\+imu\+\_\+0 -\/-\/frame head\+\_\+imu\+\_\+0 -\/-\/mean\+\_\+error 0.\+1\char`\"{}
+
+Moreover, you can manually modify the suites/contexts/icub/test\+\_\+imu.\+ini file depending on the parameters of the test. In this case, after compiling, you can run\+:
+
+robottestingframework-\/testrunner --suite ../suites/imu.xml
+
+This will launch the test and open a yarpscope with the plots of the IMU traces.
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering model   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot model.   &\PBS\centering e.\+g. model.\+urdf    \\\cline{1-7}
+\PBS\centering port   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the port streaming IMU data.   &\PBS\centering e.\+g. /icub/head/inertials    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot part on which the sensor is mounted.   &\PBS\centering e.\+g. head    \\\cline{1-7}
+\PBS\centering controlboards   &\PBS\centering vector of string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The list of the controlboards to open.   &\PBS\centering e.\+g. (\char`\"{}torso\char`\"{}, \char`\"{}head\char`\"{})    \\\cline{1-7}
+\PBS\centering sensor   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the sensor to be tested.   &\PBS\centering e.\+g. head\+\_\+imu\+\_\+0    \\\cline{1-7}
+\PBS\centering frame   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the frame on which the sensor is attached.   &\PBS\centering e.\+g. head\+\_\+imu\+\_\+0    \\\cline{1-7}
+\PBS\centering mean\+\_\+error   &\PBS\centering double   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The tolerance on the mean of the error.   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 44 of file imu.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.\+cpp\end{DoxyCompactItemize}

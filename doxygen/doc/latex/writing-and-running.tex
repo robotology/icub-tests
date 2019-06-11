@@ -1,0 +1,256 @@
+\hypertarget{writing-and-running_writing-new-tests}{}\doxysection{Writing a new test}\label{writing-and-running_writing-new-tests}
+Create a folder with the name of your test case in the {\ttfamily icub-\/tests/src/} folder to keep your test codes\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mkdir icub-\/tests/src/example-\/test}
+
+\end{DoxyCode}
+
+
+Create a child test class inherited from the {\ttfamily Yarp\+Test\+Case}\+:
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{ * iCub Robot Unit Tests (Robot Testing Framework)}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * Copyright (C) 2015-\/2019 Istituto Italiano di Tecnologia (IIT)}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * This library is free software; you can redistribute it and/or}}
+\DoxyCodeLine{\textcolor{comment}{ * modify it under the terms of the GNU Lesser General Public}}
+\DoxyCodeLine{\textcolor{comment}{ * License as published by the Free Software Foundation; either}}
+\DoxyCodeLine{\textcolor{comment}{ * version 2.1 of the License, or (at your option) any later version.}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * This library is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{\textcolor{comment}{ * but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{\textcolor{comment}{ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU}}
+\DoxyCodeLine{\textcolor{comment}{ * Lesser General Public License for more details.}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * You should have received a copy of the GNU Lesser General Public}}
+\DoxyCodeLine{\textcolor{comment}{ * License along with this library; if not, write to the Free Software}}
+\DoxyCodeLine{\textcolor{comment}{ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-\/1301  USA}}
+\DoxyCodeLine{\textcolor{comment}{ */}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef \_EXAMPLE\_TEST\_H\_}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define \_EXAMPLE\_TEST\_H\_}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class }ExampleTest : \textcolor{keyword}{public} yarp::robottestingframework::TestCase \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    ExampleTest();}
+\DoxyCodeLine{    \textcolor{keyword}{virtual} \string~ExampleTest();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} setup(yarp::os::Property\& property);}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} tearDown();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} run();}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif }\textcolor{comment}{//\_EXAMPLE\_TEST\_H}}
+
+\end{DoxyCodeInclude}
+
+
+Implement the test case\+:
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{ * iCub Robot Unit Tests (Robot Testing Framework)}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * Copyright (C) 2015-\/2019 Istituto Italiano di Tecnologia (IIT)}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * This library is free software; you can redistribute it and/or}}
+\DoxyCodeLine{\textcolor{comment}{ * modify it under the terms of the GNU Lesser General Public}}
+\DoxyCodeLine{\textcolor{comment}{ * License as published by the Free Software Foundation; either}}
+\DoxyCodeLine{\textcolor{comment}{ * version 2.1 of the License, or (at your option) any later version.}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * This library is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{\textcolor{comment}{ * but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{\textcolor{comment}{ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU}}
+\DoxyCodeLine{\textcolor{comment}{ * Lesser General Public License for more details.}}
+\DoxyCodeLine{\textcolor{comment}{ *}}
+\DoxyCodeLine{\textcolor{comment}{ * You should have received a copy of the GNU Lesser General Public}}
+\DoxyCodeLine{\textcolor{comment}{ * License along with this library; if not, write to the Free Software}}
+\DoxyCodeLine{\textcolor{comment}{ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-\/1301  USA}}
+\DoxyCodeLine{\textcolor{comment}{ */}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}ExampleTest.h"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }robottestingframework;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }yarp::os;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// prepare the plugin}}
+\DoxyCodeLine{ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(ExampleTest)}
+\DoxyCodeLine{}
+\DoxyCodeLine{ExampleTest::ExampleTest() : yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}ExampleTest"{}}) \{}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{ExampleTest::\string~ExampleTest() \{ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ExampleTest::setup(yarp::os::Property \&property) \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// initialization goes here ...}}
+\DoxyCodeLine{    \textcolor{comment}{//updating the test name}}
+\DoxyCodeLine{    \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{        setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{string} example = \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}example"{}}, Value(\textcolor{stringliteral}{"{}default value"{}})).asString();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Use '\%s' for the example param!"{}},}
+\DoxyCodeLine{                                       example.c\_str()));}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} ExampleTest::tearDown() \{}
+\DoxyCodeLine{    \textcolor{comment}{// finalization goes her ...}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} ExampleTest::run() \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{int} a = 5; \textcolor{keywordtype}{int} b = 3;}
+\DoxyCodeLine{    ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(a<b, \textcolor{stringliteral}{"{}a smaller then b"{}});}
+\DoxyCodeLine{    ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(a>b, \textcolor{stringliteral}{"{}a bigger then b"{}});}
+\DoxyCodeLine{    ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(a==b, \textcolor{stringliteral}{"{}a equal to b"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// add more}}
+\DoxyCodeLine{    \textcolor{comment}{// ...}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+
+\end{DoxyCodeInclude}
+
+
+Notice\+: The {\ttfamily ROBOTTESTINGFRAMEWORK\+\_\+\+TEST\+\_\+\+CHECK}, {\ttfamily ROBOTTESTINGFRAMEWORK\+\_\+\+TEST\+\_\+\+REPORT} do NOT threw any exception and are used to add failure or report messages to the result collector. Instead, all the macros which include {\ttfamily \+\_\+\+ASSERT\+\_\+} within their names (e.\+g., {\ttfamily ROBOTTESTINGFRAMEWORK\+\_\+\+ASSERT\+\_\+\+FAIL}) throw exceptions which prevent only the current test case (Not the whole test suite) of being proceed. The error/failure messages thrown by the exceptions are caught. (See \href{http://robotology.github.io/robot-testing-framework/documentation/TestAssert_8h.html}{\texttt{ {\itshape Basic Assertion macros}}}).
+
+The report/assertion macros store the source line number where the check/report or assertion happen. To see them, you can run the test case or suite with {\ttfamily -\/-\/detail} parameter using the {\ttfamily robottestingframework-\/testrunner} (See \href{http://robotology.github.io/robot-testing-framework/documentation/robottestingframework-testrunner.html}{\texttt{ {\itshape Running test case plug-\/ins using robottestingframework-\/testrunner}}}).
+
+Create a cmake file to build the plug-\/in\+:
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\# iCub Robot Unit Tests (Robot Testing Framework)}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# Copyright (C) 2015-\/2019 Istituto Italiano di Tecnologia (IIT)}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# This library is free software; you can redistribute it and/or}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# modify it under the terms of the GNU Lesser General Public}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# License as published by the Free Software Foundation; either}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# version 2.1 of the License, or (at your option) any later version.}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# This library is distributed in the hope that it will be useful,}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# but WITHOUT ANY WARRANTY; without even the implied warranty of}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# Lesser General Public License for more details.}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# You should have received a copy of the GNU Lesser General Public}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# License along with this library; if not, write to the Free Software}}
+\DoxyCodeLine{\textcolor{preprocessor}{\# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-\/1301  USA}}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if}(NOT DEFINED CMAKE\_MINIMUM\_REQUIRED\_VERSION)}
+\DoxyCodeLine{  cmake\_minimum\_required(VERSION 3.5)}
+\DoxyCodeLine{endif()}
+\DoxyCodeLine{}
+\DoxyCodeLine{project(ExampleTest)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\# add the required cmake packages}}
+\DoxyCodeLine{find\_package(RobotTestingFramework 2 COMPONENTS DLL)}
+\DoxyCodeLine{find\_package(YARP 3.5.1 COMPONENTS os robottestingframework)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\# add the source codes to build the plugin library}}
+\DoxyCodeLine{add\_library(\$\{PROJECT\_NAME\} MODULE ExampleTest.h}
+\DoxyCodeLine{                                   ExampleTest.cpp)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# add required libraries}
+\DoxyCodeLine{target\_link\_libraries(\$\{PROJECT\_NAME\} RobotTestingFramework::RTF}
+\DoxyCodeLine{                                      RobotTestingFramework::RTF\_dll}
+\DoxyCodeLine{                                      YARP::YARP\_os}
+\DoxyCodeLine{                                      YARP::YARP\_init}
+\DoxyCodeLine{                                      YARP::YARP\_robottestingframework)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# set the installation options}
+\DoxyCodeLine{install(TARGETS \$\{PROJECT\_NAME\}}
+\DoxyCodeLine{        EXPORT \$\{PROJECT\_NAME\}}
+\DoxyCodeLine{        COMPONENT runtime}
+\DoxyCodeLine{        LIBRARY DESTINATION lib)}
+\DoxyCodeLine{}
+
+\end{DoxyCodeInclude}
+
+
+Call your cmake file from the {\ttfamily icub-\/test/\+CMake\+Lists.\+txt} to build it along with the other other test plugins. To do that, adds the following line to the {\ttfamily icub-\/test/\+CMake\+Lists.\+txt}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\# Build example test}}
+\DoxyCodeLine{\textcolor{preprocessor}{add\_subdirectory(src/example-\/test)}}
+
+\end{DoxyCode}
+
+
+Please check the {\ttfamily icub-\/tests/example} folder for a template for developing tests for the i\+Cub.\hypertarget{writing-and-running_running_single_test_case}{}\doxysection{Running a single test case}\label{writing-and-running_running_single_test_case}
+As it is documented here (\href{http://robotology.github.io/robot-testing-framework/documentation/robottestingframework-testrunner.html}{\texttt{ {\itshape Running test case plug-\/ins using robottestingframework-\/testrunner}}}) you can run a single test case or run it with the other tests using a test suite. For example, to run a single test case\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{robottestingframework-\/testrunner -\/-\/verbose -\/-\/test plugins/ExampleTest.so  -\/-\/param \textcolor{stringliteral}{"{}-\/-\/name MyExampleTest"{}}}
+
+\end{DoxyCode}
+
+
+Notice that this test require the {\ttfamily yarpserver} to be running and it contains tests that are programmed to succeed and some that are programmed to fail.
+
+or to run the i\+Cub\+Sim camera test whith the test configuration file\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{robottestingframework-\/testrunner -\/-\/verbose -\/-\/test plugins/CameraTest.so -\/-\/param \textcolor{stringliteral}{"{}-\/-\/from camera\_right.ini"{}} -\/-\/environment \textcolor{stringliteral}{"{}-\/-\/robotname icubSim"{}}}
+
+\end{DoxyCode}
+
+
+This runs the icub\+Sim right-\/camera test with the parameters specified in the {\ttfamily right\+\_\+camera.\+ini} which can be found in {\ttfamily icub-\/tests/suites/contexts/icub\+Sim} folder. This test assumes you are running {\ttfamily yarpserver} and the i\+Cub simulator (i.\+e. {\ttfamily i\+Cub\+\_\+\+SIM}).
+
+Notice that the environment parameter {\ttfamily -\/-\/robotname icub\+Sim} is used to locate the correct context (for this examples is {\ttfamily icub\+Sim}) and also to update the variables loaded from the {\ttfamily right\+\_\+camera.\+ini} file.\hypertarget{writing-and-running_running_multiple_tests}{}\doxysection{Running multiple tests using a test suite}\label{writing-and-running_running_multiple_tests}
+You can update one of the existing suite XML files to add your test case plug-\/in and its parameters or create a new test suite which keeps all the relevant test cases. For example the {\ttfamily basic-\/icub\+Sim.\+xml} test suite keeps the basic tests for cameras and motors\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{<?xml version=\textcolor{stringliteral}{"{}1.0"{}} encoding=\textcolor{stringliteral}{"{}UTF-\/8"{}}?>}
+\DoxyCodeLine{}
+\DoxyCodeLine{<suite name=\textcolor{stringliteral}{"{}Basic Tests Suite"{}}>}
+\DoxyCodeLine{    <description>Testing robot\textcolor{stringliteral}{'s basic features</description>}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <environment>-\/-\/robotname icubSim</environment>}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <fixture param="{}-\/-\/fixture icubsim-\/fixture.xml"{}> yarpmanager </fixture>}}
+\DoxyCodeLine{\textcolor{stringliteral}{}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <!-\/-\/ Camera -\/-\/>}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <test type="{}dll"{} param="{}-\/-\/from right\_camera.ini"{}> CameraTest </test>}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <test type="{}dll"{} param="{}-\/-\/from left\_camera.ini"{}> CameraTest </test>}}
+\DoxyCodeLine{\textcolor{stringliteral}{}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <!-\/-\/ Motors -\/-\/>}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <test type="{}dll"{} param="{}-\/-\/from test\_right\_arm.ini"{}> MotorTest </test>}}
+\DoxyCodeLine{\textcolor{stringliteral}{    <test type="{}dll"{} param="{}-\/-\/from test\_left\_arm.ini"{}> MotorTest </test>}}
+\DoxyCodeLine{\textcolor{stringliteral}{</suite>}}
+
+\end{DoxyCode}
+
+
+Then you can run all the test cases from the test suite\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{robottestingframework-\/testrunner -\/-\/verbose -\/-\/suite icub-\/tests/suites/basics-\/icubSim.xml}
+
+\end{DoxyCode}
+
+
+The {\ttfamily robottestingframework-\/testrunner}, first, launches the i\+Cub simulator and then runs all the tests one after each other. After running all the test cases, the {\ttfamily tesrunner} stop the simulator. If the i\+Cub simulator crashes during the test run, the {\ttfamily robottestingframework-\/testrunner} re-\/launchs it and continues running the remaining tests.
+
+How {\ttfamily robottestingframework-\/testrunner} knows that it should launch the i\+Cub simulator before running the tests? Well, this is indicated by {\ttfamily $<$fixture param=\char`\"{}-\/-\/fixture icubsim-\/fixture.\+xml\char`\"{}$>$ yarpmanager $<$/fixture$>$}. The {\ttfamily robottestingframework-\/testrunner} uses the {\ttfamily yarpmanager} fixture plug-\/in to launch the modules which are listed in the {\ttfamily icubsim-\/fixture.\+xml}. Notice that all the fixture files should be located in the {\ttfamily icub-\/tests/suites/fixtures} folder. 
