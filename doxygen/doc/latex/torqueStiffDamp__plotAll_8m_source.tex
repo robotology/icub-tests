@@ -1,0 +1,67 @@
+\doxysection{torque\+Stiff\+Damp\+\_\+plot\+All.\+m}
+\label{torqueStiffDamp__plotAll_8m_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/suites/contexts/scripts/torqueStiffDamp\_plotAll.m@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/suites/contexts/scripts/torqueStiffDamp\_plotAll.m}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \%\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}
+\DoxyCodeLine{00002\ \%}
+\DoxyCodeLine{00003\ \%\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}
+\DoxyCodeLine{00004\ \%}
+\DoxyCodeLine{00005\ \%\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}
+\DoxyCodeLine{00006\ \%\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}
+\DoxyCodeLine{00007\ \%\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}
+\DoxyCodeLine{00008\ \%\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}
+\DoxyCodeLine{00009\ \%}
+\DoxyCodeLine{00010\ \%\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}
+\DoxyCodeLine{00011\ \%\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}
+\DoxyCodeLine{00012\ \%\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}
+\DoxyCodeLine{00013\ \%\ Lesser\ General\ Public\ License\ \textcolor{keywordflow}{for}\ more\ details.}
+\DoxyCodeLine{00014\ \%}
+\DoxyCodeLine{00015\ \%\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}
+\DoxyCodeLine{00016\ \%\ License\ along\ with\ \textcolor{keyword}{this}\ library;\ \textcolor{keywordflow}{if}\ not,\ write\ to\ the\ Free\ Software}
+\DoxyCodeLine{00017\ \%\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ function\ torqueStiffDamp\_plotAll(partname,\ numofjoint,\ stiffness,\ damping,\ jointlist)}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ p=mfilename("{}fullpath"{});\ \#\textcolor{keyword}{get}\ current\ funtion\ file\ name\ with\ full\ path}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ in\ =\ \ rindex\ (p,\ \textcolor{stringliteral}{"{}/"{}});\ \#\textcolor{keyword}{get}\ the\ index\ of\ last\ occurence\ of\ /}
+\DoxyCodeLine{00025\ onlydir\ =\ strtrunc(p,\ in);\ \#cat\ the\ name\ of\ file\ from\ full\ path.\ in\ Only\ dit\ i\ have\ the\ path\ to\ scripts}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#I\ need\ to\ add\ the\ path\ to\ script\ torqueStiffDump\_plot}}
+\DoxyCodeLine{00028\ addpath(onlydir);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ figure(1);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keywordflow}{for}\ i=\ 1:1:numofjoint}
+\DoxyCodeLine{00033\ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ subplot(numofjoint,\ 1,\ i,\ \textcolor{stringliteral}{"{}align"{}});}
+\DoxyCodeLine{00035\ \ \ \ \ filename\ =\ strcat(\textcolor{stringliteral}{"{}posVStrq\_"{}},\ partname,\ \textcolor{stringliteral}{"{}\_j"{}},\ \ num2str(jointlist(i)),\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00036\ \ \ \ \ printf(\textcolor{stringliteral}{"{}I'm\ going\ to\ plot\ file\ \%s\(\backslash\)n"{}},\ filename);}
+\DoxyCodeLine{00037\ \ \ \ \ torqueStiffDamp\_plot(filename,\ stiffness(i));}
+\DoxyCodeLine{00038\ \ \ \ \ refresh();}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{if}(i==1)}
+\DoxyCodeLine{00040\ \ \ \ \ title(\textcolor{stringliteral}{"{}Position\ vs\ Torque"{}});}
+\DoxyCodeLine{00041\ \ \ \ \ endif}
+\DoxyCodeLine{00042\ endfor}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ figure(2);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keywordflow}{for}\ i=\ 1:1:numofjoint}
+\DoxyCodeLine{00049\ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ subplot(numofjoint,\ 1,\ i,\ \textcolor{stringliteral}{"{}align"{}});}
+\DoxyCodeLine{00051\ \ \ \ \ filename\ =\ strcat(\textcolor{stringliteral}{"{}velVStrq\_"{}},\ partname,\ \textcolor{stringliteral}{"{}\_j"{}},\ \ num2str(jointlist(i)),\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00052\ \ \ \ \ printf(\textcolor{stringliteral}{"{}I'm\ going\ to\ plot\ file\ \%s\(\backslash\)n"{}},\ filename);}
+\DoxyCodeLine{00053\ \ \ \ \ torqueStiffDamp\_plot(filename,\ damping(i));}
+\DoxyCodeLine{00054\ \ \ \ \ refresh();}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{if}(i==1)}
+\DoxyCodeLine{00056\ \ \ \ \ title(\textcolor{stringliteral}{"{}Velocity\ vs\ Torque"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ endif}
+\DoxyCodeLine{00058\ endfor}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ endfunction}
+\DoxyCodeLine{00061\ }
+
+\end{DoxyCode}

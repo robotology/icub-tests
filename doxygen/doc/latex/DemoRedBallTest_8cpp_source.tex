@@ -1,0 +1,386 @@
+\doxysection{Demo\+Red\+Ball\+Test.\+cpp}
+\label{DemoRedBallTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/demoRedBall/DemoRedBallTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/demoRedBall/DemoRedBallTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Network.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/os/BufferedPort.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/ResourceFinder.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/dev/GazeControl.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <iCub/ctrl/filters.h>}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ "{}DemoRedBallTest.h"{}}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00038\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00039\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00040\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00042\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{using\ namespace\ }iCub::ctrl;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00046\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(DemoRedBallTest)}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00050\ DemoRedBallTest::DemoRedBallTest()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}DemoRedBallTest"{}})}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00056\ DemoRedBallTest::\string~DemoRedBallTest()}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{bool}\ DemoRedBallTest::setup(Property\ \&property)}
+\DoxyCodeLine{00063\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ Time::useNetworkClock(\textcolor{stringliteral}{"{}/clock"{}});}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{string}\ context=\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}context"{}},Value(\textcolor{stringliteral}{"{}demoRedBall"{}})).asString();}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{string}\ from=\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}from"{}},Value(\textcolor{stringliteral}{"{}config-\/test.ini"{}})).asString();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ retrieve\ demoRedBall\ parameters}}
+\DoxyCodeLine{00070\ \ \ \ \ ResourceFinder\ rf;}
+\DoxyCodeLine{00071\ \ \ \ \ rf.setDefaultContext(context.c\_str());}
+\DoxyCodeLine{00072\ \ \ \ \ rf.setDefaultConfigFile(from.c\_str());}
+\DoxyCodeLine{00073\ \ \ \ \ rf.configure(0,NULL);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\ fallback\ values}}
+\DoxyCodeLine{00076\ \ \ \ \ params.robot=\textcolor{stringliteral}{"{}icubSim"{}};}
+\DoxyCodeLine{00077\ \ \ \ \ params.eye=\textcolor{stringliteral}{"{}left"{}};}
+\DoxyCodeLine{00078\ \ \ \ \ params.reach\_tol=0.01;}
+\DoxyCodeLine{00079\ \ \ \ \ params.use\_torso=\textcolor{keyword}{true};}
+\DoxyCodeLine{00080\ \ \ \ \ params.use\_left=\textcolor{keyword}{true};}
+\DoxyCodeLine{00081\ \ \ \ \ params.use\_right=\textcolor{keyword}{true};}
+\DoxyCodeLine{00082\ \ \ \ \ params.home\_arm.resize(7,0.0);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ Bottle\ \&general=rf.findGroup(\textcolor{stringliteral}{"{}general"{}});}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (!general.isNull())}
+\DoxyCodeLine{00086\ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ params.robot=general.check(\textcolor{stringliteral}{"{}robot"{}},Value(params.robot)).asString();}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ params.eye=general.check(\textcolor{stringliteral}{"{}eye"{}},Value(params.eye)).asString();}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ params.reach\_tol=general.check(\textcolor{stringliteral}{"{}reach\_tol"{}},Value(params.reach\_tol)).asFloat64();}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ params.use\_torso=(general.check(\textcolor{stringliteral}{"{}torso"{}},Value(params.use\_torso?\textcolor{stringliteral}{"{}on"{}}:\textcolor{stringliteral}{"{}off"{}})).asString()==\textcolor{stringliteral}{"{}on"{}});}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ params.use\_left=(general.check(\textcolor{stringliteral}{"{}left\_arm"{}},Value(params.use\_left?\textcolor{stringliteral}{"{}on"{}}:\textcolor{stringliteral}{"{}off"{}})).asString()==\textcolor{stringliteral}{"{}on"{}});}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ params.use\_right=(general.check(\textcolor{stringliteral}{"{}right\_arm"{}},Value(params.use\_right?\textcolor{stringliteral}{"{}on"{}}:\textcolor{stringliteral}{"{}off"{}})).asString()==\textcolor{stringliteral}{"{}on"{}});}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ Bottle\ \&home\_arm=rf.findGroup(\textcolor{stringliteral}{"{}home\_arm"{}});}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{if}\ (!home\_arm.isNull())}
+\DoxyCodeLine{00097\ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (home\_arm.check(\textcolor{stringliteral}{"{}poss"{}}))}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\ \&poss=home\_arm.findGroup(\textcolor{stringliteral}{"{}poss"{}});}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i=0;\ i<std::min(params.home\_arm.length(),(\textcolor{keywordtype}{size\_t})poss.size()-\/1);\ i++)}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ params.home\_arm[i]=poss.get(1+i).asFloat64();}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Opening\ Clients"{}});}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_left)}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ Property\ optJoint;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+params.robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}left\_arm"{}}));}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/joint/left\_arm"{}}));}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ Property\ optCart;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}cartesiancontrollerclient"{}});}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+params.robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}cartesianController/left\_arm"{}}));}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/cartesian/left\_arm"{}}));}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(drvJointArmL.open(optJoint)\&\&drvCartArmL.open(optCart),}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ open\ clients\ for\ left\_arm!"{}});}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_right)}
+\DoxyCodeLine{00124\ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ Property\ optJoint;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+params.robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}right\_arm"{}}));}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/joint/right\_arm"{}}));}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ Property\ optCart;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}cartesiancontrollerclient"{}});}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+params.robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}cartesianController/right\_arm"{}}));}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/cartesian/right\_arm"{}}));}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(drvJointArmR.open(optJoint)\&\&drvCartArmR.open(optCart),}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ open\ clients\ for\ right\_arm!"{}});}
+\DoxyCodeLine{00137\ \ \ \ \ \}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ Property\ optJoint;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+params.robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}head"{}}));}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/joint/head"{}}));}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ Property\ optGaze;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ optGaze.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}gazecontrollerclient"{}});}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ optGaze.put(\textcolor{stringliteral}{"{}remote"{}},\textcolor{stringliteral}{"{}/iKinGazeCtrl"{}});}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ optGaze.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/gaze"{}}));}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(drvJointHead.open(optJoint)\&\&drvGaze.open(optGaze),}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ open\ clients\ for\ head!"{}});}
+\DoxyCodeLine{00152\ \ \ \ \ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_torso)}
+\DoxyCodeLine{00155\ \ \ \ \ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ Property\ optJoint;}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+params.robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}torso"{}}));}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/joint/torso"{}}));}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(drvJointTorso.open(optJoint),}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ open\ clients\ for\ torso!"{}});}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ rpcPort.open(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/rpc"{}});}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordtype}{string}\ dest=\textcolor{stringliteral}{"{}/demoRedBall/rpc"{}};}
+\DoxyCodeLine{00167\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(Network::connect(rpcPort.getName(),dest),}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Unable\ to\ connect\ to\ \%s!"{}},dest.c\_str()));}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ guiPort.open(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/gui:i"{}});}
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordtype}{string}\ src=\textcolor{stringliteral}{"{}/demoRedBall/gui:o"{}};}
+\DoxyCodeLine{00172\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(Network::connect(src,guiPort.getName()),}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Unable\ to\ connect\ to\ \%s!"{}},src.c\_str()));\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00176\ \}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{void}\ DemoRedBallTest::tearDown()}
+\DoxyCodeLine{00181\ \{}
+\DoxyCodeLine{00182\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Closing\ Clients"{}});}
+\DoxyCodeLine{00183\ \ \ \ \ rpcPort.close();}
+\DoxyCodeLine{00184\ \ \ \ \ guiPort.close();}
+\DoxyCodeLine{00185\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_left)}
+\DoxyCodeLine{00186\ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(drvJointArmL.close()\&\&drvCartArmL.close(),}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ close\ client\ for\ left\_arm!"{}});}
+\DoxyCodeLine{00189\ \ \ \ \ \}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_right)}
+\DoxyCodeLine{00191\ \ \ \ \ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(drvJointArmR.close()\&\&drvCartArmR.close(),}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ close\ client\ for\ right\_arm!"{}});}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(drvJointHead.close()\&\&drvGaze.close(),}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ close\ client\ for\ head!"{}});}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_torso)}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(drvJointTorso.close(),\textcolor{stringliteral}{"{}Unable\ to\ close\ client\ for\ left\_arm!"{}});}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00205\ \textcolor{keywordtype}{bool}\ DemoRedBallTest::getBallPosition(\textcolor{keyword}{const}\ Bottle*\ b,\ Vector\&\ pos)}
+\DoxyCodeLine{00206\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{if}\ (b-\/>size()>=15)}
+\DoxyCodeLine{00208\ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (b-\/>get(0).isString()\ \&\&\ (b-\/>get(0).asString()==\textcolor{stringliteral}{"{}object"{}}))}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ pos.resize(3);}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ pos[0]=b-\/>get(5).asFloat64()/1000.;}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ pos[1]=b-\/>get(6).asFloat64()/1000.;}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ pos[2]=b-\/>get(7).asFloat64()/1000.;}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00217\ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ }
+\DoxyCodeLine{00222\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00223\ \textcolor{keywordtype}{void}\ DemoRedBallTest::testBallPosition(\textcolor{keyword}{const}\ Vector\ \&dpos)}
+\DoxyCodeLine{00224\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ Vector\ x,o,encs;}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keywordtype}{int}\ nEncs;\ IEncoders*\ ienc;}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordtype}{bool}\ done=\textcolor{keyword}{false};}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{double}\ t0;}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ Bottle\ cmd,rep;}
+\DoxyCodeLine{00231\ \ \ \ \ cmd.addString(\textcolor{stringliteral}{"{}update\_pose"{}});}
+\DoxyCodeLine{00232\ \ \ \ \ cmd.addFloat64(dpos[0]);}
+\DoxyCodeLine{00233\ \ \ \ \ cmd.addFloat64(dpos[1]);}
+\DoxyCodeLine{00234\ \ \ \ \ cmd.addFloat64(dpos[2]);}
+\DoxyCodeLine{00235\ \ \ \ \ rpcPort.write(cmd,rep);}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ Time::delay(3.0);}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \ \ \ \ cmd.clear();}
+\DoxyCodeLine{00240\ \ \ \ \ cmd.addString(\textcolor{stringliteral}{"{}start"{}});}
+\DoxyCodeLine{00241\ \ \ \ \ cmd.addFloat64(0.);}
+\DoxyCodeLine{00242\ \ \ \ \ cmd.addFloat64(-\/50.);}
+\DoxyCodeLine{00243\ \ \ \ \ cmd.addFloat64(10.);}
+\DoxyCodeLine{00244\ \ \ \ \ rpcPort.write(cmd,rep);}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{keyword}{auto}\ filt\ =\ make\_unique<MedianFilter>(5,\ Vector\{0.,\ 0.,\ 0.\});}
+\DoxyCodeLine{00247\ }
+\DoxyCodeLine{00248\ \ \ \ \ IGazeControl*\ igaze;}
+\DoxyCodeLine{00249\ \ \ \ \ drvGaze.view(igaze);}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<10.0)}
+\DoxyCodeLine{00253\ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}*\ gui=guiPort.read(\textcolor{keyword}{false}))}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ pos;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getBallPosition(gui,pos))}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ filt-\/>filt(pos);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ igaze-\/>getFixationPoint(x);}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (norm(filt-\/>output()-\/x)<2.0*params.reach\_tol)}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ done=\textcolor{keyword}{true};}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ Time::delay(0.01);}
+\DoxyCodeLine{00269\ \ \ \ \ \}}
+\DoxyCodeLine{00270\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Ball\ gazed\ at\ with\ the\ eyes!"{}});}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ filt-\/>init(Vector\{0.,\ 0.,\ 0.\});}
+\DoxyCodeLine{00273\ \ \ \ \ done=\textcolor{keyword}{false};}
+\DoxyCodeLine{00274\ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<10.0)}
+\DoxyCodeLine{00276\ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}*\ gui=guiPort.read(\textcolor{keyword}{false}))}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ pos;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (getBallPosition(gui,pos))}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ filt-\/>filt(pos);}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ arm\_under\_test.iarm-\/>getPose(x,o);}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (norm(filt-\/>output()-\/x)<params.reach\_tol)}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ done=\textcolor{keyword}{true};}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ Time::delay(0.01);}
+\DoxyCodeLine{00292\ \ \ \ \ \}}
+\DoxyCodeLine{00293\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Ball\ reached\ with\ the\ hand!"{}});}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Going\ home"{}});}
+\DoxyCodeLine{00296\ \ \ \ \ cmd.clear();}
+\DoxyCodeLine{00297\ \ \ \ \ cmd.addString(\textcolor{stringliteral}{"{}stop"{}});}
+\DoxyCodeLine{00298\ \ \ \ \ rpcPort.write(cmd,rep);}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ arm\_under\_test.ienc-\/>getAxes(\&nEncs);}
+\DoxyCodeLine{00301\ \ \ \ \ encs.resize(nEncs,0.0);}
+\DoxyCodeLine{00302\ \ \ \ \ done=\textcolor{keyword}{false};}
+\DoxyCodeLine{00303\ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<10.0)}
+\DoxyCodeLine{00305\ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ arm\_under\_test.ienc-\/>getEncoders(encs.data());}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (norm(params.home\_arm-\/encs.subVector(0,params.home\_arm.length()-\/1))<5.0)}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ done=\textcolor{keyword}{true};}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ Time::delay(1.0);}
+\DoxyCodeLine{00313\ \ \ \ \ \}}
+\DoxyCodeLine{00314\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Arm\ has\ reached\ home!"{}});}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \ \ drvJointHead.view(ienc);}
+\DoxyCodeLine{00317\ \ \ \ \ ienc-\/>getAxes(\&nEncs);}
+\DoxyCodeLine{00318\ \ \ \ \ encs.resize(nEncs,0.0);}
+\DoxyCodeLine{00319\ \ \ \ \ done=\textcolor{keyword}{false};}
+\DoxyCodeLine{00320\ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<10.0)}
+\DoxyCodeLine{00322\ \ \ \ \ \{}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ ienc-\/>getEncoders(encs.data());}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (norm(encs.subVector(0,3))<5.0)}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ done=\textcolor{keyword}{true};}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ Time::delay(1.0);}
+\DoxyCodeLine{00330\ \ \ \ \ \}}
+\DoxyCodeLine{00331\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Head\ has\ reached\ home!"{}});}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_torso)}
+\DoxyCodeLine{00334\ \ \ \ \ \{}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ drvJointTorso.view(ienc);}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ ienc-\/>getAxes(\&nEncs);}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ encs.resize(nEncs,0.0);}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ done=\textcolor{keyword}{false};}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ t0=Time::now();}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<10.0)}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoders(encs.data());}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (norm(encs.subVector(0,3))<5.0)}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ done=\textcolor{keyword}{true};}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(1.0);}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Torso\ has\ reached\ home!"{}});}
+\DoxyCodeLine{00351\ \ \ \ \ \}}
+\DoxyCodeLine{00352\ \}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00356\ \textcolor{keywordtype}{void}\ DemoRedBallTest::run()}
+\DoxyCodeLine{00357\ \{\ \ \ \ }
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_torso\ ||\ params.use\_left)}
+\DoxyCodeLine{00359\ \ \ \ \ \{}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ Vector\ dpos(3,0.0);}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ dpos[1]=-\/0.06;}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ dpos[2]=-\/0.3;}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ drvJointArmL.view(arm\_under\_test.ienc);}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ drvCartArmL.view(arm\_under\_test.iarm);}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Reaching\ with\ the\ left\ hand"{}});}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ testBallPosition(dpos);}
+\DoxyCodeLine{00367\ \ \ \ \ \}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \textcolor{keywordflow}{if}\ (params.use\_torso\ ||\ params.use\_right)}
+\DoxyCodeLine{00370\ \ \ \ \ \{}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ Vector\ dpos(3,0.0);}
+\DoxyCodeLine{00372\ \ \ \ \ \ \ \ \ dpos[1]=+0.06;}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ dpos[2]=-\/0.3;}
+\DoxyCodeLine{00374\ \ \ \ \ \ \ \ \ drvJointArmR.view(arm\_under\_test.ienc);}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ drvCartArmR.view(arm\_under\_test.iarm);}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Reaching\ with\ the\ right\ hand"{}});}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ testBallPosition(dpos);}
+\DoxyCodeLine{00378\ \ \ \ \ \}}
+\DoxyCodeLine{00379\ \}}
+\DoxyCodeLine{00380\ }
+
+\end{DoxyCode}

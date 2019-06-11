@@ -1,0 +1,99 @@
+\doxysection{Control\+Modes.\+h}
+\label{ControlModes_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/controlModes/ControlModes.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/controlModes/ControlModes.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_CONTROLMODES\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_CONTROLMODES\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{class\ }ControlModes\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00054\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00055\ \ \ \ \ ControlModes();}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~ControlModes();}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{void}\ goHome();}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{void}\ executeCmd();}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{void}\ setMode(\textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode);}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ verifyMode(\textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode,\ std::string\ title);}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ verifyAmplifier(\textcolor{keywordtype}{int}\ desired\_amplifier\_mode,\ std::string\ title);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ zeroCurrentLimits();}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ getOriginalCurrentLimits();}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ resetOriginalCurrentLimits();}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ verifyModeSingle(\textcolor{keywordtype}{int}\ joint,\ \textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode,\ std::string\ title);}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ setModeSingle(\textcolor{keywordtype}{int}\ joint,\ \textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ checkJointWithTorqueMode();}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ checkControlModeWithImCompliant(\textcolor{keywordtype}{int}\ desired\_control\_mode,\ std::string\ title);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00079\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00080\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{int}*\ jointsList;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{int}*\ jointTorqueCtrlEnabled;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{double}\ *home\_pos;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_part\_joints;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_cmd\_joints;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{double}\ tolerance;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keyword}{enum}\ cmd\_mode\_t}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ single\_joint\ =\ 0,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ all\_joints\ =\ 1,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ some\_joints\ =2}
+\DoxyCodeLine{00093\ \ \ \ \ \}\ cmd\_mode;}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ yarp::dev::PolyDriver\ \ \ \ \ \ \ \ *dd;}
+\DoxyCodeLine{00096\ \ \ \ \ yarp::dev::IPositionControl\ *ipos;}
+\DoxyCodeLine{00097\ \ \ \ \ yarp::dev::IAmplifierControl\ *iamp;}
+\DoxyCodeLine{00098\ \ \ \ \ yarp::dev::IControlMode\ \ \ \ \ *icmd;}
+\DoxyCodeLine{00099\ \ \ \ \ yarp::dev::IInteractionMode\ \ *iimd;}
+\DoxyCodeLine{00100\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00101\ \ \ \ \ yarp::dev::IPositionDirect\ \ \ *idir;}
+\DoxyCodeLine{00102\ \ \ \ \ yarp::dev::IVelocityControl\ \ *ivel;}
+\DoxyCodeLine{00103\ \ \ \ \ yarp::dev::ITorqueControl\ \ \ \ *itrq;}
+\DoxyCodeLine{00104\ \ \ \ \ yarp::dev::IRemoteVariables\ \ *ivar;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{double}\ \ cmd\_single;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{double}*\ cmd\_tot;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{double}*\ cmd\_some;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{double}\ \ prevcurr\_single;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordtype}{double}*\ prevcurr\_tot;}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{double}*\ prevcurr\_some;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordtype}{double}*\ pos\_tot;}
+\DoxyCodeLine{00115\ \};}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_CONTROLMODES\_H}}
+
+\end{DoxyCode}

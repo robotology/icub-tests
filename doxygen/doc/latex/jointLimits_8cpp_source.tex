@@ -1,0 +1,429 @@
+\doxysection{joint\+Limits.\+cpp}
+\label{jointLimits_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/jointLimits/jointLimits.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/jointLimits/jointLimits.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}jointLimits.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00035\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00036\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00037\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00040\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(JointLimits)}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ JointLimits::JointLimits()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}JointLimits"{}})\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ jointsList=0;}
+\DoxyCodeLine{00044\ \ \ \ \ dd=0;}
+\DoxyCodeLine{00045\ \ \ \ \ ipos=0;}
+\DoxyCodeLine{00046\ \ \ \ \ icmd=0;}
+\DoxyCodeLine{00047\ \ \ \ \ iimd=0;}
+\DoxyCodeLine{00048\ \ \ \ \ ienc=0;}
+\DoxyCodeLine{00049\ \ \ \ \ ilim=0;}
+\DoxyCodeLine{00050\ \ \ \ \ enc\_jnt=0;}
+\DoxyCodeLine{00051\ \ \ \ \ original\_pids=0;}
+\DoxyCodeLine{00052\ \ \ \ \ pids\_saved=\textcolor{keyword}{false};}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ JointLimits::\string~JointLimits()\ \{\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{bool}\ JointLimits::setup(yarp::os::Property\&\ property)\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00062\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}robot"{}}),\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ robot\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00063\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}part"{}}),\ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ part\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00064\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}joints"{}}),\ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ joints\ list\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00065\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}home"{}}),\ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ home\ position\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}speed"{}}),\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ positionMove\ reference\ speed\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00067\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}outOfBoundPosition"{}}),\ \textcolor{stringliteral}{"{}The\ outOfBoundPosition\ parameter\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00068\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}outputLimitPercent"{}}),\ \ \textcolor{stringliteral}{"{}The\ outputLimitPercent\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00069\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}tolerance"{}}),\ \textcolor{stringliteral}{"{}\ \ The\ max\ error\ tolerance\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ robotName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}robot"{}}).asString();}
+\DoxyCodeLine{00072\ \ \ \ \ partName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}part"{}}).asString();}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{char}\ buff[500];}
+\DoxyCodeLine{00075\ \ \ \ \ sprintf(buff,\ \textcolor{stringliteral}{"{}setting\ up\ test\ for\ \%s"{}},\ partName.c\_str());}
+\DoxyCodeLine{00076\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ Bottle*\ jointsBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}joints"{}}).asList();}
+\DoxyCodeLine{00079\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(jointsBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ joints\ parameter"{}});}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ Bottle*\ homeBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}home"{}}).asList();}
+\DoxyCodeLine{00082\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(homeBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ zero\ parameter"{}});}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ Bottle*\ speedBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}speed"{}}).asList();}
+\DoxyCodeLine{00085\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(speedBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ speed\ parameter"{}});}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ Bottle*\ outOfBoundPosition\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}outOfBoundPosition"{}}).asList();}
+\DoxyCodeLine{00088\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(outOfBoundPosition\ !=\ 0,\ \textcolor{stringliteral}{"{}unable\ to\ parse\ outOfBoundPosition\ parameter"{}});}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ Bottle*\ outputLimitBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}outputLimitPercent"{}}).asList();}
+\DoxyCodeLine{00091\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(outputLimitBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ speed\ parameter"{}});}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ tolerance\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}tolerance"{}}).asFloat64();}
+\DoxyCodeLine{00094\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(tolerance>=0,\textcolor{stringliteral}{"{}invalid\ tolerance"{}});}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ Bottle*\ toleranceListBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}toleranceList"{}}).asList();\ \textcolor{comment}{//optional\ param}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ Property\ options;}
+\DoxyCodeLine{00099\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00100\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}remote"{}},\ \textcolor{stringliteral}{"{}/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00101\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}local"{}},\ \textcolor{stringliteral}{"{}/jointsLimitsTest/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ dd\ =\ \textcolor{keyword}{new}\ PolyDriver(options);}
+\DoxyCodeLine{00104\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>isValid(),\textcolor{stringliteral}{"{}Unable\ to\ open\ device\ driver"{}});}
+\DoxyCodeLine{00105\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ienc),\textcolor{stringliteral}{"{}Unable\ to\ open\ encoders\ interface"{}});}
+\DoxyCodeLine{00106\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ipos),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ interface"{}});}
+\DoxyCodeLine{00107\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(icmd),\textcolor{stringliteral}{"{}Unable\ to\ open\ control\ mode\ interface"{}});}
+\DoxyCodeLine{00108\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iimd),\textcolor{stringliteral}{"{}Unable\ to\ open\ interaction\ mode\ interface"{}});}
+\DoxyCodeLine{00109\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ilim),\textcolor{stringliteral}{"{}Unable\ to\ open\ limits\ interface"{}});}
+\DoxyCodeLine{00110\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ipid),\textcolor{stringliteral}{"{}Unable\ to\ open\ pid\ interface"{}});}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ienc-\/>getAxes(\&n\_part\_joints))}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}unable\ to\ get\ the\ number\ of\ joints\ of\ the\ part"{}});}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordtype}{int}\ n\_cmd\_joints\ =\ jointsBottle-\/>size();}
+\DoxyCodeLine{00118\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(n\_cmd\_joints>0\ \&\&\ n\_cmd\_joints<=n\_part\_joints,"{}invalid\ number\ of\ joints,\ it\ must\ be\ >0\ \&\ <=\ number\ of\ part\ joints\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00119\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i\ <n\_cmd\_joints;\ i++)\ jointsList.push\_back(jointsBottle-\/>get(i).asInt32());}}
+\DoxyCodeLine{00120\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00121\ \textcolor{stringliteral}{\ \ \ \ enc\_jnt.resize(n\_part\_joints);}}
+\DoxyCodeLine{00122\ \textcolor{stringliteral}{\ \ \ \ max\_lims.resize(n\_cmd\_joints);}}
+\DoxyCodeLine{00123\ \textcolor{stringliteral}{\ \ \ \ min\_lims.resize(n\_cmd\_joints);}}
+\DoxyCodeLine{00124\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00125\ \textcolor{stringliteral}{\ \ \ \ home.resize\ (n\_cmd\_joints);\ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ home[i]=homeBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00126\ \textcolor{stringliteral}{\ \ \ \ speed.resize(n\_cmd\_joints);\ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ speed[i]=speedBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00127\ \textcolor{stringliteral}{\ \ \ \ outputLimit.resize(n\_cmd\_joints);for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ outputLimit[i]=outputLimitBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00128\ \textcolor{stringliteral}{\ \ \ \ outOfBoundPos.resize(n\_cmd\_joints);\ for\ (int\ i\ =\ 0;\ i\ <\ n\_cmd\_joints;\ i++)\ \{\ outOfBoundPos[i]\ =\ outOfBoundPosition-\/>get(i).asFloat64();\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(outOfBoundPos[i]\ >\ 0\ ,\ "{}}outOfBoundPosition\ must\ be\ >\ 0\textcolor{stringliteral}{"{});\ \}}}
+\DoxyCodeLine{00129\ \textcolor{stringliteral}{\ \ \ \ toleranceList.resize(n\_cmd\_joints);}}
+\DoxyCodeLine{00130\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i\ =\ 0;\ i\ <\ n\_cmd\_joints;\ i++)}}
+\DoxyCodeLine{00131\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00132\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if(toleranceListBottle)}}
+\DoxyCodeLine{00133\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00134\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ toleranceList[i]\ =\ toleranceListBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00135\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(toleranceList[i]\ >=\ 0\ ,\ "{}}toleranceList\ must\ be\ >\ 0\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00136\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00137\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00138\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ toleranceList[i]\ =\ tolerance;}}
+\DoxyCodeLine{00139\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00140\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00141\ \textcolor{stringliteral}{\ \ \ \ original\_pids\ =\ new\ yarp::dev::Pid[n\_cmd\_joints];}}
+\DoxyCodeLine{00142\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00143\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00144\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ipid-\/>getPid(yarp::dev::PidControlTypeEnum::VOCAB\_PIDTYPE\_POSITION,\ (int)jointsList[i],\&original\_pids[i]);}}
+\DoxyCodeLine{00145\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00146\ \textcolor{stringliteral}{\ \ \ \ pids\_saved=true;}}
+\DoxyCodeLine{00147\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00148\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00149\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00150\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::dev::Pid\ p\ =\ original\_pids[i];}}
+\DoxyCodeLine{00151\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ p.max\_output\ =\ p.max\_output/100*outputLimit[i];}}
+\DoxyCodeLine{00152\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ p.max\_int\ =\ \ \ \ p.max\_int/100*outputLimit[i];}}
+\DoxyCodeLine{00153\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ipid-\/>setPid(yarp::dev::PidControlTypeEnum::VOCAB\_PIDTYPE\_POSITION,\ (int)jointsList[i],p);}}
+\DoxyCodeLine{00154\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.010);}}
+\DoxyCodeLine{00155\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::dev::Pid\ t;}}
+\DoxyCodeLine{00156\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ipid-\/>getPid(yarp::dev::PidControlTypeEnum::VOCAB\_PIDTYPE\_POSITION,\ (int)jointsList[i],\&t);}}
+\DoxyCodeLine{00157\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00158\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //since\ pid\ values\ are\ double,\ the\ returned\ values\ may\ differ\ from\ those\ sent\ due\ to\ conversion.}}
+\DoxyCodeLine{00159\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (fabs(t.max\_output-\/p.max\_output)\ >\ 1.0\ \ ||}}
+\DoxyCodeLine{00160\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ fabs(t.max\_int-\/p.max\_int)\ >\ 1.0\ \ ||}}
+\DoxyCodeLine{00161\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ fabs(t.kp-\/p.kp)\ >\ 1.0\ ||}}
+\DoxyCodeLine{00162\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ fabs(t.kd-\/p.kd)\ >\ 1.0\ ||}}
+\DoxyCodeLine{00163\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ fabs(t.ki-\/p.ki)\ >\ 1.0)}}
+\DoxyCodeLine{00164\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00165\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Unable\ to\ set\ output\ limits\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00166\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00167\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00168\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00169\ \textcolor{stringliteral}{\ \ \ \ return\ true;}}
+\DoxyCodeLine{00170\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00171\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00172\ \textcolor{stringliteral}{void\ JointLimits::tearDown()}}
+\DoxyCodeLine{00173\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00174\ \textcolor{stringliteral}{\ \ \ \ if\ (original\_pids)}}
+\DoxyCodeLine{00175\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00176\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (pids\_saved)}}
+\DoxyCodeLine{00177\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00178\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00179\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00180\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ipid-\/>setPid(yarp::dev::PidControlTypeEnum::VOCAB\_PIDTYPE\_POSITION,\ (int)jointsList[i],original\_pids[i]);}}
+\DoxyCodeLine{00181\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00182\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00183\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ delete[]\ original\_pids;\ original\_pids=0;}}
+\DoxyCodeLine{00184\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00185\ \textcolor{stringliteral}{\ \ \ \ if\ (dd)\ \{delete\ dd;\ dd\ =0;\}}}
+\DoxyCodeLine{00186\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00187\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00188\ \textcolor{stringliteral}{void\ JointLimits::setMode(int\ desired\_mode)}}
+\DoxyCodeLine{00189\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00190\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00191\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00192\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ icmd-\/>setControlMode((int)jointsList[i],desired\_mode);}}
+\DoxyCodeLine{00193\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ iimd-\/>setInteractionMode((int)jointsList[i],VOCAB\_IM\_STIFF);}}
+\DoxyCodeLine{00194\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.010);}}
+\DoxyCodeLine{00195\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00196\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00197\ \textcolor{stringliteral}{\ \ \ \ int\ cmode;}}
+\DoxyCodeLine{00198\ \textcolor{stringliteral}{\ \ \ \ yarp::dev::InteractionModeEnum\ imode;}}
+\DoxyCodeLine{00199\ \textcolor{stringliteral}{\ \ \ \ int\ timeout\ =\ 0;}}
+\DoxyCodeLine{00200\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00201\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00202\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00203\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ ok=0;}}
+\DoxyCodeLine{00204\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00205\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00206\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ icmd-\/>getControlMode\ ((int)jointsList[i],\&cmode);}}
+\DoxyCodeLine{00207\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ iimd-\/>getInteractionMode((int)jointsList[i],\&imode);}}
+\DoxyCodeLine{00208\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (cmode==desired\_mode\ \&\&\ imode==VOCAB\_IM\_STIFF)\ ok++;}}
+\DoxyCodeLine{00209\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00210\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (ok==jointsList.size())\ break;}}
+\DoxyCodeLine{00211\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (timeout>100)}}
+\DoxyCodeLine{00212\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00213\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Unable\ to\ set\ control\ mode/interaction\ mode\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00214\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00215\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}}
+\DoxyCodeLine{00216\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timeout++;}}
+\DoxyCodeLine{00217\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00218\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00219\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00220\ \textcolor{stringliteral}{void\ JointLimits::goTo(yarp::sig::Vector\ position)}}
+\DoxyCodeLine{00221\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00222\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00223\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00224\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ipos-\/>setRefSpeed((int)jointsList[i],speed[i]);}}
+\DoxyCodeLine{00225\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ipos-\/>positionMove((int)jointsList[i],position[i]);}}
+\DoxyCodeLine{00226\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00227\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00228\ \textcolor{stringliteral}{\ \ \ \ int\ timeout\ =\ 0;}}
+\DoxyCodeLine{00229\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00230\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00231\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ in\_position=0;}}
+\DoxyCodeLine{00232\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00233\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00234\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ double\ tmp=0;}}
+\DoxyCodeLine{00235\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoder((int)jointsList[i],\&tmp);}}
+\DoxyCodeLine{00236\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (fabs(tmp-\/position[i])<toleranceList[i])\ in\_position++;}}
+\DoxyCodeLine{00237\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00238\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (in\_position==jointsList.size())\ break;}}
+\DoxyCodeLine{00239\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (timeout>100)}}
+\DoxyCodeLine{00240\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00241\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Timeout\ \textcolor{keywordflow}{while}\ reaching\ desired\ position\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00242\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00243\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}}
+\DoxyCodeLine{00244\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timeout++;}}
+\DoxyCodeLine{00245\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00246\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00247\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00248\ \textcolor{stringliteral}{bool\ JointLimits::goToSingle(int\ i,\ double\ pos,\ double\ *reached\_pos)}}
+\DoxyCodeLine{00249\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00250\ \textcolor{stringliteral}{\ \ \ \ ipos-\/>setRefSpeed((int)jointsList[i],speed[i]);}}
+\DoxyCodeLine{00251\ \textcolor{stringliteral}{\ \ \ \ ipos-\/>positionMove((int)jointsList[i],pos);}}
+\DoxyCodeLine{00252\ \textcolor{stringliteral}{\ \ \ \ double\ tmp=0;}}
+\DoxyCodeLine{00253\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00254\ \textcolor{stringliteral}{\ \ \ \ int\ timeout\ =\ 0;}}
+\DoxyCodeLine{00255\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00256\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00257\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ienc-\/>getEncoder((int)jointsList[i],\&tmp);}}
+\DoxyCodeLine{00258\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (fabs(tmp-\/pos)<toleranceList[i])\ break;}}
+\DoxyCodeLine{00259\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00260\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (timeout>100)}}
+\DoxyCodeLine{00261\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00262\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if(reached\_pos\ !=\ NULL)}}
+\DoxyCodeLine{00263\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00264\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *reached\_pos\ =\ tmp;}}
+\DoxyCodeLine{00265\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00266\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ return(false);}}
+\DoxyCodeLine{00267\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00268\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00269\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}}
+\DoxyCodeLine{00270\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timeout++;}}
+\DoxyCodeLine{00271\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00272\ \textcolor{stringliteral}{\ \ \ \ if(reached\_pos\ !=\ NULL)}}
+\DoxyCodeLine{00273\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00274\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ *reached\_pos\ =\ tmp;}}
+\DoxyCodeLine{00275\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00276\ \textcolor{stringliteral}{\ \ \ \ return(true);}}
+\DoxyCodeLine{00277\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00278\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00279\ \textcolor{stringliteral}{bool\ JointLimits::goToSingleExceed(int\ i,\ double\ position\_to\_reach,\ double\ limit,\ double\ reachedLimit,\ double\ *reached\_pos)}}
+\DoxyCodeLine{00280\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00281\ \textcolor{stringliteral}{\ \ \ \ ipos-\/>setRefSpeed((int)jointsList[i],\ speed[i]);}}
+\DoxyCodeLine{00282\ \textcolor{stringliteral}{\ \ \ \ ipos-\/>positionMove((int)jointsList[i],\ position\_to\_reach);}}
+\DoxyCodeLine{00283\ \textcolor{stringliteral}{\ \ \ \ double\ tmp\ =\ 0;}}
+\DoxyCodeLine{00284\ \textcolor{stringliteral}{\ \ \ \ bool\ excededLimit\ =\ false;}}
+\DoxyCodeLine{00285\ \textcolor{stringliteral}{\ \ \ \ int\ timeout\ =\ 0;}}
+\DoxyCodeLine{00286\ \textcolor{stringliteral}{\ \ \ \ double\ limitToCheck;}}
+\DoxyCodeLine{00287\ \textcolor{stringliteral}{\ \ \ \ if(fabs(reachedLimit-\/limit)>toleranceList[i])}}
+\DoxyCodeLine{00288\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00289\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ i'm\ here\ joint\ did\ NOT\ reached\ the\ limit\ and\ I\ would\ check\ joint\ doesn't\ exced\ reached\ limit}}
+\DoxyCodeLine{00290\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ limitToCheck\ =\ reachedLimit;}}
+\DoxyCodeLine{00291\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00292\ \textcolor{stringliteral}{\ \ \ \ else}}
+\DoxyCodeLine{00293\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00294\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ limitToCheck\ =\ limit;}}
+\DoxyCodeLine{00295\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00296\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00297\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00298\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ienc-\/>getEncoder((int)jointsList[i],\ \&tmp);}}
+\DoxyCodeLine{00299\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if(fabs(tmp\ -\/\ limitToCheck)>toleranceList[i])}}
+\DoxyCodeLine{00300\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00301\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ excededLimit\ =\ true;}}
+\DoxyCodeLine{00302\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //ROBOTTESTINGFRAMEWORK\_TEST\_REPORT\ (Asserter::format("{}}j\ \%d\ exced\ limitTocheck\ \%f:\ reached\ \%f\textcolor{stringliteral}{"{},(int)jointsList[i],\ \ limitToCheck,\ tmp));}}
+\DoxyCodeLine{00303\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ break;}}
+\DoxyCodeLine{00304\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00305\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (fabs(tmp\ -\/\ position\_to\_reach)<toleranceList[i])}}
+\DoxyCodeLine{00306\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00307\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ excededLimit\ =\ true;}}
+\DoxyCodeLine{00308\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //ROBOTTESTINGFRAMEWORK\_TEST\_REPORT\ (Asserter::format("{}}j\ \%d\ is\ near\ position\_to\_reach\ \%f:\ reached\ \%f\textcolor{stringliteral}{"{},(int)jointsList[i],\ \ position\_to\_reach,\ tmp));}}
+\DoxyCodeLine{00309\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ break;}}
+\DoxyCodeLine{00310\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00311\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00312\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (timeout>50)\ break;}}
+\DoxyCodeLine{00313\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}}
+\DoxyCodeLine{00314\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timeout++;}}
+\DoxyCodeLine{00315\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00316\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00317\ \textcolor{stringliteral}{\ \ \ \ *reached\_pos\ =\ tmp;}}
+\DoxyCodeLine{00318\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00319\ \textcolor{stringliteral}{/*\ \ \ \ if\ (fabs(tmp\ -\/\ position\_to\_reach)<toleranceList[i])}}
+\DoxyCodeLine{00320\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00321\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //I\ reached\ the\ out\ of\ bound\ target.\ That's\ bad!}}
+\DoxyCodeLine{00322\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ return\ (true);}}
+\DoxyCodeLine{00323\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00324\ \textcolor{stringliteral}{\ \ \ \ if\ (fabs(tmp\ -\/\ limit)<toleranceList[i])}}
+\DoxyCodeLine{00325\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00326\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //I'm\ still\ near\ the\ joint\ limit.\ That's\ fine.}}
+\DoxyCodeLine{00327\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ return\ (false);}}
+\DoxyCodeLine{00328\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00329\ \textcolor{stringliteral}{\ \ \ \ //I\ dont\ know\ where\ I\ am,\ that's\ bad!}}
+\DoxyCodeLine{00330\ \textcolor{stringliteral}{\ \ \ \ return(true);}}
+\DoxyCodeLine{00331\ \textcolor{stringliteral}{*/}}
+\DoxyCodeLine{00332\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00333\ \textcolor{stringliteral}{\ \ \ \ if(\ excededLimit)}}
+\DoxyCodeLine{00334\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ return\ (true);}}
+\DoxyCodeLine{00335\ \textcolor{stringliteral}{\ \ \ \ else}}
+\DoxyCodeLine{00336\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ return(false);}}
+\DoxyCodeLine{00337\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00338\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00339\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00340\ \textcolor{stringliteral}{void\ JointLimits::run()}}
+\DoxyCodeLine{00341\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00342\ \textcolor{stringliteral}{\ \ \ \ char\ buff[500];}}
+\DoxyCodeLine{00343\ \textcolor{stringliteral}{\ \ \ \ setMode(VOCAB\_CM\_POSITION);}}
+\DoxyCodeLine{00344\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}all\ joints\ are\ going\ to\ home....\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00345\ \textcolor{stringliteral}{\ \ \ \ goTo(home);}}
+\DoxyCodeLine{00346\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00347\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00348\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00349\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ilim-\/>getLimits((int)jointsList[i],\&min\_lims[i],\&max\_lims[i]);}}
+\DoxyCodeLine{00350\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(max\_lims[i]!=min\_lims[i],"{}}Invalid\ limit:\ max==min?\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00351\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(max\_lims[i]>min\_lims[i],"{}}Invalid\ limit:\ max<min?\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00352\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (max\_lims[i]\ ==\ 0\ \&\&\ min\_lims[i]\ ==\ 0)\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Invalid\ limit:\ max==min==0\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00353\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00354\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00355\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00356\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00357\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ bool\ res;}}
+\DoxyCodeLine{00358\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ reached\_pos=0;}}
+\DoxyCodeLine{00359\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ excededpos\_reached\ =\ 0;}}
+\DoxyCodeLine{00360\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00361\ \textcolor{stringliteral}{\ \ \ \ //1)\ Check\ max\ limit}}
+\DoxyCodeLine{00362\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sprintf(buff,"{}}Testing\ if\ max\ limit\ is\ reachable,\ joint\ \%d,\ max\ limit:\ \%f\textcolor{stringliteral}{"{},(int)jointsList[i],max\_lims[i]);ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00363\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //check\ that\ max\_limit\ is\ reachable}}
+\DoxyCodeLine{00364\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ goToSingle(i,\ max\_lims[i],\ \&reached\_pos);}}
+\DoxyCodeLine{00365\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK\ (res,\ Asserter::format("{}}joint\ \%d\ moved\ to\ max\ limit:\ \%f\ reached:\ \%f\textcolor{stringliteral}{"{},\ \ (int)jointsList[i],\ max\_lims[i],\ reached\_pos));}}
+\DoxyCodeLine{00366\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if(!res)}}
+\DoxyCodeLine{00367\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\{}}
+\DoxyCodeLine{00368\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ goToSingle(i,home[i],\ NULL);\ //I\ need\ to\ go\ to\ home\ in\ order\ to\ leave\ joint\ in\ safe\ position\ for\ further\ tests\ (other\ body\ parts)}}
+\DoxyCodeLine{00369\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ sprintf(buff,\ "{}}Timeout\ while\ reaching\ desired\ position(\%.2f).\ Reached\ pos=\%.2f\textcolor{stringliteral}{"{},\ max\_lims[i],\ reached\_pos);ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(buff);}}
+\DoxyCodeLine{00370\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\}}}
+\DoxyCodeLine{00371\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //else\ \{\ sprintf(buff,\ "{}}Test\ successfull,\ joint\ \%d,\ max\ limit:\ \%f\ reached:\ \%f\textcolor{stringliteral}{"{},\ (int)jointsList[i],\ max\_lims[i],\ reached\_pos);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);\ \}}}
+\DoxyCodeLine{00372\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00373\ \textcolor{stringliteral}{\ \ \ \ //2)\ check\ that\ max\_limit\ +\ outOfBoundPos\ is\ NOT\ reachable}}
+\DoxyCodeLine{00374\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sprintf(buff,\ "{}}Testing\ that\ max\ limit\ cannot\ be\ exceeded,\ joint\ \%d,\ max\ limit:\ \%f\textcolor{stringliteral}{"{},\ (int)jointsList[i],\ max\_lims[i]);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00375\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ goToSingleExceed(i,\ max\_lims[i]\ +\ outOfBoundPos[i],\ max\_lims[i],\ reached\_pos,\ \&excededpos\_reached);}}
+\DoxyCodeLine{00376\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK\ (!res,\ Asserter::format("{}}check\ if\ joint\ \%d\ desn\textcolor{stringliteral}{'t\ exced\ max\ limit.\ target\ was:\ \%f\ reached:\ \%f,\ limit\ \%f\ "{},\ \ (int)jointsList[i],\ max\_lims[i]\ +\ outOfBoundPos[i],\ excededpos\_reached,\ max\_lims[i]));}}
+\DoxyCodeLine{00377\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (res)}}
+\DoxyCodeLine{00378\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\{}}
+\DoxyCodeLine{00379\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ goToSingle(i,\ home[i],\ NULL);\ //I\ need\ to\ go\ to\ home\ in\ order\ to\ leave\ joint\ in\ safe\ position\ for\ further\ tests\ (other\ body\ parts)}}
+\DoxyCodeLine{00380\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ sprintf(buff,\ "{}Limit\ execeeded!\ Limit\ was\ (\%.2f).\ Reached\ pos=\%.2f"{},\ max\_lims[i],\ reached\_pos);\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(buff);}}
+\DoxyCodeLine{00381\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\}}}
+\DoxyCodeLine{00382\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //else\ \{\ sprintf(buff,\ "{}Test\ successfull,\ joint\ \%d,\ target\ was:\ \%f\ reached:\ \%f,\ limit\ \%f\ "{},\ (int)jointsList[i],\ max\_lims[i]\ +\ outOfBoundPos[i],\ reached\_pos,\ max\_lims[i]);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);\ \}}}
+\DoxyCodeLine{00383\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00384\ \textcolor{stringliteral}{\ \ \ \ //3)\ Check\ min\ limit}}
+\DoxyCodeLine{00385\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //check\ that\ min\_limit\ is\ reachable}}
+\DoxyCodeLine{00386\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sprintf(buff,"{}Testing\ if\ min\ limit\ is\ reachable,\ joint\ \%d,\ min\ limit:\ \%f"{},(int)jointsList[i],min\_lims[i]);ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00387\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ goToSingle(i,\ min\_lims[i],\ \&reached\_pos);}}
+\DoxyCodeLine{00388\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK\ (res,\ Asserter::format("{}joint\ \%d\ moved\ to\ min\ limit:\ \%f\ reached:\ \%f"{},\ \ (int)jointsList[i],\ min\_lims[i],\ reached\_pos));}}
+\DoxyCodeLine{00389\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00390\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ /*if(!res)}}
+\DoxyCodeLine{00391\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00392\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ goToSingle(i,home[i],\ NULL);}}
+\DoxyCodeLine{00393\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ sprintf(buff,\ "{}Timeout\ while\ reaching\ desired\ position(\%.2f).\ Reached\ pos=\%.2f"{},\ min\_lims[i],\ reached\_pos);ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(buff);}}
+\DoxyCodeLine{00394\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00395\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ else\ \{\ sprintf(buff,\ "{}Test\ successfull,\ joint\ \%d,\ min\ limit:\ \%f\ reached:\ \%f"{},\ (int)jointsList[i],\ min\_lims[i],\ reached\_pos);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);\ \}*/}}
+\DoxyCodeLine{00396\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00397\ \textcolor{stringliteral}{\ \ \ \ //4)\ check\ that\ min\_limit\ -\/\ outOfBoundPos\ is\ NOT\ reachable}}
+\DoxyCodeLine{00398\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sprintf(buff,\ "{}Testing\ that\ min\ limit\ cannot\ be\ exceeded,\ joint\ \%d,\ min\ limit:\ \%f"{},\ (int)jointsList[i],\ min\_lims[i]);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00399\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ goToSingleExceed(i,\ min\_lims[i]\ -\/\ outOfBoundPos[i],\ min\_lims[i],\ reached\_pos,\ \&\ excededpos\_reached);}}
+\DoxyCodeLine{00400\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK\ (!res,\ Asserter::format("{}check\ if\ joint\ \%d\ desn'}t\ exced\ min\ limit.\ target\ was:\ \%f\ reached:\ \%f,\ limit\ \%f\ \textcolor{stringliteral}{"{},\ \ (int)jointsList[i],\ min\_lims[i]\ -\/\ outOfBoundPos[i],\ excededpos\_reached,\ min\_lims[i]));}}
+\DoxyCodeLine{00401\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00402\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (res)}}
+\DoxyCodeLine{00403\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\{}}
+\DoxyCodeLine{00404\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ goToSingle(i,\ home[i],\ NULL);\ //I\ need\ to\ go\ to\ home\ in\ order\ to\ leave\ joint\ in\ safe\ position\ for\ further\ tests\ (other\ body\ parts)}}
+\DoxyCodeLine{00405\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ sprintf(buff,\ "{}}Limit\ execeeded!\ Limit\ was\ (\%.2f).\ Reached\ pos=\%.2f\textcolor{stringliteral}{"{},\ min\_lims[i],\ reached\_pos);\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(buff);}}
+\DoxyCodeLine{00406\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\}}}
+\DoxyCodeLine{00407\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //else\ \{\ sprintf(buff,\ "{}}Test\ successfull,\ joint\ \%d,\ target\ was:\ \%f\ reached:\ \%f,\ limit\ \%f\ \textcolor{stringliteral}{"{},\ (int)jointsList[i],\ min\_lims[i]\ -\/\ outOfBoundPos[i],\ reached\_pos,\ min\_lims[i]);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);\ \}}}
+\DoxyCodeLine{00408\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00409\ \textcolor{stringliteral}{\ \ \ \ //5)\ Check\ home\ position}}
+\DoxyCodeLine{00410\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ sprintf(buff,"{}}Testing\ joint\ \%d,\ homing\ to:\ \%f\textcolor{stringliteral}{"{},(int)jointsList[i],home[i]);ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00411\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ goToSingle(i,\ home[i],\ \&reached\_pos);}}
+\DoxyCodeLine{00412\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if(!res)}}
+\DoxyCodeLine{00413\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00414\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ sprintf(buff,\ "{}}Timeout\ while\ reaching\ desired\ position(\%.2f).\ Reached\ pos=\%.2f\textcolor{stringliteral}{"{},\ home[i],\ reached\_pos);ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(buff);}}
+\DoxyCodeLine{00415\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00416\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ else\{\ sprintf(buff,\ "{}}Homing\ joint\ \%d\ complete\textcolor{stringliteral}{"{},\ (int)jointsList[i]);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);\ \}}}
+\DoxyCodeLine{00417\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00418\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00419\ \textcolor{stringliteral}{\ \ \ \ ienc-\/>getEncoders(enc\_jnt.data());}}
+\DoxyCodeLine{00420\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Test\ ends.\ All\ joints\ are\ going\ to\ home....\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00421\ \textcolor{stringliteral}{\ \ \ \ goTo(home);}}
+\DoxyCodeLine{00422\ \textcolor{stringliteral}{\ \ \ \ yarp::os::Time::delay(2.0);}}
+\DoxyCodeLine{00423\ \textcolor{stringliteral}{\}}}
+
+\end{DoxyCode}

@@ -1,0 +1,147 @@
+\doxysection{Sensors\+Duplicate\+Readings.\+cpp}
+\label{SensorsDuplicateReadings_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/sensors-\/duplicate-\/readings/SensorsDuplicateReadings.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/sensors-\/duplicate-\/readings/SensorsDuplicateReadings.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <Plugin.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}SensorsDuplicateReadings.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/Stamp.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00031\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00034\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(SensorsDuplicateReadings)}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ SensorsDuplicateReadings::SensorsDuplicateReadings()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}SensorsDuplicateReadings"{}})\ \{}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ SensorsDuplicateReadings::\string~SensorsDuplicateReadings()\ \{\ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{bool}\ SensorsDuplicateReadings::setup(yarp::os::Property\ \&property)\ \{}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//updating\ the\ test\ name}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00048\ \ \ \ testTime\ =\ (\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}time"{}}))\ ?\ property.find(\textcolor{stringliteral}{"{}time"{}}).asFloat64()\ :\ 2;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(property.check(\textcolor{stringliteral}{"{}PORTS"{}}),}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}A\ list\ of\ the\ ports\ must\ be\ given"{}});}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ yarp::os::Bottle\ portsSet\ =\ \textcolor{keyword}{property}.findGroup(\textcolor{stringliteral}{"{}PORTS"{}}).tail();}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<portsSet.size();\ i++)\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ yarp::os::Bottle*\ btport\ =\ portsSet.get(i).asList();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(btport\ \&\&\ btport-\/>size()>=3,\ \textcolor{stringliteral}{"{}The\ ports\ must\ be\ given\ as\ lists\ of\ <portname>\ <toleratedDuplicates>"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ DuplicateReadingsPortInfo\ info;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ info.name\ =\ btport-\/>get(0).asString();}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ info.toleratedDuplicates\ =\ btport-\/>get(1).asInt32();}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ ports.push\_back(info);}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ opening\ port}}
+\DoxyCodeLine{00064\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(port.open(\textcolor{stringliteral}{"{}..."{}}),}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}opening\ port,\ is\ YARP\ network\ available?"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00067\ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ SensorsDuplicateReadings::tearDown()\ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00071\ \ \ \ \ port.close();}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ SensorsDuplicateReadings::run()\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<ports.size();\ i++)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ port.reset();}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Checking\ port\ \%s\ ..."{}},\ ports[i].name.c\_str()));}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ connected\ =\ Network::connect(ports[i].name.c\_str(),\ port.getName());}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(connected,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}could\ not\ connect\ to\ remote\ port\ \%s."{}},\ ports[i].name.c\_str()));}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(connected)\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ port.useCallback();}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(testTime);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ port.disableCallback();}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Computed\ a\ total\ of\ \%lu\ duplicates\ out\ of\ \%lu\ samples."{}},}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getTotalNrOfDuplicates(),port.getCount()));}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Maximum\ number\ of\ consecutive\ duplicates:\ \%lu\ Maximum\ jitter:\ \%lf\ "{}},}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getMaxNrOfDuplicates(),\ port.getMaxJitter()));}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(port.getTotalNrOfDuplicates()\ >\ ports[i].toleratedDuplicates,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Number\ of\ duplicates\ (\%lu)\ is\ higher\ than\ the\ tolerated\ (\%d)"{}},}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getTotalNrOfDuplicates(),}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ports[i].toleratedDuplicates));}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ Network::disconnect(ports[i].name.c\_str(),\ port.getName());}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{void}\ DuplicateDetector::onRead(yarp::sig::Vector\&\ vec)\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{double}\ tcurrent\ =\ Time::now();}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordflow}{if}(count\ ==\ 0)}
+\DoxyCodeLine{00105\ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ lastReading\ =\ vec;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ currentJitter\ =\ 0.0;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ currentNrOfDuplicates\ =\ 0;}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ totalNrOfDuplicates\ =\ 0;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ lastNewValueTime\ =\ tcurrent;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ maxJitter\ =\ currentJitter;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ maxNrOfDuplicates\ =\ currentNrOfDuplicates;}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ for\ duplicate\ data}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ diff\ =\ yarp::math::norm(vec-\/lastReading);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\ diff\ <\ this-\/>tolerance\ )}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ duplicate\ !\ report\ a\ duplicate}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ currentNrOfDuplicates++;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ currentJitter\ =\ tcurrent\ -\/\ lastNewValueTime;}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ totalNrOfDuplicates++;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ maxJitter\ =\ std::max(currentJitter,maxJitter);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ maxNrOfDuplicates\ =\ std::max(currentJitter,maxJitter);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ not\ duplicate!\ update\ last\ read\ value}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ lastReading\ =\ vec;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ currentNrOfDuplicates\ =\ 0;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ currentJitter\ =\ 0.0;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ lastNewValueTime\ =\ tcurrent;}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ count++;}
+\DoxyCodeLine{00141\ \}}
+
+\end{DoxyCode}

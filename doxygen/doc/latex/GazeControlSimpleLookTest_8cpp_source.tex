@@ -1,0 +1,126 @@
+\doxysection{Gaze\+Control\+Simple\+Look\+Test.\+cpp}
+\label{GazeControlSimpleLookTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/gaze-\/control/simple-\/look/GazeControlSimpleLookTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/gaze-\/control/simple-\/look/GazeControlSimpleLookTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/dev/GazeControl.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}GazeControlSimpleLookTest.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00031\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00036\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(GazeControlSimpleLookTest)}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00040\ GazeControlSimpleLookTest::GazeControlSimpleLookTest()\ :}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}GazeControlSimpleLookTest"{}})}
+\DoxyCodeLine{00042\ \{}
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00047\ GazeControlSimpleLookTest::\string~GazeControlSimpleLookTest()}
+\DoxyCodeLine{00048\ \{}
+\DoxyCodeLine{00049\ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{bool}\ GazeControlSimpleLookTest::setup(Property\ \&property)}
+\DoxyCodeLine{00054\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ Property\ option;}
+\DoxyCodeLine{00056\ \ \ \ \ option.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}gazecontrollerclient"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ option.put(\textcolor{stringliteral}{"{}remote"{}},\textcolor{stringliteral}{"{}/iKinGazeCtrl"{}});}
+\DoxyCodeLine{00058\ \ \ \ \ option.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/gaze"{}}));}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Opening\ Gaze\ Controller\ Client"{}});}
+\DoxyCodeLine{00061\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(driver.open(option),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ client!"{}});}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00063\ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{void}\ GazeControlSimpleLookTest::tearDown()}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Closing\ Gaze\ Controller\ Client"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(driver.close(),\textcolor{stringliteral}{"{}Unable\ to\ close\ the\ client!"{}});}
+\DoxyCodeLine{00071\ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ GazeControlSimpleLookTest::run()}
+\DoxyCodeLine{00076\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ IGazeControl\ *igaze;}
+\DoxyCodeLine{00078\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(driver.view(igaze),\textcolor{stringliteral}{"{}Opening\ the\ view\ on\ the\ device!"{}});}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{bool}\ done;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ Vector\ fp;}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{double}\ t0=Time::now();}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<5.0)}
+\DoxyCodeLine{00085\ \ \ \ \ \{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ done=igaze-\/>getFixationPoint(fp);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (done)}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ Time::delay(0.1);}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+\DoxyCodeLine{00091\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Initial\ fixation-\/point\ retrieved!"{}});}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Setting\ up\ the\ context"{}});}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{int}\ context;}
+\DoxyCodeLine{00095\ \ \ \ \ igaze-\/>storeContext(\&context);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Looking\ at\ the\ target"{}});}
+\DoxyCodeLine{00098\ \ \ \ \ Vector\ fpd(3,0.0);\ fp[0]=-\/0.4;}
+\DoxyCodeLine{00099\ \ \ \ \ igaze-\/>lookAtFixationPoint(fpd);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Waiting"{}});}
+\DoxyCodeLine{00102\ \ \ \ \ igaze-\/>waitMotionDone(1.0,5.0);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ igaze-\/>checkMotionDone(\&done);}
+\DoxyCodeLine{00105\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Target\ reached!"{}});}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Going\ back"{}});}
+\DoxyCodeLine{00108\ \ \ \ \ igaze-\/>lookAtFixationPoint(fp);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Waiting"{}});}
+\DoxyCodeLine{00111\ \ \ \ \ igaze-\/>waitMotionDone(1.0,5.0);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ igaze-\/>checkMotionDone(\&done);}
+\DoxyCodeLine{00114\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Done!"{}});}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Cleaning\ up\ the\ context"{}});}
+\DoxyCodeLine{00117\ \ \ \ \ igaze-\/>restoreContext(context);}
+\DoxyCodeLine{00118\ \ \ \ \ igaze-\/>deleteContext(context);}
+\DoxyCodeLine{00119\ \}}
+\DoxyCodeLine{00120\ }
+
+\end{DoxyCode}

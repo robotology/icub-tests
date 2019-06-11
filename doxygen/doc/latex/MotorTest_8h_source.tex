@@ -1,0 +1,65 @@
+\doxysection{Motor\+Test.\+h}
+\label{MotorTest_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor-\/tests/MotorTest.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor-\/tests/MotorTest.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_MOTORTEST\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_MOTORTEST\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Value.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{class\ }MotorTest\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00060\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00061\ \ \ \ \ MotorTest();}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~MotorTest();}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ configuration);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00071\ \ \ \ \ yarp::dev::PolyDriver\ m\_driver;}
+\DoxyCodeLine{00072\ \ \ \ \ yarp::dev::IEncoders\ *iEncoders;}
+\DoxyCodeLine{00073\ \ \ \ \ yarp::dev::IPositionControl\ *iPosition;}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_initialized;}
+\DoxyCodeLine{00075\ \ \ \ \ std::string\ m\_portname;}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_NumJoints;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aTargetVal;}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aHome;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aMaxErr;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aMinErr;}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aRefVel;}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aRefAcc;}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{double}\ *m\_aTimeout;}
+\DoxyCodeLine{00084\ \};}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_MOTORTEST\_H\_}}
+
+\end{DoxyCode}

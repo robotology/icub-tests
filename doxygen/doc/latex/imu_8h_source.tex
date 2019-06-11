@@ -1,0 +1,78 @@
+\doxysection{imu.\+h}
+\label{imu_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ IMU\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ IMU\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <yarp/dev/MultipleAnalogSensorsInterfaces.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <yarp/dev/IPositionControl.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <yarp/dev/IEncoders.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <yarp/dev/IAxisInfo.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <yarp/dev/IMultipleWrapper.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <yarp/manager/localbroker.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <iDynTree/KinDynComputations.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <iDynTree/ModelLoader.h>}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <iDynTree/Model.h>}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00039\ \textcolor{keyword}{class\ }Imu\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ Imu();}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \string~Imu();}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ std::string\ portName;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ std::string\ modelName;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ errorMax;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ yarp::os::Bottle\ sensorsList;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ std::vector<std::string>\ partsList;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ yarp::dev::PolyDriver\ MASclientDriver;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ yarp::dev::PolyDriver\ controlBoardDriver;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ yarp::dev::PolyDriver\ MASremapperDriver;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ yarp::dev::IOrientationSensors*\ iorientation;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ yarp::dev::IPositionControl*\ ipos;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ yarp::dev::IEncoders*\ ienc;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ yarp::dev::IAxisInfo*\ iaxes;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ yarp::dev::IMultipleWrapper*\ imultiwrap;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ yarp::os::BufferedPort\ <yarp::os::Bottle>\ outputPort;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ std::vector<yarp::sig::Vector>\ rpyValues;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ yarp::sig::Vector\ positions;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ yarp::sig::Vector\ velocities;}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ axes;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ std::vector<std::string>\ axesVec;}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ iDynTree::ModelLoader\ model;}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ iDynTree::KinDynComputations\ kinDynComp;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ iDynTree::VectorDynSize\ s;}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ iDynTree::VectorDynSize\ ds;}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ iDynTree::Vector3\ gravity;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ iDynTree::Rotation\ baseLinkOrientation;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ iDynTree::Twist\ baseVelocity;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ iDynTree::Transform\ I\_T\_base;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ std::vector<iDynTree::Rotation>\ I\_R\_I\_IMU;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ robometry::BufferManager\ bufferManager;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ startMove();}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ setupRobometry();}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ setupBrokers();}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ std::vector<yarp::manager::LocalBroker>\ localBroker;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ yarp::manager::LocalBroker\ scriptBroker;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ std::string\ strCmd;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ std::string\ strParam;}
+\DoxyCodeLine{00092\ \};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//IMU\_H}}
+
+\end{DoxyCode}

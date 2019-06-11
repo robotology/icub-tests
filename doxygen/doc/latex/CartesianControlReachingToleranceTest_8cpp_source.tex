@@ -1,0 +1,207 @@
+\doxysection{Cartesian\+Control\+Reaching\+Tolerance\+Test.\+cpp}
+\label{CartesianControlReachingToleranceTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/cartesian-\/control/reaching-\/tolerance/CartesianControlReachingToleranceTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/cartesian-\/control/reaching-\/tolerance/CartesianControlReachingToleranceTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/dev/CartesianControl.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/IEncoders.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}CartesianControlReachingToleranceTest.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00035\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00036\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00037\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00040\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(CartesianControlReachingToleranceTest)}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00044\ CartesianControlReachingToleranceTest::CartesianControlReachingToleranceTest()\ :}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}CartesianControlReachingToleranceTest"{}})}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00051\ CartesianControlReachingToleranceTest::\string~CartesianControlReachingToleranceTest()}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{bool}\ CartesianControlReachingToleranceTest::setup(Property\ \&property)}
+\DoxyCodeLine{00058\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{string}\ robot=\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}robot"{}},Value(\textcolor{stringliteral}{"{}icubSim"{}})).asString();}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{string}\ arm=\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}arm-\/type"{}},Value(\textcolor{stringliteral}{"{}left"{}})).asString();}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ Property\ optCart;}
+\DoxyCodeLine{00063\ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}cartesiancontrollerclient"{}});}
+\DoxyCodeLine{00064\ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}cartesianController/"{}}+arm+\textcolor{stringliteral}{"{}\_arm"{}}));}
+\DoxyCodeLine{00065\ \ \ \ \ optCart.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/cartesian/"{}}+arm+\textcolor{stringliteral}{"{}\_arm"{}}));}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ Property\ optJoint;}
+\DoxyCodeLine{00068\ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00069\ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+robot+\textcolor{stringliteral}{"{}/"{}}+arm+\textcolor{stringliteral}{"{}\_arm"{}}));}
+\DoxyCodeLine{00070\ \ \ \ \ optJoint.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/joint/"{}}+arm+\textcolor{stringliteral}{"{}\_arm"{}}));}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Opening\ Cartesian\ Controller\ Client\ for\ \%s\_arm"{}},arm.c\_str()));}
+\DoxyCodeLine{00073\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(drvCart.open(optCart),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ client!"{}});}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Opening\ Joint\ Controller\ Client\ for\ \%s\_arm"{}},arm.c\_str()));}
+\DoxyCodeLine{00076\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(drvJoint.open(optJoint),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ client!"{}});}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00078\ \}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ CartesianControlReachingToleranceTest::tearDown()}
+\DoxyCodeLine{00083\ \{}
+\DoxyCodeLine{00084\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Closing\ Cartesian\ Controller\ Client"{}});}
+\DoxyCodeLine{00085\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(drvCart.close(),\textcolor{stringliteral}{"{}Unable\ to\ close\ the\ client!"{}});}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Closing\ Joint\ Controller\ Client"{}});}
+\DoxyCodeLine{00088\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(drvJoint.close(),\textcolor{stringliteral}{"{}Unable\ to\ close\ the\ client!"{}});}
+\DoxyCodeLine{00089\ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{double}\ CartesianControlReachingToleranceTest::compute\_error(\textcolor{keyword}{const}\ Vector\ \&xh,\ \textcolor{keyword}{const}\ Vector\ \&oh,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Vector\ \&x,\ \textcolor{keyword}{const}\ Vector\ \&o)}
+\DoxyCodeLine{00095\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ Matrix\ H=axis2dcm(o);}
+\DoxyCodeLine{00097\ \ \ \ \ H(0,3)=x[0];}
+\DoxyCodeLine{00098\ \ \ \ \ H(1,3)=x[1];}
+\DoxyCodeLine{00099\ \ \ \ \ H(2,3)=x[2];}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ Vector\ e(6,0.0);}
+\DoxyCodeLine{00102\ \ \ \ \ e[0]=xh[0]-\/H(0,3);}
+\DoxyCodeLine{00103\ \ \ \ \ e[1]=xh[1]-\/H(1,3);}
+\DoxyCodeLine{00104\ \ \ \ \ e[2]=xh[2]-\/H(2,3);}
+\DoxyCodeLine{00105\ \ \ \ \ Matrix\ Des=axis2dcm(oh);}
+\DoxyCodeLine{00106\ \ \ \ \ Vector\ ax=dcm2axis(Des*SE3inv(H));}
+\DoxyCodeLine{00107\ \ \ \ \ e[3]=ax[3]*ax[0];}
+\DoxyCodeLine{00108\ \ \ \ \ e[4]=ax[3]*ax[1];}
+\DoxyCodeLine{00109\ \ \ \ \ e[5]=ax[3]*ax[2];}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{return}\ norm(e);}
+\DoxyCodeLine{00112\ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ CartesianControlReachingToleranceTest::run()}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ ICartesianControl\ *iarm;}
+\DoxyCodeLine{00119\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(drvCart.view(iarm),\textcolor{stringliteral}{"{}Opening\ the\ view\ on\ the\ Cartesian\ device!"{}});}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ IEncoders\ *ienc;}
+\DoxyCodeLine{00122\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(drvJoint.view(ienc),\textcolor{stringliteral}{"{}Opening\ the\ view\ on\ the\ Joint\ device!"{}});}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{bool}\ done;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ Vector\ x,o;}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keywordtype}{double}\ t0=Time::now();}
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<5.0)}
+\DoxyCodeLine{00129\ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ done=iarm-\/>getPose(x,o);}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (done)}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ Time::delay(0.1);}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+\DoxyCodeLine{00135\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Initial\ pose\ retrieved!"{}});}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Setting\ up\ the\ context"{}});}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{int}\ context;}
+\DoxyCodeLine{00139\ \ \ \ \ iarm-\/>storeContext(\&context);}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ Vector\ dof;}
+\DoxyCodeLine{00142\ \ \ \ \ iarm-\/>getDOF(dof);\ dof=1.0;}
+\DoxyCodeLine{00143\ \ \ \ \ dof[0]=dof[1]=dof[2]=0.0;}
+\DoxyCodeLine{00144\ \ \ \ \ iarm-\/>setDOF(dof,dof);}
+\DoxyCodeLine{00145\ \ \ \ \ iarm-\/>setTrajTime(1.0);}
+\DoxyCodeLine{00146\ \ \ \ \ iarm-\/>setInTargetTol(0.02);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordtype}{double}\ tol;}
+\DoxyCodeLine{00149\ \ \ \ \ iarm-\/>getInTargetTol(\&tol);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ Vector\ pos2reach(3,0.0);}
+\DoxyCodeLine{00152\ \ \ \ \ pos2reach[0]=-\/0.35;}
+\DoxyCodeLine{00153\ \ \ \ \ pos2reach[1]=0.0;}
+\DoxyCodeLine{00154\ \ \ \ \ pos2reach[2]=0.15;}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ Matrix\ dcm2reach=zeros(3,3);}
+\DoxyCodeLine{00157\ \ \ \ \ dcm2reach(0,0)=dcm2reach(2,1)=dcm2reach(1,2)=-\/1.0;}
+\DoxyCodeLine{00158\ \ \ \ \ Vector\ ori2reach=dcm2axis(dcm2reach);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Reaching\ for\ the\ target:\ (\%s,\ \%s)"{}},}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pos2reach.toString(3,3).c\_str(),ori2reach.toString(3,3).c\_str()));}
+\DoxyCodeLine{00162\ \ \ \ \ Vector\ xh,oh,qh;}
+\DoxyCodeLine{00163\ \ \ \ \ iarm-\/>goToPoseSync(pos2reach,ori2reach);}
+\DoxyCodeLine{00164\ \ \ \ \ iarm-\/>getDesired(xh,oh,qh);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Waiting"{}});}
+\DoxyCodeLine{00167\ \ \ \ \ done=iarm-\/>waitMotionDone(0.1,10.0);}
+\DoxyCodeLine{00168\ \ \ \ \ iarm-\/>stopControl();}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ Vector\ xf,of;}
+\DoxyCodeLine{00171\ \ \ \ \ iarm-\/>getPose(xf,of);}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordtype}{int}\ nJoints;}
+\DoxyCodeLine{00174\ \ \ \ \ ienc-\/>getAxes(\&nJoints);}
+\DoxyCodeLine{00175\ \ \ \ \ Vector\ qf(nJoints);}
+\DoxyCodeLine{00176\ \ \ \ \ ienc-\/>getEncoders(qf.data());}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Target\ reached!"{}});}
+\DoxyCodeLine{00179\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Reaching\ tolerance:\ \%g"{}},tol));}
+\DoxyCodeLine{00180\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Solved\ pose:\ (\%s,\ \%s)"{}},}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xh.toString(3,3).c\_str(),oh.toString(3,3).c\_str()));}
+\DoxyCodeLine{00182\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Reached\ pose:\ (\%s,\ \%s)"{}},}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xf.toString(3,3).c\_str(),of.toString(3,3).c\_str()));}
+\DoxyCodeLine{00184\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Solved\ joints\ qh:\ (\%s)"{}},}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ qh.subVector(3,dof.length()-\/1).toString(3,3).c\_str()));}
+\DoxyCodeLine{00186\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Reached\ joints\ qf:\ (\%s)"{}},}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ qf.subVector(0,6).toString(3,3).c\_str()));}
+\DoxyCodeLine{00188\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Error:\ \%g"{}},compute\_error(xh,oh,xf,of)));}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Going\ back\ to\ starting\ pose"{}});}
+\DoxyCodeLine{00191\ \ \ \ \ iarm-\/>goToPoseSync(x,o);}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Waiting"{}});}
+\DoxyCodeLine{00194\ \ \ \ \ done=iarm-\/>waitMotionDone(1.0,5.0);}
+\DoxyCodeLine{00195\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Starting\ pose\ reached!"{}});}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Cleaning\ up\ the\ context"{}});}
+\DoxyCodeLine{00198\ \ \ \ \ iarm-\/>restoreContext(context);}
+\DoxyCodeLine{00199\ \ \ \ \ iarm-\/>deleteContext(context);}
+\DoxyCodeLine{00200\ \}}
+\DoxyCodeLine{00201\ }
+
+\end{DoxyCode}

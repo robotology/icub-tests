@@ -1,0 +1,79 @@
+\doxysection{motor\+Encoders\+Sign\+Check.\+h}
+\label{motorEncodersSignCheck_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motorEncodersSignCheck/motorEncodersSignCheck.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motorEncodersSignCheck/motorEncodersSignCheck.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_MOTORENCODERSSIGNCHECK\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_MOTORENCODERSSIGNCHECK\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}yarp/robottestingframework/JointsPosMotion.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{class\ }MotorEncodersSignCheck\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00062\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00063\ \ \ \ \ MotorEncodersSignCheck();}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~MotorEncodersSignCheck();}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ setModeSingle(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordtype}{void}\ OplExecute(\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ yarp::robottestingframework::jointsPosMotion\ *jPosMotion;}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00079\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00080\ \ \ \ \ yarp::sig::Vector\ jointsList;}
+\DoxyCodeLine{00081\ \ \ \ \ yarp::sig::Vector\ home;}
+\DoxyCodeLine{00082\ \ \ \ \ yarp::sig::Vector\ opl\_step;}
+\DoxyCodeLine{00083\ \ \ \ \ yarp::sig::Vector\ opl\_max;}
+\DoxyCodeLine{00084\ \ \ \ \ yarp::sig::Vector\ opl\_delay;}
+\DoxyCodeLine{00085\ \ \ \ \ yarp::sig::Vector\ max\_lims;}
+\DoxyCodeLine{00086\ \ \ \ \ yarp::sig::Vector\ min\_lims;}
+\DoxyCodeLine{00087\ \ \ \ \ yarp::sig::Vector\ pos\_threshold;}
+\DoxyCodeLine{00088\ \ \ \ \ yarp::sig::Vector\ opl\_start;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_part\_joints;}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ yarp::dev::PolyDriver\ \ \ \ \ \ \ \ *dd;}
+\DoxyCodeLine{00093\ \ \ \ \ yarp::dev::IControlMode\ \ \ \ \ *icmd;}
+\DoxyCodeLine{00094\ \ \ \ \ yarp::dev::IInteractionMode\ \ *iimd;}
+\DoxyCodeLine{00095\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00096\ \ \ \ \ yarp::dev::IPWMControl\ \ \ \ \ \ \ *ipwm;}
+\DoxyCodeLine{00097\ \ \ \ \ yarp::dev::IMotorEncoders\ \ \ \ *imenc;}
+\DoxyCodeLine{00098\ \ \ \ \ yarp::dev::IPidControl\ \ \ \ \ \ \ *ipid;}
+\DoxyCodeLine{00099\ \};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_opticalEncoders\_H}}
+
+\end{DoxyCode}

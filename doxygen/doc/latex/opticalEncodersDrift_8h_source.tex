@@ -1,0 +1,84 @@
+\doxysection{optical\+Encoders\+Drift.\+h}
+\label{opticalEncodersDrift_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/opticalEncoders-\/drift/opticalEncodersDrift.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/opticalEncoders-\/drift/opticalEncodersDrift.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_OPTICALENCODERSDRIFT\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_OPTICALENCODERSDRIFT\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/os/Bottle.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{class\ }OpticalEncodersDrift\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00063\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00064\ \ \ \ \ OpticalEncodersDrift();}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~OpticalEncodersDrift();}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{bool}\ goHome();}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{void}\ setMode(\textcolor{keywordtype}{int}\ desired\_mode);}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{bool}\ saveToFile(\textcolor{keyword}{const}\ std::string\ \&filename,\ \textcolor{keyword}{const}\ yarp::os::Bottle\ \&b);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00078\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00079\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00080\ \ \ \ \ yarp::sig::Vector\ jointsList;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{double}\ tolerance;}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_part\_joints;}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ yarp::dev::PolyDriver\ \ \ \ \ \ \ \ *dd;}
+\DoxyCodeLine{00087\ \ \ \ \ yarp::dev::IPositionControl\ *ipos;}
+\DoxyCodeLine{00088\ \ \ \ \ yarp::dev::IControlMode\ \ \ \ \ *icmd;}
+\DoxyCodeLine{00089\ \ \ \ \ yarp::dev::IInteractionMode\ \ *iimd;}
+\DoxyCodeLine{00090\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00091\ \ \ \ \ yarp::dev::IMotorEncoders\ \ \ \ *imot;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ yarp::sig::Vector\ enc\_jnt;}
+\DoxyCodeLine{00094\ \ \ \ \ yarp::sig::Vector\ enc\_mot;}
+\DoxyCodeLine{00095\ \ \ \ \ yarp::sig::Vector\ home\_enc\_mot;}
+\DoxyCodeLine{00096\ \ \ \ \ yarp::sig::Vector\ end\_enc\_mot;}
+\DoxyCodeLine{00097\ \ \ \ \ yarp::sig::Vector\ err\_enc\_mot;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ cycles;}
+\DoxyCodeLine{00100\ \ \ \ \ yarp::sig::Vector\ max;}
+\DoxyCodeLine{00101\ \ \ \ \ yarp::sig::Vector\ min;}
+\DoxyCodeLine{00102\ \ \ \ \ yarp::sig::Vector\ home;}
+\DoxyCodeLine{00103\ \ \ \ \ yarp::sig::Vector\ speed;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{bool}\ plot;\ \textcolor{comment}{//if\ true,\ the\ test\ runs\ gnuplot\ utility\ at\ end\ of\ test.}}
+\DoxyCodeLine{00106\ \};}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_opticalEncodersDRIFT\_H}}
+
+\end{DoxyCode}

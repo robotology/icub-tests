@@ -1,0 +1,154 @@
+\doxysection{Torque\+Control\+Gravity\+Consistency.\+cpp}
+\label{TorqueControlGravityConsistency_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torqueControl-\/gravityConsistency/TorqueControlGravityConsistency.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torqueControl-\/gravityConsistency/TorqueControlGravityConsistency.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}TorqueControlGravityConsistency.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00037\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(TorqueControlGravityConsistency)}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ TorqueControlGravityConsistency::TorqueControlGravityConsistency()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}TorqueControlGravityConsistency"{}}),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarpRobot(0)}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ TorqueControlGravityConsistency::\string~TorqueControlGravityConsistency()}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{bool}\ TorqueControlGravityConsistency::setup(yarp::os::Property\&\ property)}
+\DoxyCodeLine{00050\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ yarp::os::ResourceFinder\ \&\ rf\ =\ yarp::os::ResourceFinder::getResourceFinderSingleton();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ yarp::os::Property\ yarpWbiConfiguration;}
+\DoxyCodeLine{00054\ \ \ \ \ std::string\ yarpWbiConfigurationFile;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}wbi\_conf\_file"{}})\ \&\&\ property.find(\textcolor{stringliteral}{"{}wbi\_conf\_file"{}}).isString())}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ yarpWbiConfigurationFile\ =\ rf.findFileByName(property.find(\textcolor{stringliteral}{"{}wbi\_conf\_file"{}}).asString());}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ yarpWbiConfigurationFile\ =\ rf.findFileByName(\textcolor{stringliteral}{"{}yarpWholeBodyInterface.ini"{}});}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//It\ may\ be\ convenient\ to\ overload\ some\ option\ of\ the\ configuration\ file,}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ so\ we\ load\ in\ the\ yarpWbiConfiguration\ also\ the\ option\ passed\ in\ the\ command\ line}}
+\DoxyCodeLine{00066\ \ \ \ \ yarpWbiConfiguration.fromConfigFile(yarpWbiConfigurationFile);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ yarpWbiConfiguration.fromString(property.toString().c\_str(),\textcolor{keyword}{false});}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ Create\ yarpWholeBodyInterface}}
+\DoxyCodeLine{00071\ \ \ \ \ std::string\ localName\ =\ \textcolor{stringliteral}{"{}wbiTest"{}};}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{if}(\ property.check(\textcolor{stringliteral}{"{}local"{}})\ )}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ localName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}local"{}}).asString();}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ wbi::wholeBodyInterface\ *yarpRobot\ =\ \textcolor{keyword}{new}\ yarpWbi::yarpWholeBodyInterface\ (localName.c\_str(),\ yarpWbiConfiguration);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ wbi::IDList\ RobotMainJoints;}
+\DoxyCodeLine{00080\ \ \ \ \ std::string\ RobotMainJointsListName\ =\ \textcolor{stringliteral}{"{}ROBOT\_TORQUE\_CONTROL\_JOINTS"{}};}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{if}(\ !yarpWbi::loadIdListFromConfig(RobotMainJointsListName,yarpWbiConfiguration,RobotMainJoints)\ )}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}[ERR]\ yarpWholeBodyInterface:\ impossible\ to\ load\ wbiId\ joint\ list\ with\ name\ \%s\(\backslash\)n"{}},RobotMainJointsListName.c\_str());}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ yarpRobot-\/>addJoints(RobotMainJoints);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Joints\ added,\ calling\ init\ method"{}}\ <<\ \ std::endl;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{if}(!yarpRobot-\/>init())}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Error:\ init()\ method\ failed"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ Time::delay(0.5);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00100\ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{void}\ TorqueControlGravityConsistency::tearDown()}
+\DoxyCodeLine{00103\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ yarpRobot-\/>close();}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{delete}\ yarpRobot;}
+\DoxyCodeLine{00106\ \ \ \ \ yarpRobot\ =\ 0;}
+\DoxyCodeLine{00107\ \}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ TorqueControlGravityConsistency::run()}
+\DoxyCodeLine{00110\ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//Get\ the\ number\ of\ controlled\ degrees\ of\ freedom\ of\ the\ robot}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{int}\ dof\ =\ yarpRobot-\/>getDoFs();}
+\DoxyCodeLine{00113\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Number\ of\ (internal)\ controlled\ DoFs:\ \%d\(\backslash\)n"{}},\ dof);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{//Allocate\ yarp\ vector\ of\ the\ right\ dimensions}}
+\DoxyCodeLine{00116\ \ \ \ \ Vector\ q(dof),\ trqMeasured(dof),\ trqGravity(dof),\ generalizedBiasForces(dof+6),\ dq(dof);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//Read\ position\ and\ torque\ estimates}}
+\DoxyCodeLine{00119\ \ \ \ \ yarpRobot-\/>getEstimates(wbi::ESTIMATE\_JOINT\_POS,\ q.data());}
+\DoxyCodeLine{00120\ \ \ \ \ yarpRobot-\/>getEstimates(wbi::ESTIMATE\_JOINT\_VEL,\ dq.data());}
+\DoxyCodeLine{00121\ \ \ \ \ yarpRobot-\/>getEstimates(wbi::ESTIMATE\_JOINT\_TORQUE,\ trqMeasured.data());}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ Compute\ gravity\ compensation\ torques}}
+\DoxyCodeLine{00124\ \ \ \ \ wbi::Frame\ world2base;}
+\DoxyCodeLine{00125\ \ \ \ \ world2base.identity();}
+\DoxyCodeLine{00126\ \ \ \ \ Vector\ baseTwist(6);}
+\DoxyCodeLine{00127\ \ \ \ \ baseTwist.zero();}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_gravity[3];}
+\DoxyCodeLine{00130\ \ \ \ \ m\_gravity[0]\ =\ 0;}
+\DoxyCodeLine{00131\ \ \ \ \ m\_gravity[1]\ =\ 0;}
+\DoxyCodeLine{00132\ \ \ \ \ m\_gravity[2]\ =\ -\/9.81;}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ yarpRobot-\/>computeGeneralizedBiasForces(q.data(),world2base,dq.data(),baseTwist.data(),m\_gravity,generalizedBiasForces.data());}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{//\ We\ extract\ the\ joint\ torques\ from\ the\ generalized\ bias\ forces}}
+\DoxyCodeLine{00137\ \ \ \ \ trqGravity\ =\ generalizedBiasForces.subVector(6,6+dof-\/1);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{size\_t}\ i=0;\ i\ <\ dof;\ i++)}
+\DoxyCodeLine{00140\ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ wbi::ID\ wbiID;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ yarpRobot-\/>getJointList().indexToID(i,wbiID);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Joint\ "{}}\ <<\ wbiID.toString()\ <<\ \textcolor{stringliteral}{"{}\ :\ "{}}\ <<\ std::endl;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\ Measured\ torque:\ "{}}\ <<\ trqMeasured[i]\ <<\ \textcolor{stringliteral}{"{}Nm"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\ Gravity\ \ torque:\ "{}}\ <<\ trqGravity[i]\ <<\ \textcolor{stringliteral}{"{}Nm"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\ Difference\ \ \ \ \ :\ "{}}\ <<\ trqMeasured[i]-\/trqGravity[i]\ <<\ \textcolor{stringliteral}{"{}Nm"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00147\ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \}}
+
+\end{DoxyCode}

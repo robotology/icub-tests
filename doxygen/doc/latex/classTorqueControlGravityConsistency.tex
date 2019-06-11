@@ -1,0 +1,219 @@
+\doxysection{Torque\+Control\+Gravity\+Consistency Class Reference}
+\label{classTorqueControlGravityConsistency}\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+
+
+The test is supposed to be run with the i\+Cub fixed to the pole, with the pole leveled with respect to the gravity (please check this with a level before running the test) and with the whole\+Body\+Dynamics(\+Tree) running.  
+
+
+
+
+{\ttfamily \#include $<$Torque\+Control\+Gravity\+Consistency.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classTorqueControlGravityConsistency_af458d18b20938955516073ffbb9aeb8a}{setup}} (yarp\+::os\+::\+Property \&property)
+\item 
+virtual void \mbox{\hyperlink{classTorqueControlGravityConsistency_a530ffd6435bf66da62107510ef379c3b}{tear\+Down}} ()
+\item 
+virtual void \mbox{\hyperlink{classTorqueControlGravityConsistency_a0a60459b300343fe929867703d38a8da}{run}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The test is supposed to be run with the i\+Cub fixed to the pole, with the pole leveled with respect to the gravity (please check this with a level before running the test) and with the whole\+Body\+Dynamics(\+Tree) running. 
+
+The tests opens the whole\+Body\+Interface (to be migrated to use material available on YARP and i\+Dyn\+Tree) and compares the gravity compensation torque coming from the model and assuming that the gravity is fixed in the based with the joint torques measured by i\+Cub (that actually come from the whole\+Body\+Dynamics(\+Tree) ).
+
+Example\+: test\+Runner -\/v -\/t Torque\+Control\+Gravity\+Consistency.\+dll -\/p "{}"{} 
+
+Definition at line \mbox{\hyperlink{TorqueControlGravityConsistency_8h_source_l00045}{45}} of file \mbox{\hyperlink{TorqueControlGravityConsistency_8h_source}{Torque\+Control\+Gravity\+Consistency.\+h}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\label{classTorqueControlGravityConsistency_a9b7690ee7480fabeb8e37eb2678c39f1} 
+\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}!TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}!TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+\doxysubsubsection{\texorpdfstring{TorqueControlGravityConsistency()}{TorqueControlGravityConsistency()}}
+{\footnotesize\ttfamily Torque\+Control\+Gravity\+Consistency\+::\+Torque\+Control\+Gravity\+Consistency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source_l00039}{39}} of file \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source}{Torque\+Control\+Gravity\+Consistency.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}TorqueControlGravityConsistency"{}}),}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarpRobot(0)}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \}}
+
+\end{DoxyCode}
+\label{classTorqueControlGravityConsistency_ad965dbd261a06fbd89849c1ddd520146} 
+\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}!````~TorqueControlGravityConsistency@{\texorpdfstring{$\sim$}{\string~}TorqueControlGravityConsistency}}
+\index{````~TorqueControlGravityConsistency@{\texorpdfstring{$\sim$}{\string~}TorqueControlGravityConsistency}!TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}TorqueControlGravityConsistency()}{\string~TorqueControlGravityConsistency()}}
+{\footnotesize\ttfamily Torque\+Control\+Gravity\+Consistency\+::\texorpdfstring{$\sim$}{\string~}\+Torque\+Control\+Gravity\+Consistency (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source_l00045}{45}} of file \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source}{Torque\+Control\+Gravity\+Consistency.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\label{classTorqueControlGravityConsistency_a0a60459b300343fe929867703d38a8da} 
+\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}!run@{run}}
+\index{run@{run}!TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Torque\+Control\+Gravity\+Consistency\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source_l00109}{109}} of file \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source}{Torque\+Control\+Gravity\+Consistency.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00110\ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//Get\ the\ number\ of\ controlled\ degrees\ of\ freedom\ of\ the\ robot}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{int}\ dof\ =\ yarpRobot-\/>getDoFs();}
+\DoxyCodeLine{00113\ \ \ \ \ printf(\textcolor{stringliteral}{"{}Number\ of\ (internal)\ controlled\ DoFs:\ \%d\(\backslash\)n"{}},\ dof);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{comment}{//Allocate\ yarp\ vector\ of\ the\ right\ dimensions}}
+\DoxyCodeLine{00116\ \ \ \ \ Vector\ q(dof),\ trqMeasured(dof),\ trqGravity(dof),\ generalizedBiasForces(dof+6),\ dq(dof);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//Read\ position\ and\ torque\ estimates}}
+\DoxyCodeLine{00119\ \ \ \ \ yarpRobot-\/>getEstimates(wbi::ESTIMATE\_JOINT\_POS,\ q.data());}
+\DoxyCodeLine{00120\ \ \ \ \ yarpRobot-\/>getEstimates(wbi::ESTIMATE\_JOINT\_VEL,\ dq.data());}
+\DoxyCodeLine{00121\ \ \ \ \ yarpRobot-\/>getEstimates(wbi::ESTIMATE\_JOINT\_TORQUE,\ trqMeasured.data());}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ Compute\ gravity\ compensation\ torques}}
+\DoxyCodeLine{00124\ \ \ \ \ wbi::Frame\ world2base;}
+\DoxyCodeLine{00125\ \ \ \ \ world2base.identity();}
+\DoxyCodeLine{00126\ \ \ \ \ Vector\ baseTwist(6);}
+\DoxyCodeLine{00127\ \ \ \ \ baseTwist.zero();}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordtype}{double}\ m\_gravity[3];}
+\DoxyCodeLine{00130\ \ \ \ \ m\_gravity[0]\ =\ 0;}
+\DoxyCodeLine{00131\ \ \ \ \ m\_gravity[1]\ =\ 0;}
+\DoxyCodeLine{00132\ \ \ \ \ m\_gravity[2]\ =\ -\/9.81;}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ yarpRobot-\/>computeGeneralizedBiasForces(q.data(),world2base,dq.data(),baseTwist.data(),m\_gravity,generalizedBiasForces.data());}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{//\ We\ extract\ the\ joint\ torques\ from\ the\ generalized\ bias\ forces}}
+\DoxyCodeLine{00137\ \ \ \ \ trqGravity\ =\ generalizedBiasForces.subVector(6,6+dof-\/1);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{size\_t}\ i=0;\ i\ <\ dof;\ i++)}
+\DoxyCodeLine{00140\ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ wbi::ID\ wbiID;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ yarpRobot-\/>getJointList().indexToID(i,wbiID);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Joint\ "{}}\ <<\ wbiID.toString()\ <<\ \textcolor{stringliteral}{"{}\ :\ "{}}\ <<\ std::endl;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\ Measured\ torque:\ "{}}\ <<\ trqMeasured[i]\ <<\ \textcolor{stringliteral}{"{}Nm"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\ Gravity\ \ torque:\ "{}}\ <<\ trqGravity[i]\ <<\ \textcolor{stringliteral}{"{}Nm"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\ Difference\ \ \ \ \ :\ "{}}\ <<\ trqMeasured[i]-\/trqGravity[i]\ <<\ \textcolor{stringliteral}{"{}Nm"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00147\ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \}}
+
+\end{DoxyCode}
+\label{classTorqueControlGravityConsistency_af458d18b20938955516073ffbb9aeb8a} 
+\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}!setup@{setup}}
+\index{setup@{setup}!TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily bool Torque\+Control\+Gravity\+Consistency\+::setup (\begin{DoxyParamCaption}\item[{yarp\+::os\+::\+Property \&}]{property }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source_l00049}{49}} of file \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source}{Torque\+Control\+Gravity\+Consistency.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00050\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ yarp::os::ResourceFinder\ \&\ rf\ =\ yarp::os::ResourceFinder::getResourceFinderSingleton();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ yarp::os::Property\ yarpWbiConfiguration;}
+\DoxyCodeLine{00054\ \ \ \ \ std::string\ yarpWbiConfigurationFile;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}wbi\_conf\_file"{}})\ \&\&\ property.find(\textcolor{stringliteral}{"{}wbi\_conf\_file"{}}).isString())}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ yarpWbiConfigurationFile\ =\ rf.findFileByName(property.find(\textcolor{stringliteral}{"{}wbi\_conf\_file"{}}).asString());}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ yarpWbiConfigurationFile\ =\ rf.findFileByName(\textcolor{stringliteral}{"{}yarpWholeBodyInterface.ini"{}});}
+\DoxyCodeLine{00062\ \ \ \ \ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//It\ may\ be\ convenient\ to\ overload\ some\ option\ of\ the\ configuration\ file,}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ so\ we\ load\ in\ the\ yarpWbiConfiguration\ also\ the\ option\ passed\ in\ the\ command\ line}}
+\DoxyCodeLine{00066\ \ \ \ \ yarpWbiConfiguration.fromConfigFile(yarpWbiConfigurationFile);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ yarpWbiConfiguration.fromString(property.toString().c\_str(),\textcolor{keyword}{false});}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ Create\ yarpWholeBodyInterface}}
+\DoxyCodeLine{00071\ \ \ \ \ std::string\ localName\ =\ \textcolor{stringliteral}{"{}wbiTest"{}};}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{if}(\ property.check(\textcolor{stringliteral}{"{}local"{}})\ )}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ localName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}local"{}}).asString();}
+\DoxyCodeLine{00075\ \ \ \ \ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ wbi::wholeBodyInterface\ *yarpRobot\ =\ \textcolor{keyword}{new}\ yarpWbi::yarpWholeBodyInterface\ (localName.c\_str(),\ yarpWbiConfiguration);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ wbi::IDList\ RobotMainJoints;}
+\DoxyCodeLine{00080\ \ \ \ \ std::string\ RobotMainJointsListName\ =\ \textcolor{stringliteral}{"{}ROBOT\_TORQUE\_CONTROL\_JOINTS"{}};}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordflow}{if}(\ !yarpWbi::loadIdListFromConfig(RobotMainJointsListName,yarpWbiConfiguration,RobotMainJoints)\ )}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}[ERR]\ yarpWholeBodyInterface:\ impossible\ to\ load\ wbiId\ joint\ list\ with\ name\ \%s\(\backslash\)n"{}},RobotMainJointsListName.c\_str());}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ yarpRobot-\/>addJoints(RobotMainJoints);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Joints\ added,\ calling\ init\ method"{}}\ <<\ \ std::endl;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordflow}{if}(!yarpRobot-\/>init())}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Error:\ init()\ method\ failed"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ Time::delay(0.5);}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00100\ \}}
+
+\end{DoxyCode}
+\label{classTorqueControlGravityConsistency_a530ffd6435bf66da62107510ef379c3b} 
+\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily void Torque\+Control\+Gravity\+Consistency\+::tear\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source_l00102}{102}} of file \mbox{\hyperlink{TorqueControlGravityConsistency_8cpp_source}{Torque\+Control\+Gravity\+Consistency.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00103\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ yarpRobot-\/>close();}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{delete}\ yarpRobot;}
+\DoxyCodeLine{00106\ \ \ \ \ yarpRobot\ =\ 0;}
+\DoxyCodeLine{00107\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torque\+Control-\/gravity\+Consistency/Torque\+Control\+Gravity\+Consistency.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torque\+Control-\/gravity\+Consistency/Torque\+Control\+Gravity\+Consistency.\+cpp\end{DoxyCompactItemize}

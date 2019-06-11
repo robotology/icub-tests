@@ -1,0 +1,130 @@
+\doxysection{System\+Status.\+cpp}
+\label{SystemStatus_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/system-\/status/SystemStatus.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/system-\/status/SystemStatus.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <yarp/os/Port.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <yarp/os/SystemInfoSerializer.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}SystemStatus.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00027\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00028\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ CONNECTION\_TIMEOUT\ \ \ \ \ \ 5.0\ \ \ \ \ \ \ \ \ }\textcolor{comment}{//seconds}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00033\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(SystemStatus)}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ SystemStatus::SystemStatus()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}SystemStatus"{}})\ \{}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ SystemStatus::\string~SystemStatus()\ \{\ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{bool}\ SystemStatus::setup(yarp::os::Property\ \&property)\ \{}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//updating\ the\ test\ name}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(property.check(\textcolor{stringliteral}{"{}hosts"{}}),}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}A\ list\ of\ hosts\ name\ must\ be\ given\ using\ 'hosts'\ param"{}});}
+\DoxyCodeLine{00049\ \ \ \ \ yarp::os::Bottle\ portsSet\ =\ \textcolor{keyword}{property}.findGroup(\textcolor{stringliteral}{"{}hosts"{}}).tail();}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<portsSet.size();\ i++)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ yarp::os::Bottle*\ btport\ =\ portsSet.get(i).asList();}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(btport\ \&\&\ btport-\/>size()>=2,\ \textcolor{stringliteral}{"{}Hosts\ must\ be\ given\ as\ lists\ of\ <host\ name>\ <max\ cpu\ load>"{}});}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ HostInfo\ info;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ info.name\ =\ btport-\/>get(0).asString();}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ info.maxCpuLoad\ =\ btport-\/>get(1).asInt32();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ hosts.push\_back(info);}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ SystemStatus::tearDown()\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ SystemStatus::run()\ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<hosts.size();\ i++)\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ SystemInfoSerializer\ info;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Checking\ host\ \%s\ ..."{}},\ hosts[i].name.c\_str()));}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ret\ =\ getSystemInfo(hosts[i].name,\ info);}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(ret,\ Asserter::format(\textcolor{stringliteral}{"{}Failed\ to\ get\ the\ system\ status\ of\ host\ \%s.\ Is\ the\ yarprun\ running\ on\ \%s?"{}},}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hosts[i].name.c\_str(),\ hosts[i].name.c\_str()));}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(ret)\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Total\ memory\ \%d\ MB,\ free\ memory\ \%d\ MB."{}},}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ info.memory.totalSpace,\ info.memory.freeSpace));}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ cpuLoad1\ =\ (int)(info.load.cpuLoad1*100);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ cpuLoad5\ =\ (int)(info.load.cpuLoad5*100);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ cpuLoad15\ =\ (int)(info.load.cpuLoad15*100);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Cpu\ load\ during\ last\ minute\ \%d\(\backslash\)\%,\ last\ 5\ minutes\ \%d\(\backslash\)\%,\ last\ 15\ minutes\ \%d\(\backslash\)\%"{}},}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cpuLoad1,\ cpuLoad5,\ cpuLoad15));}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(cpuLoad1\ <\ hosts[i].maxCpuLoad,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Cpu\ load\ (last\ minute)\ is\ higher\ than\ desired\ [\%d\(\backslash\)\%]"{}},\ hosts[i].maxCpuLoad));}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keywordtype}{bool}\ SystemStatus::getSystemInfo(std::string\ remote,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ SystemInfoSerializer\&\ info)\ \{}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ yarp::os::Port\ port;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{//\ opening\ the\ port}}
+\DoxyCodeLine{00094\ \ \ \ \ port.setTimeout(CONNECTION\_TIMEOUT);}
+\DoxyCodeLine{00095\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(port.open(\textcolor{stringliteral}{"{}..."{}}),\ \textcolor{stringliteral}{"{}Cannot\ open\ the\ yarp\ port"{}});}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ yarp::os::Bottle\ msg,\ grp;}
+\DoxyCodeLine{00098\ \ \ \ \ grp.clear();}
+\DoxyCodeLine{00099\ \ \ \ \ grp.addString(\textcolor{stringliteral}{"{}sysinfo"{}});}
+\DoxyCodeLine{00100\ \ \ \ \ msg.addList()\ =\ grp;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ ContactStyle\ style;}
+\DoxyCodeLine{00103\ \ \ \ \ style.quiet\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00104\ \ \ \ \ style.timeout\ =\ CONNECTION\_TIMEOUT;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{bool}\ connected\ =\ yarp::os::NetworkBase::connect(port.getName(),\ remote.c\_str(),\ style);}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{if}(!connected)\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(connected,\ \textcolor{keywordtype}{string}(\textcolor{stringliteral}{"{}Cannot\ connect\ to\ "{}})\ +\ remote);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ port.close();}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{bool}\ ret\ =\ port.write(msg,\ info);}
+\DoxyCodeLine{00114\ \ \ \ \ NetworkBase::disconnect(port.getName().c\_str(),\ remote.c\_str());}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{if}(!ret)\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ port.close();}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(ret,\ remote\ +\ \textcolor{keywordtype}{string}(\textcolor{stringliteral}{"{}\ does\ not\ respond"{}}));}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00119\ \ \ \ \ \}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ port.close();}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00123\ \}}
+\DoxyCodeLine{00124\ }
+
+\end{DoxyCode}

@@ -1,0 +1,94 @@
+\doxysection{Ports\+Frequency.\+h}
+\label{PortsFrequency_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/ports-\/frequency/PortsFrequency.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/ports-\/frequency/PortsFrequency.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_PORTSFREQUENCY\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_PORTSFREQUENCY\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/BufferedPort.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Bottle.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{class\ }MyPortInfo\ \{}
+\DoxyCodeLine{00030\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00031\ \ \ \ \ std::string\ name;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ frequency;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ tolerance;}
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }DataPort\ :\ \textcolor{keyword}{public}\ yarp::os::BufferedPort<yarp::os::Bottle>\ \{}
+\DoxyCodeLine{00038\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ reset()\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ max\ =\ smax\ =\ sum\ =\ ssum\ =\ dmax\ =\ dsum\ =\ 0.0;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ min\ =\ smin\ =\ dmin\ =\ -\/1.0;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ tprev\ =\ stprev\ =\ 0.0;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ count\ =\ 0;}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ prevPacketCount\ =\ 0;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ packetLostCount\ =\ 0;}
+\DoxyCodeLine{00046\ \ \ \ \ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{double}\ getMax()\ \{\ \textcolor{keywordflow}{return}\ max;\ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{double}\ getMin()\ \{\ \textcolor{keywordflow}{return}\ min;\ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{double}\ getAvg()\ \{\ \textcolor{keywordflow}{return}\ sum/count;\ \}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{double}\ getSMax()\ \{\ \textcolor{keywordflow}{return}\ smax;\ \}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{double}\ getSMin()\ \{\ \textcolor{keywordflow}{return}\ smin;\ \}}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{double}\ getSAvg()\ \{\ \textcolor{keywordflow}{return}\ ssum/count;\ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{double}\ getDMax()\ \{\ \textcolor{keywordflow}{return}\ dmax;\ \}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{double}\ getDMin()\ \{\ \textcolor{keywordflow}{return}\ dmin;\ \}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{double}\ getDAvg()\ \{\ \textcolor{keywordflow}{return}\ dsum/count;\ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ getPacketLostCount()\ \{\ \textcolor{keywordflow}{return}\ packetLostCount;\ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ getCount()\ \{\ \textcolor{keywordflow}{return}\ count;\ \}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ onRead(yarp::os::Bottle\&\ bot);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ count,\ packetLostCount;}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ prevPacketCount;}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordtype}{double}\ tprev,\ stprev;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{double}\ max,\ min,\ sum;\ \ \ \ \ \ \ \textcolor{comment}{//\ receiver\ time}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{double}\ smax,\ smin,\ ssum;\ \ \ \ \textcolor{comment}{//\ sender\ time}}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{double}\ dmax,\ dmin,\ dsum;\ \ \ \ \textcolor{comment}{//\ time\ delay}}
+\DoxyCodeLine{00069\ \};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{class\ }PortsFrequency\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00072\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00073\ \ \ \ \ PortsFrequency();}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~PortsFrequency();}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00083\ \ \ \ \ DataPort\ port;}
+\DoxyCodeLine{00084\ \ \ \ \ std::vector<MyPortInfo>\ ports;}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{double}\ testTime;}
+\DoxyCodeLine{00086\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_PORTSFREQUENCY\_H}}
+
+\end{DoxyCode}

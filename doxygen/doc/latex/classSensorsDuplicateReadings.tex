@@ -1,0 +1,195 @@
+\doxysection{Sensors\+Duplicate\+Readings Class Reference}
+\label{classSensorsDuplicateReadings}\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+
+
+Check if a yarp port is correctly publishing unique values at each update .  
+
+
+
+
+{\ttfamily \#include $<$Sensors\+Duplicate\+Readings.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classSensorsDuplicateReadings_ab59f0ef1631d3e9e32319d7258cfb1f8}{setup}} (yarp\+::os\+::\+Property \&property)
+\item 
+virtual void \mbox{\hyperlink{classSensorsDuplicateReadings_a985c191f7133ff39409a5d30f93316cf}{tear\+Down}} ()
+\item 
+virtual void \mbox{\hyperlink{classSensorsDuplicateReadings_a4c03abe12e3dadaaa13a26a537a897e3}{run}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check if a yarp port is correctly publishing unique values at each update . 
+
+For some sensors, such as strain gauge based force sensors, errors on the measurement ensure that two different readings of the sensors are always different. If on a port that is publishing a sensor reading you get two times exactly the same value, this could mean that the same sensor reading was sent multiple times. This could happen for several reasons\+:
+\begin{DoxyItemize}
+\item The wrapper is running faster than the sensor frequency (depending on the configuration this could make sense or not)
+\item The sensor readings are not properly read, for example because packets are lost or dropped (this usually indicate some problem in your system).
+\end{DoxyItemize}
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering "{}\+Sensors\+Duplicate\+Readings"{}   &\PBS\centering No   &\PBS\centering The name of the test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering time   &\PBS\centering double   &\PBS\centering s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering Duration of the test for each port.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering PORTS (group )   &\PBS\centering Bottle   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of couples of port/tolerated\+Duplicates with this format\+: (portname1, tolerated\+Duplicates1) (portname1, tolerated\+Duplicates1)   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line \mbox{\hyperlink{SensorsDuplicateReadings_8h_source_l00088}{88}} of file \mbox{\hyperlink{SensorsDuplicateReadings_8h_source}{Sensors\+Duplicate\+Readings.\+h}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\label{classSensorsDuplicateReadings_a4c753a6206cde3bfb1f2f98bb0312555} 
+\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}!SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}!SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+\doxysubsubsection{\texorpdfstring{SensorsDuplicateReadings()}{SensorsDuplicateReadings()}}
+{\footnotesize\ttfamily Sensors\+Duplicate\+Readings\+::\+Sensors\+Duplicate\+Readings (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source_l00036}{36}} of file \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source}{Sensors\+Duplicate\+Readings.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}SensorsDuplicateReadings"{}})\ \{}
+\DoxyCodeLine{00037\ \}}
+
+\end{DoxyCode}
+\label{classSensorsDuplicateReadings_ab97748fec10f912ba0b551e947ffbe9a} 
+\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}!````~SensorsDuplicateReadings@{\texorpdfstring{$\sim$}{\string~}SensorsDuplicateReadings}}
+\index{````~SensorsDuplicateReadings@{\texorpdfstring{$\sim$}{\string~}SensorsDuplicateReadings}!SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}SensorsDuplicateReadings()}{\string~SensorsDuplicateReadings()}}
+{\footnotesize\ttfamily Sensors\+Duplicate\+Readings\+::\texorpdfstring{$\sim$}{\string~}\+Sensors\+Duplicate\+Readings (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source_l00039}{39}} of file \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source}{Sensors\+Duplicate\+Readings.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00039\ \{\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\label{classSensorsDuplicateReadings_a4c03abe12e3dadaaa13a26a537a897e3} 
+\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}!run@{run}}
+\index{run@{run}!SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Sensors\+Duplicate\+Readings\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source_l00074}{74}} of file \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source}{Sensors\+Duplicate\+Readings.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<ports.size();\ i++)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ port.reset();}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Checking\ port\ \%s\ ..."{}},\ ports[i].name.c\_str()));}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ connected\ =\ Network::connect(ports[i].name.c\_str(),\ port.getName());}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(connected,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}could\ not\ connect\ to\ remote\ port\ \%s."{}},\ ports[i].name.c\_str()));}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(connected)\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ port.useCallback();}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(testTime);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ port.disableCallback();}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Computed\ a\ total\ of\ \%lu\ duplicates\ out\ of\ \%lu\ samples."{}},}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getTotalNrOfDuplicates(),port.getCount()));}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Maximum\ number\ of\ consecutive\ duplicates:\ \%lu\ Maximum\ jitter:\ \%lf\ "{}},}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getMaxNrOfDuplicates(),\ port.getMaxJitter()));}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF(port.getTotalNrOfDuplicates()\ >\ ports[i].toleratedDuplicates,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Number\ of\ duplicates\ (\%lu)\ is\ higher\ than\ the\ tolerated\ (\%d)"{}},}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getTotalNrOfDuplicates(),}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ports[i].toleratedDuplicates));}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ Network::disconnect(ports[i].name.c\_str(),\ port.getName());}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \}}
+
+\end{DoxyCode}
+\label{classSensorsDuplicateReadings_ab59f0ef1631d3e9e32319d7258cfb1f8} 
+\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}!setup@{setup}}
+\index{setup@{setup}!SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily bool Sensors\+Duplicate\+Readings\+::setup (\begin{DoxyParamCaption}\item[{yarp\+::os\+::\+Property \&}]{property }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source_l00041}{41}} of file \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source}{Sensors\+Duplicate\+Readings.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//updating\ the\ test\ name}}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00048\ \ \ \ testTime\ =\ (\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}time"{}}))\ ?\ property.find(\textcolor{stringliteral}{"{}time"{}}).asFloat64()\ :\ 2;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(property.check(\textcolor{stringliteral}{"{}PORTS"{}}),}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}A\ list\ of\ the\ ports\ must\ be\ given"{}});}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ yarp::os::Bottle\ portsSet\ =\ \textcolor{keyword}{property}.findGroup(\textcolor{stringliteral}{"{}PORTS"{}}).tail();}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<portsSet.size();\ i++)\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ yarp::os::Bottle*\ btport\ =\ portsSet.get(i).asList();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(btport\ \&\&\ btport-\/>size()>=3,\ \textcolor{stringliteral}{"{}The\ ports\ must\ be\ given\ as\ lists\ of\ <portname>\ <toleratedDuplicates>"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ DuplicateReadingsPortInfo\ info;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ info.name\ =\ btport-\/>get(0).asString();}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ info.toleratedDuplicates\ =\ btport-\/>get(1).asInt32();}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ ports.push\_back(info);}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ opening\ port}}
+\DoxyCodeLine{00064\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF(port.open(\textcolor{stringliteral}{"{}..."{}}),}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}opening\ port,\ is\ YARP\ network\ available?"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00067\ \}}
+
+\end{DoxyCode}
+\label{classSensorsDuplicateReadings_a985c191f7133ff39409a5d30f93316cf} 
+\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily void Sensors\+Duplicate\+Readings\+::tear\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source_l00069}{69}} of file \mbox{\hyperlink{SensorsDuplicateReadings_8cpp_source}{Sensors\+Duplicate\+Readings.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{comment}{//\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00071\ \ \ \ \ port.close();}
+\DoxyCodeLine{00072\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/sensors-\/duplicate-\/readings/Sensors\+Duplicate\+Readings.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/sensors-\/duplicate-\/readings/Sensors\+Duplicate\+Readings.\+cpp\end{DoxyCompactItemize}

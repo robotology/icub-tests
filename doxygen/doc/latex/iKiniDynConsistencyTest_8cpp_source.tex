@@ -1,0 +1,271 @@
+\doxysection{i\+Kini\+Dyn\+Consistency\+Test.\+cpp}
+\label{iKiniDynConsistencyTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/models-\/consistency/iKiniDynConsistencyTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/models-\/consistency/iKiniDynConsistencyTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}iKiniDynConsistencyTest.h"{}}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ Yarp\ includes}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/math/api.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/os/Random.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ iKin\ includes}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <iCub/iKin/iKinFwd.h>}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ iDyn\ includes}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ <iCub/iDyn/iDyn.h>}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ <iCub/iDyn/iDynBody.h>}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00041\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00042\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00044\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00045\ \textcolor{keyword}{using\ namespace\ }iCub::iKin;}
+\DoxyCodeLine{00046\ \textcolor{keyword}{using\ namespace\ }iCub::iDyn;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{comment}{//\ some\ utils}}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ set\_random\_vector(yarp::sig::Vector\ \&\ vec,\ yarp::os::Random\ \&\ rng,\ \textcolor{keywordtype}{double}\ coeff=0.0)}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{for}(\ \textcolor{keywordtype}{int}\ i=0;\ i\ <\ (int)vec.size();\ i++\ )\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ vec[i]\ =\ \ coeff*M\_PI*rng.uniform();}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00059\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(iKiniDynConsistencyTest)}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ iKiniDynConsistencyTest::iKiniDynConsistencyTest()\ :\ TestCase(\textcolor{stringliteral}{"{}iKiniDynConsistencyTest"{}})\ \{}
+\DoxyCodeLine{00062\ \}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ iKiniDynConsistencyTest::check\_matrix\_are\_equal(\textcolor{keyword}{const}\ yarp::sig::Matrix\ \&\ mat1,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ yarp::sig::Matrix\ \&\ mat2,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ tol)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Comparing\ mat1:\ \(\backslash\)n\ \%s\ \(\backslash\)n"{}},mat1.toString().c\_str()));}
+\DoxyCodeLine{00069\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}with\ mat2:\ \(\backslash\)n\ \%s\ \(\backslash\)n"{}},mat2.toString().c\_str()));}
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(mat1.rows()==mat2.rows(),\textcolor{stringliteral}{"{}matrix\ rows\ do\ not\ match"{}});}
+\DoxyCodeLine{00071\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(mat1.cols()==mat2.cols(),\textcolor{stringliteral}{"{}matrix\ cols\ do\ not\ match"{}});}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ row=0;\ row\ <\ mat1.rows();\ row++\ )}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ col=0;\ col\ <\ mat1.cols();\ col++\ )}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(std::fabs(mat1(row,col)-\/mat2(row,col))\ <\ tol,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Element\ \%d\ \%d\ don't\ match"{}},row,col));}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ iKiniDynConsistencyTest::\string~iKiniDynConsistencyTest()\ \{\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{bool}\ iKiniDynConsistencyTest::setup(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}**\ argv)\ \{}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00089\ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{void}\ iKiniDynConsistencyTest::tearDown()\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00093\ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ Matrix\ iKiniDynConsistencyTest::getiKinTransform(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ part,\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00097\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}left\_leg"{}}\ )}
+\DoxyCodeLine{00099\ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ikin\_lleg.getH(index);}
+\DoxyCodeLine{00101\ \ \ \ \ \}}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}right\_leg"{}}\ )}
+\DoxyCodeLine{00103\ \ \ \ \ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ikin\_rleg.getH(index);}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}left\_arm"{}}\ )}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ikin\_larm.getH(index);}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}right\_arm"{}}\ )}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ikin\_rarm.getH(index);}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keywordflow}{return}\ Matrix();}
+\DoxyCodeLine{00115\ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ Matrix\ iKiniDynConsistencyTest::getiDynTransform(\textcolor{keyword}{const}\ \textcolor{keywordtype}{string}\ part,\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{00118\ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}left\_leg"{}}\ )}
+\DoxyCodeLine{00120\ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ icub-\/>lowerTorso-\/>HLeft*}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>lowerTorso-\/>left-\/>getH();}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}right\_leg"{}}\ )}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ icub-\/>lowerTorso-\/>HRight*}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>lowerTorso-\/>right-\/>getH();}
+\DoxyCodeLine{00128\ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}left\_arm"{}}\ )}
+\DoxyCodeLine{00130\ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{comment}{//return\ ikin\_larm.getH(index);}}
+\DoxyCodeLine{00132\ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{keywordflow}{if}(\ part\ ==\ \textcolor{stringliteral}{"{}right\_arm"{}}\ )}
+\DoxyCodeLine{00134\ \ \ \ \ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{comment}{//return\ ikin\_rarm.getH(index);}}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordflow}{return}\ Matrix();}
+\DoxyCodeLine{00138\ \}}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{void}\ iKiniDynConsistencyTest::run()\ \{}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Creating\ iCubWholeBody\ object"{}});}
+\DoxyCodeLine{00143\ \ \ \ \ version\_tag\ ver;}
+\DoxyCodeLine{00144\ \ \ \ \ ver.head\_version\ =\ 1;}
+\DoxyCodeLine{00145\ \ \ \ \ ver.legs\_version\ =\ 1;}
+\DoxyCodeLine{00146\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Creating\ iCubWholeBody\ object\ with\ head\ version\ \%d\ and\ legs\ version\ \%d"{}},\ ver.head\_version,\ ver.legs\_version));}
+\DoxyCodeLine{00147\ \ \ \ \ icub\ =\ \textcolor{keyword}{new}\ iCubWholeBody(ver);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{comment}{//\ now\ we\ set\ the\ joint\ angles\ for\ all\ the\ limbs}}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{//\ if\ connected\ to\ the\ real\ robot,\ we\ can\ take\ this\ values\ from\ the\ encoders}}
+\DoxyCodeLine{00151\ \ \ \ \ q\_head.resize(icub-\/>upperTorso-\/>getNLinks(\textcolor{stringliteral}{"{}head"{}}));}
+\DoxyCodeLine{00152\ \ \ \ \ q\_larm.resize(icub-\/>upperTorso-\/>getNLinks(\textcolor{stringliteral}{"{}left\_arm"{}}));}
+\DoxyCodeLine{00153\ \ \ \ \ q\_rarm.resize(icub-\/>upperTorso-\/>getNLinks(\textcolor{stringliteral}{"{}right\_arm"{}}));}
+\DoxyCodeLine{00154\ \ \ \ \ q\_torso.resize(icub-\/>lowerTorso-\/>getNLinks(\textcolor{stringliteral}{"{}torso"{}}));}
+\DoxyCodeLine{00155\ \ \ \ \ q\_lleg.resize(icub-\/>lowerTorso-\/>getNLinks(\textcolor{stringliteral}{"{}left\_leg"{}}));}
+\DoxyCodeLine{00156\ \ \ \ \ q\_rleg.resize(icub-\/>lowerTorso-\/>getNLinks(\textcolor{stringliteral}{"{}right\_leg"{}}));}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{comment}{//We\ can\ initialize\ the\ joint\ position\ to\ random\ values}}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ yarp::os::Random\ rng;}
+\DoxyCodeLine{00161\ \ \ \ \ rng.seed(147);}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{double}\ coeff\ =\ 1.0;}
+\DoxyCodeLine{00163\ \ \ \ \ set\_random\_vector(q\_head,rng,coeff);}
+\DoxyCodeLine{00164\ \ \ \ \ set\_random\_vector(q\_larm,rng,coeff);}
+\DoxyCodeLine{00165\ \ \ \ \ set\_random\_vector(q\_rarm,rng,coeff);}
+\DoxyCodeLine{00166\ \ \ \ \ set\_random\_vector(q\_torso,rng,coeff);}
+\DoxyCodeLine{00167\ \ \ \ \ set\_random\_vector(q\_lleg,rng,coeff);}
+\DoxyCodeLine{00168\ \ \ \ \ set\_random\_vector(q\_rleg,rng,coeff);}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Setting\ positions\ in\ iCubWholeBody"{}});}
+\DoxyCodeLine{00173\ \ \ \ \ q\_head\ =\ icub-\/>upperTorso-\/>setAng(\textcolor{stringliteral}{"{}head"{}},q\_head);}
+\DoxyCodeLine{00174\ \ \ \ \ q\_rarm\ =\ icub-\/>upperTorso-\/>setAng(\textcolor{stringliteral}{"{}right\_arm"{}},q\_rarm);}
+\DoxyCodeLine{00175\ \ \ \ \ q\_larm\ =\ icub-\/>upperTorso-\/>setAng(\textcolor{stringliteral}{"{}left\_arm"{}},q\_larm);}
+\DoxyCodeLine{00176\ \ \ \ \ q\_torso\ =\ icub-\/>lowerTorso-\/>setAng(\textcolor{stringliteral}{"{}torso"{}},q\_torso);}
+\DoxyCodeLine{00177\ \ \ \ \ q\_rleg\ =\ icub-\/>lowerTorso-\/>setAng(\textcolor{stringliteral}{"{}right\_leg"{}},q\_rleg);}
+\DoxyCodeLine{00178\ \ \ \ \ q\_lleg\ =\ icub-\/>lowerTorso-\/>setAng(\textcolor{stringliteral}{"{}left\_leg"{}},q\_lleg);}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ yarp::sig::Matrix\ transform\_ikin(4,4),\ transform\_idyn(4,4);}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00183\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ left\ hand\ position"{}});}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keyword}{new}(\&ikin\_larm)\ iCubArm(\textcolor{stringliteral}{"{}left"{}});}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \ \ Vector\ q\_torso\_larm\ =\ cat(q\_torso,q\_larm);}
+\DoxyCodeLine{00187\ \ \ \ \ ikin\_larm.setAllConstraints(\textcolor{keyword}{false});}
+\DoxyCodeLine{00188\ \ \ \ \ ikin\_larm.releaseLink(0);}
+\DoxyCodeLine{00189\ \ \ \ \ ikin\_larm.releaseLink(1);}
+\DoxyCodeLine{00190\ \ \ \ \ ikin\_larm.releaseLink(2);}
+\DoxyCodeLine{00191\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}q\_torso\_larm\ :\ \%d\ ikin\_larm\ :\ \%d"{}},q\_torso\_larm.size(),ikin\_larm.getDOF()));}
+\DoxyCodeLine{00192\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(q\_torso\_larm.size()\ ==\ ikin\_larm.getDOF(),\textcolor{stringliteral}{"{}unexpected\ chain\ size"{}});}
+\DoxyCodeLine{00193\ \ \ \ \ ikin\_larm.setAng(q\_torso\_larm);}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \ \ transform\_ikin\ =\ ikin\_larm.getH();}
+\DoxyCodeLine{00196\ \ \ \ \ transform\_idyn\ =\ icub-\/>lowerTorso-\/>HUp*}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>lowerTorso-\/>up-\/>getH(2,\textcolor{keyword}{true})*}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>upperTorso-\/>HLeft*}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>upperTorso-\/>left-\/>getH();}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ check\_matrix\_are\_equal(transform\_ikin,transform\_idyn);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00205\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ right\ hand\ position"{}});}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keyword}{new}(\&ikin\_rarm)\ iCubArm(\textcolor{stringliteral}{"{}right"{}});}
+\DoxyCodeLine{00207\ \ \ \ \ Vector\ q\_torso\_rarm\ =\ cat(q\_torso,q\_rarm);}
+\DoxyCodeLine{00208\ \ \ \ \ ikin\_rarm.setAllConstraints(\textcolor{keyword}{false});}
+\DoxyCodeLine{00209\ \ \ \ \ ikin\_rarm.releaseLink(0);}
+\DoxyCodeLine{00210\ \ \ \ \ ikin\_rarm.releaseLink(1);}
+\DoxyCodeLine{00211\ \ \ \ \ ikin\_rarm.releaseLink(2);}
+\DoxyCodeLine{00212\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(q\_torso\_rarm.size()\ ==\ ikin\_rarm.getDOF(),\textcolor{stringliteral}{"{}unexpected\ chain\ size"{}});}
+\DoxyCodeLine{00213\ \ \ \ \ ikin\_rarm.setAng(q\_torso\_rarm);}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \ \ transform\_ikin\ =\ ikin\_rarm.getH();}
+\DoxyCodeLine{00216\ \ \ \ \ transform\_idyn\ =\ icub-\/>lowerTorso-\/>HUp*}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>lowerTorso-\/>up-\/>getH(2,\textcolor{keyword}{true})*}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>upperTorso-\/>HRight*}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>upperTorso-\/>right-\/>getH();}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ check\_matrix\_are\_equal(transform\_ikin,transform\_idyn);}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00225\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ left\ leg\ end\ effector\ positions"{}});}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{keyword}{new}(\&ikin\_lleg)\ iCubLeg(\textcolor{stringliteral}{"{}left"{}});}
+\DoxyCodeLine{00227\ \ \ \ \ ikin\_lleg.setAllConstraints(\textcolor{keyword}{false});}
+\DoxyCodeLine{00228\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}q\_lleg\ :\ \%d\ ikin\_lleg\ :\ \%d"{}},q\_lleg.size(),ikin\_lleg.getDOF()));}
+\DoxyCodeLine{00229\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(q\_lleg.size()\ ==\ ikin\_lleg.getDOF(),\textcolor{stringliteral}{"{}unexpected\ chain\ size"{}});}
+\DoxyCodeLine{00230\ \ \ \ \ ikin\_lleg.setAng(q\_lleg);}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ transform\_ikin\ =\ ikin\_lleg.getH();}
+\DoxyCodeLine{00233\ \ \ \ \ transform\_idyn\ =\ icub-\/>lowerTorso-\/>HLeft*}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>lowerTorso-\/>left-\/>getH();}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ check\_matrix\_are\_equal(transform\_ikin,transform\_idyn);}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00239\ \textcolor{comment}{\ \ \ \ for(int\ link=0;\ link\ <\ ikin\_lleg.getDOF();\ link++\ )}}
+\DoxyCodeLine{00240\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00241\ \textcolor{comment}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}Checking\ \%d\ DH\ frame\ of\ left\_leg"{},link));}}
+\DoxyCodeLine{00242\ \textcolor{comment}{\ \ \ \ \ \ \ \ check\_matrix\_are\_equal(this-\/>getiKinTransform("{}left\_leg"{},link),}}
+\DoxyCodeLine{00243\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>getiDynTransform("{}left\_leg"{},link));}}
+\DoxyCodeLine{00244\ \textcolor{comment}{\ \ \ \ \}*/}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00247\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ right\ leg\ end\ effector\ positions"{}});}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keyword}{new}(\&ikin\_rleg)\ iCubLeg(\textcolor{stringliteral}{"{}right"{}});}
+\DoxyCodeLine{00249\ \ \ \ \ ikin\_rleg.setAllConstraints(\textcolor{keyword}{false});}
+\DoxyCodeLine{00250\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(q\_rleg.size()\ ==\ ikin\_rleg.getDOF(),\textcolor{stringliteral}{"{}unexpected\ chain\ size"{}});}
+\DoxyCodeLine{00251\ \ \ \ \ ikin\_rleg.setAng(q\_rleg);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ transform\_ikin\ =\ ikin\_rleg.getH();}
+\DoxyCodeLine{00254\ \ \ \ \ transform\_idyn\ =\ icub-\/>lowerTorso-\/>HRight*}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ icub-\/>lowerTorso-\/>right-\/>getH();}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ check\_matrix\_are\_equal(transform\_ikin,transform\_idyn);}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00260\ \textcolor{comment}{\ \ \ \ for(int\ link=0;\ link\ <\ ikin\_rleg.getDOF();\ link++\ )}}
+\DoxyCodeLine{00261\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00262\ \textcolor{comment}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}Checking\ \%d\ DH\ frame\ of\ right\_leg"{},link));}}
+\DoxyCodeLine{00263\ \textcolor{comment}{\ \ \ \ \ \ \ \ check\_matrix\_are\_equal(this-\/>getiKinTransform("{}right\_leg"{},link),}}
+\DoxyCodeLine{00264\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this-\/>getiDynTransform("{}right\_leg"{},link));}}
+\DoxyCodeLine{00265\ \textcolor{comment}{\ \ \ \ \}*/}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{keyword}{delete}\ icub;}
+\DoxyCodeLine{00268\ \}}
+\DoxyCodeLine{00269\ }
+
+\end{DoxyCode}

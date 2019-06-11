@@ -1,0 +1,134 @@
+\doxysection{Cartesian\+Control\+Simple\+P2p\+Movement\+Test.\+cpp}
+\label{CartesianControlSimpleP2pMovementTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/cartesian-\/control/simple-\/p2p-\/movement/CartesianControlSimpleP2pMovementTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/cartesian-\/control/simple-\/p2p-\/movement/CartesianControlSimpleP2pMovementTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/dev/CartesianControl.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}CartesianControlSimpleP2pMovementTest.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00031\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00037\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(CartesianControlSimpleP2pMovementTest)}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00041\ CartesianControlSimpleP2pMovementTest::CartesianControlSimpleP2pMovementTest()\ :}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}CartesianControlSimpleP2pMovementTest"{}})}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00048\ CartesianControlSimpleP2pMovementTest::\string~CartesianControlSimpleP2pMovementTest()}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{bool}\ CartesianControlSimpleP2pMovementTest::setup(Property\ \&property)}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{string}\ robot=\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}robot"{}},Value(\textcolor{stringliteral}{"{}icubSim"{}})).asString();}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{string}\ arm=\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}arm-\/type"{}},Value(\textcolor{stringliteral}{"{}left"{}})).asString();}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ Property\ option;}
+\DoxyCodeLine{00060\ \ \ \ \ option.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}cartesiancontrollerclient"{}});}
+\DoxyCodeLine{00061\ \ \ \ \ option.put(\textcolor{stringliteral}{"{}remote"{}},(\textcolor{stringliteral}{"{}/"{}}+robot+\textcolor{stringliteral}{"{}/"{}}+\textcolor{stringliteral}{"{}cartesianController/"{}}+arm+\textcolor{stringliteral}{"{}\_arm"{}}));}
+\DoxyCodeLine{00062\ \ \ \ \ option.put(\textcolor{stringliteral}{"{}local"{}},(\textcolor{stringliteral}{"{}/"{}}+getName()+\textcolor{stringliteral}{"{}/"{}}+arm+\textcolor{stringliteral}{"{}\_arm"{}}));}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Opening\ Cartesian\ Controller\ Client\ for\ \%s\_arm"{}},arm.c\_str()));}
+\DoxyCodeLine{00065\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(driver.open(option),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ client!"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00067\ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ CartesianControlSimpleP2pMovementTest::tearDown()}
+\DoxyCodeLine{00072\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Closing\ Cartesian\ Controller\ Client"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(driver.close(),\textcolor{stringliteral}{"{}Unable\ to\ close\ the\ client!"{}});}
+\DoxyCodeLine{00075\ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{/***********************************************************************************/}}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{void}\ CartesianControlSimpleP2pMovementTest::run()}
+\DoxyCodeLine{00080\ \{}
+\DoxyCodeLine{00081\ \ \ \ \ ICartesianControl\ *iarm;}
+\DoxyCodeLine{00082\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(driver.view(iarm),\textcolor{stringliteral}{"{}Opening\ the\ view\ on\ the\ device!"{}});}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{bool}\ done;}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ Vector\ x,o;}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{double}\ t0=Time::now();}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{while}\ (Time::now()-\/t0<5.0)}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ done=iarm-\/>getPose(x,o);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (done)}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ Time::delay(0.1);}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Initial\ pose\ retrieved!"{}});}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Setting\ up\ the\ context"{}});}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{int}\ context;}
+\DoxyCodeLine{00099\ \ \ \ \ iarm-\/>storeContext(\&context);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ Vector\ dof;}
+\DoxyCodeLine{00102\ \ \ \ \ iarm-\/>getDOF(dof);\ dof=1.0;}
+\DoxyCodeLine{00103\ \ \ \ \ iarm-\/>setDOF(dof,dof);}
+\DoxyCodeLine{00104\ \ \ \ \ iarm-\/>setTrajTime(1.0);}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Reaching\ for\ the\ target"{}});}
+\DoxyCodeLine{00107\ \ \ \ \ Vector\ xd(3,0.0);\ xd[0]=-\/0.4;}
+\DoxyCodeLine{00108\ \ \ \ \ iarm-\/>goToPositionSync(xd);}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Waiting"{}});}
+\DoxyCodeLine{00111\ \ \ \ \ done=iarm-\/>waitMotionDone(1.0,5.0);}
+\DoxyCodeLine{00112\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Target\ reached!"{}});}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Going\ back\ to\ starting\ pose"{}});}
+\DoxyCodeLine{00115\ \ \ \ \ iarm-\/>setLimits(0,0.0,0.0);}
+\DoxyCodeLine{00116\ \ \ \ \ iarm-\/>setLimits(1,0.0,0.0);}
+\DoxyCodeLine{00117\ \ \ \ \ iarm-\/>setLimits(2,0.0,0.0);}
+\DoxyCodeLine{00118\ \ \ \ \ iarm-\/>goToPoseSync(x,o);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Waiting"{}});}
+\DoxyCodeLine{00121\ \ \ \ \ done=iarm-\/>waitMotionDone(1.0,5.0);}
+\DoxyCodeLine{00122\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(done,\textcolor{stringliteral}{"{}Starting\ pose\ reached!"{}});}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Cleaning\ up\ the\ context"{}});}
+\DoxyCodeLine{00125\ \ \ \ \ iarm-\/>restoreContext(context);}
+\DoxyCodeLine{00126\ \ \ \ \ iarm-\/>deleteContext(context);}
+\DoxyCodeLine{00127\ \}}
+\DoxyCodeLine{00128\ }
+
+\end{DoxyCode}

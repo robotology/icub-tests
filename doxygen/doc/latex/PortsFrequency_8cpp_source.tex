@@ -1,0 +1,166 @@
+\doxysection{Ports\+Frequency.\+cpp}
+\label{PortsFrequency_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/ports-\/frequency/PortsFrequency.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/ports-\/frequency/PortsFrequency.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}PortsFrequency.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Stamp.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/os/QosStyle.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/Network.h>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00031\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00035\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(PortsFrequency)}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ PortsFrequency::PortsFrequency()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}PortsFrequency"{}})\ \{}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ PortsFrequency::\string~PortsFrequency()\ \{\ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{bool}\ PortsFrequency::setup(yarp::os::Property\ \&property)\ \{}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{//updating\ the\ test\ name}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00049\ \ \ \ testTime\ =\ (\textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}time"{}}))\ ?\ property.find(\textcolor{stringliteral}{"{}time"{}}).asFloat64()\ :\ 2;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}PORTS"{}}),}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}A\ list\ of\ the\ ports\ must\ be\ given"{}});}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ yarp::os::Bottle\ portsSet\ =\ \textcolor{keyword}{property}.findGroup(\textcolor{stringliteral}{"{}PORTS"{}}).tail();}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<portsSet.size();\ i++)\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ yarp::os::Bottle*\ btport\ =\ portsSet.get(i).asList();}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(btport\ \&\&\ btport-\/>size()>=3,\ \textcolor{stringliteral}{"{}The\ ports\ must\ be\ given\ as\ lists\ of\ <portname>\ <grequency>\ <tolerance>"{}});}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ MyPortInfo\ info;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ info.name\ =\ btport-\/>get(0).asString();}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ info.frequency\ =\ btport-\/>get(1).asInt32();}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ info.tolerance\ =\ btport-\/>get(2).asInt32();}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ ports.push\_back(info);}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ opening\ port}}
+\DoxyCodeLine{00066\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(port.open(\textcolor{stringliteral}{"{}..."{}}),}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}opening\ port,\ is\ YARP\ network\ available?"{}});}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00069\ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ PortsFrequency::tearDown()\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00073\ \ \ \ \ port.close();}
+\DoxyCodeLine{00074\ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ PortsFrequency::run()\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i=0;\ i<ports.size();\ i++)\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ port.reset();}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Checking\ port\ \%s\ ..."{}},\ ports[i].name.c\_str()));}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ connected\ =\ Network::connect(ports[i].name.c\_str(),\ port.getName());}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(connected,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}could\ not\ connect\ to\ remote\ port\ \%s."{}},\ ports[i].name.c\_str()));}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(connected)\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ setting\ QOS}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ QosStyle\ qos;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ qos.setPacketPriorityByLevel(QosStyle::PacketPriorityHigh);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ qos.setThreadPriority(30);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ qos.setThreadPolicy(1);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ Network::setConnectionQos(ports[i].name.c\_str(),\ port.getName(),\ qos);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ port.useCallback();}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ Time::delay(testTime);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ port.disableCallback();}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(port.getSAvg()\ <=\ 0)\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Sender\ frequency\ is\ not\ available"{}});}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Time\ delay\ between\ sender/receiver\ is\ \%.4f\ s.\ (min:\ \%.4f,\ max:\ \%.f4)"{}},}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getDAvg(),\ port.getDMax(),\ port.getDMin()));}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Sender\ frequency\ \%d\ hrz.\ (min:\ \%d,\ max:\ \%d)"{}},}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{int})(1.0/port.getSAvg()),\ (\textcolor{keywordtype}{int})(1.0/port.getSMax()),\ (\textcolor{keywordtype}{int})(1.0/port.getSMin())));}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ freq\ =\ 1.0/port.getAvg();}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Receiver\ frequency\ \%d\ hrz.\ (min:\ \%d,\ max:\ \%d)"{}},}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{int})freq,\ (\textcolor{keywordtype}{int})(1.0/port.getMax()),\ (\textcolor{keywordtype}{int})(1.0/port.getMin())));}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ diff\ =\ fabs(freq\ -\/\ ports[i].frequency);}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(diff\ <\ ports[i].tolerance,}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}Receiver\ frequency\ is\ outside\ the\ desired\ range\ [\%d\ ..\ \%d]"{}},}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ports[i].frequency-\/ports[i].tolerance,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ports[i].frequency+ports[i].tolerance));}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Lost\ \%ld\ packets.\ received\ (\%ld)"{}},}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getPacketLostCount(),\ port.getCount()));}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ Network::disconnect(ports[i].name.c\_str(),\ port.getName());}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00115\ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{void}\ DataPort::onRead(yarp::os::Bottle\&\ bot)\ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordtype}{double}\ tcurrent\ =\ Time::now();}
+\DoxyCodeLine{00120\ \ \ \ \ Stamp\ stm;}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{bool}\ hasTimeStamp\ =\ getEnvelope(stm);}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordflow}{if}(count\ ==\ 0)\ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(hasTimeStamp)\ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ tdiff\ =\ fabs(tcurrent\ -\/\ stm.getTime());}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ dsum\ =\ dmax\ =\ dmin\ =\ tdiff;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ prevPacketCount\ =\ stm.getCount();}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculating\ statistics}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ tdiff\ =\ \ fabs(tcurrent\ -\/\ tprev);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ sum\ +=\ tdiff;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ max\ =\ (tdiff\ >\ max)\ ?\ tdiff\ :\ max;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ min\ =\ (min<0\ ||\ min\ >\ tdiff)\ ?\ tdiff\ :\ min;}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculating\ statistics\ using\ time\ stamp}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(hasTimeStamp)\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ tdiff\ =\ fabs(stm.getTime()\ -\/\ stprev);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ ssum\ +=\ tdiff;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ smax\ =\ (tdiff\ >\ smax)\ ?\ tdiff\ :\ smax;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ smin\ =\ (smin<0\ ||\ smin\ >\ tdiff)\ ?\ tdiff\ :\ smin;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculating\ time\ delay}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ tdiff\ =\ fabs(tcurrent\ -\/\ stm.getTime());}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ dsum\ +=\ tdiff;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ dmax\ =\ (tdiff\ >\ dmax)\ ?\ tdiff\ :\ dmax;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ dmin\ =\ (dmin<0\ ||\ dmin\ >\ tdiff)\ ?\ tdiff\ :\ dmin;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ calculating\ packet\ losts}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(stm.getCount()\ >\ prevPacketCount)}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ packetLostCount\ +=\ stm.getCount()\ -\/\ prevPacketCount\ -\/\ 1;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ prevPacketCount\ =\ stm.getCount();}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00154\ \ \ \ \ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ count++;}
+\DoxyCodeLine{00157\ \ \ \ \ tprev\ =\ tcurrent;}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordflow}{if}(hasTimeStamp)}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ stprev\ =\ stm.getTime();}
+\DoxyCodeLine{00160\ \}}
+
+\end{DoxyCode}

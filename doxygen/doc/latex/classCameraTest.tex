@@ -1,0 +1,186 @@
+\doxysection{Camera\+Test Class Reference}
+\label{classCameraTest}\index{CameraTest@{CameraTest}}
+
+
+Check if a camera is publishing images at desired framerate.  
+
+
+
+
+{\ttfamily \#include $<$Camera\+Test.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classCameraTest_ac059968960ce6deaee9c60623ba2266d}{setup}} (yarp\+::os\+::\+Property \&property)
+\item 
+virtual void \mbox{\hyperlink{classCameraTest_a9d99fe4d4b8929fbfaf280ed87388dc2}{tear\+Down}} ()
+\item 
+virtual void \mbox{\hyperlink{classCameraTest_a1c55590d1e9b43051fa8a818559abff2}{run}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check if a camera is publishing images at desired framerate. 
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering "{}\+Camera\+Test"{}   &\PBS\centering No   &\PBS\centering The name of the test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering portname   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The yarp port name of the camera to test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering measure\+\_\+time   &\PBS\centering int   &\PBS\centering s   &\PBS\centering 1   &\PBS\centering No   &\PBS\centering The duration of the test.   &\PBS\centering \\\cline{1-7}
+\PBS\centering expected\+\_\+frequency   &\PBS\centering int   &\PBS\centering Hz   &\PBS\centering 30   &\PBS\centering No   &\PBS\centering The expected framerate of the camera.   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering int   &\PBS\centering Number of frames   &\PBS\centering 5   &\PBS\centering No   &\PBS\centering The tolerance on the total number of frames read during the period (expected\+\_\+frequency\texorpdfstring{$\ast$}{*}measure\+\_\+time) to consider the test sucessful.   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line \mbox{\hyperlink{CameraTest_8h_source_l00044}{44}} of file \mbox{\hyperlink{CameraTest_8h_source}{Camera\+Test.\+h}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\label{classCameraTest_ac791298066844162c9fedc4a9394800e} 
+\index{CameraTest@{CameraTest}!CameraTest@{CameraTest}}
+\index{CameraTest@{CameraTest}!CameraTest@{CameraTest}}
+\doxysubsubsection{\texorpdfstring{CameraTest()}{CameraTest()}}
+{\footnotesize\ttfamily Camera\+Test\+::\+Camera\+Test (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{CameraTest_8cpp_source_l00044}{44}} of file \mbox{\hyperlink{CameraTest_8cpp_source}{Camera\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}CameraTest"{}})\ \{}
+\DoxyCodeLine{00045\ \}}
+
+\end{DoxyCode}
+\label{classCameraTest_a1f4c188f64f4a6f47ba5c11fdd2aea1d} 
+\index{CameraTest@{CameraTest}!````~CameraTest@{\texorpdfstring{$\sim$}{\string~}CameraTest}}
+\index{````~CameraTest@{\texorpdfstring{$\sim$}{\string~}CameraTest}!CameraTest@{CameraTest}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}CameraTest()}{\string~CameraTest()}}
+{\footnotesize\ttfamily Camera\+Test\+::\texorpdfstring{$\sim$}{\string~}\+Camera\+Test (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{CameraTest_8cpp_source_l00047}{47}} of file \mbox{\hyperlink{CameraTest_8cpp_source}{Camera\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00047\ \{\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\label{classCameraTest_a1c55590d1e9b43051fa8a818559abff2} 
+\index{CameraTest@{CameraTest}!run@{run}}
+\index{run@{run}!CameraTest@{CameraTest}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Camera\+Test\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{CameraTest_8cpp_source_l00082}{82}} of file \mbox{\hyperlink{CameraTest_8cpp_source}{Camera\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Reading\ images..."{}});}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{double}\ timeStart=yarp::os::Time::now();}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{double}\ timeNow=timeStart;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{int}\ frames=0;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+measure\_time)\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ Image\ *image=port.read(\textcolor{keyword}{false});}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(image!=0)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ frames++;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.01);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ timeNow=yarp::os::Time::now();}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{int}\ expectedFrames\ =\ measure\_time*expected\_frequency;}
+\DoxyCodeLine{00097\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Received\ \%d\ frames,\ expecting\ \%d"{}},}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frames,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ expectedFrames));}
+\DoxyCodeLine{00100\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(abs(frames-\/expectedFrames)<tolerance,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}checking\ number\ of\ received\ frames"{}});}
+\DoxyCodeLine{00102\ \}}
+
+\end{DoxyCode}
+\label{classCameraTest_ac059968960ce6deaee9c60623ba2266d} 
+\index{CameraTest@{CameraTest}!setup@{setup}}
+\index{setup@{setup}!CameraTest@{CameraTest}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily bool Camera\+Test\+::setup (\begin{DoxyParamCaption}\item[{yarp\+::os\+::\+Property \&}]{property }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{CameraTest_8cpp_source_l00049}{49}} of file \mbox{\hyperlink{CameraTest_8cpp_source}{Camera\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00055\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}portname"{}}),}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ portname\ must\ be\ given\ as\ the\ test\ paramter!"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ cameraPortName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}portname"{}}).asString();}
+\DoxyCodeLine{00058\ \ \ \ \ measure\_time\ =\ \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}measure\_time"{}})\ ?\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}measure\_time"{}}).asInt32()\ :\ TIMES;}
+\DoxyCodeLine{00059\ \ \ \ \ expected\_frequency\ =\ \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}expected\_frequency"{}})\ ?\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}expected\_frequency"{}}).asInt32()\ :\ FREQUENCY;}
+\DoxyCodeLine{00060\ \ \ \ \ tolerance\ =\ \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}tolerance"{}})\ ?\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}tolerance"{}}).asInt32()\ :\ TOLERANCE;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//\ opening\ port}}
+\DoxyCodeLine{00063\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(port.open(\textcolor{stringliteral}{"{}/CameraTest/image:i"{}}),}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}opening\ port,\ is\ YARP\ network\ available?"{}});}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Listening\ to\ camera\ for\ \%d\ seconds"{}},}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ measure\_time));}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ connecting}}
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}connecting\ from\ \%s\ to\ \%s"{}},}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getName().c\_str(),\ cameraPortName.c\_str()));}
+\DoxyCodeLine{00072\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(Network::connect(cameraPortName,\ port.getName()),}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}could\ not\ connect\ to\ remote\ port,\ camera\ unavailable"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00075\ \}}
+
+\end{DoxyCode}
+\label{classCameraTest_a9d99fe4d4b8929fbfaf280ed87388dc2} 
+\index{CameraTest@{CameraTest}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!CameraTest@{CameraTest}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily void Camera\+Test\+::tear\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{CameraTest_8cpp_source_l00077}{77}} of file \mbox{\hyperlink{CameraTest_8cpp_source}{Camera\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ Network::disconnect(cameraPortName,\ port.getName());}
+\DoxyCodeLine{00079\ \ \ \ \ port.close();}
+\DoxyCodeLine{00080\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/camera/Camera\+Test.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/camera/Camera\+Test.\+cpp\end{DoxyCompactItemize}

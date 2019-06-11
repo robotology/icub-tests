@@ -1,0 +1,339 @@
+\doxysection{Motor\+Test.\+cpp}
+\label{MotorTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor-\/tests/MotorTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor-\/tests/MotorTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestAsserter.h>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}MotorTest.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00035\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(MotorTest)}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ MotorTest::MotorTest()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}MotorTest"{}})\ \{}
+\DoxyCodeLine{00038\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ MotorTest::\string~MotorTest()\ \{}
+\DoxyCodeLine{00041\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{bool}\ MotorTest::setup(yarp::os::Property\ \&configuration)\ \{}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{//\ initialization\ goes\ here\ ...}}
+\DoxyCodeLine{00046\ \ \ \ \ m\_aTargetVal=NULL;}
+\DoxyCodeLine{00047\ \ \ \ \ m\_aMaxErr=NULL;}
+\DoxyCodeLine{00048\ \ \ \ \ m\_aMinErr=NULL;}
+\DoxyCodeLine{00049\ \ \ \ \ m\_aRefVel=NULL;}
+\DoxyCodeLine{00050\ \ \ \ \ m\_aRefAcc=NULL;}
+\DoxyCodeLine{00051\ \ \ \ \ m\_aTimeout=NULL;}
+\DoxyCodeLine{00052\ \ \ \ \ m\_aHome=NULL;}
+\DoxyCodeLine{00053\ \ \ \ \ iEncoders=NULL;}
+\DoxyCodeLine{00054\ \ \ \ \ iPosition=NULL;}
+\DoxyCodeLine{00055\ \ \ \ \ m\_initialized=\textcolor{keyword}{false};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordflow}{if}(configuration.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ setName(configuration.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}portname"{}}),}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'portname'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00062\ \ \ \ \ m\_portname\ =\ configuration.find(\textcolor{stringliteral}{"{}portname"{}}).asString();}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}joints"{}}),}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'joints'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ m\_NumJoints=configuration.find(\textcolor{stringliteral}{"{}joints"{}}).asInt32();}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}target"{}}),}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'target'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ yarp::os::Bottle\ bot=configuration.findGroup(\textcolor{stringliteral}{"{}target"{}}).tail();}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ m\_NumJoints<bot.size()?\ m\_NumJoints:bot.size();}
+\DoxyCodeLine{00072\ \ \ \ \ m\_aTargetVal=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_NumJoints];}
+\DoxyCodeLine{00073\ \ \ \ \ m\_aHome=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}\ [m\_NumJoints];}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n;\ ++i)\ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ m\_aTargetVal[i]=bot.get(i).asFloat64();}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ m\_aHome[i]=0.0;}
+\DoxyCodeLine{00077\ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}min"{}}),}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'min'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00081\ \ \ \ \ bot\ =\ configuration.findGroup(\textcolor{stringliteral}{"{}min"{}}).tail();}
+\DoxyCodeLine{00082\ \ \ \ \ n\ =\ m\_NumJoints<bot.size()?m\_NumJoints:bot.size();}
+\DoxyCodeLine{00083\ \ \ \ \ m\_aMinErr=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_NumJoints];}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n;\ ++i)}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ m\_aMinErr[i]=bot.get(i).asFloat64();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}max"{}}),}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'max'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00089\ \ \ \ \ bot=configuration.findGroup(\textcolor{stringliteral}{"{}max"{}}).tail();}
+\DoxyCodeLine{00090\ \ \ \ \ n\ =\ m\_NumJoints<bot.size()?\ m\_NumJoints:bot.size();}
+\DoxyCodeLine{00091\ \ \ \ \ m\_aMaxErr=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_NumJoints];}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n;\ ++i)}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ m\_aMaxErr[i]=bot.get(i).asFloat64();}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}refvel"{}}),}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'max'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00097\ \ \ \ \ bot\ =\ configuration.findGroup(\textcolor{stringliteral}{"{}refvel"{}}).tail();}
+\DoxyCodeLine{00098\ \ \ \ \ n\ =\ m\_NumJoints<bot.size()?m\_NumJoints:bot.size();}
+\DoxyCodeLine{00099\ \ \ \ \ m\_aRefVel=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_NumJoints];}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n;\ ++i)}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ m\_aRefVel[i]=bot.get(i).asFloat64();}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordflow}{if}(configuration.check(\textcolor{stringliteral}{"{}refacc"{}}))\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ bot\ =\ configuration.findGroup(\textcolor{stringliteral}{"{}refacc"{}}).tail();}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ n\ =\ m\_NumJoints<bot.size()?m\_NumJoints:bot.size();}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ m\_aRefAcc=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_NumJoints];}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n;\ ++i)}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ m\_aRefAcc[i]=bot.get(i).asFloat64();}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(configuration.check(\textcolor{stringliteral}{"{}timeout"{}}),}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Missing\ 'timeout'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00113\ \ \ \ \ bot\ =\ configuration.findGroup(\textcolor{stringliteral}{"{}timeout"{}}).tail();}
+\DoxyCodeLine{00114\ \ \ \ \ n\ =\ m\_NumJoints<bot.size()?m\_NumJoints:bot.size();}
+\DoxyCodeLine{00115\ \ \ \ \ m\_aTimeout\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_NumJoints];}
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n;\ ++i)}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ m\_aTimeout[i]=bot.get(i).asFloat64();}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ opening\ interfaces}}
+\DoxyCodeLine{00120\ \ \ \ \ yarp::os::Property\ options;}
+\DoxyCodeLine{00121\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00122\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}local"{}},m\_portname+\textcolor{stringliteral}{"{}/client"{}});}
+\DoxyCodeLine{00123\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}remote"{}},m\_portname);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(m\_driver.open(options),}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}cannot\ open\ driver"{}});}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(m\_driver.view(iEncoders),\ \textcolor{stringliteral}{"{}cannot\ view\ iEncoder"{}});}
+\DoxyCodeLine{00129\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(m\_driver.view(iPosition),\ \textcolor{stringliteral}{"{}cannot\ view\ iPosition"{}});}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00132\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ MotorTest::tearDown()\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}(iPosition)\ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Homing\ robot"{}});}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ iPosition-\/>positionMove(m\_aHome);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ reached=\textcolor{keyword}{false};}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ timeStart=yarp::os::Time::now();}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ timeNow=timeStart;}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+m\_aTimeout[0]\ \&\&\ !reached)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ iPosition-\/>checkMotionDone(\&reached);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ timeNow=yarp::os::Time::now();}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00148\ \ \ \ \ \}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aTargetVal)\ \textcolor{keyword}{delete}\ []\ m\_aTargetVal;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aMaxErr)\ \ \ \ \textcolor{keyword}{delete}\ []\ m\_aMaxErr;}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aMinErr)\ \ \ \ \textcolor{keyword}{delete}\ []\ m\_aMinErr;}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aRefVel)\ \ \ \ \textcolor{keyword}{delete}\ []\ m\_aRefVel;}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aRefAcc)\ \ \ \ \textcolor{keyword}{delete}\ []\ m\_aRefAcc;}
+\DoxyCodeLine{00155\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aTimeout)\ \ \ \textcolor{keyword}{delete}\ []\ m\_aTimeout;}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aHome)\ \ \ \ \ \ \textcolor{keyword}{delete}\ []\ m\_aHome;}
+\DoxyCodeLine{00157\ \}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{void}\ MotorTest::run()\ \{}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{int}\ nJoints=0;}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{bool}\ doneAll=\textcolor{keyword}{false};}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{bool}\ ret=\textcolor{keyword}{false};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}checking\ joints\ number"{}});}
+\DoxyCodeLine{00166\ \ \ \ \ iEncoders-\/>getAxes(\&nJoints);}
+\DoxyCodeLine{00167\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(m\_NumJoints==nJoints,\ \textcolor{stringliteral}{"{}expected\ number\ of\ joints\ is\ inconsistent"{}});}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ individual\ joints..."{}});}
+\DoxyCodeLine{00170\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ joint=0;\ joint<m\_NumJoints;\ ++joint)\ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Checking\ joint\ \%d"{}},\ joint));}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aRefAcc!=NULL)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>setRefAcceleration(joint,\ m\_aRefAcc[joint]),}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}setting\ reference\ acceleration\ on\ joint\ \%d"{}},\ joint));}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>setRefSpeed(joint,\ m\_aRefVel[joint]),}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}setting\ reference\ speed\ on\ joint\ \%d"{}},\ joint));}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ wait\ some\ time}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ timeStart=yarp::os::Time::now();}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ timeNow=timeStart;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ read=\textcolor{keyword}{false};}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ encoders"{}});}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+m\_aTimeout[joint]\ \&\&\ !read)\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ read\ encoders}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ read=iEncoders-\/>getEncoder(joint,m\_aHome+joint);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(read,\ \textcolor{stringliteral}{"{}getEncoder()\ returned\ true"{}});}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>positionMove(joint,\ m\_aTargetVal[joint]),}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}moving\ joint\ \%d\ to\ \%.2lf"{}},\ joint,\ m\_aTargetVal[joint]));}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ doneAll=\textcolor{keyword}{false};}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ ret=iPosition-\/>checkMotionDone(joint,\ \&doneAll);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(!doneAll\&\&ret,\ \textcolor{stringliteral}{"{}checking\ checkMotionDone\ returns\ false\ after\ position\ move"{}});}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Waiting\ timeout\ \%.2lf"{}},\ m\_aTimeout[joint]));}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ reached=\textcolor{keyword}{false};}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+m\_aTimeout[joint]\ \&\&\ !reached)\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ pos;}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ iEncoders-\/>getEncoder(joint,\&pos);}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ reached\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(pos,\ m\_aTargetVal[joint],\ m\_aMinErr[joint],\ m\_aMaxErr[joint]);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ timeNow=yarp::os::Time::now();}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(reached,\ \textcolor{stringliteral}{"{}reached\ position"{}});}
+\DoxyCodeLine{00210\ \ \ \ \ \}}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00213\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ multiple\ joints..."{}});}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_aRefAcc!=NULL)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>setRefAccelerations(m\_aRefAcc),}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}setting\ reference\ acceleration\ on\ all\ joints"{}});}
+\DoxyCodeLine{00217\ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>setRefSpeeds(m\_aRefVel),}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}setting\ reference\ speed\ on\ all\ joints"{}});}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>positionMove(m\_aHome),}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}moving\ all\ joints\ to\ home"{}});}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ doneAll=\textcolor{keyword}{false};}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{comment}{//\ make\ sure\ that\ checkMotionDone\ return\ false\ right\ after\ a\ movement}}
+\DoxyCodeLine{00226\ \ \ \ \ ret=iPosition-\/>checkMotionDone(\&doneAll);}
+\DoxyCodeLine{00227\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(!doneAll\&\&ret,\ \textcolor{stringliteral}{"{}checking\ checkMotionDone\ returns\ false\ after\ position\ move"{}});}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{comment}{//\ wait\ some\ time}}
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keywordtype}{double}\ timeStart=yarp::os::Time::now();}
+\DoxyCodeLine{00231\ \ \ \ \ \textcolor{keywordtype}{double}\ timeNow=timeStart;}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordtype}{double}\ timeout=m\_aTimeout[0];}
+\DoxyCodeLine{00234\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ j=0;\ j<m\_NumJoints;\ j++)}
+\DoxyCodeLine{00235\ \ \ \ \ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (timeout<m\_aTimeout[j])}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ timeout=m\_aTimeout[j];}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Waiting\ timeout\ \%.2lf"{}},\ timeout));}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordtype}{bool}\ reached=\textcolor{keyword}{false};}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keywordtype}{double}\ *encoders;}
+\DoxyCodeLine{00243\ \ \ \ \ encoders=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}\ [m\_NumJoints];}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+timeout\ \&\&\ !reached)\ \{}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iEncoders-\/>getEncoders(encoders),\ \textcolor{stringliteral}{"{}getEncoders()"{}});}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ reached\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(encoders,\ m\_aHome,\ m\_aMinErr,\ m\_aMaxErr,\ m\_NumJoints);}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ timeNow=yarp::os::Time::now();}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00249\ \ \ \ \ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(reached,\ \textcolor{stringliteral}{"{}reached\ position"{}});}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keywordflow}{if}(reached)\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ check\ checkMotionDone.}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ because\ the\ previous\ movement\ was\ approximate,\ the\ robot}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ could\ still\ be\ moving\ so\ we\ need\ to\ iterate\ a\ few\ times}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ times=10;}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ doneAll=\textcolor{keyword}{false};}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ret=\textcolor{keyword}{false};}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(times>0\ \&\&\ !doneAll)\ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ ret=iPosition-\/>checkMotionDone(\&doneAll);}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!doneAll)}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ times-\/-\/;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(doneAll\&\&ret,\ \textcolor{stringliteral}{"{}checking\ checkMotionDone\ returns\ true"{}});}
+\DoxyCodeLine{00270\ \ \ \ \ \}}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Now\ checking\ group\ interface"{}});}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{comment}{//shuffle\ encoders}}
+\DoxyCodeLine{00276\ \ \ \ \ \textcolor{keywordtype}{int}\ *jmap=\textcolor{keyword}{new}\ \textcolor{keywordtype}{int}\ [m\_NumJoints];}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keywordtype}{double}\ *swapped\_refvel=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}\ [m\_NumJoints];}
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordtype}{double}\ *swapped\_target=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}\ [m\_NumJoints];}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ kk=0;kk<m\_NumJoints;kk++)}
+\DoxyCodeLine{00281\ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ swapped\_refvel[kk]=m\_aRefVel[m\_NumJoints-\/kk-\/1];}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ swapped\_target[kk]=m\_aTargetVal[m\_NumJoints-\/kk-\/1];}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ jmap[kk]=m\_NumJoints-\/kk-\/1;}
+\DoxyCodeLine{00285\ \ \ \ \ \}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>setRefSpeeds(m\_NumJoints,\ jmap,\ swapped\_refvel),}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}setting\ reference\ speed\ on\ all\ joints\ using\ group\ interface"{}});}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>positionMove(m\_NumJoints,\ jmap,\ swapped\_target),}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}moving\ all\ joints\ to\ home\ using\ group\ interface"{}});}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ ret=iPosition-\/>checkMotionDone(m\_NumJoints,\ jmap,\ \&doneAll);}
+\DoxyCodeLine{00294\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(!doneAll\&\&ret,\ \textcolor{stringliteral}{"{}checking\ checkMotionDone\ returns\ false\ after\ position\ move"{}});}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \ \ \ \ timeStart=yarp::os::Time::now();}
+\DoxyCodeLine{00297\ \ \ \ \ timeNow=timeStart;}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Waiting\ timeout\ \%.2lf"{}},\ timeout));}
+\DoxyCodeLine{00300\ \ \ \ \ reached=\textcolor{keyword}{false};}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+timeout\ \&\&\ !reached)\ \{}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ iEncoders-\/>getEncoders(encoders);}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ reached\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(encoders,\ m\_aTargetVal,\ m\_aMinErr,\ m\_aMaxErr,\ m\_NumJoints);}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ timeNow=yarp::os::Time::now();}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00306\ \ \ \ \ \}}
+\DoxyCodeLine{00307\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(reached,\ \textcolor{stringliteral}{"{}reached\ position"{}});}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00309\ \ \ \ \ \textcolor{keywordflow}{if}\ (reached)\ \{}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ *done\_vector=\textcolor{keyword}{new}\ \textcolor{keywordtype}{bool}\ [m\_NumJoints];}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ check\ checkMotionDone.}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ because\ the\ previous\ movement\ was\ approximate,\ the\ robot}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ could\ still\ be\ moving\ so\ we\ need\ to\ iterate\ a\ few\ times}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ times=10;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ doneAll=\textcolor{keyword}{false};}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ret=\textcolor{keyword}{false};}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(times>0\ \&\&\ !doneAll)\ \{}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ ret=iPosition-\/>checkMotionDone(m\_NumJoints,\ jmap,\ \&doneAll);}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!doneAll)}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.1);}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ times-\/-\/;}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(doneAll\&\&ret,\ \textcolor{stringliteral}{"{}checking\ checkMotionDone"{}});}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ []\ done\_vector;}
+\DoxyCodeLine{00327\ \ \ \ \ \}}
+\DoxyCodeLine{00328\ }
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{comment}{//cleanup}}
+\DoxyCodeLine{00330\ \ \ \ \ \textcolor{keyword}{delete}\ []\ jmap;}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{delete}\ []\ swapped\_refvel;}
+\DoxyCodeLine{00332\ \ \ \ \ \textcolor{keyword}{delete}\ []\ swapped\_target;}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keyword}{delete}\ []\ encoders;}
+\DoxyCodeLine{00334\ \}}
+
+\end{DoxyCode}

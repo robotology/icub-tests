@@ -1,0 +1,184 @@
+\doxysection{Skin\+Wrapper\+Test Class Reference}
+\label{classSkinWrapperTest}\index{SkinWrapperTest@{SkinWrapperTest}}
+
+
+This test verifies the functionalities of skin\+Wrapper after the removal of analog\+Server from icub-\/main.  
+
+
+
+
+{\ttfamily \#include $<$Skin\+Wrapper\+Test.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classSkinWrapperTest_aa22a01cedaf43f2a9b19d8837379de99}{setup}} (yarp\+::os\+::\+Property \&property)
+\item 
+virtual void \mbox{\hyperlink{classSkinWrapperTest_ac79f439b54f8f4d3268cc9c63765b852}{tear\+Down}} ()
+\item 
+virtual void \mbox{\hyperlink{classSkinWrapperTest_a5ffdc900a2af2b9371626f0b2588d65a}{run}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This test verifies the functionalities of skin\+Wrapper after the removal of analog\+Server from icub-\/main. 
+
+Definition at line \mbox{\hyperlink{SkinWrapperTest_8h_source_l00034}{34}} of file \mbox{\hyperlink{SkinWrapperTest_8h_source}{Skin\+Wrapper\+Test.\+h}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\label{classSkinWrapperTest_a8c759369ef6a3550951197136f3ef7e4} 
+\index{SkinWrapperTest@{SkinWrapperTest}!SkinWrapperTest@{SkinWrapperTest}}
+\index{SkinWrapperTest@{SkinWrapperTest}!SkinWrapperTest@{SkinWrapperTest}}
+\doxysubsubsection{\texorpdfstring{SkinWrapperTest()}{SkinWrapperTest()}}
+{\footnotesize\ttfamily Skin\+Wrapper\+Test\+::\+Skin\+Wrapper\+Test (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{SkinWrapperTest_8cpp_source_l00037}{37}} of file \mbox{\hyperlink{SkinWrapperTest_8cpp_source}{Skin\+Wrapper\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}SkinWrapperTest"{}})}
+\DoxyCodeLine{00039\ \{}
+\DoxyCodeLine{00040\ \}}
+
+\end{DoxyCode}
+\label{classSkinWrapperTest_acd0bff47165be73f2c6781482008a4a4} 
+\index{SkinWrapperTest@{SkinWrapperTest}!````~SkinWrapperTest@{\texorpdfstring{$\sim$}{\string~}SkinWrapperTest}}
+\index{````~SkinWrapperTest@{\texorpdfstring{$\sim$}{\string~}SkinWrapperTest}!SkinWrapperTest@{SkinWrapperTest}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}SkinWrapperTest()}{\string~SkinWrapperTest()}}
+{\footnotesize\ttfamily Skin\+Wrapper\+Test\+::\texorpdfstring{$\sim$}{\string~}\+Skin\+Wrapper\+Test (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SkinWrapperTest_8cpp_source_l00044}{44}} of file \mbox{\hyperlink{SkinWrapperTest_8cpp_source}{Skin\+Wrapper\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\label{classSkinWrapperTest_a5ffdc900a2af2b9371626f0b2588d65a} 
+\index{SkinWrapperTest@{SkinWrapperTest}!run@{run}}
+\index{run@{run}!SkinWrapperTest@{SkinWrapperTest}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Skin\+Wrapper\+Test\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SkinWrapperTest_8cpp_source_l00106}{106}} of file \mbox{\hyperlink{SkinWrapperTest_8cpp_source}{Skin\+Wrapper\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00107\ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keywordtype}{bool}\ result;}
+\DoxyCodeLine{00109\ \ \ \ \ result\ \ =\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub/skin/rpc:i"{}});}
+\DoxyCodeLine{00110\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub/skin"{}});}
+\DoxyCodeLine{00111\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub3/skin/left\_hand"{}});}
+\DoxyCodeLine{00112\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub3/skin/left\_hand/rpc:i"{}});}
+\DoxyCodeLine{00113\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub3/skin/left\_forearm"{}});}
+\DoxyCodeLine{00114\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub3/skin/left\_forearm/rpc:i"{}});}
+\DoxyCodeLine{00115\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub3/skin/left\_arm"{}});}
+\DoxyCodeLine{00116\ \ \ \ \ result\ \&=\ Network::exists(\textcolor{stringliteral}{"{}/fakeiCub3/skin/left\_arm/rpc:i"{}});}
+\DoxyCodeLine{00117\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ if\ all\ ports\ has\ been\ opened\ successfully"{}});}
+\DoxyCodeLine{00118\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(result,\textcolor{stringliteral}{"{}ports\ opened\ succefully"{}});}
+\DoxyCodeLine{00119\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Checking\ the\ validity\ of\ devices"{}});}
+\DoxyCodeLine{00120\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(dd1.isValid()\ \&\&\ !dd2.isValid()\ \&\&\ dd3.isValid()\ \&\&\ !dd4.isValid(),\textcolor{stringliteral}{"{}dd1\ and\ dd3\ valid,\ dd2\ and\ dd4\ not\ valid\ as\ expected"{}});}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \}}
+
+\end{DoxyCode}
+\label{classSkinWrapperTest_aa22a01cedaf43f2a9b19d8837379de99} 
+\index{SkinWrapperTest@{SkinWrapperTest}!setup@{setup}}
+\index{setup@{setup}!SkinWrapperTest@{SkinWrapperTest}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily bool Skin\+Wrapper\+Test\+::setup (\begin{DoxyParamCaption}\item[{yarp\+::os\+::\+Property \&}]{property }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SkinWrapperTest_8cpp_source_l00050}{50}} of file \mbox{\hyperlink{SkinWrapperTest_8cpp_source}{Skin\+Wrapper\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{comment}{//test\ \#1}}
+\DoxyCodeLine{00053\ \ \ \ \ Property\ p;}
+\DoxyCodeLine{00054\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}skinWrapper"{}});}
+\DoxyCodeLine{00055\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}robotName"{}},\textcolor{stringliteral}{"{}fakeiCub"{}});}
+\DoxyCodeLine{00056\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}name"{}},\textcolor{stringliteral}{"{}/testSkinWrapper"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}period"{}},20);}
+\DoxyCodeLine{00058\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}total\_taxels"{}},10);}
+\DoxyCodeLine{00059\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}subdevice"{}},\textcolor{stringliteral}{"{}fakeAnalogSensor"{}});}
+\DoxyCodeLine{00060\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Opening\ the\ skinWrapper\ with\ one\ port"{}});}
+\DoxyCodeLine{00061\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(dd1.open(p),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ device!"{}});}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//test\ \#2}}
+\DoxyCodeLine{00063\ \ \ \ \ BufferedPort<Bottle>\ port,portrpc;}
+\DoxyCodeLine{00064\ \ \ \ \ portrpc.open(\textcolor{stringliteral}{"{}/fakeiCub2/skin/rpc:i"{}});}
+\DoxyCodeLine{00065\ \ \ \ \ port.open(\textcolor{stringliteral}{"{}/fakeiCub2/skin"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ p.unput(\textcolor{stringliteral}{"{}robotName"{}});}
+\DoxyCodeLine{00067\ \ \ \ \ p.put(\textcolor{stringliteral}{"{}robotName"{}},\textcolor{stringliteral}{"{}fakeiCub2"{}});}
+\DoxyCodeLine{00068\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Opening\ the\ skinWrapper\ with\ one\ port\ (address\ conflict\ case)"{}});}
+\DoxyCodeLine{00069\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(!dd2.open(p),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ device\ as\ expected"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ portrpc.close();}
+\DoxyCodeLine{00071\ \ \ \ \ port.close();}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//test\ \#3}}
+\DoxyCodeLine{00073\ \ \ \ \ Property\ p2;}
+\DoxyCodeLine{00074\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}device"{}},\textcolor{stringliteral}{"{}skinWrapper"{}});}
+\DoxyCodeLine{00075\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}robotName"{}},\textcolor{stringliteral}{"{}fakeiCub3"{}});}
+\DoxyCodeLine{00076\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}name"{}},\textcolor{stringliteral}{"{}/testSkinWrapperMultip"{}});}
+\DoxyCodeLine{00077\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}period"{}},20);}
+\DoxyCodeLine{00078\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}total\_taxels"{}},3);}
+\DoxyCodeLine{00079\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}subdevice"{}},\textcolor{stringliteral}{"{}fakeAnalogSensor"{}});}
+\DoxyCodeLine{00080\ \ \ \ \ p2.fromString(\textcolor{stringliteral}{"{}(ports\ (left\_hand\ left\_forearm\ left\_arm))\ (left\_hand\ 0\ 0\ 0\ 0)\ (left\_forearm\ 0\ 0\ 0\ 0)\ (left\_arm\ 0\ 0\ 0\ 0)"{}},\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00081\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Opening\ the\ skinWrapper\ with\ multiple\ ports"{}});}
+\DoxyCodeLine{00082\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(dd3.open(p2),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ device!"{}});}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//test\ \#4}}
+\DoxyCodeLine{00084\ \ \ \ \ port.open(\textcolor{stringliteral}{"{}/fakeiCub4/skin/left\_hand"{}});}
+\DoxyCodeLine{00085\ \ \ \ \ portrpc.open(\textcolor{stringliteral}{"{}/fakeiCub4/skin/left\_forearm/rpc:i"{}});}
+\DoxyCodeLine{00086\ \ \ \ \ p2.unput(\textcolor{stringliteral}{"{}robotName"{}});}
+\DoxyCodeLine{00087\ \ \ \ \ p2.put(\textcolor{stringliteral}{"{}robotName"{}},\textcolor{stringliteral}{"{}fakeiCub4"{}});}
+\DoxyCodeLine{00088\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Opening\ the\ skinWrapper\ with\ multiple\ ports\ (address\ conflict\ case)"{}});}
+\DoxyCodeLine{00089\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(!dd4.open(p2),\textcolor{stringliteral}{"{}Unable\ to\ open\ the\ device\ as\ expected"{}});}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ port.close();}
+\DoxyCodeLine{00092\ \ \ \ \ portrpc.close();}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00094\ \}}
+
+\end{DoxyCode}
+\label{classSkinWrapperTest_ac79f439b54f8f4d3268cc9c63765b852} 
+\index{SkinWrapperTest@{SkinWrapperTest}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!SkinWrapperTest@{SkinWrapperTest}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily void Skin\+Wrapper\+Test\+::tear\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{SkinWrapperTest_8cpp_source_l00098}{98}} of file \mbox{\hyperlink{SkinWrapperTest_8cpp_source}{Skin\+Wrapper\+Test.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00099\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Closing\ the\ skinWrapper"{}});}
+\DoxyCodeLine{00101\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(dd1.close()\ \&\&\ dd2.close()\ \&\&\ dd3.close()\ \&\&\ dd4.close(),\textcolor{stringliteral}{"{}Unable\ to\ close\ the\ device!"{}});}
+\DoxyCodeLine{00102\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/skin\+Wrapper\+Test/Skin\+Wrapper\+Test.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/skin\+Wrapper\+Test/Skin\+Wrapper\+Test.\+cpp\end{DoxyCompactItemize}

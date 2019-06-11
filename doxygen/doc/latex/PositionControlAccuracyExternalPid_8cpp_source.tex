@@ -1,0 +1,396 @@
+\doxysection{Position\+Control\+Accuracy\+External\+Pid.\+cpp}
+\label{PositionControlAccuracyExternalPid_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/positionControl-\/accuracy-\/ExternalPid/PositionControlAccuracyExternalPid.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/positionControl-\/accuracy-\/ExternalPid/PositionControlAccuracyExternalPid.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/os/LogStream.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}PositionControlAccuracyExternalPid.h"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00035\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00038\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(PositionControlAccuracyExernalPid)}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ PositionControlAccuracyExernalPid::PositionControlAccuracyExernalPid()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}PositionControlAccuracyExernalPid"{}})\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ m\_jointsList\ =\ 0;}
+\DoxyCodeLine{00042\ \ \ \ \ m\_encoders\ =\ 0;}
+\DoxyCodeLine{00043\ \ \ \ \ m\_zeros\ =\ 0;}
+\DoxyCodeLine{00044\ \ \ \ \ dd=0;}
+\DoxyCodeLine{00045\ \ \ \ \ ipos=0;}
+\DoxyCodeLine{00046\ \ \ \ \ icmd=0;}
+\DoxyCodeLine{00047\ \ \ \ \ iimd=0;}
+\DoxyCodeLine{00048\ \ \ \ \ ienc=0;}
+\DoxyCodeLine{00049\ \ \ \ \ idir=0;}
+\DoxyCodeLine{00050\ \ \ \ \ ipwm=0;}
+\DoxyCodeLine{00051\ \ \ \ \ m\_home\_tolerance=0.5;}
+\DoxyCodeLine{00052\ \ \ \ \ m\_step\_duration=4;}
+\DoxyCodeLine{00053\ \ \ \ \ m\_pospid\_vup=0;}
+\DoxyCodeLine{00054\ \ \ \ \ m\_pospid\_vdown=0;}
+\DoxyCodeLine{00055\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ PositionControlAccuracyExernalPid::\string~PositionControlAccuracyExernalPid()\ \{\ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{bool}\ PositionControlAccuracyExernalPid::setup(yarp::os::Property\&\ property)\ \{}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//updating\ the\ test\ name}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00066\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}robot"{}}),\ \textcolor{stringliteral}{"{}The\ robot\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00067\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}part"{}}),\ \textcolor{stringliteral}{"{}The\ part\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00068\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}joints"{}}),\ \textcolor{stringliteral}{"{}The\ joints\ list\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00069\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}zeros"{}}),\ \ \ \ \textcolor{stringliteral}{"{}The\ zero\ position\ list\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}cycles"{}}),\ \textcolor{stringliteral}{"{}The\ number\ of\ cycles\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00071\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}step"{}}),\ \textcolor{stringliteral}{"{}The\ amplitude\ of\ the\ step\ reference\ signal\ expressed\ in\ degrees!"{}});}
+\DoxyCodeLine{00072\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}sampleTime"{}}),\ \textcolor{stringliteral}{"{}The\ sampleTime\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}filename"{}}))}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \{m\_requested\_filename\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}filename"{}}).asString();\}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}home\_tolerance"{}}))}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \{m\_home\_tolerance\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}home\_tolerance"{}}).asFloat64();\}}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}step\_duration"{}}))}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \{m\_step\_duration\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}step\_duration"{}}).asFloat64();\}}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}pid\_vup"{}}))}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \{m\_pospid\_vup\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}pid\_vup"{}}).asFloat64();\}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}pid\_vdown"{}}))}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \{m\_pospid\_vdown\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}pid\_vdown"{}}).asFloat64();\}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ m\_robotName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}robot"{}}).asString();}
+\DoxyCodeLine{00086\ \ \ \ \ m\_partName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}part"{}}).asString();}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ Bottle*\ jointsBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}joints"{}}).asList();}
+\DoxyCodeLine{00089\ \ \ \ \ Bottle*\ zerosBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}zeros"{}}).asList();}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(jointsBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ joints\ parameter"{}});}
+\DoxyCodeLine{00092\ \ \ \ \ m\_n\_cmd\_joints\ =\ jointsBottle-\/>size();}
+\DoxyCodeLine{00093\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(m\_n\_cmd\_joints>0,\ \textcolor{stringliteral}{"{}invalid\ number\ of\ joints,\ it\ must\ be\ >0"{}});}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ m\_step\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}step"{}}).asFloat64();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ m\_cycles\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}cycles"{}}).asInt32();}
+\DoxyCodeLine{00098\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(m\_cycles>0,\ \textcolor{stringliteral}{"{}invalid\ cycles"{}});}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ m\_sampleTime\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}sampleTime"{}}).asFloat64();}
+\DoxyCodeLine{00101\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(m\_sampleTime>0,\ \textcolor{stringliteral}{"{}invalid\ sampleTime"{}});}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ Property\ options;}
+\DoxyCodeLine{00104\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00105\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}remote"{}},\ \textcolor{stringliteral}{"{}/"{}}\ +\ m\_robotName\ +\ \textcolor{stringliteral}{"{}/"{}}\ +\ m\_partName);}
+\DoxyCodeLine{00106\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}local"{}},\ \textcolor{stringliteral}{"{}/positionControlAccuracyTest/"{}}\ +\ m\_robotName\ +\ \textcolor{stringliteral}{"{}/"{}}\ +\ m\_partName);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ dd\ =\ \textcolor{keyword}{new}\ PolyDriver(options);}
+\DoxyCodeLine{00109\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>isValid(),\textcolor{stringliteral}{"{}Unable\ to\ open\ device\ driver"{}});}
+\DoxyCodeLine{00110\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(idir),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ direct\ interface"{}});}
+\DoxyCodeLine{00111\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ienc),\textcolor{stringliteral}{"{}Unable\ to\ open\ encoders\ interface"{}});}
+\DoxyCodeLine{00112\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ipos),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ interface"{}});}
+\DoxyCodeLine{00113\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(icmd),\textcolor{stringliteral}{"{}Unable\ to\ open\ control\ mode\ interface"{}});}
+\DoxyCodeLine{00114\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iimd),\textcolor{stringliteral}{"{}Unable\ to\ open\ interaction\ mode\ interface"{}});}
+\DoxyCodeLine{00115\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ipwm),\textcolor{stringliteral}{"{}Unable\ to\ open\ pwm\ mode\ interface"{}});}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ienc-\/>getAxes(\&m\_n\_part\_joints))}
+\DoxyCodeLine{00118\ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}unable\ to\ get\ the\ number\ of\ joints\ of\ the\ part"{}});}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ m\_zeros\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_n\_part\_joints];}
+\DoxyCodeLine{00123\ \ \ \ \ m\_encoders\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[m\_n\_part\_joints];}
+\DoxyCodeLine{00124\ \ \ \ \ m\_jointsList\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{int}[m\_n\_cmd\_joints];}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <m\_n\_cmd\_joints;\ i++)\ m\_jointsList[i]\ =\ jointsBottle-\/>get(i).asInt32();}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <m\_n\_cmd\_joints;\ i++)\ m\_zeros[i]\ =\ zerosBottle-\/>get(i).asFloat64();}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{double}\ \ p\_Ts\ =\ m\_sampleTime;}
+\DoxyCodeLine{00129\ \ \ \ \ yarp::sig::Vector\ p\_Kp(1,0.0);}
+\DoxyCodeLine{00130\ \ \ \ \ yarp::sig::Vector\ p\_Ki(1,0.0);}
+\DoxyCodeLine{00131\ \ \ \ \ yarp::sig::Vector\ p\_Kd(1,0.0);}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}Kp"{}}))}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \{p\_Kp\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}Kp"{}}).asFloat64();\}}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}Ki"{}}))}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \{p\_Ki\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}Ki"{}}).asFloat64();\}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}Kd"{}}))}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \{p\_Kd\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}Kd"{}}).asFloat64();\}}
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordtype}{double}\ p\_Max=100;}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}MaxValue"{}}))}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \{p\_Max\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}MaxValue"{}}).asFloat64();\}}
+\DoxyCodeLine{00141\ \ \ \ \ yarp::sig::Vector\ p\_Wp(1,1);}
+\DoxyCodeLine{00142\ \ \ \ \ yarp::sig::Vector\ p\_Wi(1,1);}
+\DoxyCodeLine{00143\ \ \ \ \ yarp::sig::Vector\ p\_Wd(1,1);}
+\DoxyCodeLine{00144\ \ \ \ \ yarp::sig::Vector\ p\_N\ (1,10);}
+\DoxyCodeLine{00145\ \ \ \ \ yarp::sig::Vector\ p\_Tt\ (1,1);}
+\DoxyCodeLine{00146\ \ \ \ \ yarp::sig::Matrix\ p\_Lim\ (1,2);}
+\DoxyCodeLine{00147\ \ \ \ \ yInfo()\ <<\ \textcolor{stringliteral}{"{}Using\ gains\ Kp:"{}}\ <<\ p\_Kp[0]\ <<\ \textcolor{stringliteral}{"{}\ Ki:"{}}<<p\_Ki[0]\ <<\ \textcolor{stringliteral}{"{}\ Kd:"{}}<<p\_Kd[0]\ <<\ \textcolor{stringliteral}{"{}\ Max:"{}}\ <<\ p\_Max;}
+\DoxyCodeLine{00148\ \ \ \ \ p\_Lim[0][0]=-\/p\_Max;}
+\DoxyCodeLine{00149\ \ \ \ \ p\_Lim[0][1]=+p\_Max;}
+\DoxyCodeLine{00150\ \ \ \ \ ppid\ =\ \textcolor{keyword}{new}\ iCub::ctrl::parallelPID(p\_Ts,\ p\_Kp,\ p\_Ki,\ p\_Kd,\ p\_Wp,\ p\_Wi,\ p\_Wd,\ p\_N,\ p\_Tt,\ p\_Lim);}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_requested\_filename==\textcolor{stringliteral}{"{}auto"{}})}
+\DoxyCodeLine{00153\ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ buff[50];}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ m\_requested\_filename=\textcolor{stringliteral}{"{}ext\_"{}};}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(m\_robotName+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(m\_partName+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ sprintf(buff,\textcolor{stringliteral}{"{}\%.3f"{}},p\_Kp[0]);}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(\textcolor{stringliteral}{"{}Kp\_"{}}+std::string(buff)+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ sprintf(buff,\textcolor{stringliteral}{"{}\%.3f"{}},p\_Ki[0]);}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(\textcolor{stringliteral}{"{}Ki\_"{}}+std::string(buff)+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ sprintf(buff,\textcolor{stringliteral}{"{}\%.3f"{}},p\_Kd[0]);}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(\textcolor{stringliteral}{"{}Kdi\_"{}}+std::string(buff)+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ sprintf(buff,\textcolor{stringliteral}{"{}\%.3f"{}},m\_pospid\_vup);}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(\textcolor{stringliteral}{"{}Vup\_"{}}+std::string(buff)+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ sprintf(buff,\textcolor{stringliteral}{"{}\%.3f"{}},m\_pospid\_vdown);}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(\textcolor{stringliteral}{"{}Vdown\_"{}}+std::string(buff)+\textcolor{stringliteral}{"{}\_"{}});}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ sprintf(buff,\textcolor{stringliteral}{"{}\%.1f"{}},m\_step);}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ m\_requested\_filename+=(\textcolor{stringliteral}{"{}step\_"{}}+std::string(buff)+\textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00170\ \ \ \ \ \}}
+\DoxyCodeLine{00171\ \ \ \ \ yDebug()\ <<\ \textcolor{stringliteral}{"{}File:\ "{}}\ <<\ m\_requested\_filename\ <<\ \textcolor{stringliteral}{"{}\ will\ be\ used"{}};}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00174\ \}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{void}\ PositionControlAccuracyExernalPid::tearDown()}
+\DoxyCodeLine{00177\ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_jointsList)\ \{\ \textcolor{keyword}{delete}\ []\ m\_jointsList;\ m\_jointsList\ =\ 0;\ \}}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_zeros)\ \{\ \textcolor{keyword}{delete}\ []\ m\_zeros;\ m\_zeros\ =\ 0;\ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_encoders)\ \{\ \textcolor{keyword}{delete}\ []\ m\_encoders;\ m\_encoders\ =\ 0;\ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordflow}{if}\ (dd)\ \{\textcolor{keyword}{delete}\ dd;\ dd\ =0;\}}
+\DoxyCodeLine{00182\ \}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{keywordtype}{void}\ PositionControlAccuracyExernalPid::setMode(\textcolor{keywordtype}{int}\ desired\_mode)}
+\DoxyCodeLine{00185\ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i<m\_n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00187\ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ icmd-\/>setControlMode(m\_jointsList[i],\ desired\_mode);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ iimd-\/>setInteractionMode(m\_jointsList[i],\ VOCAB\_IM\_STIFF);}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.010);}
+\DoxyCodeLine{00191\ \ \ \ \ \}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{int}\ cmode;}
+\DoxyCodeLine{00194\ \ \ \ \ yarp::dev::InteractionModeEnum\ imode;}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keywordtype}{int}\ timeout\ =\ 0;}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ok=0;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i<m\_n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ icmd-\/>getControlMode(m\_jointsList[i],\ \&cmode);}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ iimd-\/>getInteractionMode(m\_jointsList[i],\ \&imode);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cmode==desired\_mode\ \&\&\ imode==VOCAB\_IM\_STIFF)\ ok++;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ok\ ==\ m\_n\_cmd\_joints)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (timeout>100)}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}Unable\ to\ set\ control\ mode/interaction\ mode"{}});}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ timeout++;}
+\DoxyCodeLine{00213\ \ \ \ \ \}}
+\DoxyCodeLine{00214\ \}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{keywordtype}{bool}\ PositionControlAccuracyExernalPid::goHome()}
+\DoxyCodeLine{00217\ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i<m\_n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00219\ \ \ \ \ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ ipos-\/>setRefSpeed(m\_jointsList[i],\ 20.0);}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ ipos-\/>positionMove(m\_jointsList[i],\ m\_zeros[i]);}
+\DoxyCodeLine{00222\ \ \ \ \ \}}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordtype}{int}\ timeout\ =\ 0;}
+\DoxyCodeLine{00225\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)}
+\DoxyCodeLine{00226\ \ \ \ \ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ in\_position=0;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i<m\_n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoder(m\_jointsList[i],\ \&m\_encoders[m\_jointsList[i]]);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fabs(m\_encoders[m\_jointsList[i]]\ -\/\ m\_zeros[i])<m\_home\_tolerance)\ in\_position++;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (in\_position\ ==\ m\_n\_cmd\_joints)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (timeout>100)}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}Timeout\ while\ reaching\ zero\ position"{}});}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ timeout++;}
+\DoxyCodeLine{00241\ \ \ \ \ \}}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{comment}{//sleep\ some\ additional\ time\ to\ complete\ movement\ from\ m\_home\_tolerance\ to\ 0}}
+\DoxyCodeLine{00243\ \ \ \ \ yarp::os::Time::delay(0.5);}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00245\ \}}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \textcolor{keywordtype}{void}\ PositionControlAccuracyExernalPid::run()}
+\DoxyCodeLine{00248\ \{}
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ m\_n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00250\ \ \ \ \ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ cycle\ =\ 0;\ cycle\ <\ m\_cycles;\ cycle++)}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ setMode(VOCAB\_CM\_POSITION);}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (goHome()\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL(\textcolor{stringliteral}{"{}Test\ stopped"{}});}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ ppid-\/>reset(yarp::sig::Vector(1,0.0));}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ setMode(VOCAB\_CM\_PWM);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ start\_time\ =\ yarp::os::Time::now();}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ cbuff[64];}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ sprintf(cbuff,\ \textcolor{stringliteral}{"{}Testing\ Joint:\ \%d\ cycle:\ \%d"{}},\ i,\ cycle);}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ buff(cbuff);}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ time\_zero\ =\ 0;}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Bottle\ \ \ \ \ \ dataToPlotRaw;}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Bottle\ \ \ \ \ \ dataToPlotSync;}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoders(m\_encoders);}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (1)}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ curr\_time\ =\ yarp::os::Time::now();}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ elapsed\ =\ curr\_time\ -\/\ start\_time;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ ref=0;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (elapsed\ <=\ 1.0)}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ref=m\_zeros[i];}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (elapsed\ >\ 1.0\ \&\&\ elapsed\ <=\ m\_step\_duration)}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ref=m\_zeros[i]+m\_step;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (time\_zero\ ==\ 0)\ time\_zero\ =\ elapsed;}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//pid\ computation}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoders(m\_encoders);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_cmd\_single\ =\ ppid-\/>compute(yarp::sig::Vector(1,ref),yarp::sig::Vector(1,m\_encoders[m\_jointsList[i]]))[0];}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//stiction\ compensation}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ref>m\_encoders[m\_jointsList[i]])}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_cmd\_single+=m\_pospid\_vup;}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ m\_cmd\_single+=m\_pospid\_vdown;}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//control}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ipwm-\/>setRefDutyCycle(m\_jointsList[i],\ m\_cmd\_single);}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ b1\ =\ dataToPlotRaw.addList();}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addInt32(cycle);}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(elapsed);}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(m\_encoders[m\_jointsList[i]]);}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(ref);}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(m\_cmd\_single);}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ yarp::os::Time::delay(m\_sampleTime);}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//reorder\ data}}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ t\ =\ 0;\ t\ <\ dataToPlotRaw.size();\ t++)}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ cycle\ =\ dataToPlotRaw.get(t).asList()-\/>get(0).asInt32();}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ time\ =\ dataToPlotRaw.get(t).asList()-\/>get(1).asFloat64();}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ val\ =\ dataToPlotRaw.get(t).asList()-\/>get(2).asFloat64();}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ cmd\ =\ dataToPlotRaw.get(t).asList()-\/>get(3).asFloat64();}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ duty\ =\ dataToPlotRaw.get(t).asList()-\/>get(4).asFloat64();}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ b1\ =\ dataToPlotSync.addList();}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addInt32(cycle);}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(time\ -\/\ time\_zero);}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(val);}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(cmd);}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b1.addFloat64(duty);}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ m\_dataToSave.append(dataToPlotSync);}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \}\ \textcolor{comment}{//cycle\ loop}}
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \textcolor{comment}{//save\ data}}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ std::string\ filename;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (m\_requested\_filename==\textcolor{stringliteral}{"{}"{}})}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ cfilename[128];}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ sprintf(cfilename,\ \textcolor{stringliteral}{"{}positionControlAccuracyExternalPid\_plot\_\%s\%d.txt"{}},\ m\_partName.c\_str(),\ i);}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ filename\ =\ cfilename;}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//filename\ +=\ m\_partName;}}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//filename\ +=\ std::to\_string(i);}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//filename\ +=\ "{}.txt"{};}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ filename=m\_requested\_filename;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ yInfo()\ <<\ \textcolor{stringliteral}{"{}Saving\ file\ to:\ "{}}<<\ filename;}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ saveToFile(filename,\ m\_dataToSave);}
+\DoxyCodeLine{00356\ \ \ \ \ \}\ \textcolor{comment}{//joint\ loop}}
+\DoxyCodeLine{00357\ }
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{comment}{//data\ acquisition\ ends\ here}}
+\DoxyCodeLine{00359\ \ \ \ \ setMode(VOCAB\_CM\_POSITION);}
+\DoxyCodeLine{00360\ \ \ \ \ goHome();}
+\DoxyCodeLine{00361\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Data\ acquisition\ complete"{}});}
+\DoxyCodeLine{00362\ }
+\DoxyCodeLine{00363\ \ \ \ \ \textcolor{comment}{//plot\ data}}
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{comment}{/*for\ (int\ i\ =\ 0;\ i\ <\ m\_n\_cmd\_joints;\ i++)}}
+\DoxyCodeLine{00365\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00366\ \textcolor{comment}{\ \ \ \ \ \ \ \ std::string\ filename\ =\ "{}positionControlAccuracy\_plot\_"{};}}
+\DoxyCodeLine{00367\ \textcolor{comment}{\ \ \ \ \ \ \ \ filename\ +=\ m\_partName;}}
+\DoxyCodeLine{00368\ \textcolor{comment}{\ \ \ \ \ \ \ \ filename\ +=\ std::to\_string(i);}}
+\DoxyCodeLine{00369\ \textcolor{comment}{\ \ \ \ \ \ \ \ filename\ +=\ "{}.txt"{};}}
+\DoxyCodeLine{00370\ \textcolor{comment}{\ \ \ \ \ \ \ \ char\ plotstring[1000];}}
+\DoxyCodeLine{00371\ \textcolor{comment}{\ \ \ \ \ \ \ \ sprintf(plotstring,\ "{}gnuplot\ -\/e\ \(\backslash\)"{}\ unset\ key;\ plot\ for\ [col=1:\%d]\ '\%s'\ using\ col\ with\ lines\ \(\backslash\)"{}\ -\/persist"{},\ m\_n\_cmd\_joints,\ filename.c\_str());}}
+\DoxyCodeLine{00372\ \textcolor{comment}{\ \ \ \ \ \ \ \ system(plotstring);}}
+\DoxyCodeLine{00373\ \textcolor{comment}{\ \ \ \ \}*/}}
+\DoxyCodeLine{00374\ \}}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00376\ \textcolor{keywordtype}{void}\ PositionControlAccuracyExernalPid::saveToFile(std::string\ filename,\ yarp::os::Bottle\ \&b)}
+\DoxyCodeLine{00377\ \{}
+\DoxyCodeLine{00378\ \ \ \ \ std::fstream\ fs;}
+\DoxyCodeLine{00379\ \ \ \ \ fs.open(filename.c\_str(),\ std::fstream::out);}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i<b.size();\ i++)}
+\DoxyCodeLine{00382\ \ \ \ \ \{}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ std::string\ s\ =\ b.get(i).toString();}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ std::replace(s.begin(),\ s.end(),\ \textcolor{charliteral}{'('},\ \textcolor{charliteral}{'\ '});}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ std::replace(s.begin(),\ s.end(),\ \textcolor{charliteral}{')'},\ \textcolor{charliteral}{'\ '});}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ fs\ <<\ s\ <<\ std::endl;}
+\DoxyCodeLine{00387\ \ \ \ \ \}}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ fs.close();}
+\DoxyCodeLine{00390\ \}}
+
+\end{DoxyCode}

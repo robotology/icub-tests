@@ -1,0 +1,61 @@
+\doxysection{Example\+Fixture.\+cpp}
+\label{ExampleFixture_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/example/cpp/ExampleFixture/ExampleFixture.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/example/cpp/ExampleFixture/ExampleFixture.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <cstdio>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <ctime>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}ExampleFixture.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Random.h>}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ ROBOTTESTINGFRAMEWORK\_PREPARE\_FIXTURE\_PLUGIN(ExampleFixture)}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{bool}\ ExampleFixture::setup(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}**\ argv)\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ExampleFixture:\ setupping\ fixture...\(\backslash\)n"{}});}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ do\ the\ setup\ here}}
+\DoxyCodeLine{00037\ \ \ \ \ Property\ prop;}
+\DoxyCodeLine{00038\ \ \ \ \ prop.fromCommand(argc,\ argv,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{if}(!prop.check(\textcolor{stringliteral}{"{}probability"{}}))\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}ExampleFixture:\ missing\ 'probability'\ param.\(\backslash\)n"{}});}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \ \ \ \ probability\ =\ prop.find(\textcolor{stringliteral}{"{}probability"{}}).asFloat64();}
+\DoxyCodeLine{00044\ \ \ \ \ Random::seed(time(NULL));}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{bool}\ ExampleFixture::check()\ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//\ return\ a\ random\ boolean}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{return}\ ((\textcolor{keywordtype}{double})Random::uniform(0,\ 100)\ <=\ 100.0*probability);}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{void}\ ExampleFixture::tearDown()\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ExampleFixture:\ tearing\ down\ the\ fixture...\(\backslash\)n"{}});}
+\DoxyCodeLine{00055\ \}}
+
+\end{DoxyCode}

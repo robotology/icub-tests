@@ -1,0 +1,400 @@
+\doxysection{movement\+References\+Test.\+cpp}
+\label{movementReferencesTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/movementReferencesTest/movementReferencesTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/movementReferencesTest/movementReferencesTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestAsserter.h>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}movementReferencesTest.h"{}}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00036\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(MovementReferencesTest)}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ MovementReferencesTest::MovementReferencesTest()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}MovementReferencesTest"{}})}
+\DoxyCodeLine{00039\ \{}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ MovementReferencesTest::\string~MovementReferencesTest()}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{bool}\ MovementReferencesTest::setup(yarp::os::Property\ \&config)}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ initialization\ goes\ here\ ...}}
+\DoxyCodeLine{00052\ \ \ \ \ numJointsInPart\ =\ 0;}
+\DoxyCodeLine{00053\ \ \ \ \ jPosMotion=NULL;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ iEncoders=NULL;}
+\DoxyCodeLine{00056\ \ \ \ \ iPosition=NULL;}
+\DoxyCodeLine{00057\ \ \ \ \ iPosDirect=NULL;}
+\DoxyCodeLine{00058\ \ \ \ \ iControlMode=NULL;}
+\DoxyCodeLine{00059\ \ \ \ \ iVelocity=NULL;}
+\DoxyCodeLine{00060\ \ \ \ \ initialized=\textcolor{keyword}{false};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{if}(config.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ setName(config.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ setName(\textcolor{stringliteral}{"{}MovementReferencesTest"{}});}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00069\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(config.check(\textcolor{stringliteral}{"{}robot"{}}),\ \ \textcolor{stringliteral}{"{}The\ robot\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(config.check(\textcolor{stringliteral}{"{}part"{}}),\ \ \ \textcolor{stringliteral}{"{}The\ part\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00071\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(config.check(\textcolor{stringliteral}{"{}joints"{}}),\ \textcolor{stringliteral}{"{}The\ joints\ list\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00072\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(config.check(\textcolor{stringliteral}{"{}home"{}}),\ \ \ \textcolor{stringliteral}{"{}The\ home\ position\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00073\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(config.check(\textcolor{stringliteral}{"{}target"{}}),\ \textcolor{stringliteral}{"{}Missing\ 'target'\ parameter,\ cannot\ open\ device"{}});}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ robotName\ =\ config.find(\textcolor{stringliteral}{"{}robot"{}}).asString();}
+\DoxyCodeLine{00076\ \ \ \ \ partName\ \ =\ config.find(\textcolor{stringliteral}{"{}part"{}}).asString();}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ Property\ options;}
+\DoxyCodeLine{00080\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00081\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}remote"{}},\ \textcolor{stringliteral}{"{}/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00082\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}local"{}},\ \textcolor{stringliteral}{"{}/moveRefTest/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ dd\ =\ \textcolor{keyword}{new}\ yarp::dev::PolyDriver(options);}
+\DoxyCodeLine{00085\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>isValid(),\textcolor{stringliteral}{"{}Unable\ to\ open\ device\ driver"{}});}
+\DoxyCodeLine{00086\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iPosition),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ interface"{}});}
+\DoxyCodeLine{00087\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iEncoders),\textcolor{stringliteral}{"{}Unable\ to\ open\ encoders\ interface"{}});}
+\DoxyCodeLine{00088\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iControlMode),\textcolor{stringliteral}{"{}Unable\ to\ open\ control\ mode\ interface"{}});}
+\DoxyCodeLine{00089\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iPWM),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ PWM\ interface"{}});}
+\DoxyCodeLine{00090\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iPosDirect),\textcolor{stringliteral}{"{}Unable\ to\ open\ OpnLoop\ interface"{}});}
+\DoxyCodeLine{00091\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iVelocity),\textcolor{stringliteral}{"{}Unable\ to\ open\ velocity2\ interface"{}});}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordflow}{if}\ (!iEncoders-\/>getAxes(\&numJointsInPart))}
+\DoxyCodeLine{00096\ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}unable\ to\ get\ the\ number\ of\ joints\ of\ the\ part"{}});}
+\DoxyCodeLine{00098\ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ Bottle*\ homeBottle\ =\ config.find(\textcolor{stringliteral}{"{}home"{}}).asList();}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{if}(homeBottle\ ==\ NULL)}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}home\ bottle\ is\ null"{}});}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}home\ bottle\ is\ not\ null"{}});}
+\DoxyCodeLine{00110\ \ \ \ \ \}}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(homeBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ home\ parameter"{}});}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ Bottle*\ jointsBottle\ =\ config.find(\textcolor{stringliteral}{"{}joints"{}}).asList();}
+\DoxyCodeLine{00115\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(jointsBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ joints\ parameter"{}});}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ Bottle*\ targetBottle\ =\ config.find(\textcolor{stringliteral}{"{}target"{}}).asList();}
+\DoxyCodeLine{00118\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(targetBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ target\ parameter"{}});}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ Bottle*\ refAccBottle\ =\ config.find(\textcolor{stringliteral}{"{}refAcc"{}}).asList();}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordflow}{if}(refAccBottle\ ==\ NULL)}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}refAcc\ param\ not\ present.\ Test\ will\ use\ deafoult\ values."{}});}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ Bottle*\ refVelBottle\ =\ config.find(\textcolor{stringliteral}{"{}refVel"{}}).asList();}
+\DoxyCodeLine{00125\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(refVelBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ refVel\ parameter"{}});}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ numJoints\ =\ jointsBottle-\/>size();}
+\DoxyCodeLine{00129\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}num\ joints:\ \%d"{}},\ numJoints));}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(numJoints>0\ \&\&\ numJoints<=numJointsInPart,"{}invalid\ number\ of\ joints,\ it\ must\ be\ >0\ \&\ <=\ number\ of\ part\ joints\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00133\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00134\ \textcolor{stringliteral}{\ \ \ \ //jointsList.clear();}}
+\DoxyCodeLine{00135\ \textcolor{stringliteral}{\ \ \ \ targetPos.clear();}}
+\DoxyCodeLine{00136\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00137\ \textcolor{stringliteral}{\ \ \ \ jointsList.resize(numJoints);}}
+\DoxyCodeLine{00138\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<\ numJoints;\ i++)}}
+\DoxyCodeLine{00139\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00140\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ jointsList[i]=jointsBottle-\/>get(i).asInt32();}}
+\DoxyCodeLine{00141\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00142\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00143\ \textcolor{stringliteral}{\ \ \ \ jList\ =\ new\ int[numJoints];}}
+\DoxyCodeLine{00144\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<\ numJoints;\ i++)}}
+\DoxyCodeLine{00145\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00146\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ jList[i]=jointsBottle-\/>get(i).asInt32();}}
+\DoxyCodeLine{00147\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00148\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00149\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00150\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00151\ \textcolor{stringliteral}{\ \ \ \ //for\ (int\ i=0;\ i\ <numJoints;\ i++)\ jointsList.push\_back(jointsBottle-\/>get(i).asInt32());}}
+\DoxyCodeLine{00152\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00153\ \textcolor{stringliteral}{\ \ \ \ homePos.resize\ (numJoints);\ \ \ \ \ \ \ \ \ for\ (int\ i=0;\ i<\ numJoints;\ i++)\ homePos[i]=homeBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00154\ \textcolor{stringliteral}{\ \ \ \ targetPos.resize\ (numJoints);\ \ \ \ \ \ \ for\ (int\ i=0;\ i<\ numJoints;\ i++)\ targetPos[i]=targetBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00155\ \textcolor{stringliteral}{\ \ \ \ refVel.resize\ (numJoints);\ \ \ \ \ \ \ \ \ \ for\ (int\ i=0;\ i<\ numJoints;\ i++)\ refVel[i]=refVelBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00156\ \textcolor{stringliteral}{\ \ \ \ if(refAccBottle\ !=\ NULL)}}
+\DoxyCodeLine{00157\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00158\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ refAcc.resize\ (numJoints);}}
+\DoxyCodeLine{00159\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (int\ i=0;\ i<\ numJoints;\ i++)\ refAcc[i]=refAccBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00160\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00161\ \textcolor{stringliteral}{\ \ \ \ else}}
+\DoxyCodeLine{00162\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00163\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ refAcc.resize\ (0);}}
+\DoxyCodeLine{00164\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00165\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00166\ \textcolor{stringliteral}{\ \ \ \ jPosMotion\ =\ new\ yarp::robottestingframework::jointsPosMotion(dd,\ jointsList);}}
+\DoxyCodeLine{00167\ \textcolor{stringliteral}{\ \ \ \ jPosMotion-\/>setTolerance(2.0);}}
+\DoxyCodeLine{00168\ \textcolor{stringliteral}{\ \ \ \ jPosMotion-\/>setTimeout(5);\ //5\ sec}}
+\DoxyCodeLine{00169\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00170\ \textcolor{stringliteral}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(jointsList.toString().c\_str());}}
+\DoxyCodeLine{00171\ \textcolor{stringliteral}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}startup\ num\ joints:\ \%d\ partnj=\%d\textcolor{stringliteral}{"{},\ numJoints,\ numJointsInPart));}}
+\DoxyCodeLine{00172\ \textcolor{stringliteral}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(targetPos.toString().c\_str());}}
+\DoxyCodeLine{00173\ \textcolor{stringliteral}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(refVel.toString().c\_str());}}
+\DoxyCodeLine{00174\ \textcolor{stringliteral}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(refAcc.toString().c\_str());}}
+\DoxyCodeLine{00175\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00176\ \textcolor{stringliteral}{//\ \ \ \ for(int\ k=0;\ k<numJoints;\ k++)}}
+\DoxyCodeLine{00177\ \textcolor{stringliteral}{//\ \ \ \ \{}}
+\DoxyCodeLine{00178\ \textcolor{stringliteral}{//\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}targetpos\ [\%d]=\%.2f\textcolor{stringliteral}{"{},\ k,\ targetPos[k]));}}
+\DoxyCodeLine{00179\ \textcolor{stringliteral}{//\ \ \ \ \}}}
+\DoxyCodeLine{00180\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00181\ \textcolor{stringliteral}{\ /*\ \ \ for(int\ k=0;\ k<numJoints;\ k++)}}
+\DoxyCodeLine{00182\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00183\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}jointlist\ [\%d]=\%d\textcolor{stringliteral}{"{},\ k,\ (int)jointsList[k]));}}
+\DoxyCodeLine{00184\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}jlist\ [\%d]=\%d\textcolor{stringliteral}{"{},\ k,\ jList[k]));}}
+\DoxyCodeLine{00185\ \textcolor{stringliteral}{\ \ \ \ \}*/}}
+\DoxyCodeLine{00186\ \textcolor{stringliteral}{\ \ \ \ return\ true;}}
+\DoxyCodeLine{00187\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00188\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00189\ \textcolor{stringliteral}{void\ MovementReferencesTest::tearDown()\ \{}}
+\DoxyCodeLine{00190\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00191\ \textcolor{stringliteral}{\ \ \ \ //\ finalization\ goes\ her\ ...}}
+\DoxyCodeLine{00192\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00193\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<numJoints;\ ++i)}}
+\DoxyCodeLine{00194\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00195\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00196\ \textcolor{stringliteral}{\ \ \ \ //\ 1)\ check\ get\ reference\ position\ returns\ the\ target\ position\ set\ by\ positionMove(..)}}
+\DoxyCodeLine{00197\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00198\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}tear\ down:\ \ joint\ \%d\ is\ going\ to\ home\textcolor{stringliteral}{"{},\ jList[i]));}}
+\DoxyCodeLine{00199\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00200\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ setAndCheckControlMode(jList[i],\ VOCAB\_CM\_POSITION);}}
+\DoxyCodeLine{00201\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00202\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(jPosMotion-\/>goToSingle(jList[i],\ homePos[i]),}}
+\DoxyCodeLine{00203\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}go\ to\ target\ pos\ \ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00204\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00205\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00206\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00207\ \textcolor{stringliteral}{\ \ \ \ if(jPosMotion)}}
+\DoxyCodeLine{00208\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ delete\ jPosMotion;}}
+\DoxyCodeLine{00209\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00210\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00211\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00212\ \textcolor{stringliteral}{void\ MovementReferencesTest::setAndCheckControlMode(int\ j,\ int\ mode)}}
+\DoxyCodeLine{00213\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00214\ \textcolor{stringliteral}{\ \ \ \ int\ rec\_mode=VOCAB\_CM\_IDLE;}}
+\DoxyCodeLine{00215\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iControlMode-\/>setControlMode(j,\ mode),}}
+\DoxyCodeLine{00216\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}setting\ control\ mode\ for\ j\ \%d\textcolor{stringliteral}{"{}),j));}}
+\DoxyCodeLine{00217\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00218\ \textcolor{stringliteral}{\ \ \ \ yarp::os::Time::delay(0.1);}}
+\DoxyCodeLine{00219\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00220\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iControlMode-\/>getControlMode(j,\ \&rec\_mode),}}
+\DoxyCodeLine{00221\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}getting\ control\ mode\ for\ j\ \%d\textcolor{stringliteral}{"{}),j));}}
+\DoxyCodeLine{00222\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00223\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE((rec\_mode\ ==\ mode),}}
+\DoxyCodeLine{00224\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}joint\ \%d:\ is\ not\ in\ position\textcolor{stringliteral}{"{}),j));}}
+\DoxyCodeLine{00225\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00226\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00227\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00228\ \textcolor{stringliteral}{void\ MovementReferencesTest::run()\ \{}}
+\DoxyCodeLine{00229\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00230\ \textcolor{stringliteral}{\ \ \ \ int\ nJoints=0;}}
+\DoxyCodeLine{00231\ \textcolor{stringliteral}{\ \ \ \ bool\ doneAll=false;}}
+\DoxyCodeLine{00232\ \textcolor{stringliteral}{\ \ \ \ bool\ ret=false;}}
+\DoxyCodeLine{00233\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00234\ \textcolor{stringliteral}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(jointsList.toString().c\_str());}}
+\DoxyCodeLine{00235\ \textcolor{stringliteral}{//\ \ \ \ for(int\ k=0;\ k<numJoints;\ k++)}}
+\DoxyCodeLine{00236\ \textcolor{stringliteral}{//\ \ \ \ \{}}
+\DoxyCodeLine{00237\ \textcolor{stringliteral}{//\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}targetpos\ [\%d]=\%.2f\textcolor{stringliteral}{"{},\ k,\ targetPos[k]));}}
+\DoxyCodeLine{00238\ \textcolor{stringliteral}{//\ \ \ \ \}}}
+\DoxyCodeLine{00239\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00240\ \textcolor{stringliteral}{//\ \ \ \ for(int\ k=0;\ k<numJoints;\ k++)}}
+\DoxyCodeLine{00241\ \textcolor{stringliteral}{//\ \ \ \ \{}}
+\DoxyCodeLine{00242\ \textcolor{stringliteral}{//\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}jointlist\ [\%d]=\%d\textcolor{stringliteral}{"{},\ k,\ jointsList[k]));}}
+\DoxyCodeLine{00243\ \textcolor{stringliteral}{//\ \ \ \ \}}}
+\DoxyCodeLine{00244\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00245\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00246\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}setting\ velocity\ refs\ for\ all\ joints...\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00247\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00248\ \textcolor{stringliteral}{\ \ \ \ if(refAcc.size()\ !=\ 0)}}
+\DoxyCodeLine{00249\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00250\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}setting\ acceleration\ refs\ for\ all\ joints...\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00251\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iVelocity-\/>setRefAccelerations(numJoints,\ jList,\ refAcc.data()),}}
+\DoxyCodeLine{00252\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format("{}}setting\ reference\ acceleration\ on\ joints\textcolor{stringliteral}{"{}));}}
+\DoxyCodeLine{00253\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00254\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00255\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}setting\ velocity\ refs\ for\ all\ joints...\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00256\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>setRefSpeeds(numJoints,\ jList,\ refVel.data()),}}
+\DoxyCodeLine{00257\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format("{}}setting\ reference\ speed\ on\ joints\textcolor{stringliteral}{"{}));}}
+\DoxyCodeLine{00258\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00259\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00260\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00261\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00262\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}all\ joints\ are\ going\ to\ home...\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00263\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<numJoints;\ ++i)}}
+\DoxyCodeLine{00264\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00265\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00266\ \textcolor{stringliteral}{\ \ \ \ //\ 1)\ check\ get\ reference\ position\ returns\ the\ target\ position\ set\ by\ positionMove(..)}}
+\DoxyCodeLine{00267\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00268\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}\ joint\ \%d\ is\ going\ to\ home\textcolor{stringliteral}{"{},\ jList[i]));}}
+\DoxyCodeLine{00269\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00270\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ setAndCheckControlMode(jList[i],\ VOCAB\_CM\_POSITION);}}
+\DoxyCodeLine{00271\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00272\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_FAIL\_IF\_FALSE(jPosMotion-\/>goToSingle(jList[i],\ homePos[i]),}}
+\DoxyCodeLine{00273\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}go\ to\ target\ pos\ \ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00274\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00275\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00276\ \textcolor{stringliteral}{\ \ \ \ yarp::os::Time::delay(5);}}
+\DoxyCodeLine{00277\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00278\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Checking\ individual\ joints...\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00279\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00280\ \textcolor{stringliteral}{\ \ \ \ const\ double\ res\_th\ =\ 0.01;\ //resolution\ threshold}}
+\DoxyCodeLine{00281\ \textcolor{stringliteral}{\ \ \ \ //numJoints=numJointsInPart;}}
+\DoxyCodeLine{00282\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<numJoints;\ ++i)}}
+\DoxyCodeLine{00283\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00284\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //double\ reached\_pos;}}
+\DoxyCodeLine{00285\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ rec\_targetPos=200.0;}}
+\DoxyCodeLine{00286\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00287\ \textcolor{stringliteral}{\ \ \ \ //\ 1)\ check\ get\ reference\ position\ returns\ the\ target\ position\ set\ by\ positionMove(..)}}
+\DoxyCodeLine{00288\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00289\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}Checking\ PosReference\ joint\ \%d\ with\ resolution\ threshold\ \%.3f\textcolor{stringliteral}{"{},\ jList[i],\ res\_th));}}
+\DoxyCodeLine{00290\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00291\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ setAndCheckControlMode(jList[i],\ VOCAB\_CM\_POSITION);}}
+\DoxyCodeLine{00292\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00293\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(jPosMotion-\/>goToSingle(jList[i],\ targetPos[i]),}}
+\DoxyCodeLine{00294\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}go\ to\ target\ pos\ \ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));\ //Note:\ gotosingle\ use\ IPositioncontrol2::PositionMove}}
+\DoxyCodeLine{00295\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00296\ \textcolor{stringliteral}{\ \ \ \ yarp::os::Time::delay(0.5);}}
+\DoxyCodeLine{00297\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00298\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>getTargetPosition(jList[i],\ \&rec\_targetPos),}}
+\DoxyCodeLine{00299\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}getting\ target\ pos\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00300\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00301\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ bool\ res\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(targetPos[i],\ rec\_targetPos,\ res\_th,\ res\_th);}}
+\DoxyCodeLine{00302\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(res,\ Asserter::format(}}
+\DoxyCodeLine{00303\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ("{}}IPositionControl:\ getting\ target\ pos\ for\ j\ \%d:\ setval\ =\%.2f\ received\ \%.2f\textcolor{stringliteral}{"{}),}}
+\DoxyCodeLine{00304\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jList[i],\ targetPos[i],rec\_targetPos));}}
+\DoxyCodeLine{00305\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00306\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if(!res)}}
+\DoxyCodeLine{00307\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ std::cout\ <<"{}}ERRORE:\ getTargetPosition:\ j\ \textcolor{stringliteral}{"{}\ <<\ jList[i]\ <<\ "{}}sent\textcolor{stringliteral}{"{}\ <<\ targetPos[i]\ <<\ "{}}rec\textcolor{stringliteral}{"{}\ <<\ rec\_targetPos;}}
+\DoxyCodeLine{00308\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //else}}
+\DoxyCodeLine{00309\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //\ \ \ \ std::cout\ <<"{}}OK:\ getTargetPosition:\ j\ \textcolor{stringliteral}{"{}\ <<\ jList[i]\ <<\ "{}}sent\textcolor{stringliteral}{"{}\ <<\ targetPos[i]\ <<\ "{}}rec\textcolor{stringliteral}{"{}\ <<\ rec\_targetPos;}}
+\DoxyCodeLine{00310\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00311\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(3);}}
+\DoxyCodeLine{00312\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00313\ \textcolor{stringliteral}{\ \ \ \ //2)\ check\ get\ reference\ output\ (pwm\ mode)\ returns\ the\ ouput\ set\ by\ setRefOutput}}
+\DoxyCodeLine{00314\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}Checking\ pwm\ reference\ joint\ \%d\textcolor{stringliteral}{"{},\ jList[i]));}}
+\DoxyCodeLine{00315\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00316\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00317\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ setAndCheckControlMode(jList[i],\ VOCAB\_CM\_PWM);}}
+\DoxyCodeLine{00318\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00319\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ output\ =\ 2;}}
+\DoxyCodeLine{00320\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ rec\_output\ =\ 0;}}
+\DoxyCodeLine{00321\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPWM-\/>setRefDutyCycle(jList[i],\ output),}}
+\DoxyCodeLine{00322\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}set\ ref\ output\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00323\ \textcolor{stringliteral}{yarp::os::Time::delay(0.5);}}
+\DoxyCodeLine{00324\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00325\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPWM-\/>getRefDutyCycle(jList[i],\ \&rec\_output),}}
+\DoxyCodeLine{00326\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}get\ ref\ output\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00327\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00328\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK((output\ ==\ rec\_output),}}
+\DoxyCodeLine{00329\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}getting\ target\ output\ for\ j\ \%d:\ setval\ =\%.2f\ received\ \%.2f\textcolor{stringliteral}{"{}),jList[i],\ output,rec\_output));}}
+\DoxyCodeLine{00330\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00331\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>positionMove(jList[i],\ homePos[i]),}}
+\DoxyCodeLine{00332\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}go\ to\ home\ \ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00333\ \textcolor{stringliteral}{yarp::os::Time::delay(0.5);}}
+\DoxyCodeLine{00334\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>getTargetPosition(jList[i],\ \&rec\_targetPos),}}
+\DoxyCodeLine{00335\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}getting\ target\ pos\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00336\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00337\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //here\ I\ expect\ getTargetPosition\ returns\ targetPos[j]\ and\ not\ homePos[j]\ because\ joint\ is\ in\ pwm\ control\ mode\ and}}
+\DoxyCodeLine{00338\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //the\ positionMove(homepos)\ command\ should\ be\ discarded\ by\ firmware\ motor\ controller}}
+\DoxyCodeLine{00339\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(homePos[i],\ rec\_targetPos,\ res\_th,\ res\_th);}}
+\DoxyCodeLine{00340\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(!res,}}
+\DoxyCodeLine{00341\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}joint\ \%d\ discards\ PosotinMove\ command\ while\ it\ is\ in\ opnLoop\ mode.\ Set=\%.2f\ rec=\%.2f\textcolor{stringliteral}{"{}),jList[i],\ homePos[i],\ rec\_targetPos));}}
+\DoxyCodeLine{00342\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00343\ \textcolor{stringliteral}{\ \ \ \ //3)\ check\ get\ reference\ pos\ (directPosition\ mode)\ returns\ the\ target\ position\ set\ by\ setPosition()}}
+\DoxyCodeLine{00344\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //set\ direct\ mode}}
+\DoxyCodeLine{00345\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}Checking\ directPos\ reference\ joint\ \%d\textcolor{stringliteral}{"{},\ jList[i]));}}
+\DoxyCodeLine{00346\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00347\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ setAndCheckControlMode(jList[i],\ VOCAB\_CM\_POSITION\_DIRECT);}}
+\DoxyCodeLine{00348\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00349\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ curr\_pos=targetPos[i];}}
+\DoxyCodeLine{00350\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iEncoders-\/>getEncoder(jList[i],\ \&curr\_pos),}}
+\DoxyCodeLine{00351\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}get\ encoders\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00352\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00353\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ delta\ =\ 0.1;}}
+\DoxyCodeLine{00354\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ new\_directPos\ =\ curr\_pos+delta;}}
+\DoxyCodeLine{00355\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosDirect-\/>setPosition(jList[i],\ new\_directPos),}}
+\DoxyCodeLine{00356\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}Direct:setPosition\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00357\ \textcolor{stringliteral}{yarp::os::Time::delay(0.5);}}
+\DoxyCodeLine{00358\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00359\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosDirect-\/>getRefPosition(jList[i],\ \&rec\_targetPos),}}
+\DoxyCodeLine{00360\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}getting\ target\ pos\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00361\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00362\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(new\_directPos,\ rec\_targetPos,\ res\_th,\ res\_th);}}
+\DoxyCodeLine{00363\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(res,}}
+\DoxyCodeLine{00364\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}iDirect:\ getting\ target\ direct\ pos\ for\ j\ \%d:\ setval\ =\%.2f\ received\ \%.2f\textcolor{stringliteral}{"{}),jList[i],\ new\_directPos,rec\_targetPos));}}
+\DoxyCodeLine{00365\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00366\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //here\ I'm\ going\ to\ check\ the\ position\ reference\ is\ not\ changed.}}
+\DoxyCodeLine{00367\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iPosition-\/>getTargetPosition(jList[i],\ \&rec\_targetPos),}}
+\DoxyCodeLine{00368\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}getting\ target\ pos\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00369\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00370\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(targetPos[i],\ rec\_targetPos,\ res\_th,\ res\_th);}}
+\DoxyCodeLine{00371\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(res,\ Asserter::format(}}
+\DoxyCodeLine{00372\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ("{}}IPositionControl:\ getting\ target\ pos\ for\ j\ \%d:\ setval\ =\%.2f\ received\ \%.2f\textcolor{stringliteral}{"{}),}}
+\DoxyCodeLine{00373\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ jList[i],\ targetPos[i],rec\_targetPos));}}
+\DoxyCodeLine{00374\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00375\ \textcolor{stringliteral}{\ \ \ \ //4)\ check\ get\ reference\ velocity\ (velocity\ mode)\ returns\ the\ target\ velocity\ set\ by\ velocityMove()}}
+\DoxyCodeLine{00376\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //set\ velocity\ mode}}
+\DoxyCodeLine{00377\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format("{}}Checking\ velocity\ reference\ joint\ \%d\textcolor{stringliteral}{"{},\ jList[i]));}}
+\DoxyCodeLine{00378\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00379\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ setAndCheckControlMode(jList[i],\ VOCAB\_CM\_VELOCITY);}}
+\DoxyCodeLine{00380\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00381\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ vel=\ 0.5;}}
+\DoxyCodeLine{00382\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ rec\_vel;}}
+\DoxyCodeLine{00383\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iVelocity-\/>velocityMove(jList[i],\ vel),}}
+\DoxyCodeLine{00384\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}IVelocity:velocityMove\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00385\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00386\ \textcolor{stringliteral}{yarp::os::Time::delay(0.5);}}
+\DoxyCodeLine{00387\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(iVelocity-\/>getRefVelocity(jList[i],\ \&rec\_vel),}}
+\DoxyCodeLine{00388\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}IVelocity:getting\ target\ velocity\ for\ j\ \%d\textcolor{stringliteral}{"{}),jList[i]));}}
+\DoxyCodeLine{00389\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ res\ =\ yarp::robottestingframework::TestAsserter::isApproxEqual(vel,\ rec\_vel,\ res\_th,\ res\_th);}}
+\DoxyCodeLine{00390\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_CHECK(res,}}
+\DoxyCodeLine{00391\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(("{}}iVelocity:\ getting\ target\ vel\ for\ j\ \%d:\ setval\ =\%.2f\ received\ \%.2f\textcolor{stringliteral}{"{}),jList[i],\ vel,rec\_vel));}}
+\DoxyCodeLine{00392\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00393\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00394\ \textcolor{stringliteral}{\}}}
+
+\end{DoxyCode}

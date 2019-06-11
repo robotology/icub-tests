@@ -1,0 +1,108 @@
+\doxysection{Camera\+Test.\+cpp}
+\label{CameraTest_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/camera/CameraTest.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/camera/CameraTest.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <stdlib.h>}\ \ \ \ \ \textcolor{comment}{//\ for\ abs()}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Network.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}CameraTest.h"{}}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00034\ \textcolor{keyword}{using\ namespace\ }yarp::sig;}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ TIMES\ \ \ \ \ \ \ 1}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ FREQUENCY\ \ \ 30}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ TOLERANCE\ \ \ 5}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00042\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(CameraTest)}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ CameraTest::CameraTest()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}CameraTest"{}})\ \{}
+\DoxyCodeLine{00045\ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ CameraTest::\string~CameraTest()\ \{\ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{bool}\ CameraTest::setup(yarp::os::Property\&\ property)\ \{}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00055\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}portname"{}}),}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ portname\ must\ be\ given\ as\ the\ test\ paramter!"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ cameraPortName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}portname"{}}).asString();}
+\DoxyCodeLine{00058\ \ \ \ \ measure\_time\ =\ \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}measure\_time"{}})\ ?\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}measure\_time"{}}).asInt32()\ :\ TIMES;}
+\DoxyCodeLine{00059\ \ \ \ \ expected\_frequency\ =\ \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}expected\_frequency"{}})\ ?\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}expected\_frequency"{}}).asInt32()\ :\ FREQUENCY;}
+\DoxyCodeLine{00060\ \ \ \ \ tolerance\ =\ \textcolor{keyword}{property}.check(\textcolor{stringliteral}{"{}tolerance"{}})\ ?\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}tolerance"{}}).asInt32()\ :\ TOLERANCE;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{comment}{//\ opening\ port}}
+\DoxyCodeLine{00063\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(port.open(\textcolor{stringliteral}{"{}/CameraTest/image:i"{}}),}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}opening\ port,\ is\ YARP\ network\ available?"{}});}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Listening\ to\ camera\ for\ \%d\ seconds"{}},}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ measure\_time));}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ connecting}}
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}connecting\ from\ \%s\ to\ \%s"{}},}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ port.getName().c\_str(),\ cameraPortName.c\_str()));}
+\DoxyCodeLine{00072\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(Network::connect(cameraPortName,\ port.getName()),}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}could\ not\ connect\ to\ remote\ port,\ camera\ unavailable"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00075\ \}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ CameraTest::tearDown()\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ Network::disconnect(cameraPortName,\ port.getName());}
+\DoxyCodeLine{00079\ \ \ \ \ port.close();}
+\DoxyCodeLine{00080\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ CameraTest::run()\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Reading\ images..."{}});}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keywordtype}{double}\ timeStart=yarp::os::Time::now();}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{double}\ timeNow=timeStart;}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{int}\ frames=0;}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{while}(timeNow<timeStart+measure\_time)\ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ Image\ *image=port.read(\textcolor{keyword}{false});}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(image!=0)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ frames++;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.01);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ timeNow=yarp::os::Time::now();}
+\DoxyCodeLine{00094\ \ \ \ \ \}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{int}\ expectedFrames\ =\ measure\_time*expected\_frequency;}
+\DoxyCodeLine{00097\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(Asserter::format(\textcolor{stringliteral}{"{}Received\ \%d\ frames,\ expecting\ \%d"{}},}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frames,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ expectedFrames));}
+\DoxyCodeLine{00100\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_FAIL\_IF\_FALSE(abs(frames-\/expectedFrames)<tolerance,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}checking\ number\ of\ received\ frames"{}});}
+\DoxyCodeLine{00102\ \}}
+
+\end{DoxyCode}

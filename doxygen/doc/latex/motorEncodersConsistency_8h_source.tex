@@ -1,0 +1,135 @@
+\doxysection{motor\+Encoders\+Consistency.\+h}
+\label{motorEncodersConsistency_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motorEncoders-\/consistency/motorEncodersConsistency.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motorEncoders-\/consistency/motorEncodersConsistency.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_OPTICALENCODERSCONSISTENCY\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_OPTICALENCODERSCONSISTENCY\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00080\ \textcolor{keyword}{class\ }OpticalEncodersConsistency\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00081\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00082\ \ \ \ \ OpticalEncodersConsistency();}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~OpticalEncodersConsistency();}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ goHome();}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{void}\ setMode(\textcolor{keywordtype}{int}\ desired\_mode);}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ saveToFile(std::string\ filename,\ yarp::os::Bottle\ \&b);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00096\ \ \ \ \ std::string\ getPath(\textcolor{keyword}{const}\ std::string\&\ str);}
+\DoxyCodeLine{00097\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00098\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00099\ \ \ \ \ std::string\ plotString1;}
+\DoxyCodeLine{00100\ \ \ \ \ std::string\ plotString2;}
+\DoxyCodeLine{00101\ \ \ \ \ std::string\ plotString3;}
+\DoxyCodeLine{00102\ \ \ \ \ std::string\ plotString4;}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ yarp::sig::Vector\ jointsList;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{double}\ tolerance;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordtype}{bool}\ plot\_enabled;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_part\_joints;}
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ cycles;}
+\DoxyCodeLine{00111\ \ \ \ \ \ }
+\DoxyCodeLine{00112\ \ \ \ \ yarp::dev::PolyDriver\ \ \ \ \ \ \ \ *dd;}
+\DoxyCodeLine{00113\ \ \ \ \ yarp::dev::IPositionControl\ \ *ipos;}
+\DoxyCodeLine{00114\ \ \ \ \ yarp::dev::IControlMode\ \ \ \ \ \ *icmd;}
+\DoxyCodeLine{00115\ \ \ \ \ yarp::dev::IInteractionMode\ \ *iimd;}
+\DoxyCodeLine{00116\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00117\ \ \ \ \ yarp::dev::IMotorEncoders\ \ \ \ *imotenc;}
+\DoxyCodeLine{00118\ \ \ \ \ yarp::dev::IMotor\ \ \ \ \ \ \ \ \ \ \ \ *imot;}
+\DoxyCodeLine{00119\ \ \ \ \ yarp::dev::IRemoteVariables\ \ *ivar;}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ yarp::sig::Vector\ zero\_vector;}
+\DoxyCodeLine{00122\ \ \ \ \ yarp::sig::Vector\ enc\_jnt;}
+\DoxyCodeLine{00123\ \ \ \ \ yarp::sig::Vector\ enc\_jnt2mot;}
+\DoxyCodeLine{00124\ \ \ \ \ yarp::sig::Vector\ enc\_mot;}
+\DoxyCodeLine{00125\ \ \ \ \ yarp::sig::Vector\ enc\_mot2jnt;}
+\DoxyCodeLine{00126\ \ \ \ \ yarp::sig::Vector\ vel\_jnt;}
+\DoxyCodeLine{00127\ \ \ \ \ yarp::sig::Vector\ vel\_jnt2mot;}
+\DoxyCodeLine{00128\ \ \ \ \ yarp::sig::Vector\ vel\_mot;}
+\DoxyCodeLine{00129\ \ \ \ \ yarp::sig::Vector\ vel\_mot2jnt;}
+\DoxyCodeLine{00130\ \ \ \ \ yarp::sig::Vector\ acc\_jnt;}
+\DoxyCodeLine{00131\ \ \ \ \ yarp::sig::Vector\ acc\_jnt2mot;}
+\DoxyCodeLine{00132\ \ \ \ \ yarp::sig::Vector\ acc\_mot;}
+\DoxyCodeLine{00133\ \ \ \ \ yarp::sig::Vector\ acc\_mot2jnt;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ yarp::sig::Vector\ prev\_enc\_jnt;}
+\DoxyCodeLine{00136\ \ \ \ \ yarp::sig::Vector\ prev\_enc\_jnt2mot;}
+\DoxyCodeLine{00137\ \ \ \ \ yarp::sig::Vector\ prev\_enc\_mot;}
+\DoxyCodeLine{00138\ \ \ \ \ yarp::sig::Vector\ prev\_enc\_mot2jnt;}
+\DoxyCodeLine{00139\ \ \ \ \ yarp::sig::Vector\ prev\_vel\_jnt;}
+\DoxyCodeLine{00140\ \ \ \ \ yarp::sig::Vector\ prev\_vel\_jnt2mot;}
+\DoxyCodeLine{00141\ \ \ \ \ yarp::sig::Vector\ prev\_vel\_mot;}
+\DoxyCodeLine{00142\ \ \ \ \ yarp::sig::Vector\ prev\_vel\_mot2jnt;}
+\DoxyCodeLine{00143\ \ \ \ \ yarp::sig::Vector\ prev\_acc\_jnt;}
+\DoxyCodeLine{00144\ \ \ \ \ yarp::sig::Vector\ prev\_acc\_jnt2mot;}
+\DoxyCodeLine{00145\ \ \ \ \ yarp::sig::Vector\ prev\_acc\_mot;}
+\DoxyCodeLine{00146\ \ \ \ \ yarp::sig::Vector\ prev\_acc\_mot2jnt;}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ yarp::sig::Vector\ diff\_enc\_jnt;}
+\DoxyCodeLine{00149\ \ \ \ \ yarp::sig::Vector\ diff\_enc\_jnt2mot;}
+\DoxyCodeLine{00150\ \ \ \ \ yarp::sig::Vector\ diff\_enc\_mot;}
+\DoxyCodeLine{00151\ \ \ \ \ yarp::sig::Vector\ diff\_enc\_mot2jnt;}
+\DoxyCodeLine{00152\ \ \ \ \ yarp::sig::Vector\ diff\_vel\_jnt;}
+\DoxyCodeLine{00153\ \ \ \ \ yarp::sig::Vector\ diff\_vel\_jnt2mot;}
+\DoxyCodeLine{00154\ \ \ \ \ yarp::sig::Vector\ diff\_vel\_mot;}
+\DoxyCodeLine{00155\ \ \ \ \ yarp::sig::Vector\ diff\_vel\_mot2jnt;}
+\DoxyCodeLine{00156\ \ \ \ \ yarp::sig::Vector\ diff\_acc\_jnt;}
+\DoxyCodeLine{00157\ \ \ \ \ yarp::sig::Vector\ diff\_acc\_jnt2mot;}
+\DoxyCodeLine{00158\ \ \ \ \ yarp::sig::Vector\ diff\_acc\_mot;}
+\DoxyCodeLine{00159\ \ \ \ \ yarp::sig::Vector\ diff\_acc\_mot2jnt;}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ yarp::sig::Vector\ max;}
+\DoxyCodeLine{00162\ \ \ \ \ yarp::sig::Vector\ min;}
+\DoxyCodeLine{00163\ \ \ \ \ yarp::sig::Vector\ home;}
+\DoxyCodeLine{00164\ \ \ \ \ yarp::sig::Vector\ speed;}
+\DoxyCodeLine{00165\ \ \ \ \ yarp::sig::Vector\ gearbox;}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ yarp::sig::Matrix\ matrix\_arms;}
+\DoxyCodeLine{00168\ \ \ \ \ yarp::sig::Matrix\ matrix\_torso;}
+\DoxyCodeLine{00169\ \ \ \ \ yarp::sig::Matrix\ matrix\_legs;}
+\DoxyCodeLine{00170\ \ \ \ \ yarp::sig::Matrix\ matrix\_head;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ yarp::sig::Matrix\ matrix;}
+\DoxyCodeLine{00173\ \ \ \ \ yarp::sig::Matrix\ inv\_matrix;}
+\DoxyCodeLine{00174\ \ \ \ \ yarp::sig::Matrix\ trasp\_matrix;}
+\DoxyCodeLine{00175\ \ \ \ \ yarp::sig::Matrix\ inv\_trasp\_matrix;}
+\DoxyCodeLine{00176\ \};}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_opticalEncoders\_H}}
+
+\end{DoxyCode}

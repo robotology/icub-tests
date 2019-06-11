@@ -1,0 +1,323 @@
+\doxysection{Imu Class Reference}
+\label{classImu}\index{Imu@{Imu}}
+
+
+The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements.  
+
+
+
+
+{\ttfamily \#include $<$imu.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classImu_a2bd75f1be1f28fecbff074a7cb12ed8a}{setup}} (yarp\+::os\+::\+Property \&property)
+\item 
+virtual void \mbox{\hyperlink{classImu_aefc1351bbb75573d08c851a3d1d11a6d}{tear\+Down}} ()
+\item 
+virtual void \mbox{\hyperlink{classImu_a8af2b1c07ac7950215df4d4ece2008c0}{run}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements. 
+
+It takes as input the urdf of the robot and make a comparison between the expected values retrieved from the forward kinematics and the ones read from the IMU itself. The test involves the movements of the joints belonging to the part on which the sensors are mounted.
+
+You can find the parameters involved in the test in the following table\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{5}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-5}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-5}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-5}
+\PBS\centering model   &\PBS\centering string   &\PBS\centering Yes   &\PBS\centering The name of the robot model.   &\PBS\centering e.\+g. model.\+urdf    \\\cline{1-5}
+\PBS\centering port   &\PBS\centering string   &\PBS\centering Yes   &\PBS\centering The name of the port streaming IMU data.   &\PBS\centering e.\+g. /icub/alljoints/inertials    \\\cline{1-5}
+\PBS\centering remote\+Control\+Boards   &\PBS\centering vector of string   &\PBS\centering Yes   &\PBS\centering The list of the controlboards to open.   &\PBS\centering e.\+g. ("{}torso"{}, "{}head"{})    \\\cline{1-5}
+\PBS\centering axes\+Names   &\PBS\centering vector of string   &\PBS\centering Yes   &\PBS\centering The list of the controlled joints.   &\PBS\centering e.\+g. ("{}torso\+\_\+pitch"{}, "{}torso\+\_\+roll"{}, "{}torso\+\_\+yaw"{}, "{}neck\+\_\+pitch"{}, "{}neck\+\_\+roll"{}, "{}neck\+\_\+yaw"{})    \\\cline{1-5}
+\PBS\centering sensors\+List   &\PBS\centering vector of string   &\PBS\centering Yes   &\PBS\centering The list of the sensors to be tested.   &\PBS\centering e.\+g. ("{}head\+\_\+imu\+\_\+0"{}, "{}l\+\_\+arm\+\_\+ft"{}) or ("{}all"{})    \\\cline{1-5}
+\PBS\centering max\+Error   &\PBS\centering double   &\PBS\centering Yes   &\PBS\centering The tolerance on the error.   &\PBS\centering \\\cline{1-5}
+\end{longtabu}
+
+
+Further instructions about how to install, configure and run the test can be found in the \href{http://robotology.github.io/icub-tests/doxygen/doc/html/pages.html}{\texttt{ related page}}. 
+
+Definition at line \mbox{\hyperlink{imu_8h_source_l00039}{39}} of file \mbox{\hyperlink{imu_8h_source}{imu.\+h}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\label{classImu_a4d39c30846a5b69218f0847178a31994} 
+\index{Imu@{Imu}!Imu@{Imu}}
+\index{Imu@{Imu}!Imu@{Imu}}
+\doxysubsubsection{\texorpdfstring{Imu()}{Imu()}}
+{\footnotesize\ttfamily Imu\+::\+Imu (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{imu_8cpp_source_l00021}{21}} of file \mbox{\hyperlink{imu_8cpp_source}{imu.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00021\ :\ TestCase(\textcolor{stringliteral}{"{}Imu"{}})\ \{\ \}}
+
+\end{DoxyCode}
+\label{classImu_a0660138107b74ceb001a5691eb1db4d0} 
+\index{Imu@{Imu}!````~Imu@{\texorpdfstring{$\sim$}{\string~}Imu}}
+\index{````~Imu@{\texorpdfstring{$\sim$}{\string~}Imu}!Imu@{Imu}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}Imu()}{\string~Imu()}}
+{\footnotesize\ttfamily Imu\+::\texorpdfstring{$\sim$}{\string~}\+Imu (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{imu_8cpp_source_l00023}{23}} of file \mbox{\hyperlink{imu_8cpp_source}{imu.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \{\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\label{classImu_a8af2b1c07ac7950215df4d4ece2008c0} 
+\index{Imu@{Imu}!run@{run}}
+\index{run@{run}!Imu@{Imu}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Imu\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{imu_8cpp_source_l00191}{191}} of file \mbox{\hyperlink{imu_8cpp_source}{imu.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00192\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Starting\ reading\ IMU\ orientation\ values..."{}});}
+\DoxyCodeLine{00194\ \ \ \ \ rpyValues.resize(sensorsList.get(0).asList()-\/>size());}
+\DoxyCodeLine{00195\ \ \ \ \ I\_R\_I\_IMU.resize(sensorsList.get(0).asList()-\/>size());}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ sensorIndex\ =\ 0;\ sensorIndex\ <\ sensorsList.get(0).asList()-\/>size();\ sensorIndex++)}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ std::string\ sensorName\{\textcolor{stringliteral}{"{}"{}}\};}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ std::string\ frameName\{\textcolor{stringliteral}{"{}"{}}\};}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ timestamp;}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(iorientation-\/>getOrientationSensorName(sensorIndex,\ sensorName),\ \textcolor{stringliteral}{"{}Unable\ to\ obtain\ sensor\ name."{}});}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(iorientation-\/>getOrientationSensorMeasureAsRollPitchYaw(sensorIndex,\ rpyValues[sensorIndex],\ timestamp),\ \textcolor{stringliteral}{"{}Unable\ to\ obtain\ rpy\ measurements."{}});}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(iorientation-\/>getOrientationSensorFrameName(sensorIndex,\ frameName),\ \textcolor{stringliteral}{"{}Unable\ to\ obtain\ frame\ name."{}});}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ iDynTree::Rotation\ I\_R\_FK\ =\ kinDynComp.getWorldTransform(frameName).getRotation();\ }
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ I\_R\_I\_IMU[sensorIndex]\ =\ (I\_R\_FK\ *\ ((iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]),\ iDynTree::deg2rad(rpyValues[sensorIndex][1]),\ iDynTree::deg2rad(rpyValues[sensorIndex][2]))).inverse()));\ \ \ \ }
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00209\ \ \ \ \ setupBrokers();}
+\DoxyCodeLine{00210\ \ \ \ \ startMove();}
+\DoxyCodeLine{00211\ \}}
+
+\end{DoxyCode}
+\label{classImu_a2bd75f1be1f28fecbff074a7cb12ed8a} 
+\index{Imu@{Imu}!setup@{setup}}
+\index{setup@{setup}!Imu@{Imu}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily bool Imu\+::setup (\begin{DoxyParamCaption}\item[{yarp\+::os\+::\+Property \&}]{property }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{imu_8cpp_source_l00025}{25}} of file \mbox{\hyperlink{imu_8cpp_source}{imu.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}robot"{}}),\ \textcolor{stringliteral}{"{}The\ robot\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00028\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}port"{}}),\ \textcolor{stringliteral}{"{}The\ port\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00029\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}remoteControlBoards"{}}),\ \textcolor{stringliteral}{"{}Please,\ provide\ the\ controlboards\ name."{}});}
+\DoxyCodeLine{00030\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}axesNames"{}}),\ \textcolor{stringliteral}{"{}Please,\ provide\ the\ controlled\ joints\ name."{}});}
+\DoxyCodeLine{00031\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}model"{}}),\ \textcolor{stringliteral}{"{}Please,\ provide\ the\ urdf\ model\ path."{}});}
+\DoxyCodeLine{00032\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}maxError"{}}),\ \textcolor{stringliteral}{"{}Please,\ provide\ the\ threshold\ error."{}});}
+\DoxyCodeLine{00033\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}sensorsList"{}}),\ \textcolor{stringliteral}{"{}Please,\ provide\ the\ list\ of\ the\ sensors\ you\ want\ to\ check\ or\ 'all'\ if\ you\ want\ to\ test\ all\ the\ IMUs."{}});}
+\DoxyCodeLine{00034\ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ robotName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}robot"{}}).asString();\ \textcolor{comment}{//\ robot\ name}}
+\DoxyCodeLine{00036\ \ \ \ \ portName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}port"{}}).asString();\ \textcolor{comment}{//\ name\ of\ the\ port\ from\ which\ the\ data\ are\ streamed}}
+\DoxyCodeLine{00037\ \ \ \ \ errorMax\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}maxError"{}}).asFloat64();\ \textcolor{comment}{//error\ mean}}
+\DoxyCodeLine{00038\ \ \ \ \ modelName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}model"{}}).asString();\ \textcolor{comment}{//\ urdf\ model\ path}}
+\DoxyCodeLine{00039\ \ \ \ \ yarp::os::ResourceFinder\ \&rf\ =\ yarp::os::ResourceFinder::getResourceFinderSingleton();}
+\DoxyCodeLine{00040\ \ \ \ \ std::string\ modelAbsolutePath\ =\ rf.findFileByName(modelName);}
+\DoxyCodeLine{00041\ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Running\ IMU\ test\ on\ "{}}+robotName+\textcolor{stringliteral}{"{}..."{}});}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ yarp::os::Property\ controlBoardOptions;}
+\DoxyCodeLine{00045\ \ \ \ \ controlBoardOptions.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}remotecontrolboardremapper"{}});}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ yarp::os::Bottle\ remoteControlBoards;}
+\DoxyCodeLine{00048\ \ \ \ \ yarp::os::Bottle\ \&\ remoteControlBoardsList\ =\ remoteControlBoards.addList();\ }
+\DoxyCodeLine{00049\ \ \ \ \ yarp::os::Bottle\ *inputControlBoards;}
+\DoxyCodeLine{00050\ \ \ \ \ inputControlBoards\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}remoteControlBoards"{}}).asList();}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ ctrlBoard\ =\ 0;\ ctrlBoard\ <\ inputControlBoards-\/>size();\ ctrlBoard++)}
+\DoxyCodeLine{00052\ \ \ \ \ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ partsList.push\_back(inputControlBoards-\/>get(ctrlBoard).asString());}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ remoteControlBoardsList.addString(\textcolor{stringliteral}{"{}/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+inputControlBoards-\/>get(ctrlBoard).asString());}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ yarp::os::Bottle\ axesNames;}
+\DoxyCodeLine{00058\ \ \ \ \ yarp::os::Bottle\ \&\ axesList\ =\ axesNames.addList();}
+\DoxyCodeLine{00059\ \ \ \ \ yarp::os::Bottle\ *inputJoints;}
+\DoxyCodeLine{00060\ \ \ \ \ inputJoints\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}axesNames"{}}).asList();}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ ctrlJoint\ =\ 0;\ ctrlJoint\ <\ inputJoints-\/>size();\ ctrlJoint++)}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ axesList.addString(inputJoints-\/>get(ctrlJoint).asString());}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ controlBoardOptions.put(\textcolor{stringliteral}{"{}remoteControlBoards"{}},\ remoteControlBoards.get(0));}
+\DoxyCodeLine{00067\ \ \ \ \ controlBoardOptions.put(\textcolor{stringliteral}{"{}localPortPrefix"{}},\ \textcolor{stringliteral}{"{}/test"{}});}
+\DoxyCodeLine{00068\ \ \ \ \ controlBoardOptions.put(\textcolor{stringliteral}{"{}axesNames"{}},\ axesNames.get(0));}
+\DoxyCodeLine{00069\ \ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(controlBoardDriver.open(controlBoardOptions),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ the\ controlBoard\ driver"{}});}
+\DoxyCodeLine{00071\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(controlBoardDriver.isValid(),\ \textcolor{stringliteral}{"{}Device\ driver\ cannot\ be\ opened"{}});}
+\DoxyCodeLine{00072\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(controlBoardDriver.view(ipos),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ position\ control\ interface"{}});}
+\DoxyCodeLine{00073\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(controlBoardDriver.view(ienc),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ encoder\ interface"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(controlBoardDriver.view(iaxes),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ axes\ interface"{}});}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ienc-\/>getAxes(\&axes),\ \textcolor{stringliteral}{"{}Cannot\ get\ number\ of\ controlled\ axes"{}});}
+\DoxyCodeLine{00077\ \ \ \ \ std::string\ axisName;}
+\DoxyCodeLine{00078\ \ \ \ \ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ axIndex\ =\ 0;\ axIndex\ <\ axes;\ axIndex++)}
+\DoxyCodeLine{00080\ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(iaxes-\/>getAxisName(axIndex,\ axisName),\ \textcolor{stringliteral}{"{}Cannot\ get\ the\ name\ of\ controlled\ axes"{}});}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ axesVec.push\_back(axisName);}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \ \ }
+\DoxyCodeLine{00085\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(model.loadReducedModelFromFile(modelAbsolutePath.c\_str(),\ axesVec),\ Asserter::format(\textcolor{stringliteral}{"{}Cannot\ load\ model\ from\ \%s"{}},\ modelAbsolutePath.c\_str()));}
+\DoxyCodeLine{00086\ \ \ \ \ kinDynComp.loadRobotModel(model.model());}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ yarp::os::Property\ MASclientOptions;}
+\DoxyCodeLine{00089\ \ \ \ \ MASclientOptions.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}multipleanalogsensorsclient"{}});}
+\DoxyCodeLine{00090\ \ \ \ \ MASclientOptions.put(\textcolor{stringliteral}{"{}remote"{}},\ portName);}
+\DoxyCodeLine{00091\ \ \ \ \ MASclientOptions.put(\textcolor{stringliteral}{"{}local"{}},\ \textcolor{stringliteral}{"{}/imuTest"{}}+portName);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASclientDriver.open(MASclientOptions),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ the\ MAS\ client\ driver"{}});}
+\DoxyCodeLine{00094\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASclientDriver.isValid(),\ \textcolor{stringliteral}{"{}Device\ driver\ cannot\ be\ opened"{}});}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ yarp::os::Bottle\ \&\ sensorsNamesList\ =\ sensorsList.addList();}
+\DoxyCodeLine{00097\ \ \ \ \ yarp::os::Bottle\ *inputSensorsList;}
+\DoxyCodeLine{00098\ \ \ \ \ inputSensorsList\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}sensorsList"{}}).asList();}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{if}(inputSensorsList-\/>size()\ ==\ 0\ ||\ inputSensorsList-\/>get(0).asString()\ ==\ \textcolor{stringliteral}{"{}all"{}})}
+\DoxyCodeLine{00101\ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Testing\ all\ the\ IMUs\ available..."{}});}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ std::string\ sensorName\{\textcolor{stringliteral}{"{}"{}}\};}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ yarp::dev::IOrientationSensors*\ ior;}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASclientDriver.view(ior),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ the\ orientation\ interface"{}});}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ sensorIndex\ =\ 0;\ sensorIndex\ <\ ior-\/>getNrOfOrientationSensors();\ sensorIndex++)}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ ior-\/>getOrientationSensorName(sensorIndex,\ sensorName);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ sensorsNamesList.addString(sensorName);}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \}\ \ \ \ }
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00114\ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}Testing\ the\ list\ of\ provided\ IMUs..."{}});}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ sensorIndex\ =\ 0;\ sensorIndex\ <\ inputSensorsList-\/>size();\ sensorIndex++)}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ sensorsNamesList.addString(inputSensorsList-\/>get(sensorIndex).asString());}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ yarp::os::Property\ MASremapperOptions;}
+\DoxyCodeLine{00123\ \ \ \ \ MASremapperOptions.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}multipleanalogsensorsremapper"{}});}
+\DoxyCodeLine{00124\ \ \ \ \ MASremapperOptions.put(\textcolor{stringliteral}{"{}OrientationSensorsNames"{}},\ sensorsList.get(0));}
+\DoxyCodeLine{00125\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASremapperDriver.open(MASremapperOptions),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ the\ MAS\ remapper\ driver"{}});}
+\DoxyCodeLine{00126\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASremapperDriver.isValid(),\ \textcolor{stringliteral}{"{}Device\ driver\ cannot\ be\ opened"{}});}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASremapperDriver.view(imultiwrap),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ multiple\ wrapper\ interface"{}});}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ yarp::dev::PolyDriverList\ driverList;}
+\DoxyCodeLine{00131\ \ \ \ \ driverList.push(\&MASclientDriver,\ \textcolor{stringliteral}{"{}alljoints\_inertials"{}});}
+\DoxyCodeLine{00132\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(imultiwrap-\/>attachAll(driverList),\ \textcolor{stringliteral}{"{}Unable\ to\ do\ the\ attach"{}});}
+\DoxyCodeLine{00133\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(MASremapperDriver.view(iorientation),\ \textcolor{stringliteral}{"{}Unable\ to\ open\ orientation\ interface"{}});}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ iDynTree::Vector3\ baseLinkOrientationRad;}
+\DoxyCodeLine{00136\ \ \ \ \ baseLinkOrientationRad.zero();}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ baseLinkOrientation\ =\ iDynTree::Rotation::RPY(baseLinkOrientationRad[0],\ baseLinkOrientationRad[1],\ baseLinkOrientationRad[2]);}
+\DoxyCodeLine{00139\ \ \ \ \ I\_T\_base\ =\ iDynTree::Transform(baseLinkOrientation,\ iDynTree::Position::Zero());}
+\DoxyCodeLine{00140\ \ \ \ \ iDynTree::Twist\ baseVelocity\ =\ iDynTree::Twist::Zero();}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ dofs\ =\ kinDynComp.model().getNrOfDOFs();}
+\DoxyCodeLine{00143\ \ \ \ \ s.resize(dofs);}
+\DoxyCodeLine{00144\ \ \ \ \ ds.resize(dofs);}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ positions.resize(axes);}
+\DoxyCodeLine{00147\ \ \ \ \ velocities.resize(axes);}
+\DoxyCodeLine{00148\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ienc-\/>getEncoders(positions.data()),\ \textcolor{stringliteral}{"{}Cannot\ get\ joint\ positions"{}});}
+\DoxyCodeLine{00149\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ienc-\/>getEncoderSpeeds(velocities.data()),\ \textcolor{stringliteral}{"{}Cannot\ get\ joint\ velocities"{}});}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keyword}{auto}\ axIndex\ =\ 0;\ axIndex\ <\ axes;\ axIndex++)}
+\DoxyCodeLine{00152\ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ s.setVal(axIndex,\ iDynTree::deg2rad(positions[axIndex]));}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ ds.setVal(axIndex,\ iDynTree::deg2rad(velocities[axIndex]));}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ gravity.zero();}
+\DoxyCodeLine{00158\ \ \ \ \ gravity(2)\ =\ -\/9.81;}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ kinDynComp.setRobotState(}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ I\_T\_base,}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ s,}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ baseVelocity,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ ds,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ gravity}
+\DoxyCodeLine{00166\ \ \ \ \ );}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ setupRobometry();}
+\DoxyCodeLine{00169\ \ \ \ \ localBroker.resize(remoteControlBoards.get(0).asList()-\/>size());}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00172\ \}}
+
+\end{DoxyCode}
+\label{classImu_aefc1351bbb75573d08c851a3d1d11a6d} 
+\index{Imu@{Imu}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!Imu@{Imu}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily void Imu\+::tear\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{imu_8cpp_source_l00174}{174}} of file \mbox{\hyperlink{imu_8cpp_source}{imu.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00175\ \{}
+\DoxyCodeLine{00176\ \ \ \ \ outputPort.interrupt();}
+\DoxyCodeLine{00177\ \ \ \ \ outputPort.close();}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ controlBoardDriver.close();}
+\DoxyCodeLine{00180\ \ \ \ \ MASclientDriver.close();}
+\DoxyCodeLine{00181\ \ \ \ \ MASremapperDriver.close();}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ localBroker.size();\ i++)}
+\DoxyCodeLine{00184\ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ localBroker[i].stop();}
+\DoxyCodeLine{00186\ \ \ \ \ \}}
+\DoxyCodeLine{00187\ \ \ \ \ }
+\DoxyCodeLine{00188\ \ \ \ \ scriptBroker.stop();}
+\DoxyCodeLine{00189\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.\+cpp\end{DoxyCompactItemize}

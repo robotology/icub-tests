@@ -1,0 +1,81 @@
+\doxysection{movement\+References\+Test.\+h}
+\label{movementReferencesTest_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/movementReferencesTest/movementReferencesTest.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/movementReferencesTest/movementReferencesTest.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_MOVEMENTREFERNCESTEST\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_MOVEMENTREFERNCESTEST\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Value.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}yarp/robottestingframework/JointsPosMotion.h"{}}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{class\ }MovementReferencesTest\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00057\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00058\ \ \ \ \ MovementReferencesTest();}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~MovementReferencesTest();}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ configuration);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ setAndCheckControlMode(\textcolor{keywordtype}{int}\ j,\ \textcolor{keywordtype}{int}\ mode);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ yarp::dev::PolyDriver\ *dd;}
+\DoxyCodeLine{00072\ \ \ \ \ yarp::dev::IEncoders\ *iEncoders;}
+\DoxyCodeLine{00073\ \ \ \ \ yarp::dev::IPositionControl\ *iPosition;}
+\DoxyCodeLine{00074\ \ \ \ \ yarp::dev::IPWMControl\ *iPWM;}
+\DoxyCodeLine{00075\ \ \ \ \ yarp::dev::IPositionDirect\ *iPosDirect;}
+\DoxyCodeLine{00076\ \ \ \ \ yarp::dev::IControlMode\ *iControlMode;}
+\DoxyCodeLine{00077\ \ \ \ \ yarp::dev::IVelocityControl\ *iVelocity;}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{bool}\ initialized;}
+\DoxyCodeLine{00082\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00083\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{int}\ numJointsInPart;}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ numJoints;}
+\DoxyCodeLine{00087\ \ \ \ \ yarp::robottestingframework::jointsPosMotion\ *jPosMotion;}
+\DoxyCodeLine{00088\ \ \ \ \ yarp::sig::Vector\ jointsList;}
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ *jList;}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ yarp::sig::Vector\ targetPos;}
+\DoxyCodeLine{00092\ \ \ \ \ yarp::sig::Vector\ homePos;}
+\DoxyCodeLine{00093\ \ \ \ \ yarp::sig::Vector\ refVel;}
+\DoxyCodeLine{00094\ \ \ \ \ yarp::sig::Vector\ refAcc;}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{//yarp::sig::Vector\ timeout;}}
+\DoxyCodeLine{00096\ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_MOVEMENTREFERNCESTEST\_}}
+
+\end{DoxyCode}

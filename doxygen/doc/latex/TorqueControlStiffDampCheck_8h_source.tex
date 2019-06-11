@@ -1,0 +1,83 @@
+\doxysection{Torque\+Control\+Stiff\+Damp\+Check.\+h}
+\label{TorqueControlStiffDampCheck_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torqueControl-\/stiffDampCheck/TorqueControlStiffDampCheck.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torqueControl-\/stiffDampCheck/TorqueControlStiffDampCheck.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_TORQUECONTORLSTIFFDAMPCHECK\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_TORQUECONTORLSTIFFDAMPCHECK\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }TorqueControlStiffDampCheck\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00033\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ TorqueControlStiffDampCheck();}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~TorqueControlStiffDampCheck();}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ goHome();}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ setMode(\textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode);}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ verifyMode(\textcolor{keywordtype}{int}\ desired\_control\_mode,\ yarp::dev::InteractionModeEnum\ desired\_interaction\_mode,\ std::string\ title);}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{bool}\ setAndCheckImpedance(\textcolor{keywordtype}{int}\ joint,\ \textcolor{keywordtype}{double}\ stiffness,\ \textcolor{keywordtype}{double}\ damping);}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ saveToFile(std::string\ filename,\ yarp::os::Bottle\ \&b);}
+\DoxyCodeLine{00048\ \ \ \ \ std::string\ getPath(\textcolor{keyword}{const}\ std::string\&\ str);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00051\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00052\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}*\ jointsList;}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_part\_joints;}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_cmd\_joints;}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{double}\ *stiffness;}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{double}\ *damping;}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{double}\ *home;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{double}\ *pos\_tot;}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{double}\ \ testLen\_sec;}
+\DoxyCodeLine{00061\ \ \ \ \ Bottle\ b\_pos\_trq;}
+\DoxyCodeLine{00062\ \ \ \ \ Bottle\ b\_vel\_trq;}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{bool}\ plot\_enabled;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ yarp::dev::PolyDriver\ \ \ \ \ \ \ \ *dd;}
+\DoxyCodeLine{00067\ \ \ \ \ yarp::dev::IPositionControl\ *ipos;}
+\DoxyCodeLine{00068\ \ \ \ \ yarp::dev::IAmplifierControl\ *iamp;}
+\DoxyCodeLine{00069\ \ \ \ \ yarp::dev::IControlMode\ \ \ \ \ *icmd;}
+\DoxyCodeLine{00070\ \ \ \ \ yarp::dev::IInteractionMode\ \ *iimd;}
+\DoxyCodeLine{00071\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00072\ \ \ \ \ yarp::dev::ITorqueControl\ \ \ \ *itrq;}
+\DoxyCodeLine{00073\ \ \ \ \ yarp::dev::IImpedanceControl\ *iimp;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_TORQUECONTORLSTIFFDAMPCHECK\_H}}
+
+\end{DoxyCode}

@@ -1,0 +1,639 @@
+\doxysection{motor\+Encoders\+Consistency.\+cpp}
+\label{motorEncodersConsistency_8cpp_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motorEncoders-\/consistency/motorEncodersConsistency.cpp@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motorEncoders-\/consistency/motorEncodersConsistency.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <robottestingframework/TestAssert.h>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <robottestingframework/dll/Plugin.h>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <yarp/os/Time.h>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/os/LogStream.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/math/Math.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/ResourceFinder.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <cstdlib>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}motorEncodersConsistency.h"{}}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <yarp/dev/IRemoteVariables.h>}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{//example\ \ \ \ \ -\/v\ -\/t\ OpticalEncodersConsistency.dll\ -\/p\ "{}-\/-\/robot\ icub\ -\/-\/part\ left\_arm\ -\/-\/joints\ "{}"{}(0\ 1\ 2)"{}"{}\ -\/-\/home\ "{}"{}(-\/30\ 30\ 10)"{}"{}\ -\/-\/speed\ "{}"{}(20\ 20\ 20)"{}"{}\ -\/-\/max\ "{}"{}(-\/20\ 40\ 20)"{}"{}\ -\/-\/min\ "{}"{}(-\/40\ 20\ 0)"{}"{}\ -\/-\/cycles\ 10\ -\/-\/tolerance\ 1.0\ "{}}}
+\DoxyCodeLine{00039\ \textcolor{comment}{//example2\ \ \ \ -\/v\ -\/t\ OpticalEncodersConsistency.dll\ -\/p\ "{}-\/-\/robot\ icub\ -\/-\/part\ head\ \ \ \ \ -\/-\/joints\ "{}"{}(2)"{}"{}\ \ \ \ \ -\/-\/home\ "{}"{}(0)"{}"{}\ \ \ \ \ \ \ \ \ -\/-\/speed\ "{}"{}(20\ \ \ \ \ \ )"{}"{}\ -\/-\/max\ "{}"{}(10\ \ \ \ \ \ )"{}"{}\ \ -\/-\/min\ "{}"{}(-\/10)"{}"{}\ \ \ \ \ \ -\/-\/cycles\ 10\ -\/-\/tolerance\ 1.0\ "{}}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//-\/v\ -\/\ s\ "{}C:\(\backslash\)software\(\backslash\)icub-\/tests\(\backslash\)suites\(\backslash\)encoders-\/icubSim.xml"{}}}
+\DoxyCodeLine{00041\ \textcolor{keyword}{using\ namespace\ }robottestingframework;}
+\DoxyCodeLine{00042\ \textcolor{keyword}{using\ namespace\ }yarp::os;}
+\DoxyCodeLine{00043\ \textcolor{keyword}{using\ namespace\ }yarp::dev;}
+\DoxyCodeLine{00044\ \textcolor{keyword}{using\ namespace\ }yarp::math;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ prepare\ the\ plugin}}
+\DoxyCodeLine{00047\ ROBOTTESTINGFRAMEWORK\_PREPARE\_PLUGIN(OpticalEncodersConsistency)}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ OpticalEncodersConsistency::OpticalEncodersConsistency()\ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}OpticalEncodersConsistency"{}})\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ jointsList=0;}
+\DoxyCodeLine{00051\ \ \ \ \ dd=0;}
+\DoxyCodeLine{00052\ \ \ \ \ ipos=0;}
+\DoxyCodeLine{00053\ \ \ \ \ icmd=0;}
+\DoxyCodeLine{00054\ \ \ \ \ iimd=0;}
+\DoxyCodeLine{00055\ \ \ \ \ ienc=0;}
+\DoxyCodeLine{00056\ \ \ \ \ imot=0;}
+\DoxyCodeLine{00057\ \ \ \ \ imotenc=0;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ enc\_jnt=0;}
+\DoxyCodeLine{00060\ \ \ \ \ enc\_jnt2mot=0;}
+\DoxyCodeLine{00061\ \ \ \ \ enc\_mot=0;}
+\DoxyCodeLine{00062\ \ \ \ \ vel\_jnt=0;}
+\DoxyCodeLine{00063\ \ \ \ \ vel\_jnt2mot=0;}
+\DoxyCodeLine{00064\ \ \ \ \ vel\_mot=0;}
+\DoxyCodeLine{00065\ \ \ \ \ acc\_jnt=0;}
+\DoxyCodeLine{00066\ \ \ \ \ acc\_jnt2mot=0;}
+\DoxyCodeLine{00067\ \ \ \ \ acc\_mot=0;}
+\DoxyCodeLine{00068\ \ \ \ \ cycles\ =10;}
+\DoxyCodeLine{00069\ \ \ \ \ tolerance\ =\ 1.0;}
+\DoxyCodeLine{00070\ \ \ \ \ plot\_enabled\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00071\ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ OpticalEncodersConsistency::\string~OpticalEncodersConsistency()\ \{\ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{bool}\ OpticalEncodersConsistency::setup(yarp::os::Property\&\ property)\ \{}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{char}\ b[5000];}
+\DoxyCodeLine{00081\ \ \ \ \ strcpy\ (b,property.toString().c\_str());}
+\DoxyCodeLine{00082\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(\textcolor{stringliteral}{"{}on\ setup()"{}});}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00084\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}robot"{}}),\ \textcolor{stringliteral}{"{}The\ robot\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00085\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}part"{}}),\ \textcolor{stringliteral}{"{}The\ part\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00086\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}joints"{}}),\ \textcolor{stringliteral}{"{}The\ joints\ list\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00087\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}home"{}}),\ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ home\ position\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00088\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}max"{}}),\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ max\ position\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00089\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}min"{}}),\ \ \ \ \ \ \ \textcolor{stringliteral}{"{}The\ min\ position\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00090\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}speed"{}}),\ \ \ \ \ \textcolor{stringliteral}{"{}The\ positionMove\ reference\ speed\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00091\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}tolerance"{}}),\ \textcolor{stringliteral}{"{}The\ tolerance\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00092\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}matrix\_size"{}}),\ \ \textcolor{stringliteral}{"{}The\ matrix\ size\ must\ be\ given!"{}});}
+\DoxyCodeLine{00093\ \ \ \ \textcolor{comment}{//\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check("{}matrix"{}),\ \ \ \ \ \ \ "{}The\ coupling\ matrix\ must\ be\ given!"{});}}
+\DoxyCodeLine{00094\ \ \ \ \ robotName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}robot"{}}).asString();}
+\DoxyCodeLine{00095\ \ \ \ \ partName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}part"{}}).asString();}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}plot\_enabled"{}}))}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ plot\_enabled\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}plot\_enabled"{}}).asBool();}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{/*if(plot\_enabled)}}
+\DoxyCodeLine{00099\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00100\ \textcolor{comment}{\ \ \ \ \ \ \ \ plotString1\ =\ property.find("{}plotString1"{}).asString();}}
+\DoxyCodeLine{00101\ \textcolor{comment}{\ \ \ \ \ \ \ \ plotString2\ =\ property.find("{}plotString2"{}).asString();}}
+\DoxyCodeLine{00102\ \textcolor{comment}{\ \ \ \ \ \ \ \ plotString3\ =\ property.find("{}plotString3"{}).asString();}}
+\DoxyCodeLine{00103\ \textcolor{comment}{\ \ \ \ \ \ \ \ plotString4\ =\ property.find("{}plotString4"{}).asString();}}
+\DoxyCodeLine{00104\ \textcolor{comment}{\ \ \ \ \}*/}}
+\DoxyCodeLine{00105\ \ \ \ \ Bottle*\ jointsBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}joints"{}}).asList();}
+\DoxyCodeLine{00106\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(jointsBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ joints\ parameter"{}});}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ Bottle*\ homeBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}home"{}}).asList();}
+\DoxyCodeLine{00109\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(homeBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ home\ parameter"{}});}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ Bottle*\ maxBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}max"{}}).asList();}
+\DoxyCodeLine{00112\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(maxBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ max\ parameter"{}});}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ Bottle*\ minBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}min"{}}).asList();}
+\DoxyCodeLine{00115\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(minBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ min\ parameter"{}});}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ Bottle*\ speedBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}speed"{}}).asList();}
+\DoxyCodeLine{00118\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(speedBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ speed\ parameter"{}});}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ tolerance\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}tolerance"{}}).asFloat64();}
+\DoxyCodeLine{00121\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(tolerance>=0,\textcolor{stringliteral}{"{}invalid\ tolerance"{}});}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{int}\ matrix\_size=\textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}matrix\_size"{}}).asInt32();}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordflow}{if}\ (matrix\_size>0)}
+\DoxyCodeLine{00125\ \ \ \ \ \{}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ matrix.resize(matrix\_size,matrix\_size);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ matrix.eye();}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ couplig\ matrix\ is\ retrived\ run-\/time\ by\ the\ IRemoteVariable\ interface\ accessing\ the\ jinimatic\_mj\ variable}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bottle*\ matrixBottle\ =\ property.find("{}matrix"{}).asList();}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ (matrixBottle!=\ NULL\ \&\&\ matrixBottle-\/>size()\ ==\ (matrix\_size*matrix\_size)\ )}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ for\ (int\ i=0;\ i<\ (matrix\_size*matrix\_size);\ i++)}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \{}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ matrix.data()[i]=matrixBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \}}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ else}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ char\ buff\ [500];}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ sprintf\ (buff,\ "{}invalid\ number\ of\ elements\ of\ parameter\ matrix\ \%d!=\%d"{},\ matrixBottle-\/>size()\ ,\ (matrix\_size*matrix\_size));}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(buff);}}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00146\ \ \ \ \ \}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00148\ \ \ \ \ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}invalid\ matrix\_size:\ must\ be\ >0"{}});}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{comment}{//optional\ parameters}}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{if}\ (property.check(\textcolor{stringliteral}{"{}cycles"{}}))}
+\DoxyCodeLine{00154\ \ \ \ \ \{cycles\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}cycles"{}}).asInt32();\}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ Property\ options;}
+\DoxyCodeLine{00157\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00158\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}remote"{}},\ \textcolor{stringliteral}{"{}/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00159\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}local"{}},\ \textcolor{stringliteral}{"{}/positionDirectTest/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ dd\ =\ \textcolor{keyword}{new}\ PolyDriver(options);}
+\DoxyCodeLine{00162\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>isValid(),\textcolor{stringliteral}{"{}Unable\ to\ open\ device\ driver"{}});}
+\DoxyCodeLine{00163\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ienc),\textcolor{stringliteral}{"{}Unable\ to\ open\ encoders\ interface"{}});}
+\DoxyCodeLine{00164\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ipos),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ interface"{}});}
+\DoxyCodeLine{00165\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(icmd),\textcolor{stringliteral}{"{}Unable\ to\ open\ control\ mode\ interface"{}});}
+\DoxyCodeLine{00166\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iimd),\textcolor{stringliteral}{"{}Unable\ to\ open\ interaction\ mode\ interface"{}});}
+\DoxyCodeLine{00167\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(imotenc),\textcolor{stringliteral}{"{}Unable\ to\ open\ motor\ encoders\ interface"{}});}
+\DoxyCodeLine{00168\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(imot),\textcolor{stringliteral}{"{}Unable\ to\ open\ motor\ interface"{}});}
+\DoxyCodeLine{00169\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ivar),\textcolor{stringliteral}{"{}Unable\ to\ open\ remote\ variables\ interface"{}});}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ienc-\/>getAxes(\&n\_part\_joints))}
+\DoxyCodeLine{00173\ \ \ \ \ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}unable\ to\ get\ the\ number\ of\ joints\ of\ the\ part"{}});}
+\DoxyCodeLine{00175\ \ \ \ \ \}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keywordtype}{int}\ n\_cmd\_joints\ =\ jointsBottle-\/>size();}
+\DoxyCodeLine{00178\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(n\_cmd\_joints>0\ \&\&\ n\_cmd\_joints<=n\_part\_joints,"{}invalid\ number\ of\ joints,\ it\ must\ be\ >0\ \&\ <=\ number\ of\ part\ joints\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00179\ \textcolor{stringliteral}{\ \ \ \ jointsList.clear();}}
+\DoxyCodeLine{00180\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i\ <n\_cmd\_joints;\ i++)\ jointsList.push\_back(jointsBottle-\/>get(i).asInt32());}}
+\DoxyCodeLine{00181\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00182\ \textcolor{stringliteral}{\ \ \ \ enc\_jnt.resize(n\_cmd\_joints);\ enc\_jnt.zero();}}
+\DoxyCodeLine{00183\ \textcolor{stringliteral}{\ \ \ \ enc\_mot.resize(n\_cmd\_joints);\ enc\_mot.zero();}}
+\DoxyCodeLine{00184\ \textcolor{stringliteral}{\ \ \ \ vel\_jnt.resize(n\_cmd\_joints);\ vel\_jnt.zero();}}
+\DoxyCodeLine{00185\ \textcolor{stringliteral}{\ \ \ \ vel\_mot.resize(n\_cmd\_joints);\ vel\_mot.zero();}}
+\DoxyCodeLine{00186\ \textcolor{stringliteral}{\ \ \ \ acc\_jnt.resize(n\_cmd\_joints);\ acc\_jnt.zero();}}
+\DoxyCodeLine{00187\ \textcolor{stringliteral}{\ \ \ \ acc\_mot.resize(n\_cmd\_joints);\ acc\_mot.zero();}}
+\DoxyCodeLine{00188\ \textcolor{stringliteral}{\ \ \ \ prev\_enc\_jnt.resize(n\_cmd\_joints);\ prev\_enc\_jnt.zero();}}
+\DoxyCodeLine{00189\ \textcolor{stringliteral}{\ \ \ \ prev\_enc\_mot.resize(n\_cmd\_joints);\ prev\_enc\_mot.zero();}}
+\DoxyCodeLine{00190\ \textcolor{stringliteral}{\ \ \ \ prev\_enc\_jnt2mot.resize(n\_cmd\_joints);\ prev\_enc\_jnt2mot.zero();}}
+\DoxyCodeLine{00191\ \textcolor{stringliteral}{\ \ \ \ prev\_vel\_jnt.resize(n\_cmd\_joints);\ prev\_vel\_jnt.zero();}}
+\DoxyCodeLine{00192\ \textcolor{stringliteral}{\ \ \ \ prev\_vel\_mot.resize(n\_cmd\_joints);\ prev\_vel\_mot.zero();}}
+\DoxyCodeLine{00193\ \textcolor{stringliteral}{\ \ \ \ prev\_vel\_jnt2mot.resize(n\_cmd\_joints);\ prev\_vel\_jnt2mot.zero();}}
+\DoxyCodeLine{00194\ \textcolor{stringliteral}{\ \ \ \ prev\_acc\_jnt.resize(n\_cmd\_joints);\ prev\_acc\_jnt.zero();}}
+\DoxyCodeLine{00195\ \textcolor{stringliteral}{\ \ \ \ prev\_acc\_mot.resize(n\_cmd\_joints);\ prev\_acc\_mot.zero();}}
+\DoxyCodeLine{00196\ \textcolor{stringliteral}{\ \ \ \ prev\_acc\_jnt2mot.resize(n\_cmd\_joints);\ prev\_acc\_jnt2mot.zero();}}
+\DoxyCodeLine{00197\ \textcolor{stringliteral}{\ \ \ \ zero\_vector.resize(n\_cmd\_joints);}}
+\DoxyCodeLine{00198\ \textcolor{stringliteral}{\ \ \ \ zero\_vector.zero();}}
+\DoxyCodeLine{00199\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00200\ \textcolor{stringliteral}{\ \ \ \ max.resize(n\_cmd\_joints);\ \ \ \ \ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ max[i]=maxBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00201\ \textcolor{stringliteral}{\ \ \ \ min.resize(n\_cmd\_joints);\ \ \ \ \ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ min[i]=minBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00202\ \textcolor{stringliteral}{\ \ \ \ home.resize(n\_cmd\_joints);\ \ \ \ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ home[i]=homeBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00203\ \textcolor{stringliteral}{\ \ \ \ speed.resize(n\_cmd\_joints);\ \ \ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)\ speed[i]=speedBottle-\/>get(i).asFloat64();}}
+\DoxyCodeLine{00204\ \textcolor{stringliteral}{\ \ \ \ gearbox.resize(n\_cmd\_joints);}}
+\DoxyCodeLine{00205\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<\ n\_cmd\_joints;\ i++)}}
+\DoxyCodeLine{00206\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00207\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ t;}}
+\DoxyCodeLine{00208\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ b=imot-\/>getGearboxRatio(jointsList[i],\&t);}}
+\DoxyCodeLine{00209\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ gearbox[i]=t;}}
+\DoxyCodeLine{00210\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00211\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00212\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00213\ \textcolor{stringliteral}{\ \ \ \ return\ true;}}
+\DoxyCodeLine{00214\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00215\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00216\ \textcolor{stringliteral}{void\ OpticalEncodersConsistency::tearDown()}}
+\DoxyCodeLine{00217\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00218\ \textcolor{stringliteral}{\ \ \ \ char\ buff[500];}}
+\DoxyCodeLine{00219\ \textcolor{stringliteral}{\ \ \ \ sprintf(buff,"{}}Closing\ test\ module\textcolor{stringliteral}{"{});ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00220\ \textcolor{stringliteral}{\ \ \ \ setMode(VOCAB\_CM\_POSITION);}}
+\DoxyCodeLine{00221\ \textcolor{stringliteral}{\ \ \ \ goHome();}}
+\DoxyCodeLine{00222\ \textcolor{stringliteral}{\ \ \ \ if\ (dd)\ \{delete\ dd;\ dd\ =0;\}}}
+\DoxyCodeLine{00223\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00224\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00225\ \textcolor{stringliteral}{void\ OpticalEncodersConsistency::setMode(int\ desired\_mode)}}
+\DoxyCodeLine{00226\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00227\ \textcolor{stringliteral}{\ \ \ \ if\ (icmd\ ==\ 0)\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Invalid\ control\ mode\ interface\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00228\ \textcolor{stringliteral}{\ \ \ \ if\ (iimd\ ==\ 0)\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Invalid\ interaction\ mode\ interface\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00229\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00230\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00231\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00232\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ icmd-\/>setControlMode((int)jointsList[i],desired\_mode);}}
+\DoxyCodeLine{00233\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ iimd-\/>setInteractionMode((int)jointsList[i],VOCAB\_IM\_STIFF);}}
+\DoxyCodeLine{00234\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.010);}}
+\DoxyCodeLine{00235\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00236\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00237\ \textcolor{stringliteral}{\ \ \ \ int\ cmode;}}
+\DoxyCodeLine{00238\ \textcolor{stringliteral}{\ \ \ \ yarp::dev::InteractionModeEnum\ imode;}}
+\DoxyCodeLine{00239\ \textcolor{stringliteral}{\ \ \ \ int\ timeout\ =\ 0;}}
+\DoxyCodeLine{00240\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00241\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00242\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00243\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ ok=0;}}
+\DoxyCodeLine{00244\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00245\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00246\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ icmd-\/>getControlMode\ ((int)jointsList[i],\&cmode);}}
+\DoxyCodeLine{00247\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ iimd-\/>getInteractionMode((int)jointsList[i],\&imode);}}
+\DoxyCodeLine{00248\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (cmode==desired\_mode\ \&\&\ imode==VOCAB\_IM\_STIFF)\ ok++;}}
+\DoxyCodeLine{00249\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00250\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (ok==jointsList.size())\ break;}}
+\DoxyCodeLine{00251\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (timeout>100)}}
+\DoxyCodeLine{00252\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00253\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Unable\ to\ set\ control\ mode/interaction\ mode\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00254\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00255\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}}
+\DoxyCodeLine{00256\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timeout++;}}
+\DoxyCodeLine{00257\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00258\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00259\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00260\ \textcolor{stringliteral}{void\ OpticalEncodersConsistency::goHome()}}
+\DoxyCodeLine{00261\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00262\ \textcolor{stringliteral}{\ \ \ \ if\ (ipos\ ==\ 0)\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Invalid\ position\ control\ interface\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00263\ \textcolor{stringliteral}{\ \ \ \ if\ (ienc\ ==\ 0)\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Invalid\ encoders\ interface\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00264\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00265\ \textcolor{stringliteral}{\ \ \ \ bool\ ret\ =\ true;}}
+\DoxyCodeLine{00266\ \textcolor{stringliteral}{\ \ \ \ char\ buff\ [500];}}
+\DoxyCodeLine{00267\ \textcolor{stringliteral}{\ \ \ \ sprintf(buff,"{}}Homing\ the\ whole\ part\textcolor{stringliteral}{"{});ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00268\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00269\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00270\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00271\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ ipos-\/>setRefSpeed((int)jointsList[i],speed[i]);}}
+\DoxyCodeLine{00272\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}ipos-\/>setRefSpeed\ returned\ \textcolor{keyword}{false}\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00273\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ ipos-\/>positionMove((int)jointsList[i],home[i]);}}
+\DoxyCodeLine{00274\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}ipos-\/>positionMove\ returned\ \textcolor{keyword}{false}\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00275\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00276\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00277\ \textcolor{stringliteral}{\ \ \ \ int\ timeout\ =\ 0;}}
+\DoxyCodeLine{00278\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00279\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00280\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ in\_position=0;}}
+\DoxyCodeLine{00281\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00282\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00283\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ double\ tmp=0;}}
+\DoxyCodeLine{00284\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoder((int)jointsList[i],\&tmp);}}
+\DoxyCodeLine{00285\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (fabs(tmp-\/home[i])<tolerance)\ in\_position++;}}
+\DoxyCodeLine{00286\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00287\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (in\_position==jointsList.size())\ break;}}
+\DoxyCodeLine{00288\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (timeout>100)}}
+\DoxyCodeLine{00289\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00290\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Timeout\ \textcolor{keywordflow}{while}\ reaching\ home\ position\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00291\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00292\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}}
+\DoxyCodeLine{00293\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ timeout++;}}
+\DoxyCodeLine{00294\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00295\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00296\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00297\ \textcolor{stringliteral}{void\ OpticalEncodersConsistency::saveToFile(std::string\ filename,\ yarp::os::Bottle\ \&b)}}
+\DoxyCodeLine{00298\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00299\ \textcolor{stringliteral}{\ \ \ \ std::fstream\ fs;}}
+\DoxyCodeLine{00300\ \textcolor{stringliteral}{\ \ \ \ fs.open\ (filename.c\_str(),\ std::fstream::out);}}
+\DoxyCodeLine{00301\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00302\ \textcolor{stringliteral}{\ \ \ \ for\ (int\ i=0;\ i<b.size();\ i++)}}
+\DoxyCodeLine{00303\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00304\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ std::string\ s\ =\ b.get(i).toString();}}
+\DoxyCodeLine{00305\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ std::replace(s.begin(),\ s.end(),\ '(',\ '\ ');}}
+\DoxyCodeLine{00306\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ std::replace(s.begin(),\ s.end(),\ ')',\ '\ ');}}
+\DoxyCodeLine{00307\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ fs\ <<\ s\ <<\ endl;}}
+\DoxyCodeLine{00308\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00309\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00310\ \textcolor{stringliteral}{\ \ \ \ fs.close();}}
+\DoxyCodeLine{00311\ \textcolor{stringliteral}{\}}}
+\DoxyCodeLine{00312\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00313\ \textcolor{stringliteral}{void\ OpticalEncodersConsistency::run()}}
+\DoxyCodeLine{00314\ \textcolor{stringliteral}{\{}}
+\DoxyCodeLine{00315\ \textcolor{stringliteral}{\ \ \ \ char\ buff\ [500];}}
+\DoxyCodeLine{00316\ \textcolor{stringliteral}{\ \ \ \ setMode(VOCAB\_CM\_POSITION);}}
+\DoxyCodeLine{00317\ \textcolor{stringliteral}{\ \ \ \ goHome();}}
+\DoxyCodeLine{00318\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00319\ \textcolor{stringliteral}{\ \ \ \ bool\ go\_to\_max=false;}}
+\DoxyCodeLine{00320\ \textcolor{stringliteral}{\ \ \ \ for\ (unsigned\ int\ i=0;\ i<jointsList.size();\ i++)}}
+\DoxyCodeLine{00321\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00322\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ipos-\/>positionMove((int)jointsList[i],\ min[i]);}}
+\DoxyCodeLine{00323\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00324\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00325\ \textcolor{stringliteral}{\ \ \ \ int\ \ cycle=0;}}
+\DoxyCodeLine{00326\ \textcolor{stringliteral}{\ \ \ \ double\ start\_time\ =\ yarp::os::Time::now();}}
+\DoxyCodeLine{00327\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00328\ \textcolor{stringliteral}{\ \ \ \ //****************************************************************************************}}
+\DoxyCodeLine{00329\ \textcolor{stringliteral}{\ \ \ \ //Retrieving\ coupling\ matrix\ using\ IRemoteVariable}}
+\DoxyCodeLine{00330\ \textcolor{stringliteral}{\ \ \ \ //****************************************************************************************}}
+\DoxyCodeLine{00331\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00332\ \textcolor{stringliteral}{\ \ \ \ yarp::os::Bottle\ b;}}
+\DoxyCodeLine{00333\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00334\ \textcolor{stringliteral}{\ \ \ \ ivar-\/>getRemoteVariable("{}}kinematic\_mj\textcolor{stringliteral}{"{},\ b);}}
+\DoxyCodeLine{00335\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00336\ \textcolor{stringliteral}{\ \ \ \ int\ matrix\_size\ =\ matrix.cols();}}
+\DoxyCodeLine{00337\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00338\ \textcolor{stringliteral}{\ \ \ \ matrix.eye();}}
+\DoxyCodeLine{00339\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00340\ \textcolor{stringliteral}{\ \ \ \ int\ njoints\ [4];}}
+\DoxyCodeLine{00341\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00342\ \textcolor{stringliteral}{\ \ \ \ for(int\ i=0\ ;\ i<\ b.size()\ ;\ i++)}}
+\DoxyCodeLine{00343\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00344\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ Bottle\ bv;}}
+\DoxyCodeLine{00345\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ bv.fromString(b.get(i).toString());}}
+\DoxyCodeLine{00346\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ njoints[i]\ =\ sqrt(bv.size());}}
+\DoxyCodeLine{00347\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00348\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ ele\ =\ 0;}}
+\DoxyCodeLine{00349\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if(i==0)\ \{}}
+\DoxyCodeLine{00350\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (int\ r=0;\ r\ <\ njoints[i];\ r++)\ }}
+\DoxyCodeLine{00351\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00352\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ for\ (int\ c=0;\ c\ <\ njoints[i];\ c++)\ }}
+\DoxyCodeLine{00353\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00354\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ matrix(r,c)\ =\ bv.get(ele).asFloat64();}}
+\DoxyCodeLine{00355\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ele++;}}
+\DoxyCodeLine{00356\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00357\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00358\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00359\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \}\ \ }}
+\DoxyCodeLine{00360\ \textcolor{stringliteral}{\ \ \ \ \ \ \ else\{}}
+\DoxyCodeLine{00361\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ for\ (int\ r=0;\ r\ <\ njoints[i];\ r++)\ }}
+\DoxyCodeLine{00362\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00363\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ (int\ c=0;\ c\ <\ njoints[i];\ c++)\ }}
+\DoxyCodeLine{00364\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00365\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ jntprev\ =\ 0;}}
+\DoxyCodeLine{00366\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ (int\ j=0;\ j\ <\ i;\ j++)\ jntprev\ +=\ njoints[j];}}
+\DoxyCodeLine{00367\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ if(!jntprev\ >\ matrix\_size)\ \ matrix(r+jntprev,c+jntprev)\ =\ bv.get(ele).asFloat64();}}
+\DoxyCodeLine{00368\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ele++;}}
+\DoxyCodeLine{00369\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00370\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00371\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00372\ \textcolor{stringliteral}{\ \ \ \ }}
+\DoxyCodeLine{00373\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00374\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00375\ \textcolor{stringliteral}{\ \ \ \ //\ yDebug()\ <<\ "{}}MATRIX\ J2M\ :\ \(\backslash\)n\textcolor{stringliteral}{"{}\ <<\ matrix.toString();}}
+\DoxyCodeLine{00376\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00377\ \textcolor{stringliteral}{//\ **************************************************************************************}}
+\DoxyCodeLine{00378\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00379\ \textcolor{stringliteral}{\ \ \ \ trasp\_matrix\ =\ matrix.transposed();}}
+\DoxyCodeLine{00380\ \textcolor{stringliteral}{\ \ \ \ inv\_matrix\ =\ yarp::math::luinv(matrix);}}
+\DoxyCodeLine{00381\ \textcolor{stringliteral}{\ \ \ \ inv\_trasp\_matrix\ =\ inv\_matrix.transposed();}}
+\DoxyCodeLine{00382\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00383\ \textcolor{stringliteral}{\ \ \ \ sprintf(buff,"{}}Matrix:\(\backslash\)n\ \%s\ \(\backslash\)n\textcolor{stringliteral}{"{},\ matrix.toString().c\_str());}}
+\DoxyCodeLine{00384\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00385\ \textcolor{stringliteral}{\ \ \ \ sprintf(buff,"{}}Inv\ matrix:\(\backslash\)n\ \%s\ \(\backslash\)n\textcolor{stringliteral}{"{},\ inv\_matrix.toString().c\_str());}}
+\DoxyCodeLine{00386\ \textcolor{stringliteral}{\ \ \ \ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00387\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00388\ \textcolor{stringliteral}{\ \ \ \ Bottle\ dataToPlot\_test1;}}
+\DoxyCodeLine{00389\ \textcolor{stringliteral}{\ \ \ \ Bottle\ dataToPlot\_test2;}}
+\DoxyCodeLine{00390\ \textcolor{stringliteral}{\ \ \ \ Bottle\ dataToPlot\_test3;}}
+\DoxyCodeLine{00391\ \textcolor{stringliteral}{\ \ \ \ Bottle\ dataToPlot\_test4;}}
+\DoxyCodeLine{00392\ \textcolor{stringliteral}{\ \ \ \ Bottle\ dataToPlot\_test1rev;}}
+\DoxyCodeLine{00393\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00394\ \textcolor{stringliteral}{\ \ \ \ bool\ test\_data\_is\_valid\ =\ false;}}
+\DoxyCodeLine{00395\ \textcolor{stringliteral}{\ \ \ \ bool\ first\_time\ =\ true;}}
+\DoxyCodeLine{00396\ \textcolor{stringliteral}{\ \ \ \ yarp::sig::Vector\ off\_enc\_mot;\ off\_enc\_mot.resize(jointsList.size());}}
+\DoxyCodeLine{00397\ \textcolor{stringliteral}{\ \ \ \ yarp::sig::Vector\ off\_enc\_jnt;\ off\_enc\_jnt.resize(jointsList.size());}}
+\DoxyCodeLine{00398\ \textcolor{stringliteral}{\ \ \ \ yarp::sig::Vector\ off\_enc\_jnt2mot;\ off\_enc\_jnt2mot.resize(jointsList.size());}}
+\DoxyCodeLine{00399\ \textcolor{stringliteral}{\ \ \ \ yarp::sig::Vector\ off\_enc\_mot2jnt;\ off\_enc\_mot2jnt.resize(jointsList.size());}}
+\DoxyCodeLine{00400\ \textcolor{stringliteral}{\ \ \ \ yarp::sig::Vector\ tmp\_vector;}}
+\DoxyCodeLine{00401\ \textcolor{stringliteral}{\ \ \ \ tmp\_vector.resize(n\_part\_joints);}}
+\DoxyCodeLine{00402\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00403\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00404\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00405\ \textcolor{stringliteral}{\ \ \ \ while\ (1)}}
+\DoxyCodeLine{00406\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00407\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ curr\_time\ =\ yarp::os::Time::now();}}
+\DoxyCodeLine{00408\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ double\ elapsed\ =\ curr\_time\ -\/\ start\_time;}}
+\DoxyCodeLine{00409\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00410\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ bool\ ret\ =\ true;}}
+\DoxyCodeLine{00411\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ ienc-\/>getEncoders(tmp\_vector.data());}}
+\DoxyCodeLine{00412\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)}}
+\DoxyCodeLine{00413\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ enc\_jnt[i]\ =\ tmp\_vector[jointsList[i]];}}
+\DoxyCodeLine{00414\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00415\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00416\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}ienc-\/>getEncoders\ returned\ false\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00417\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ imotenc-\/>getMotorEncoders(tmp\_vector.data());\ \ \ \ \ \ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ enc\_mot[i]\ =\ tmp\_vector[jointsList(i)];}}
+\DoxyCodeLine{00418\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}imotenc-\/>getMotorEncoder\ returned\ false\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00419\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ ienc-\/>getEncoderSpeeds(tmp\_vector.data());\ \ \ \ \ \ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ vel\_jnt[i]\ =\ tmp\_vector[jointsList(i)];}}
+\DoxyCodeLine{00420\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}ienc-\/>getEncoderSpeeds\ returned\ false\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00421\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ imotenc-\/>getMotorEncoderSpeeds(tmp\_vector.data());\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ vel\_mot[i]\ =\ tmp\_vector[jointsList(i)];}}
+\DoxyCodeLine{00422\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}imotenc-\/>getMotorEncoderSpeeds\ returned\ false\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00423\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ ienc-\/>getEncoderAccelerations(tmp\_vector.data());\ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ acc\_jnt[i]\ =\ tmp\_vector[jointsList(i)];}}
+\DoxyCodeLine{00424\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}ienc-\/>getEncoderAccelerations\ returned\ false\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00425\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ret\ =\ imotenc-\/>getMotorEncoderAccelerations(tmp\_vector.data());\ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ acc\_mot[i]\ =\ tmp\_vector[jointsList(i)];}}
+\DoxyCodeLine{00426\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(ret,\ "{}}imotenc-\/>getMotorEncoderAccelerations\ returned\ false\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00427\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00428\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (enc\_jnt\ ==\ zero\_vector)\ \{\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Invalid\ getEncoders\ data\textcolor{stringliteral}{"{});\ test\_data\_is\_valid\ =\ true;\ \}}}
+\DoxyCodeLine{00429\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (enc\_mot\ ==\ zero\_vector)\ \{\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Invalid\ getMotorEncoders\ data\textcolor{stringliteral}{"{});\ test\_data\_is\_valid\ =\ true;\ \}}}
+\DoxyCodeLine{00430\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (vel\_jnt\ ==\ zero\_vector)\ \{\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Invalid\ getEncoderSpeeds\ data\textcolor{stringliteral}{"{});\ test\_data\_is\_valid\ =\ true;\ \}}}
+\DoxyCodeLine{00431\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (vel\_mot\ ==\ zero\_vector)\ \{\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Invalid\ getMotorEncoderSpeeds\ data\textcolor{stringliteral}{"{});\ test\_data\_is\_valid\ =\ true;\ \}}}
+\DoxyCodeLine{00432\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (acc\_jnt\ ==\ zero\_vector)\ \{\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Invalid\ getEncoderAccelerations\ data\textcolor{stringliteral}{"{});\ test\_data\_is\_valid\ =\ true;\ \}}}
+\DoxyCodeLine{00433\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //if\ (acc\_mot\ ==\ zero\_vector)\ \{\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT("{}}Invalid\ getMotorEncoderAccelerations\ data\textcolor{stringliteral}{"{});\ test\_data\_is\_valid\ =\ true;\ \}}}
+\DoxyCodeLine{00434\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00435\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (first\_time)}}
+\DoxyCodeLine{00436\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00437\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ off\_enc\_jnt\ =\ enc\_jnt;}}
+\DoxyCodeLine{00438\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ off\_enc\_mot2jnt\ =\ enc\_mot2jnt;}}
+\DoxyCodeLine{00439\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00440\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00441\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00442\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ enc\_jnt2mot\ =\ matrix\ *\ enc\_jnt;}}
+\DoxyCodeLine{00443\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ enc\_mot2jnt\ =\ inv\_matrix\ *\ (enc\_mot\ -\/\ off\_enc\_mot);}}
+\DoxyCodeLine{00444\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ vel\_jnt2mot\ =\ matrix\ *\ vel\_jnt;}}
+\DoxyCodeLine{00445\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //acc\_jnt2mot\ =\ matrix\ *\ acc\_jnt;}}
+\DoxyCodeLine{00446\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00447\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00448\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ enc\_jnt2mot[i]\ =\ enc\_jnt2mot[i]\ *\ gearbox[i];;}}
+\DoxyCodeLine{00449\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ vel\_jnt2mot[i]\ =\ vel\_jnt2mot[i]\ *\ gearbox[i];}}
+\DoxyCodeLine{00450\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ acc\_jnt2mot[i]\ =\ acc\_jnt2mot[i]\ *\ gearbox[i];}}
+\DoxyCodeLine{00451\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)\ enc\_mot2jnt[i]\ =\ enc\_mot2jnt[i]\ /\ gearbox[i];}}
+\DoxyCodeLine{00452\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00453\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ bool\ reached\ =\ false;}}
+\DoxyCodeLine{00454\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ int\ in\_position\ =\ 0;}}
+\DoxyCodeLine{00455\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)}}
+\DoxyCodeLine{00456\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00457\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ double\ curr\_val\ =\ 0;}}
+\DoxyCodeLine{00458\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (go\_to\_max\ ==\ false)\ curr\_val\ =\ min[i];}}
+\DoxyCodeLine{00459\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ else\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curr\_val\ =\ max[i];}}
+\DoxyCodeLine{00460\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (fabs(enc\_jnt[i]\ -\/\ curr\_val)\ <\ tolerance)\ in\_position++;}}
+\DoxyCodeLine{00461\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00462\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (in\_position\ ==\ jointsList.size())\ reached\ =\ true;}}
+\DoxyCodeLine{00463\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00464\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (elapsed\ >=\ 20.0)}}
+\DoxyCodeLine{00465\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00466\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR("{}}Timeout\ while\ moving\ joint\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00467\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00468\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00469\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (reached)}}
+\DoxyCodeLine{00470\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00471\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ sprintf(buff,\ "{}}Test\ cycle\ \%d/\%d\textcolor{stringliteral}{"{},\ cycle,\ cycles);\ ROBOTTESTINGFRAMEWORK\_TEST\_REPORT(buff);}}
+\DoxyCodeLine{00472\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (go\_to\_max\ ==\ false)}}
+\DoxyCodeLine{00473\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00474\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)}}
+\DoxyCodeLine{00475\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ipos-\/>positionMove(jointsList[i],\ max[i]);}}
+\DoxyCodeLine{00476\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ go\_to\_max\ =\ true;}}
+\DoxyCodeLine{00477\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cycle++;}}
+\DoxyCodeLine{00478\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ start\_time\ =\ yarp::os::Time::now();}}
+\DoxyCodeLine{00479\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00480\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ else}}
+\DoxyCodeLine{00481\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00482\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ (unsigned\ int\ i\ =\ 0;\ i\ <\ jointsList.size();\ i++)}}
+\DoxyCodeLine{00483\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ipos-\/>positionMove(jointsList[i],\ min[i]);}}
+\DoxyCodeLine{00484\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ go\_to\_max\ =\ false;}}
+\DoxyCodeLine{00485\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cycle++;}}
+\DoxyCodeLine{00486\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ start\_time\ =\ yarp::os::Time::now();}}
+\DoxyCodeLine{00487\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00488\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00489\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00490\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //update\ previous\ and\ computes\ diff}}
+\DoxyCodeLine{00491\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_enc\_jnt\ =\ (enc\_jnt\ -\/\ prev\_enc\_jnt)\ /\ 0.010;}}
+\DoxyCodeLine{00492\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_enc\_mot\ =\ (enc\_mot\ -\/\ prev\_enc\_mot)\ /\ 0.010;}}
+\DoxyCodeLine{00493\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_enc\_jnt2mot\ =\ (enc\_jnt2mot\ -\/\ prev\_enc\_jnt2mot)\ /\ 0.010;}}
+\DoxyCodeLine{00494\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_vel\_jnt\ =\ (vel\_jnt\ -\/\ prev\_vel\_jnt)\ /\ 0.010;}}
+\DoxyCodeLine{00495\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_vel\_mot\ =\ (vel\_mot\ -\/\ prev\_vel\_mot)\ /\ 0.010;}}
+\DoxyCodeLine{00496\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_vel\_jnt2mot\ =\ (vel\_jnt2mot\ -\/\ prev\_vel\_jnt2mot)\ /\ 0.010;}}
+\DoxyCodeLine{00497\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_acc\_jnt\ =\ (acc\_jnt\ -\/\ prev\_acc\_jnt)\ /\ 0.010;}}
+\DoxyCodeLine{00498\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ diff\_acc\_mot\ =\ (acc\_mot\ -\/\ prev\_acc\_mot)\ /\ 0.010;}}
+\DoxyCodeLine{00499\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //diff\_acc\_jnt2mot\ =\ (acc\_jnt2mot\ -\/\ prev\_acc\_jnt2mot)\ /\ 0.010;}}
+\DoxyCodeLine{00500\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ prev\_enc\_jnt\ =\ enc\_jnt;}}
+\DoxyCodeLine{00501\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ prev\_enc\_mot\ =\ enc\_mot;}}
+\DoxyCodeLine{00502\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ prev\_enc\_jnt2mot\ =\ enc\_jnt2mot;}}
+\DoxyCodeLine{00503\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ prev\_vel\_jnt\ =\ vel\_jnt;}}
+\DoxyCodeLine{00504\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ prev\_vel\_mot\ =\ vel\_mot;}}
+\DoxyCodeLine{00505\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ prev\_vel\_jnt2mot\ =\ vel\_jnt2mot;}}
+\DoxyCodeLine{00506\ \textcolor{stringliteral}{\ \ \ \ \ \ \ //\ prev\_acc\_jnt\ =\ acc\_jnt;}}
+\DoxyCodeLine{00507\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //prev\_acc\_mot\ =\ acc\_mot;}}
+\DoxyCodeLine{00508\ \textcolor{stringliteral}{\ \ \ \ \ \ \ //\ prev\_acc\_jnt2mot\ =\ acc\_jnt2mot;}}
+\DoxyCodeLine{00509\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00510\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (first\_time)}}
+\DoxyCodeLine{00511\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00512\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ off\_enc\_mot\ =\ enc\_mot;}}
+\DoxyCodeLine{00513\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ off\_enc\_jnt2mot\ =\ enc\_jnt2mot;}}
+\DoxyCodeLine{00514\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00515\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00516\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00517\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //prepare\ data\ to\ plot}}
+\DoxyCodeLine{00518\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //JOINT\ POSITIONS\ vs\ MOTOR\ POSITIONS}}
+\DoxyCodeLine{00519\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ row\_test1\ =\ dataToPlot\_test1.addList();}}
+\DoxyCodeLine{00520\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v1\_test1\ =\ row\_test1.addList();}}
+\DoxyCodeLine{00521\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v2\_test1\ =\ row\_test1.addList();}}
+\DoxyCodeLine{00522\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ yarp::sig::Vector\ v1\ =\ enc\_mot\ -\/\ off\_enc\_mot;}}
+\DoxyCodeLine{00523\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ yarp::sig::Vector\ v2\ =\ enc\_jnt2mot\ -\/\ off\_enc\_jnt2mot;}}
+\DoxyCodeLine{00524\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ v1\_test1.read(v1);}}
+\DoxyCodeLine{00525\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ v2\_test1.read(v2);}}
+\DoxyCodeLine{00526\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00527\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00528\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00529\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //JOINT\ VELOCITES\ vs\ MOTOR\ VELOCITIES}}
+\DoxyCodeLine{00530\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ row\_test2\ =\ dataToPlot\_test2.addList();}}
+\DoxyCodeLine{00531\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v1\_test2\ =\ row\_test2.addList();}}
+\DoxyCodeLine{00532\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v2\_test2\ =\ row\_test2.addList();}}
+\DoxyCodeLine{00533\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ v1\_test2.read(vel\_mot);}}
+\DoxyCodeLine{00534\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ v2\_test2.read(vel\_jnt2mot);}}
+\DoxyCodeLine{00535\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00536\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00537\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00538\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //JOINT\ POSITIONS(DERIVED)\ vs\ JOINT\ SPEED}}
+\DoxyCodeLine{00539\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (first\_time\ ==\ false)}}
+\DoxyCodeLine{00540\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00541\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ row\_test3\ =\ dataToPlot\_test3.addList();}}
+\DoxyCodeLine{00542\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v1\_test3\ =\ row\_test3.addList();}}
+\DoxyCodeLine{00543\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v2\_test3\ =\ row\_test3.addList();}}
+\DoxyCodeLine{00544\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v1\_test3.read(vel\_jnt);}}
+\DoxyCodeLine{00545\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v2\_test3.read(diff\_enc\_jnt);}}
+\DoxyCodeLine{00546\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00547\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00548\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00549\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00550\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //MOTOR\ POSITIONS(DERIVED)\ vs\ MOTOR\ SPEED}}
+\DoxyCodeLine{00551\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ if\ (first\_time\ ==\ false)}}
+\DoxyCodeLine{00552\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00553\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ row\_test4\ =\ dataToPlot\_test4.addList();}}
+\DoxyCodeLine{00554\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v1\_test4\ =\ row\_test4.addList();}}
+\DoxyCodeLine{00555\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v2\_test4\ =\ row\_test4.addList();}}
+\DoxyCodeLine{00556\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v1\_test4.read(vel\_mot);}}
+\DoxyCodeLine{00557\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ v2\_test4.read(diff\_enc\_mot);}}
+\DoxyCodeLine{00558\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00559\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00560\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00561\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00562\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ //JOINT\ POSITIONS\ vs\ MOTOR\ POSITIONS\ REVERSED}}
+\DoxyCodeLine{00563\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ row\_test1\ =\ dataToPlot\_test1rev.addList();}}
+\DoxyCodeLine{00564\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v1\_test1\ =\ row\_test1.addList();}}
+\DoxyCodeLine{00565\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ Bottle\&\ v2\_test1\ =\ row\_test1.addList();}}
+\DoxyCodeLine{00566\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ yarp::sig::Vector\ v1\ =\ enc\_jnt;}}
+\DoxyCodeLine{00567\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ yarp::sig::Vector\ v2\ =\ enc\_mot2jnt\ +\ off\_enc\_jnt;}}
+\DoxyCodeLine{00568\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ v1\_test1.read(v1);}}
+\DoxyCodeLine{00569\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ \ \ v2\_test1.read(v2);}}
+\DoxyCodeLine{00570\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00571\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00572\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //flag\ set}}
+\DoxyCodeLine{00573\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ first\_time\ =\ false;}}
+\DoxyCodeLine{00574\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00575\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ //exit\ condition}}
+\DoxyCodeLine{00576\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ if\ (cycle>=cycles)\ break;}}
+\DoxyCodeLine{00577\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00578\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00579\ \textcolor{stringliteral}{\ \ \ \ goHome();}}
+\DoxyCodeLine{00580\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00581\ \textcolor{stringliteral}{\ \ \ \ yarp::os::ResourceFinder\ rf;}}
+\DoxyCodeLine{00582\ \textcolor{stringliteral}{\ \ \ \ rf.setDefaultContext("{}}scripts\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00583\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00584\ \textcolor{stringliteral}{\ \ \ \ string\ partfilename\ =\ partName+"{}}.txt\textcolor{stringliteral}{"{};}}
+\DoxyCodeLine{00585\ \textcolor{stringliteral}{\ \ \ \ string\ testfilename\ =\ "{}}encConsis\_\textcolor{stringliteral}{"{};}}
+\DoxyCodeLine{00586\ \textcolor{stringliteral}{\ \ \ \ string\ filename1\ =\ testfilename\ +\ "{}}jointPos\_MotorPos\_\textcolor{stringliteral}{"{}\ +\ partfilename;}}
+\DoxyCodeLine{00587\ \textcolor{stringliteral}{\ \ \ \ saveToFile(filename1,dataToPlot\_test1);}}
+\DoxyCodeLine{00588\ \textcolor{stringliteral}{\ \ \ \ string\ filename2\ =\ testfilename\ +\ "{}}jointVel\_motorVel\_\textcolor{stringliteral}{"{}\ +\ partfilename;}}
+\DoxyCodeLine{00589\ \textcolor{stringliteral}{\ \ \ \ saveToFile(filename2,dataToPlot\_test2);}}
+\DoxyCodeLine{00590\ \textcolor{stringliteral}{\ \ \ \ string\ filename3\ =\ testfilename\ +\ "{}}joint\_derivedVel\_vel\_\textcolor{stringliteral}{"{}\ +\ partfilename;}}
+\DoxyCodeLine{00591\ \textcolor{stringliteral}{\ \ \ \ saveToFile(filename3,dataToPlot\_test3);}}
+\DoxyCodeLine{00592\ \textcolor{stringliteral}{\ \ \ \ string\ filename4\ =\ testfilename\ +\ "{}}motor\_derivedVel\_vel\_\textcolor{stringliteral}{"{}\ +\ partfilename;}}
+\DoxyCodeLine{00593\ \textcolor{stringliteral}{\ \ \ \ saveToFile(filename4,dataToPlot\_test4);}}
+\DoxyCodeLine{00594\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00595\ \textcolor{stringliteral}{\ \ \ \ string\ filename1rev\ =\ testfilename\ +\ "{}}jointPos\_MotorPos\_reversed\_\textcolor{stringliteral}{"{}\ +\ partfilename;}}
+\DoxyCodeLine{00596\ \textcolor{stringliteral}{\ \ \ \ saveToFile(filename1rev,dataToPlot\_test1rev);}}
+\DoxyCodeLine{00597\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00598\ \textcolor{stringliteral}{\ \ \ \ //find\ octave\ scripts}}
+\DoxyCodeLine{00599\ \textcolor{stringliteral}{\ \ \ \ std::string\ octaveFile\ =\ rf.findFile("{}}encoderConsistencyPlotAll.m\textcolor{stringliteral}{"{});}}
+\DoxyCodeLine{00600\ \textcolor{stringliteral}{\ \ \ \ if(octaveFile.size()\ ==\ 0)}}
+\DoxyCodeLine{00601\ \textcolor{stringliteral}{\ \ \ \ \{}}
+\DoxyCodeLine{00602\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ yError()<<"{}}Cannot\ find\ file\ encoderConsistencyPlotAll.m\textcolor{stringliteral}{"{};}}
+\DoxyCodeLine{00603\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ return;}}
+\DoxyCodeLine{00604\ \textcolor{stringliteral}{\ \ \ \ \}}}
+\DoxyCodeLine{00605\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{00606\ \textcolor{stringliteral}{\ \ \ \ //prepare\ octave\ command}}
+\DoxyCodeLine{00607\ \textcolor{stringliteral}{\ \ \ \ std::string\ octaveCommand=\ "{}}octave\ -\/-\/path\ \textcolor{stringliteral}{"{}+\ getPath(octaveFile);}}
+\DoxyCodeLine{00608\ \textcolor{stringliteral}{\ \ \ \ stringstream\ ss;}}
+\DoxyCodeLine{00609\ \textcolor{stringliteral}{\ \ \ \ ss\ <<\ jointsList.size();}}
+\DoxyCodeLine{00610\ \textcolor{stringliteral}{\ \ \ \ string\ str\ =\ ss.str();}}
+\DoxyCodeLine{00611\ \textcolor{stringliteral}{\ \ \ \ octaveCommand+=\ "{}}\ -\/q\ -\/-\/eval\ \(\backslash\)\textcolor{stringliteral}{"{}encoderConsistencyPlotAll('"{}}\ +partName\ +\textcolor{stringliteral}{"{}',"{}}\ +\ str\ +\textcolor{stringliteral}{"{})\(\backslash\)"{}\ \ -\/-\/persist"{}};}
+\DoxyCodeLine{00612\ }
+\DoxyCodeLine{00613\ \ \ \ \ \textcolor{keywordflow}{if}(plot\_enabled)}
+\DoxyCodeLine{00614\ \ \ \ \ \{}
+\DoxyCodeLine{00615\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ret\ =\ system\ (octaveCommand.c\_str());}
+\DoxyCodeLine{00616\ \ \ \ \ \}}
+\DoxyCodeLine{00617\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00618\ \ \ \ \ \{}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ yInfo()\ <<\ \textcolor{stringliteral}{"{}Test\ has\ collected\ all\ data.\ You\ need\ to\ plot\ data\ to\ check\ is\ test\ is\ passed"{}};}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \ yInfo()\ <<\ \textcolor{stringliteral}{"{}Please\ run\ following\ command\ to\ plot\ data."{}};}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ yInfo()\ <<\ octaveCommand;}
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \ yInfo()\ <<\ \textcolor{stringliteral}{"{}To\ exit\ from\ Octave\ application\ please\ type\ 'exit'\ command."{}};}
+\DoxyCodeLine{00623\ \ \ \ \ \}}
+\DoxyCodeLine{00624\ \ \ \ \textcolor{comment}{//\ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(test\_data\_is\_valid,"{}Invalid\ data\ obtained\ from\ encoders\ interface"{});}}
+\DoxyCodeLine{00625\ \}}
+\DoxyCodeLine{00626\ }
+\DoxyCodeLine{00627\ }
+\DoxyCodeLine{00628\ std::string\ OpticalEncodersConsistency::getPath(\textcolor{keyword}{const}\ std::string\&\ str)}
+\DoxyCodeLine{00629\ \{}
+\DoxyCodeLine{00630\ \ \ \textcolor{keywordtype}{size\_t}\ found;}
+\DoxyCodeLine{00631\ \ \ found=str.find\_last\_of(\textcolor{stringliteral}{"{}/\(\backslash\)\(\backslash\)"{}});}
+\DoxyCodeLine{00632\ \ \ \textcolor{keywordflow}{return}(str.substr(0,found));}
+\DoxyCodeLine{00633\ \}}
+
+\end{DoxyCode}

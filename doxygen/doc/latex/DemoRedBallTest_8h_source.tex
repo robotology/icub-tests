@@ -1,0 +1,79 @@
+\doxysection{Demo\+Red\+Ball\+Test.\+h}
+\label{DemoRedBallTest_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/demoRedBall/DemoRedBallTest.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/demoRedBall/DemoRedBallTest.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_DEMOREDBALL\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_DEMOREDBALL\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/os/Bottle.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/os/Property.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/os/RpcClient.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/os/BufferedPort.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <yarp/dev/IEncoders.h>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <yarp/dev/CartesianControl.h>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{class\ }DemoRedBallTest\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ std::string\ robot;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ std::string\ eye;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ reach\_tol;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ use\_torso;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ use\_left;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ use\_right;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ yarp::sig::Vector\ home\_arm;}
+\DoxyCodeLine{00060\ \ \ \ \ \}\ params;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ yarp::dev::PolyDriver\ drvJointArmL;}
+\DoxyCodeLine{00063\ \ \ \ \ yarp::dev::PolyDriver\ drvJointArmR;}
+\DoxyCodeLine{00064\ \ \ \ \ yarp::dev::PolyDriver\ drvJointTorso;}
+\DoxyCodeLine{00065\ \ \ \ \ yarp::dev::PolyDriver\ drvJointHead;}
+\DoxyCodeLine{00066\ \ \ \ \ yarp::dev::PolyDriver\ drvCartArmL;}
+\DoxyCodeLine{00067\ \ \ \ \ yarp::dev::PolyDriver\ drvCartArmR;}
+\DoxyCodeLine{00068\ \ \ \ \ yarp::dev::PolyDriver\ drvGaze;}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00071\ \ \ \ \ yarp::dev::ICartesianControl\ *iarm;}
+\DoxyCodeLine{00072\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00073\ \ \ \ \ \}\ arm\_under\_test;}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ yarp::os::RpcClient\ rpcPort;}
+\DoxyCodeLine{00076\ \ \ \ \ yarp::os::BufferedPort<yarp::os::Bottle>\ guiPort;}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ testBallPosition(\textcolor{keyword}{const}\ yarp::sig::Vector\ \&pos);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{bool}\ getBallPosition(\textcolor{keyword}{const}\ yarp::os::Bottle*\ b,\ yarp::sig::Vector\&\ pos);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00081\ \ \ \ \ DemoRedBallTest();}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~DemoRedBallTest();}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00086\ \};}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

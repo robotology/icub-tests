@@ -1,0 +1,49 @@
+\doxysection{encoder\+Consistency\+Plot\+All.\+m}
+\label{encoderConsistencyPlotAll_8m_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/suites/contexts/scripts/encoderConsistencyPlotAll.m@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/suites/contexts/scripts/encoderConsistencyPlotAll.m}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \%\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}
+\DoxyCodeLine{00002\ \%}
+\DoxyCodeLine{00003\ \%\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}
+\DoxyCodeLine{00004\ \%}
+\DoxyCodeLine{00005\ \%\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}
+\DoxyCodeLine{00006\ \%\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}
+\DoxyCodeLine{00007\ \%\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}
+\DoxyCodeLine{00008\ \%\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}
+\DoxyCodeLine{00009\ \%}
+\DoxyCodeLine{00010\ \%\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}
+\DoxyCodeLine{00011\ \%\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}
+\DoxyCodeLine{00012\ \%\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}
+\DoxyCodeLine{00013\ \%\ Lesser\ General\ Public\ License\ \textcolor{keywordflow}{for}\ more\ details.}
+\DoxyCodeLine{00014\ \%}
+\DoxyCodeLine{00015\ \%\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}
+\DoxyCodeLine{00016\ \%\ License\ along\ with\ \textcolor{keyword}{this}\ library;\ \textcolor{keywordflow}{if}\ not,\ write\ to\ the\ Free\ Software}
+\DoxyCodeLine{00017\ \%\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ function\ encoderConsistencyPlotAll(partname,\ numofjoint)}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ figure(1);}
+\DoxyCodeLine{00023\ filename\ =\ strcat(\textcolor{stringliteral}{"{}encConsis\_jointPos\_MotorPos\_"{}},\ partname,\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00024\ oneFile\_plot(filename,\ \textcolor{stringliteral}{"{}jointPos\ vs\ MotorPos"{}},\ numofjoint);}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ figure(2);}
+\DoxyCodeLine{00027\ filename\ =\ strcat(\textcolor{stringliteral}{"{}encConsis\_jointVel\_motorVel\_"{}},\ partname,\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00028\ oneFile\_plot(filename,\ \textcolor{stringliteral}{"{}jointVel\ vs\ MotorVel"{}},\ numofjoint);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ figure(3);}
+\DoxyCodeLine{00031\ filename\ =\ strcat(\textcolor{stringliteral}{"{}encConsis\_joint\_derivedVel\_vel\_"{}},\ partname,\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00032\ oneFile\_plot(filename,\ \textcolor{stringliteral}{"{}joint:\ derivedVel\ vs\ misuredVel"{}},\ numofjoint);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ figure(4);}
+\DoxyCodeLine{00035\ filename\ =\ strcat(\textcolor{stringliteral}{"{}encConsis\_motor\_derivedVel\_vel\_"{}},\ partname,\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00036\ oneFile\_plot(filename,\ \textcolor{stringliteral}{"{}motor:\ derivedVel\ vs\ misuredVel"{}},\ numofjoint);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ figure(5);}
+\DoxyCodeLine{00039\ filename\ =\ strcat(\textcolor{stringliteral}{"{}encConsis\_jointPos\_MotorPos\_reversed\_"{}},\ partname,\ \textcolor{stringliteral}{"{}.txt"{}});}
+\DoxyCodeLine{00040\ oneFile\_plot(filename,\ \textcolor{stringliteral}{"{}jointPos\ vs\ MotorPos\ (REVERSED)"{}},\ numofjoint);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ endfunction}
+\DoxyCodeLine{00043\ }
+
+\end{DoxyCode}

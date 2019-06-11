@@ -1,0 +1,402 @@
+\doxysection{Position\+Direct Class Reference}
+\label{classPositionDirect}\index{PositionDirect@{PositionDirect}}
+
+
+This tests checks the position\+Direct control, sending a sinusoidal reference signal, with parametric frequency and amplitude.  
+
+
+
+
+{\ttfamily \#include $<$Position\+Direct.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{classPositionDirect_a65b1833e16c9185db0d488248e59d7cc}{setup}} (yarp\+::os\+::\+Property \&property)
+\item 
+virtual void \mbox{\hyperlink{classPositionDirect_a84243f0cd8e5269d486899febfc47cca}{tear\+Down}} ()
+\item 
+virtual void \mbox{\hyperlink{classPositionDirect_a70210708c01218e1aabbc657a16d85f4}{run}} ()
+\item 
+void \mbox{\hyperlink{classPositionDirect_a2dd8350755621895f0bb36d176d65e4e}{go\+Home}} ()
+\item 
+void \mbox{\hyperlink{classPositionDirect_aa6f6d0aafdb7e339fa07bbc5232b4dfb}{execute\+Cmd}} ()
+\item 
+void \mbox{\hyperlink{classPositionDirect_aa18a4e2b7558adf62e72873a78fed7bd}{set\+Mode}} (int desired\+\_\+mode)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This tests checks the position\+Direct control, sending a sinusoidal reference signal, with parametric frequency and amplitude. 
+
+The sample time, typical in the range of 10 ms, can be also be adjusted by the user. This test currently does not return any error report. It simply moves a joint, and the user visually evaluates the smoothness of the performed trajectory. In the future automatic checks/plots may be added to the test. Be aware theat may exists set of parameters (e.\+g. high values of sample time / ampiltude /frequency) that may lead to PID instability and damage the joint. The test is able to check all the three types of yarp methods (single joint, multi joint, all joints), depending on the value of cmd\+Mode Parameter.
+
+example\+: test\+Runner -\/v -\/t Position\+Direct.\+dll -\/ p "{}-\/-\/robot icub -\/-\/part head -\/-\/joints "{}"{}(0 1 2)"{}"{} -\/-\/zero 0 -\/-\/frequency 0.\+8 -\/-\/amplitude 10.\+0 -\/-\/cycles 10 -\/-\/tolerance 1.\+0 -\/-\/sample\+Time 0.\+010 -\/-\/cmd\+Mode 0"{} example\+: test\+Runner -\/v -\/t Position\+Direct.\+dll -\/ p "{}-\/-\/robot icub -\/-\/part head -\/-\/joints "{}"{}(2)"{}"{} -\/-\/zero 0 -\/-\/frequency 0.\+4 -\/-\/amplitude 10.\+0 -\/-\/cycles 10 -\/-\/tolerance 1.\+0 -\/-\/sample\+Time 0.\+010 -\/-\/cmd\+Mode 0"{}
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IPosition\+Direct\+::set\+Positions() \item IControl\+Mode\+::set\+Control\+Mode()\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of trhe robot part.   &\PBS\centering e.\+g. left\+\_\+arm    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering zero   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering cycles   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The number of test cycles (going from max to min position and viceversa)   &\PBS\centering \\\cline{1-7}
+\PBS\centering frequency   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The frequency of the sine reference signal   &\PBS\centering \\\cline{1-7}
+\PBS\centering amplitude   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The ampiltude of the sine reference signal   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The tolerance used when moving from min to max reference position and viceversa   &\PBS\centering \\\cline{1-7}
+\PBS\centering sample\+Time   &\PBS\centering double   &\PBS\centering s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The sample time of the control thread   &\PBS\centering \\\cline{1-7}
+\PBS\centering cmd\+Mode   &\PBS\centering int   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering = 0 to test single joint method, = 1 to test all joints, = 2 to test multi joint method   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8h_source_l00060}{60}} of file \mbox{\hyperlink{PositionDirect_8h_source}{Position\+Direct.\+h}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\label{classPositionDirect_a745737b058c5fa89e11800f34e6a89ce} 
+\index{PositionDirect@{PositionDirect}!PositionDirect@{PositionDirect}}
+\index{PositionDirect@{PositionDirect}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{PositionDirect()}{PositionDirect()}}
+{\footnotesize\ttfamily Position\+Direct\+::\+Position\+Direct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00036}{36}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ yarp::robottestingframework::TestCase(\textcolor{stringliteral}{"{}PositionDirect"{}})\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ jointsList=0;}
+\DoxyCodeLine{00038\ \ \ \ \ pos\_tot=0;}
+\DoxyCodeLine{00039\ \ \ \ \ dd=0;}
+\DoxyCodeLine{00040\ \ \ \ \ ipos=0;}
+\DoxyCodeLine{00041\ \ \ \ \ icmd=0;}
+\DoxyCodeLine{00042\ \ \ \ \ iimd=0;}
+\DoxyCodeLine{00043\ \ \ \ \ ienc=0;}
+\DoxyCodeLine{00044\ \ \ \ \ idir=0;}
+\DoxyCodeLine{00045\ \ \ \ \ cmd\_some=0;}
+\DoxyCodeLine{00046\ \ \ \ \ cmd\_tot=0;}
+\DoxyCodeLine{00047\ \}}
+
+\end{DoxyCode}
+\label{classPositionDirect_ac88e045ebfd3f769654d1c778b40b8b8} 
+\index{PositionDirect@{PositionDirect}!````~PositionDirect@{\texorpdfstring{$\sim$}{\string~}PositionDirect}}
+\index{````~PositionDirect@{\texorpdfstring{$\sim$}{\string~}PositionDirect}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}PositionDirect()}{\string~PositionDirect()}}
+{\footnotesize\ttfamily Position\+Direct\+::\texorpdfstring{$\sim$}{\string~}\+Position\+Direct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00049}{49}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00049\ \{\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\label{classPositionDirect_aa6f6d0aafdb7e339fa07bbc5232b4dfb} 
+\index{PositionDirect@{PositionDirect}!executeCmd@{executeCmd}}
+\index{executeCmd@{executeCmd}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{executeCmd()}{executeCmd()}}
+{\footnotesize\ttfamily void Position\+Direct\+::execute\+Cmd (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00172}{172}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00173\ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \textcolor{keywordflow}{if}\ (cmd\_mode==single\_joint)}
+\DoxyCodeLine{00175\ \ \ \ \ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ idir-\/>setPosition(jointsList[i],cmd\_single);}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00180\ \ \ \ \ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (cmd\_mode==some\_joints)}
+\DoxyCodeLine{00182\ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ cmd\_some[i]=cmd\_single;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ idir-\/>setPositions(n\_cmd\_joints,jointsList,\ cmd\_some);}
+\DoxyCodeLine{00188\ \ \ \ \ \}}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (cmd\_mode==all\_joints)}
+\DoxyCodeLine{00190\ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_part\_joints;\ i++)}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ cmd\_tot[i]=cmd\_single;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ idir-\/>setPositions(cmd\_tot);}
+\DoxyCodeLine{00196\ \ \ \ \ \}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00198\ \ \ \ \ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}Invalid\ cmd\_mode"{}});}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ prev\_cmd=cmd\_single;}
+\DoxyCodeLine{00203\ \}}
+
+\end{DoxyCode}
+\label{classPositionDirect_a2dd8350755621895f0bb36d176d65e4e} 
+\index{PositionDirect@{PositionDirect}!goHome@{goHome}}
+\index{goHome@{goHome}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{goHome()}{goHome()}}
+{\footnotesize\ttfamily void Position\+Direct\+::go\+Home (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00205}{205}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00206\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00208\ \ \ \ \ \{}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ ipos-\/>setRefSpeed(jointsList[i],20.0);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ ipos-\/>positionMove(jointsList[i],zero);}
+\DoxyCodeLine{00211\ \ \ \ \ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{keywordtype}{int}\ timeout\ =\ 0;}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)}
+\DoxyCodeLine{00215\ \ \ \ \ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ in\_position=0;}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ ienc-\/>getEncoder(jointsList[i],\&pos\_tot[jointsList[i]]);}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fabs(pos\_tot[jointsList[i]]-\/zero)<0.5)\ in\_position++;}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (in\_position==n\_cmd\_joints)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (timeout>100)}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}Timeout\ while\ reaching\ zero\ position"{}});}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ timeout++;}
+\DoxyCodeLine{00229\ \ \ \ \ \}}
+\DoxyCodeLine{00230\ \}}
+
+\end{DoxyCode}
+\label{classPositionDirect_a70210708c01218e1aabbc657a16d85f4} 
+\index{PositionDirect@{PositionDirect}!run@{run}}
+\index{run@{run}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Position\+Direct\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00232}{232}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00233\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ setMode(VOCAB\_CM\_POSITION);}
+\DoxyCodeLine{00235\ \ \ \ \ goHome();}
+\DoxyCodeLine{00236\ \ \ \ \ setMode(VOCAB\_CM\_POSITION\_DIRECT);}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keywordtype}{double}\ start\_time\ =\ yarp::os::Time::now();}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ max\_step\ =\ 2.0;}
+\DoxyCodeLine{00240\ \ \ \ \ prev\_cmd=cmd\_single\ =\ amplitude*sin(0.0)+zero;}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordflow}{while}(1)}
+\DoxyCodeLine{00242\ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ curr\_time\ =\ yarp::os::Time::now();}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ elapsed\ =\ curr\_time-\/start\_time;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ cmd\_single\ =\ amplitude*(2*3.14159265359*frequency*elapsed)+zero;}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(fabs(prev\_cmd-\/cmd\_single)<max\_step,}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Asserter::format(\textcolor{stringliteral}{"{}error\ in\ signal\ generation:\ previous:\ \%+6.3f\ current:\ \%+6.3f\ max\ step:\ \ \%+6.3f"{}},}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ prev\_cmd,cmd\_single,max\_step));}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ ienc-\/>getEncoders(pos\_tot);}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ executeCmd();}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{comment}{//printf("{}\%+6.3f\ \%f\(\backslash\)n"{},elapsed,\ cmd);}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(sampleTime);}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (elapsed*frequency>cycles)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00255\ \ \ \ \ \}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ setMode(VOCAB\_CM\_POSITION);}
+\DoxyCodeLine{00258\ \ \ \ \ goHome();}
+\DoxyCodeLine{00259\ \}}
+
+\end{DoxyCode}
+\label{classPositionDirect_aa18a4e2b7558adf62e72873a78fed7bd} 
+\index{PositionDirect@{PositionDirect}!setMode@{setMode}}
+\index{setMode@{setMode}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{setMode()}{setMode()}}
+{\footnotesize\ttfamily void Position\+Direct\+::set\+Mode (\begin{DoxyParamCaption}\item[{int}]{desired\+\_\+mode }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00140}{140}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00141\ \{}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00143\ \ \ \ \ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ icmd-\/>setControlMode(jointsList[i],desired\_mode);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ iimd-\/>setInteractionMode(jointsList[i],VOCAB\_IM\_STIFF);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.010);}
+\DoxyCodeLine{00147\ \ \ \ \ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keywordtype}{int}\ cmode;}
+\DoxyCodeLine{00150\ \ \ \ \ yarp::dev::InteractionModeEnum\ imode;}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{keywordtype}{int}\ timeout\ =\ 0;}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)}
+\DoxyCodeLine{00154\ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ ok=0;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i<n\_cmd\_joints;\ i++)}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ icmd-\/>getControlMode\ (jointsList[i],\&cmode);}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ iimd-\/>getInteractionMode(jointsList[i],\&imode);}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cmode==desired\_mode\ \&\&\ imode==VOCAB\_IM\_STIFF)\ ok++;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ok==n\_cmd\_joints)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (timeout>100)}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}Unable\ to\ set\ control\ mode/interaction\ mode"{}});}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ yarp::os::Time::delay(0.2);}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ timeout++;}
+\DoxyCodeLine{00169\ \ \ \ \ \}}
+\DoxyCodeLine{00170\ \}}
+
+\end{DoxyCode}
+\label{classPositionDirect_a65b1833e16c9185db0d488248e59d7cc} 
+\index{PositionDirect@{PositionDirect}!setup@{setup}}
+\index{setup@{setup}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily bool Position\+Direct\+::setup (\begin{DoxyParamCaption}\item[{yarp\+::os\+::\+Property \&}]{property }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00051}{51}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//updating\ the\ test\ name}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{if}(property.check(\textcolor{stringliteral}{"{}name"{}}))}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ setName(property.find(\textcolor{stringliteral}{"{}name"{}}).asString());}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{//\ updating\ parameters}}
+\DoxyCodeLine{00058\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}robot"{}}),\ \textcolor{stringliteral}{"{}The\ robot\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00059\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}part"{}}),\ \textcolor{stringliteral}{"{}The\ part\ name\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00060\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}joints"{}}),\ \textcolor{stringliteral}{"{}The\ joints\ list\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00061\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}zero"{}}),\ \ \ \ \textcolor{stringliteral}{"{}The\ zero\ position\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00062\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}frequency"{}}),\ \textcolor{stringliteral}{"{}The\ frequency\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00063\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}amplitude"{}}),\ \textcolor{stringliteral}{"{}The\ amplitude\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00064\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}cycles"{}}),\ \textcolor{stringliteral}{"{}The\ number\ of\ cycles\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00065\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}tolerance"{}}),\ \textcolor{stringliteral}{"{}The\ tolerance\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}sampleTime"{}}),\ \textcolor{stringliteral}{"{}The\ sampleTime\ of\ the\ control\ signal\ must\ be\ given\ as\ the\ test\ parameter!"{}});}
+\DoxyCodeLine{00067\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(property.check(\textcolor{stringliteral}{"{}cmdMode"{}}),\ \textcolor{stringliteral}{"{}the\ cmdType\ must\ be\ given\ as\ the\ test\ parameter!\ 0=single\_joint,\ 1=all\_joints,\ 2=some\_joints"{}});}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ robotName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}robot"{}}).asString();}
+\DoxyCodeLine{00070\ \ \ \ \ partName\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}part"{}}).asString();}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ Bottle*\ jointsBottle\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}joints"{}}).asList();}
+\DoxyCodeLine{00073\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(jointsBottle!=0,\textcolor{stringliteral}{"{}unable\ to\ parse\ joints\ parameter"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ n\_cmd\_joints\ =\ jointsBottle-\/>size();}
+\DoxyCodeLine{00075\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(n\_cmd\_joints>0,\textcolor{stringliteral}{"{}invalid\ number\ of\ joints,\ it\ must\ be\ >0"{}});}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ frequency\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}frequency"{}}).asFloat64();}
+\DoxyCodeLine{00078\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(frequency>0,\textcolor{stringliteral}{"{}invalid\ frequency"{}});}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ amplitude\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}amplitude"{}}).asFloat64();}
+\DoxyCodeLine{00081\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(amplitude>0,\textcolor{stringliteral}{"{}invalid\ amplitude"{}});}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ zero\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}zero"{}}).asFloat64();}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ cycles\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}cycles"{}}).asFloat64();}
+\DoxyCodeLine{00086\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(cycles>0,\textcolor{stringliteral}{"{}invalid\ cycles"{}});}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ tolerance\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}tolerance"{}}).asFloat64();}
+\DoxyCodeLine{00089\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(tolerance>0,\textcolor{stringliteral}{"{}invalid\ tolerance"{}});}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ sampleTime\ =\ \textcolor{keyword}{property}.find(\textcolor{stringliteral}{"{}sampleTime"{}}).asFloat64();}
+\DoxyCodeLine{00092\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(sampleTime>0,\textcolor{stringliteral}{"{}invalid\ sampleTime"{}});}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ cmd\_mode\ =\ (cmd\_mode\_t)\ property.find(\textcolor{stringliteral}{"{}cmdMode"{}}).asInt32();}
+\DoxyCodeLine{00095\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(cmd\_mode>=0\ \&\&\ cmd\_mode<=2,\textcolor{stringliteral}{"{}invalid\ cmdMode:\ can\ be\ 0=single\_joint,\ 1=all\_joints\ ,2=some\_joints"{}});}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ Property\ options;}
+\DoxyCodeLine{00098\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}device"{}},\ \textcolor{stringliteral}{"{}remote\_controlboard"{}});}
+\DoxyCodeLine{00099\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}remote"{}},\ \textcolor{stringliteral}{"{}/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00100\ \ \ \ \ options.put(\textcolor{stringliteral}{"{}local"{}},\ \textcolor{stringliteral}{"{}/positionDirectTest/"{}}+robotName+\textcolor{stringliteral}{"{}/"{}}+partName);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ dd\ =\ \textcolor{keyword}{new}\ PolyDriver(options);}
+\DoxyCodeLine{00103\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>isValid(),\textcolor{stringliteral}{"{}Unable\ to\ open\ device\ driver"{}});}
+\DoxyCodeLine{00104\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(idir),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ direct\ interface"{}});}
+\DoxyCodeLine{00105\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ienc),\textcolor{stringliteral}{"{}Unable\ to\ open\ encoders\ interface"{}});}
+\DoxyCodeLine{00106\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(ipos),\textcolor{stringliteral}{"{}Unable\ to\ open\ position\ interface"{}});}
+\DoxyCodeLine{00107\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(icmd),\textcolor{stringliteral}{"{}Unable\ to\ open\ control\ mode\ interface"{}});}
+\DoxyCodeLine{00108\ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR\_IF\_FALSE(dd-\/>view(iimd),\textcolor{stringliteral}{"{}Unable\ to\ open\ interaction\ mode\ interface"{}});}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keywordflow}{if}\ (!ienc-\/>getAxes(\&n\_part\_joints))}
+\DoxyCodeLine{00111\ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}unable\ to\ get\ the\ number\ of\ joints\ of\ the\ part"{}});}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{if}\ (cmd\_mode==all\_joints\ \&\&\ n\_part\_joints!=n\_cmd\_joints)}
+\DoxyCodeLine{00116\ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}if\ all\_joints=2\ mode\ is\ selected,\ joints\ parameter\ must\ include\ the\ full\ list\ of\ joints"{}});}
+\DoxyCodeLine{00118\ \ \ \ \ \}}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (cmd\_mode==single\_joint\ \&\&\ n\_cmd\_joints!=1)}
+\DoxyCodeLine{00121\ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ ROBOTTESTINGFRAMEWORK\_ASSERT\_ERROR(\textcolor{stringliteral}{"{}if\ single\_joint=1\ mode\ is\ selected,\ joints\ parameter\ must\ include\ one\ single\ joint"{}});}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ cmd\_tot\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[n\_part\_joints];}
+\DoxyCodeLine{00126\ \ \ \ \ pos\_tot=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[n\_part\_joints];}
+\DoxyCodeLine{00127\ \ \ \ \ jointsList=\textcolor{keyword}{new}\ \textcolor{keywordtype}{int}[n\_cmd\_joints];}
+\DoxyCodeLine{00128\ \ \ \ \ cmd\_some=\textcolor{keyword}{new}\ \textcolor{keywordtype}{double}[n\_cmd\_joints];}
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i=0;\ i\ <n\_cmd\_joints;\ i++)\ jointsList[i]=jointsBottle-\/>get(i).asInt32();}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00132\ \}}
+
+\end{DoxyCode}
+\label{classPositionDirect_a84243f0cd8e5269d486899febfc47cca} 
+\index{PositionDirect@{PositionDirect}!tearDown@{tearDown}}
+\index{tearDown@{tearDown}!PositionDirect@{PositionDirect}}
+\doxysubsubsection{\texorpdfstring{tearDown()}{tearDown()}}
+{\footnotesize\ttfamily void Position\+Direct\+::tear\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{PositionDirect_8cpp_source_l00134}{134}} of file \mbox{\hyperlink{PositionDirect_8cpp_source}{Position\+Direct.\+cpp}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00135\ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keywordflow}{if}\ (jointsList)\ \{\textcolor{keyword}{delete}\ jointsList;\ jointsList\ =0;\}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keywordflow}{if}\ (dd)\ \{\textcolor{keyword}{delete}\ dd;\ dd\ =0;\}}
+\DoxyCodeLine{00138\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/position\+Direct/Position\+Direct.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/position\+Direct/Position\+Direct.\+cpp\end{DoxyCompactItemize}

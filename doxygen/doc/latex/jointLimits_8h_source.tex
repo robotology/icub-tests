@@ -1,0 +1,86 @@
+\doxysection{joint\+Limits.\+h}
+\label{jointLimits_8h_source}\index{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/jointLimits/jointLimits.h@{/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/jointLimits/jointLimits.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ iCub\ Robot\ Unit\ Tests\ (Robot\ Testing\ Framework)}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ Copyright\ (C)\ 2015-\/2019\ Istituto\ Italiano\ di\ Tecnologia\ (IIT)}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ This\ library\ is\ free\ software;\ you\ can\ redistribute\ it\ and/or}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ modify\ it\ under\ the\ terms\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ License\ as\ published\ by\ the\ Free\ Software\ Foundation;\ either}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ version\ 2.1\ of\ the\ License,\ or\ (at\ your\ option)\ any\ later\ version.}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ This\ library\ is\ distributed\ in\ the\ hope\ that\ it\ will\ be\ useful,}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ but\ WITHOUT\ ANY\ WARRANTY;\ without\ even\ the\ implied\ warranty\ of}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ MERCHANTABILITY\ or\ FITNESS\ FOR\ A\ PARTICULAR\ PURPOSE.\ \ See\ the\ GNU}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ Lesser\ General\ Public\ License\ for\ more\ details.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ You\ should\ have\ received\ a\ copy\ of\ the\ GNU\ Lesser\ General\ Public}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ License\ along\ with\ this\ library;\ if\ not,\ write\ to\ the\ Free\ Software}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ Foundation,\ Inc.,\ 51\ Franklin\ Street,\ Fifth\ Floor,\ Boston,\ MA\ \ 02110-\/1301\ \ USA}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ \_JOINTLIMITS\_H\_}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \_JOINTLIMITS\_H\_}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <yarp/robottestingframework/TestCase.h>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <yarp/dev/ControlBoardInterfaces.h>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <yarp/dev/PolyDriver.h>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <yarp/sig/Vector.h>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <yarp/os/Bottle.h>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <yarp/sig/Matrix.h>}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{class\ }JointLimits\ :\ \textcolor{keyword}{public}\ yarp::robottestingframework::TestCase\ \{}
+\DoxyCodeLine{00075\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00076\ \ \ \ \ JointLimits();}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~JointLimits();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ setup(yarp::os::Property\&\ property);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ tearDown();}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run();}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ goTo(yarp::sig::Vector\ position);}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{bool}\ goToSingle(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{double}\ pos,\ \textcolor{keywordtype}{double}\ *reached\_pos);}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{bool}\ goToSingleExceed(\textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{double}\ position\_to\_reach,\ \textcolor{keywordtype}{double}\ limit,\ \textcolor{keywordtype}{double}\ reachedLimit,\ \textcolor{keywordtype}{double}\ *reached\_pos);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{void}\ setMode(\textcolor{keywordtype}{int}\ desired\_mode);}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordtype}{void}\ saveToFile(std::string\ filename,\ yarp::os::Bottle\ \&b);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00093\ \ \ \ \ std::string\ robotName;}
+\DoxyCodeLine{00094\ \ \ \ \ std::string\ partName;}
+\DoxyCodeLine{00095\ \ \ \ \ yarp::sig::Vector\ jointsList;}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{double}\ tolerance;}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ n\_part\_joints;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \ \ \ \ yarp::dev::PolyDriver\ \ \ \ \ \ \ \ *dd;}
+\DoxyCodeLine{00102\ \ \ \ \ yarp::dev::IPositionControl\ *ipos;}
+\DoxyCodeLine{00103\ \ \ \ \ yarp::dev::IControlMode\ \ \ \ \ *icmd;}
+\DoxyCodeLine{00104\ \ \ \ \ yarp::dev::IInteractionMode\ \ *iimd;}
+\DoxyCodeLine{00105\ \ \ \ \ yarp::dev::IEncoders\ \ \ \ \ \ \ \ \ *ienc;}
+\DoxyCodeLine{00106\ \ \ \ \ yarp::dev::IControlLimits\ \ \ \ *ilim;}
+\DoxyCodeLine{00107\ \ \ \ \ yarp::dev::IPidControl\ \ \ \ \ \ \ *ipid;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ yarp::sig::Vector\ enc\_jnt;}
+\DoxyCodeLine{00110\ \ \ \ \ yarp::sig::Vector\ max\_lims;}
+\DoxyCodeLine{00111\ \ \ \ \ yarp::sig::Vector\ min\_lims;}
+\DoxyCodeLine{00112\ \ \ \ \ yarp::sig::Vector\ outputLimit;}
+\DoxyCodeLine{00113\ \ \ \ \ yarp::sig::Vector\ outOfBoundPos;}
+\DoxyCodeLine{00114\ \ \ \ \ yarp::sig::Vector\ toleranceList;}
+\DoxyCodeLine{00115\ \ \ \ \ yarp::sig::Vector\ home;}
+\DoxyCodeLine{00116\ \ \ \ \ yarp::sig::Vector\ speed;}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{bool}\ pids\_saved;}
+\DoxyCodeLine{00119\ \ \ \ \ yarp::dev::Pid*\ original\_pids;}
+\DoxyCodeLine{00120\ \};}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_JOINTLIMITS\_H}}
+
+\end{DoxyCode}
