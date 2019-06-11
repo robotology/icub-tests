@@ -1,0 +1,44 @@
+\doxysection{Torque\+Control\+Gravity\+Consistency Class Reference}
+\label{classTorqueControlGravityConsistency}\index{TorqueControlGravityConsistency@{TorqueControlGravityConsistency}}
+
+
+The test is supposed to be run with the i\+Cub fixed to the pole, with the pole leveled with respect to the gravity (please check this with a level before running the test) and with the whole\+Body\+Dynamics(\+Tree) running.  
+
+
+
+
+{\ttfamily \#include $<$Torque\+Control\+Gravity\+Consistency.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classTorqueControlGravityConsistency_af458d18b20938955516073ffbb9aeb8a}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classTorqueControlGravityConsistency_a530ffd6435bf66da62107510ef379c3b}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classTorqueControlGravityConsistency_a0a60459b300343fe929867703d38a8da}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The test is supposed to be run with the i\+Cub fixed to the pole, with the pole leveled with respect to the gravity (please check this with a level before running the test) and with the whole\+Body\+Dynamics(\+Tree) running. 
+
+The tests opens the whole\+Body\+Interface (to be migrated to use material available on YARP and i\+Dyn\+Tree) and compares the gravity compensation torque coming from the model and assuming that the gravity is fixed in the based with the joint torques measured by i\+Cub (that actually come from the whole\+Body\+Dynamics(\+Tree) ).
+
+Example\+: test\+Runner -\/v -\/t Torque\+Control\+Gravity\+Consistency.\+dll -\/p \char`\"{}\char`\"{} 
+
+Definition at line 45 of file Torque\+Control\+Gravity\+Consistency.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torque\+Control-\/gravity\+Consistency/Torque\+Control\+Gravity\+Consistency.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/torque\+Control-\/gravity\+Consistency/Torque\+Control\+Gravity\+Consistency.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,39 @@
+The {\ttfamily icub-\/tests} repository contains tests for the i\+Cub robot. Tests are written using the \href{https://github.com/robotology/robot-testing-framework}{\tt Robot Testing Framework}.
+
+\subsection*{Installation, tutorial and available tests}
+
+See the \href{https://robotology.github.io/icub-tests/}{\tt icub-\/test documentation}.
+
+\subsection*{Update the documentation}
+
+To update documentation follow these steps\+:
+
+
+\begin{DoxyCode}
+git checkout gh-pages
+git rebase master
+cd doxygen
+rm -rf doc
+doxygen ./generate.txt
+git add ./doc
+git log -1
+git commit --amend
+git push --force-with-lease
+git checkout master
+\end{DoxyCode}
+ For in-\/depth details about doxygen documentation and gh-\/pages, see \href{https://github.com/robotology/how-to-document-modules}{\tt how-\/to-\/document-\/modules}.
+
+\subsection*{Contributors}
+
+
+\begin{DoxyItemize}
+\item \href{https://github.com/apaikan}{\tt {\bfseries Ali Paikan}}
+\item \href{https://github.com/lornat75}{\tt {\bfseries Lorenzo Natale}}
+\item \href{https://github.com/traversaro}{\tt {\bfseries Silvio Traversaro}}
+\item \href{https://github.com/ale-git}{\tt {\bfseries Alessandro Scalzo}}
+\item \href{https://github.com/randaz81}{\tt {\bfseries Marco Randazzo}}
+\item \href{https://github.com/valegagge}{\tt {\bfseries Valentina Gaggero}}
+\item \href{https://github.com/pattacini}{\tt {\bfseries Ugo Pattacini}}
+\item \href{https://github.com/Nicogene}{\tt {\bfseries Nicolo\textquotesingle{} Genesio}}
+\item \href{https://github.com/giuliavezzani}{\tt {\bfseries Giulia Vezzani}} 
+\end{DoxyItemize}

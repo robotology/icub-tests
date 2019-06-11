@@ -1,0 +1,62 @@
+\doxysection{Sensors\+Duplicate\+Readings Class Reference}
+\label{classSensorsDuplicateReadings}\index{SensorsDuplicateReadings@{SensorsDuplicateReadings}}
+
+
+Check if a yarp port is correctly publishing unique values at each update .  
+
+
+
+
+{\ttfamily \#include $<$Sensors\+Duplicate\+Readings.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classSensorsDuplicateReadings_ab59f0ef1631d3e9e32319d7258cfb1f8}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classSensorsDuplicateReadings_a985c191f7133ff39409a5d30f93316cf}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classSensorsDuplicateReadings_a4c03abe12e3dadaaa13a26a537a897e3}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check if a yarp port is correctly publishing unique values at each update . 
+
+For some sensors, such as strain gauge based force sensors, errors on the measurement ensure that two different readings of the sensors are always different. If on a port that is publishing a sensor reading you get two times exactly the same value, this could mean that the same sensor reading was sent multiple times. This could happen for several reasons\+:
+\begin{DoxyItemize}
+\item The wrapper is running faster than the sensor frequency (depending on the configuration this could make sense or not)
+\item The sensor readings are not properly read, for example because packets are lost or dropped (this usually indicate some problem in your system).
+\end{DoxyItemize}
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering \char`\"{}\+Sensors\+Duplicate\+Readings\char`\"{}   &\PBS\centering No   &\PBS\centering The name of the test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering time   &\PBS\centering double   &\PBS\centering s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering Duration of the test for each port.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering PORTS (group )   &\PBS\centering Bottle   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of couples of port/tolerated\+Duplicates with this format\+: (portname1, tolerated\+Duplicates1) (portname1, tolerated\+Duplicates1)   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 88 of file Sensors\+Duplicate\+Readings.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/sensors-\/duplicate-\/readings/Sensors\+Duplicate\+Readings.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/sensors-\/duplicate-\/readings/Sensors\+Duplicate\+Readings.\+cpp\end{DoxyCompactItemize}
