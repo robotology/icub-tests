@@ -30,7 +30,6 @@
 #include <cstdlib>
 #include <fstream>
 #include "motorEncodersConsistency.h"
-#include <yarp/manager/localbroker.h>
 #include <iostream>
 
 using namespace std;

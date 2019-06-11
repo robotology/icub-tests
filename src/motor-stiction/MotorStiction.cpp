@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include "MotorStiction.h"
-#include <yarp/manager/localbroker.h>
 
 //example1    -v -t MotorStiction.dll -p "--robot icub --part left_arm --joints ""(4)"" --home ""(45)"" --outputStep ""(0.5)"" --outputMax ""(50)"" --outputDelay ""(2.0)""  --threshold ""(5.0)"" "
 

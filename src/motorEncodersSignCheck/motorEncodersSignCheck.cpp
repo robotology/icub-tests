@@ -25,7 +25,6 @@
 #include <yarp/os/Property.h>
 #include <algorithm>
 #include "motorEncodersSignCheck.h"
-#include <yarp/manager/localbroker.h>
 #include "iostream"
 
 

@@ -30,6 +30,7 @@ target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
                                       RobotTestingFramework::RTF_dll
                                       YARP::YARP_OS
                                       YARP::YARP_init
+                                      YARP::YARP_math
                                       YARP::YARP_robottestingframework)
 
 install(TARGETS ${PROJECT_NAME}

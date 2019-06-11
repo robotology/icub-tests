@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <cstdlib>
 #include "jointLimits.h"
-#include <yarp/manager/localbroker.h>
 
 #include <stdio.h>
 
