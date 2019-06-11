@@ -35,7 +35,26 @@ git checkout -q gh-pages
 rm -Rf doxygen/doc
 (cd doxygen && doxygen Doxyfile)
 
+cat > index.html << EOF
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="refresh" content="1;url=doxygen/doc/html/index.html">
+        <script type="text/javascript">
+            window.location.href = "doxygen/doc/html/index.html"
+        </script>
+        <title>Page Redirection</title>
+    </head>
+    <body>
+        If you are not redirected automatically, follow the <a href="doxygen/doc/html/index.html">link to the documentation</a>
+    </body>
+</html>
+EOF
+
+
 git add doxygen/doc
+git add index.html
 git commit -q -m "Generate documentation"
 git checkout -q - || exit 1
 
