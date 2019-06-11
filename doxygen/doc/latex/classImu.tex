@@ -1,0 +1,66 @@
+\doxysection{Imu Class Reference}
+\label{classImu}\index{Imu@{Imu}}
+
+
+The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements.  
+
+
+
+
+{\ttfamily \#include $<$imu.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classImu_a2bd75f1be1f28fecbff074a7cb12ed8a}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classImu_aefc1351bbb75573d08c851a3d1d11a6d}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classImu_a8af2b1c07ac7950215df4d4ece2008c0}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements. 
+
+It takes as input the urdf of the robot and make a comparison between the expected values retrieved from the forward kinematics and the ones read from the IMU itself. The test involves the movements of the joints belonging to the part on which the sensors are mounted.
+
+You can find the parameters involved in the test in the following table\+:
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{5}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-5}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-5}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-5}
+\PBS\centering model   &\PBS\centering string   &\PBS\centering Yes   &\PBS\centering The name of the robot model.   &\PBS\centering e.\+g. model.\+urdf    \\\cline{1-5}
+\PBS\centering port   &\PBS\centering string   &\PBS\centering Yes   &\PBS\centering The name of the port streaming IMU data.   &\PBS\centering e.\+g. /icub/alljoints/inertials    \\\cline{1-5}
+\PBS\centering remote\+Control\+Boards   &\PBS\centering vector of string   &\PBS\centering Yes   &\PBS\centering The list of the controlboards to open.   &\PBS\centering e.\+g. (\char`\"{}torso\char`\"{}, \char`\"{}head\char`\"{})    \\\cline{1-5}
+\PBS\centering axes\+Names   &\PBS\centering vector of string   &\PBS\centering Yes   &\PBS\centering The list of the controlled joints.   &\PBS\centering e.\+g. (\char`\"{}torso\+\_\+pitch\char`\"{}, \char`\"{}torso\+\_\+roll\char`\"{}, \char`\"{}torso\+\_\+yaw\char`\"{}, \char`\"{}neck\+\_\+pitch\char`\"{}, \char`\"{}neck\+\_\+roll\char`\"{}, \char`\"{}neck\+\_\+yaw\char`\"{})    \\\cline{1-5}
+\PBS\centering sensors\+List   &\PBS\centering vector of string   &\PBS\centering Yes   &\PBS\centering The list of the sensors to be tested.   &\PBS\centering e.\+g. (\char`\"{}head\+\_\+imu\+\_\+0\char`\"{}, \char`\"{}l\+\_\+arm\+\_\+ft\char`\"{}) or (\char`\"{}all\char`\"{})    \\\cline{1-5}
+\PBS\centering max\+Error   &\PBS\centering double   &\PBS\centering Yes   &\PBS\centering The tolerance on the error.   &\PBS\centering \\\cline{1-5}
+\end{longtabu}
+
+
+Further instructions about how to install, configure and run the test can be found in the \href{http://robotology.github.io/icub-tests/doxygen/doc/html/pages.html}{\texttt{ related page}}. 
+
+Definition at line 39 of file imu.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/imu/imu.\+cpp\end{DoxyCompactItemize}

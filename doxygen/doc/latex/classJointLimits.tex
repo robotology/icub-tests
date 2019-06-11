@@ -1,0 +1,84 @@
+\doxysection{Joint\+Limits Class Reference}
+\label{classJointLimits}\index{JointLimits@{JointLimits}}
+
+
+Check if the software joint limits are properly set.  
+
+
+
+
+{\ttfamily \#include $<$joint\+Limits.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classJointLimits_aab2cba8458562fa010452d40812d2088}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classJointLimits_af90bca494fc174654dbd23050438f677}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classJointLimits_a7d638220c08c9c3c500ffb6b4ecfcaa9}} 
+virtual void {\bfseries run} ()
+\item 
+\mbox{\label{classJointLimits_af409fb877cde1701963fa0d5bcbb12be}} 
+void {\bfseries go\+To} (yarp\+::sig\+::\+Vector position)
+\item 
+\mbox{\label{classJointLimits_a5a4a3ea41f4fb7c0e9d93fbc75a6c71c}} 
+bool {\bfseries go\+To\+Single} (int i, double pos, double $\ast$reached\+\_\+pos)
+\item 
+\mbox{\label{classJointLimits_a8430fc193c56418843c67ddde4966571}} 
+bool {\bfseries go\+To\+Single\+Exceed} (int i, double position\+\_\+to\+\_\+reach, double limit, double reached\+Limit, double $\ast$reached\+\_\+pos)
+\item 
+\mbox{\label{classJointLimits_ae4d5b348e7689e4c1382252bcbb0ae0a}} 
+void {\bfseries set\+Mode} (int desired\+\_\+mode)
+\item 
+\mbox{\label{classJointLimits_a0790f6c7d9d1886aaa1bb4848cf790ef}} 
+void {\bfseries save\+To\+File} (std\+::string filename, yarp\+::os\+::\+Bottle \&b)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check if the software joint limits are properly set. 
+
+The limits are set in the robot configuration files. The test asks the limits to robot\+Interface using the IControl\+Limits interface. The test moves each joint first to the max lim, then to the min lim, then to home. If the joint is unable to reach the software limits within a certain tolerance, the test fails and the joint is put back in home position. The timeout for each joint to reach the limit position is fixed to 20 seconds. The test uses an limited output to avoid to damage the joint if, for example, an hardware limit is reached before the software limit. If this limit is too small, the the joint may be unable to reach the limit (e.\+g. because of friction), so the value must be chosen accurately. The test assumes the the position control is properly working and the position pid is properly tuned. After testing the limits, this test also tries to move the joint out of the limits on puropose (adding to the joint limits the value of out\+Of\+Bound\+Position). The test is successfull if the position move command is correctly stopped at the limit.
+
+Example\+: test\+Runner -\/v -\/t Joint\+Limits.\+dll -\/p \char`\"{}-\/-\/robot icub -\/-\/part head -\/-\/joints \char`\"{}\char`\"{}(0 1 2)\char`\"{}\char`\"{} -\/-\/home \char`\"{}\char`\"{}(0 0 0)\char`\"{}\char`\"{} -\/-\/speed \char`\"{}\char`\"{}(20 20 20)\char`\"{}\char`\"{} -\/-\/output\+Limit\+Percent \char`\"{}\char`\"{}(30 30 30)\char`\"{}\char`\"{} -\/-\/out\+Of\+Bound\+Position \char`\"{}\char`\"{}(2 2 2)\char`\"{}\char`\"{} -\/-\/tolerance 0.\+2\char`\"{}
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IControl\+Limits\+::get\+Limits()\end{DoxyItemize}
+Support functions\+: \begin{DoxyItemize}
+\item IPosition\+Control\+::get\+Axes() \item IPosition\+Control\+::position\+Move() \item IPosition\+Contol\+::set\+Ref\+Speeds() \item IEncoders\+::get\+Encoder() \item IEncoders\+::get\+Encoders() \item IPid\+::get\+Pid()/\+IPid\+::set\+Pid() \item IControl\+Mode\+::get\+Control\+Mode()/set\+Control\+Mode() \item IInteraction\+Mode\+::get\+Interaction\+Mode()/set\+Interaction\+Mode()\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of trhe robot part.   &\PBS\centering e.\+g. left\+\_\+arm    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering home   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering speed   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The reference speed used furing the movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The position tolerance used to check if the limit has been properly reached.   &\PBS\centering Typical value = 0.\+2 deg.    \\\cline{1-7}
+\PBS\centering output\+Limit\+Percent   &\PBS\centering vector of doubles of size joints   &\PBS\centering \%   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The maximum motor output (expressed as percentage).   &\PBS\centering Safe values can be, for example, 30\%.    \\\cline{1-7}
+\PBS\centering out\+Of\+Bound\+Position   &\PBS\centering vector of doubles of size joints   &\PBS\centering \%   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering This value is added the joint limit to test that a position command is not able to move out of the joint limits   &\PBS\centering Typical value 2 deg.   \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 74 of file joint\+Limits.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/joint\+Limits/joint\+Limits.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/joint\+Limits/joint\+Limits.\+cpp\end{DoxyCompactItemize}

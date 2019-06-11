@@ -1,0 +1,83 @@
+\doxysection{Position\+Control\+Accuracy\+Exernal\+Pid Class Reference}
+\label{classPositionControlAccuracyExernalPid}\index{PositionControlAccuracyExernalPid@{PositionControlAccuracyExernalPid}}
+
+
+This tests checks the response of the system to a position step, sending directly PWM commands to a joint.  
+
+
+
+
+{\ttfamily \#include $<$Position\+Control\+Accuracy\+External\+Pid.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_abba945d5c3b4f4e4b5b0bd55f2b9204c}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_af669d21a9e774f141ff0a4263b1e42a4}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_a898e7627acaef71a92f734acc24ef17f}} 
+virtual void {\bfseries run} ()
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_aa8d2b518229a4e63aa9f85c6f29d0679}} 
+bool {\bfseries go\+Home} ()
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_aa83fe1e3938433dd5315ffa917966873}} 
+void {\bfseries execute\+Cmd} ()
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_ab147307ff6b0f3be7bb895b2bed93dd3}} 
+void {\bfseries set\+Mode} (int desired\+\_\+mode)
+\item 
+\mbox{\label{classPositionControlAccuracyExernalPid_af2a2eb5af608353daa6ebb002b06ab8d}} 
+void {\bfseries save\+To\+File} (std\+::string filename, yarp\+::os\+::\+Bottle \&b)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This tests checks the response of the system to a position step, sending directly PWM commands to a joint. 
+
+The PWM commands are computed using i\+Cub\+::ctrl\+::parallel\+PID class. This test currently does not return any error report. It simply moves a joint, and saves data to a different file for each joint. The data acquired can be analyzed with a Matlab script to evaluate the position PID properties. Be aware that a step greater than 5 degrees at the maximum speed can be dangerous for both the robot and the human operator!
+
+example\+: test\+Runner -\/v -\/t Position\+Control\+Accuracy\+External\+Pid.\+dll -\/p \char`\"{}-\/-\/robot icub\+Sim -\/-\/part head -\/-\/joints \char`\"{}\char`\"{}(0 1 2)\char`\"{}\char`\"{} -\/-\/zeros \char`\"{}\char`\"{}(0 0 0)\char`\"{}\char`\"{}  -\/-\/step 5  -\/-\/cycles 10 -\/-\/sample\+Time 0.\+010 -\/-\/\+Kp 1.\+0\char`\"{} example\+: test\+Runner -\/v -\/t Position\+Control\+Accuracy\+External\+Pid.\+dll -\/p \char`\"{}-\/-\/robot icub\+Sim -\/-\/part head -\/-\/joints \char`\"{}\char`\"{}(2)\char`\"{}\char`\"{} -\/-\/zeros \char`\"{}\char`\"{}(0)\char`\"{}\char`\"{} -\/-\/step 5 -\/-\/cycles 10 -\/-\/sample\+Time 0.\+010 -\/-\/home\+Tolerance 1.\+0 -\/-\/step\+\_\+duration 8 -\/-\/\+Kp 2.\+2 -\/-\/\+Kd 0.\+01 -\/-\/\+Ki 100 -\/-\/\+Max\+Value 80\char`\"{}
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot part.   &\PBS\centering e.\+g. left\+\_\+arm    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering zeros   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering cycles   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering Each joint will be tested multiple times   &\PBS\centering \\\cline{1-7}
+\PBS\centering step   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The amplitude of the step reference signal   &\PBS\centering Recommended max\+: 5 deg!    \\\cline{1-7}
+\PBS\centering sample\+Time   &\PBS\centering double   &\PBS\centering s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The sample time of the control thread   &\PBS\centering \\\cline{1-7}
+\PBS\centering home\+\_\+tolerance   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering 0.\+5   &\PBS\centering No   &\PBS\centering The max acceptable position error during the homing phase.   &\PBS\centering \\\cline{1-7}
+\PBS\centering filename   &\PBS\centering string   &\PBS\centering &\PBS\centering &\PBS\centering No   &\PBS\centering The output filename. If not specified, the name will be generated using \textquotesingle{}part\textquotesingle{} parameter and joint number   &\PBS\centering \\\cline{1-7}
+\PBS\centering step\+\_\+duration   &\PBS\centering double   &\PBS\centering s   &\PBS\centering 4   &\PBS\centering No   &\PBS\centering The duration of the step. After this time, a new test cycle starts.   &\PBS\centering \\\cline{1-7}
+\PBS\centering Kp   &\PBS\centering double   &\PBS\centering &\PBS\centering 0   &\PBS\centering No   &\PBS\centering The Proportional gain   &\PBS\centering \\\cline{1-7}
+\PBS\centering Ki   &\PBS\centering double   &\PBS\centering &\PBS\centering 0   &\PBS\centering No   &\PBS\centering The Integral gain   &\PBS\centering \\\cline{1-7}
+\PBS\centering Kd   &\PBS\centering double   &\PBS\centering &\PBS\centering 0   &\PBS\centering No   &\PBS\centering The Derivative gain   &\PBS\centering \\\cline{1-7}
+\PBS\centering Max\+Value   &\PBS\centering double   &\PBS\centering \%   &\PBS\centering 100   &\PBS\centering No   &\PBS\centering max value for PID output (saturator).   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 62 of file Position\+Control\+Accuracy\+External\+Pid.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/position\+Control-\/accuracy-\/\+External\+Pid/Position\+Control\+Accuracy\+External\+Pid.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/position\+Control-\/accuracy-\/\+External\+Pid/Position\+Control\+Accuracy\+External\+Pid.\+cpp\end{DoxyCompactItemize}

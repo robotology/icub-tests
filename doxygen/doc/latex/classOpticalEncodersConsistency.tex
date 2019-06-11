@@ -1,0 +1,83 @@
+\doxysection{Optical\+Encoders\+Consistency Class Reference}
+\label{classOpticalEncodersConsistency}\index{OpticalEncodersConsistency@{OpticalEncodersConsistency}}
+
+
+This tests checks if the motor encoder reading are consistent with the joint encoder readings.  
+
+
+
+
+{\ttfamily \#include $<$motor\+Encoders\+Consistency.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classOpticalEncodersConsistency_a51df63f87479ffa4f2f05c99f9c06863}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classOpticalEncodersConsistency_a8751028fa2a3bb23acc51693f47a9b75}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classOpticalEncodersConsistency_a372d7c32a10225fcda5e6621c6494ad7}} 
+virtual void {\bfseries run} ()
+\item 
+\mbox{\label{classOpticalEncodersConsistency_a1b18ff12291b46dddca9e0a11584887d}} 
+void {\bfseries go\+Home} ()
+\item 
+\mbox{\label{classOpticalEncodersConsistency_ae1e7c3909700d9a39fe9dad1b4f5c9d5}} 
+void {\bfseries set\+Mode} (int desired\+\_\+mode)
+\item 
+\mbox{\label{classOpticalEncodersConsistency_a7afe73617f00256e49c9a3c506f481a7}} 
+void {\bfseries save\+To\+File} (std\+::string filename, yarp\+::os\+::\+Bottle \&b)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This tests checks if the motor encoder reading are consistent with the joint encoder readings. 
+
+Since the two sensors may be placed in different places, with gearboxes or tendon transmissions in between, a (signed) factor is needed to convert the two measurements. The test performes a cyclic movement between two reference positions (min and max) and collects data from both the encoders during the movement. The test generates four text data files, which are subsequently opened to generate plots. In all figures the joint and motor plots need to be reasonably aligned. The four plots are\+: \begin{DoxyItemize}
+\item joint positions vs motor positions \item joint velocities vs motor velocities \item joint positions (numerically derived by the test) vs joint velocities (measured by the control board) \item motor positions (numerically derived by the test) vs motor velocities (measured by the control board) The conversion formula from motor measurments (M) to joint encoder measurements (J) is the following\+: J = kinematic\+\_\+mj $\ast$ gearbox $\ast$ M with kinematic\+\_\+mj the joints coupling matrix and gearbox the gearbox reduction factor (e.\+g. 1\+:100)\end{DoxyItemize}
+Example\+: test\+Runner v -\/t motor\+Encoders\+Consistency.\+dll -\/p \char`\"{}-\/-\/robot icub -\/-\/part left\+\_\+arm -\/-\/joints \char`\"{}\char`\"{}(0 1 2)\char`\"{}\char`\"{} -\/-\/home \char`\"{}\char`\"{}(-\/30 30 10)\char`\"{}\char`\"{} -\/-\/speed \char`\"{}\char`\"{}(20 20 20)\char`\"{}\char`\"{} -\/-\/max \char`\"{}\char`\"{}(-\/20 40 20)\char`\"{}\char`\"{} -\/-\/min \char`\"{}\char`\"{}(-\/40 20 0)\char`\"{}\char`\"{} -\/-\/cycles 10 -\/-\/tolerance 1.\+0 \char`\"{} Example\+: test\+Runner v -\/s \char`\"{}..\textbackslash{}icub-\/tests\textbackslash{}suites\textbackslash{}encoders-\/icub\+Sim.\+xml\char`\"{}
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IEncoders\+::get\+Encoders() \item IEncoders\+::get\+Encoder\+Speeds() \item IEncoders\+::get\+Encoder\+Accelerations() \item IMotor\+Encoder\+::get\+Motor\+Encoders() \item IMotor\+Encoder\+::get\+Motor\+Encoder\+Speeds() \item IMotor\+Encoder\+::get\+Motor\+Encoder\+Accelerations() Note\+: Acceleration is not currently tested.\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of trhe robot part.   &\PBS\centering e.\+g. left\+\_\+arm    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering home   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering cycles   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering 10   &\PBS\centering No   &\PBS\centering The number of test cycles (going from max to min position and viceversa   &\PBS\centering \\\cline{1-7}
+\PBS\centering max   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The max position using during the joint movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering min   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The min position using during the joint movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The tolerance used when moving from min to max reference position and viceversa   &\PBS\centering \\\cline{1-7}
+\PBS\centering speed   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The reference speed used during the movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering matrix\+\_\+size   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The number of rows of the coupling matrix   &\PBS\centering Typical value = 4.    \\\cline{1-7}
+\PBS\centering matrix   &\PBS\centering vector of doubles of size matrix\+\_\+size   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The kinematic\+\_\+mj coupling matrix   &\PBS\centering matrix is identity if joints are not coupled    \\\cline{1-7}
+\PBS\centering plotstring1   &\PBS\centering string   &\PBS\centering &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The string which generates plot 1   &\PBS\centering \\\cline{1-7}
+\PBS\centering plotstring2   &\PBS\centering string   &\PBS\centering &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The string which generates plot 2   &\PBS\centering \\\cline{1-7}
+\PBS\centering plotstring3   &\PBS\centering string   &\PBS\centering &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The string which generates plot 3   &\PBS\centering \\\cline{1-7}
+\PBS\centering plotstring4   &\PBS\centering string   &\PBS\centering &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The string which generates plot 4   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 80 of file motor\+Encoders\+Consistency.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor\+Encoders-\/consistency/motor\+Encoders\+Consistency.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor\+Encoders-\/consistency/motor\+Encoders\+Consistency.\+cpp\end{DoxyCompactItemize}

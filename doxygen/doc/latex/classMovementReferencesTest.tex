@@ -1,0 +1,62 @@
+\doxysection{Movement\+References\+Test Class Reference}
+\label{classMovementReferencesTest}\index{MovementReferencesTest@{MovementReferencesTest}}
+
+
+Check IPosition\+Control, IVelocity\+Control, IPWMControl, IPosition\+Direct.  
+
+
+
+
+{\ttfamily \#include $<$movement\+References\+Test.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classMovementReferencesTest_ad9cc73f5b5865dec9d185bf4063e53a8}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&configuration)
+\item 
+\mbox{\label{classMovementReferencesTest_a593c8be2be3fe9bf79c7d0d7c5d817b9}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classMovementReferencesTest_afd727ad62714859a969e5b3c47959eca}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check IPosition\+Control, IVelocity\+Control, IPWMControl, IPosition\+Direct. 
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IPosition\+Control\+::get\+Position\+Target() \item IVelocity\+Control\+::get\+Ref\+Velocity() \item IPosition\+Direct\+::get\+Ref\+Position() \item IPWMControl\+::get\+Ref\+Duty\+Cycle()\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering \char`\"{}\+Movement\+References\+Test\char`\"{}   &\PBS\centering No   &\PBS\centering The name of the test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering portname   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The yarp port name of the controlboard to test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering Number of axes in the controlboard.   &\PBS\centering Must be consistent with the value returned by get\+Axes method.    \\\cline{1-7}
+\PBS\centering home   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the position to reach for passing the test.   &\PBS\centering \\\cline{1-7}
+\PBS\centering target   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the position to reach for passing the test.   &\PBS\centering \\\cline{1-7}
+\PBS\centering refvel   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the reference velocity value to set in the low level trajectory generator.   &\PBS\centering \\\cline{1-7}
+\PBS\centering refacc   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s$^\wedge$2   &\PBS\centering -\/   &\PBS\centering No   &\PBS\centering For each joint the reference acceleration value to set in the low level trajectory generator.   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 56 of file movement\+References\+Test.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/movement\+References\+Test/movement\+References\+Test.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/movement\+References\+Test/movement\+References\+Test.\+cpp\end{DoxyCompactItemize}

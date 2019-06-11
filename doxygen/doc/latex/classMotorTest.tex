@@ -1,0 +1,64 @@
+\doxysection{Motor\+Test Class Reference}
+\label{classMotorTest}\index{MotorTest@{MotorTest}}
+
+
+Check IPosition\+Control and IEncoders.  
+
+
+
+
+{\ttfamily \#include $<$Motor\+Test.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classMotorTest_a899f7015f4c982fd25b0a2de4d693562}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&configuration)
+\item 
+\mbox{\label{classMotorTest_a35093fc16f2160699a962e2e600d12f7}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classMotorTest_a7f262c968aa26e60b2d654fa0f3b6d1a}} 
+virtual void {\bfseries run} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Check IPosition\+Control and IEncoders. 
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IPosition\+Control\+::get\+Axes() \item IPosition\+Control\+::position\+Move() \item IPosition\+Control\+::check\+Motion\+Done() \item IPosition\+Contol\+::set\+Ref\+Speeds() \item IPosition\+Control\+::set\+Ref\+Accelerations() \item IEncoders\+::get\+Encoder() \item IEncoders\+::get\+Encoders()\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering \char`\"{}\+Motor\+Test\char`\"{}   &\PBS\centering No   &\PBS\centering The name of the test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering portname   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The yarp port name of the controlboard to test.   &\PBS\centering -\/    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering Number of axes in the controlboard.   &\PBS\centering Must be consistent with the value returned by get\+Axes method.    \\\cline{1-7}
+\PBS\centering target   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the position to reach for passing the test.   &\PBS\centering \\\cline{1-7}
+\PBS\centering min   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the maximum lower error with respect to the target to consider the test as successful.   &\PBS\centering \\\cline{1-7}
+\PBS\centering max   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the maximum upper error with respect to the target to consider the test as successful.   &\PBS\centering \\\cline{1-7}
+\PBS\centering refvel   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the reference velocity value to set in the low level trajectory generator.   &\PBS\centering \\\cline{1-7}
+\PBS\centering refacc   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s$^\wedge$2   &\PBS\centering -\/   &\PBS\centering No   &\PBS\centering For each joint the reference acceleration value to set in the low level trajectory generator.   &\PBS\centering \\\cline{1-7}
+\PBS\centering timeout   &\PBS\centering vector of doubles of size joints   &\PBS\centering s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering For each joint the maximum time to wait for the joint to reach the target.   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 59 of file Motor\+Test.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor-\/tests/Motor\+Test.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor-\/tests/Motor\+Test.\+cpp\end{DoxyCompactItemize}

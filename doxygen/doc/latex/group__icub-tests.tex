@@ -1,0 +1,67 @@
+\doxysection{A list of available tests}
+\label{group__icub-tests}\index{A list of available tests@{A list of available tests}}
+
+
+This page contains the list of all the tests tht are currently available and documented.  
+
+
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classExampleTest}{Example\+Test}}
+\begin{DoxyCompactList}\small\item\em This is just an example test, use it as a reference to implement new tests. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classCameraTest}{Camera\+Test}}
+\begin{DoxyCompactList}\small\item\em Check if a camera is publishing images at desired framerate. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classCartesianControlReachingToleranceTest}{Cartesian\+Control\+Reaching\+Tolerance\+Test}}
+\begin{DoxyCompactList}\small\item\em This test verifies the point-\/to-\/point cartesian movement. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classCartesianControlSimpleP2pMovementTest}{Cartesian\+Control\+Simple\+P2p\+Movement\+Test}}
+\begin{DoxyCompactList}\small\item\em This test verifies the point-\/to-\/point cartesian movement. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classControlModes}{Control\+Modes}}
+\begin{DoxyCompactList}\small\item\em The test checks if the joint is able to go in all the available control/interaction modes and if transition between the states is correct. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classDemoRedBallTest}{Demo\+Red\+Ball\+Test}}
+\begin{DoxyCompactList}\small\item\em This test verifies the point-\/to-\/point cartesian movement. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classFtSensorTest}{Ft\+Sensor\+Test}}
+\begin{DoxyCompactList}\small\item\em Check if a FT sensor port is correctly publishing a vector with 6 values. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classGazeControlSimpleLookTest}{Gaze\+Control\+Simple\+Look\+Test}}
+\begin{DoxyCompactList}\small\item\em This test verifies the simple gaze movements. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classImu}{Imu}}
+\begin{DoxyCompactList}\small\item\em The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classJointLimits}{Joint\+Limits}}
+\begin{DoxyCompactList}\small\item\em Check if the software joint limits are properly set. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classMotorTest}{Motor\+Test}}
+\begin{DoxyCompactList}\small\item\em Check IPosition\+Control and IEncoders. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classOpticalEncodersConsistency}{Optical\+Encoders\+Consistency}}
+\begin{DoxyCompactList}\small\item\em This tests checks if the motor encoder reading are consistent with the joint encoder readings. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classMotorEncodersSignCheck}{Motor\+Encoders\+Sign\+Check}}
+\begin{DoxyCompactList}\small\item\em This tests checks if the motor encoder readings increase when positive pwm is applayed to motor. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classMovementReferencesTest}{Movement\+References\+Test}}
+\begin{DoxyCompactList}\small\item\em Check IPosition\+Control, IVelocity\+Control, IPWMControl, IPosition\+Direct. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classOpticalEncodersDrift}{Optical\+Encoders\+Drift}}
+\begin{DoxyCompactList}\small\item\em This tests checks if the relative encoders measurements are consistent over time, by performing cyclic movements between two reference positions (min and max). \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classPositionControlAccuracy}{Position\+Control\+Accuracy}}
+\begin{DoxyCompactList}\small\item\em This tests checks the a position PID response, sending a step reference signal with a position\+Direct command. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classPositionControlAccuracyExernalPid}{Position\+Control\+Accuracy\+Exernal\+Pid}}
+\begin{DoxyCompactList}\small\item\em This tests checks the response of the system to a position step, sending directly PWM commands to a joint. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classPositionDirect}{Position\+Direct}}
+\begin{DoxyCompactList}\small\item\em This tests checks the position\+Direct control, sending a sinusoidal reference signal, with parametric frequency and amplitude. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classSensorsDuplicateReadings}{Sensors\+Duplicate\+Readings}}
+\begin{DoxyCompactList}\small\item\em Check if a yarp port is correctly publishing unique values at each update . \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classSkinWrapperTest}{Skin\+Wrapper\+Test}}
+\begin{DoxyCompactList}\small\item\em This test verifies the functionalities of skin\+Wrapper after the removal of analog\+Server from icub-\/main. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classTorqueControlAccuracy}{Torque\+Control\+Accuracy}}
+\begin{DoxyCompactList}\small\item\em This tests checks the a torque PID response, sending a step reference signal with a set\+Ref\+Torque command. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classTorqueControlGravityConsistency}{Torque\+Control\+Gravity\+Consistency}}
+\begin{DoxyCompactList}\small\item\em The test is supposed to be run with the i\+Cub fixed to the pole, with the pole leveled with respect to the gravity (please check this with a level before running the test) and with the whole\+Body\+Dynamics(\+Tree) running. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This page contains the list of all the tests tht are currently available and documented. 
+
+Each class is a test that can be ran and configured independently.
+
+To add a test to this list it is enough that you add the following line to the class that implements the test\+:
+
+\begin{DoxyVerb}\ingroup icub-tests\end{DoxyVerb}
+
+
+Do not forget to generate the documentation either locally or online following the instructions \href{https://github.com/robotology/icub-tests/}{\texttt{ here}}. 

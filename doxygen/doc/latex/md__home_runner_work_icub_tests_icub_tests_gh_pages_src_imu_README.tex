@@ -1,0 +1,124 @@
+\doxysection*{Prerequisites}
+
+If you want to test multiple IMUs at once, the robot must expose in its {\ttfamily yarprobotinterface} configuration file a {\ttfamily multipleanalogsensorsserver} that publishes the orientation measurements for all of available sensors, with a {\ttfamily prefix} that matches exactly the {\ttfamily port} parameter of the test (the default one is {\ttfamily \$\{portprefix\}/alljoints/inertials}).
+
+An example of {\ttfamily alljoints-\/inertials\+\_\+wrapper.\+xml} for i\+Cub\+V2\+\_\+$\ast$ models\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{<?xml version="{}1.0"{} encoding="{}UTF-\/8"{}?>}
+\DoxyCodeLine{<!DOCTYPE devices PUBLIC "{}-\///YARP//DTD yarprobotinterface 3.0//EN"{} "{}http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd"{}>}
+\DoxyCodeLine{}
+\DoxyCodeLine{<device xmlns:xi="{}http://www.w3.org/2001/XInclude"{} name="{}alljoints-\/inertials\_wrapper"{} type="{}multipleanalogsensorsserver"{}>}
+\DoxyCodeLine{    <param name="{}period"{}>      10                           </param>}
+\DoxyCodeLine{    <param name="{}name"{}> \$\{portprefix\}/alljoints/inertials   </param>}
+\DoxyCodeLine{}
+\DoxyCodeLine{    <action phase="{}startup"{} level="{}10"{} type="{}attach"{}>}
+\DoxyCodeLine{        <paramlist name="{}networks"{}>}
+\DoxyCodeLine{            <elem name="{}FirstStrain"{}> alljoints-\/inertials\_remapper </elem>}
+\DoxyCodeLine{        </paramlist>}
+\DoxyCodeLine{       </action>}
+\DoxyCodeLine{}
+\DoxyCodeLine{    <action phase="{}shutdown"{} level="{}15"{} type="{}detach"{} />}
+\DoxyCodeLine{</device>}
+
+\end{DoxyCode}
+
+
+and {\ttfamily alljoints-\/inertials\+\_\+remapper.\+xml}\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{<?xml version="{}1.0"{} encoding="{}UTF-\/8"{} ?>}
+\DoxyCodeLine{<!DOCTYPE devices PUBLIC "{}-\///YARP//DTD yarprobotinterface 3.0//EN"{} "{}http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd"{}>}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{    <device xmlns:xi="{}http://www.w3.org/2001/XInclude"{} name="{}alljoints-\/inertials\_remapper"{} type="{}multipleanalogsensorsremapper"{}>}
+\DoxyCodeLine{        <param name="{}OrientationSensorsNames"{}>}
+\DoxyCodeLine{            (l\_arm\_ft r\_arm\_ft head\_imu\_0)}
+\DoxyCodeLine{        </param>}
+\DoxyCodeLine{        <action phase="{}startup"{} level="{}5"{} type="{}attach"{}>}
+\DoxyCodeLine{            <paramlist name="{}networks"{}>}
+\DoxyCodeLine{                <elem name="{}head\_imu"{}>  head\_inertial\_hardware\_device </elem>}
+\DoxyCodeLine{                <elem name="{}left\_arm\_imu"{}>  left\_arm\_inertial\_hardware\_device </elem>}
+\DoxyCodeLine{                <elem name="{}right\_arm\_imu"{}>  right\_arm\_inertial\_hardware\_device </elem>}
+\DoxyCodeLine{            </paramlist>}
+\DoxyCodeLine{        </action>}
+\DoxyCodeLine{}
+\DoxyCodeLine{        <action phase="{}shutdown"{} level="{}20"{} type="{}detach"{} />}
+\DoxyCodeLine{    </device>}
+
+\end{DoxyCode}
+
+
+\doxysection*{Usage}
+
+There are essentially two methods to install and run the IMU orientation test, which are going to be described in the following sections. In both cases, after launching the test, a .mat file containing the relevant measurements involved in the test will be generated.
+
+\doxysubsection*{robotology-\/superbuild}
+
+If you have installed {\ttfamily icub-\/tests} as a part of the {\ttfamily robotology superbuild} framework with the \href{https://github.com/robotology/robotology-superbuild/blob/master/doc/cmake-options.md\#robot-testing}{\texttt{ Robot Testing profile}} activation, i.\+e. by enabling the {\ttfamily ROBOTOLOGY\+\_\+\+ENABLE\+\_\+\+ROBOT\+\_\+\+TESTING} CMake option of the superbuild, this test, like the others, is already available.
+
+In this case, after compiling and being sure that {\ttfamily yarpserver} is up, you can run\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd robotology-\/superbuild/src/icub-\/tests}
+\DoxyCodeLine{robottestingframework-\/testrunner -\/-\/suite suites/imu.xml}
+
+\end{DoxyCode}
+
+
+Otherwise, if you want to launch the test in a simulation environment, in a shell open a {\ttfamily gazebo} environment and import, for example, your i\+Cub model. After that, open a separated shell, and\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#set YARP\_ROBOT\_NAME env variable with the name of the model you imported in gazebo}
+\DoxyCodeLine{\#example:}
+\DoxyCodeLine{export YARP\_ROBOT\_NAME=iCubGazeboV2\_7}
+\DoxyCodeLine{cd robotology-\/superbuild/src/icub-\/tests}
+\DoxyCodeLine{robottestingframework-\/testrunner -\/-\/suite suites/imu-\/icubGazeboSim.xml}
+
+\end{DoxyCode}
+
+
+\doxysubsection*{pixi}
+
+If you want to run the test without depending on the whole robotology-\/superbuild, you can use {\ttfamily pixi}. First of all, be sure to have \href{https://pixi.sh/\#installation}{\texttt{ {\ttfamily pixi}}} installed. Then, clone {\ttfamily icub-\/tests} and run the test as a pixi task\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git clone https://github.com/robotology/icub-\/tests}
+\DoxyCodeLine{cd icub-\/tests}
+\DoxyCodeLine{pixi run imu\_test}
+
+\end{DoxyCode}
+
+
+In simulation, instead, import your model in {\ttfamily gazebo} and then run\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#set YARP\_ROBOT\_NAME env variable with the name of the model you imported in gazebo}
+\DoxyCodeLine{\#example:}
+\DoxyCodeLine{export YARP\_ROBOT\_NAME=iCubGazeboV2\_7}
+\DoxyCodeLine{cd icub-\/tests}
+\DoxyCodeLine{pixi run imu\_sim\_test}
+
+\end{DoxyCode}
+
+
+\doxysection*{Generate report}
+
+The IMU test is based on \href{https://github.com/robotology/robometry}{\texttt{ {\ttfamily robometry}}} that allows logging data from the robot sensors and saving them into a .mat file that will be generated at the end of the test execution.
+
+To generate the report containing the plots with the acquired data and the results of the test, you can launch the {\ttfamily generate\+\_\+report.\+mlx} MATLAB Live Script under {\ttfamily icub-\/tests/src/imu/report/} folder. After opening this file with MATLAB, there is a {\ttfamily File Browser control} with a {\ttfamily File} button, from which you can navigate your folders and select the .mat file.
+
+Then, {\ttfamily run} the script and wait until it\textquotesingle{}s done, it may take some time to finish. Finally, you can manually export the report in HTML format or, in the Command Window, run\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{export('report.mlx', format='html', HideCode=true);}
+
+\end{DoxyCode}
+ 

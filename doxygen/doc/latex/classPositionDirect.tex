@@ -1,0 +1,78 @@
+\doxysection{Position\+Direct Class Reference}
+\label{classPositionDirect}\index{PositionDirect@{PositionDirect}}
+
+
+This tests checks the position\+Direct control, sending a sinusoidal reference signal, with parametric frequency and amplitude.  
+
+
+
+
+{\ttfamily \#include $<$Position\+Direct.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classPositionDirect_a65b1833e16c9185db0d488248e59d7cc}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classPositionDirect_a84243f0cd8e5269d486899febfc47cca}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classPositionDirect_a70210708c01218e1aabbc657a16d85f4}} 
+virtual void {\bfseries run} ()
+\item 
+\mbox{\label{classPositionDirect_a2dd8350755621895f0bb36d176d65e4e}} 
+void {\bfseries go\+Home} ()
+\item 
+\mbox{\label{classPositionDirect_aa6f6d0aafdb7e339fa07bbc5232b4dfb}} 
+void {\bfseries execute\+Cmd} ()
+\item 
+\mbox{\label{classPositionDirect_aa18a4e2b7558adf62e72873a78fed7bd}} 
+void {\bfseries set\+Mode} (int desired\+\_\+mode)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This tests checks the position\+Direct control, sending a sinusoidal reference signal, with parametric frequency and amplitude. 
+
+The sample time, typical in the range of 10 ms, can be also be adjusted by the user. This test currently does not return any error report. It simply moves a joint, and the user visually evaluates the smoothness of the performed trajectory. In the future automatic checks/plots may be added to the test. Be aware theat may exists set of parameters (e.\+g. high values of sample time / ampiltude /frequency) that may lead to PID instability and damage the joint. The test is able to check all the three types of yarp methods (single joint, multi joint, all joints), depending on the value of cmd\+Mode Parameter.
+
+example\+: test\+Runner -\/v -\/t Position\+Direct.\+dll -\/ p \char`\"{}-\/-\/robot icub -\/-\/part head -\/-\/joints \char`\"{}\char`\"{}(0 1 2)\char`\"{}\char`\"{} -\/-\/zero 0 -\/-\/frequency 0.\+8 -\/-\/amplitude 10.\+0 -\/-\/cycles 10 -\/-\/tolerance 1.\+0 -\/-\/sample\+Time 0.\+010 -\/-\/cmd\+Mode 0\char`\"{} example\+: test\+Runner -\/v -\/t Position\+Direct.\+dll -\/ p \char`\"{}-\/-\/robot icub -\/-\/part head -\/-\/joints \char`\"{}\char`\"{}(2)\char`\"{}\char`\"{} -\/-\/zero 0 -\/-\/frequency 0.\+4 -\/-\/amplitude 10.\+0 -\/-\/cycles 10 -\/-\/tolerance 1.\+0 -\/-\/sample\+Time 0.\+010 -\/-\/cmd\+Mode 0\char`\"{}
+
+Check the following functions\+: \begin{DoxyItemize}
+\item IPosition\+Direct\+::set\+Positions() \item IControl\+Mode\+::set\+Control\+Mode()\end{DoxyItemize}
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of trhe robot part.   &\PBS\centering e.\+g. left\+\_\+arm    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering zero   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering cycles   &\PBS\centering int   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The number of test cycles (going from max to min position and viceversa)   &\PBS\centering \\\cline{1-7}
+\PBS\centering frequency   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The frequency of the sine reference signal   &\PBS\centering \\\cline{1-7}
+\PBS\centering amplitude   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The ampiltude of the sine reference signal   &\PBS\centering \\\cline{1-7}
+\PBS\centering tolerance   &\PBS\centering double   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The tolerance used when moving from min to max reference position and viceversa   &\PBS\centering \\\cline{1-7}
+\PBS\centering sample\+Time   &\PBS\centering double   &\PBS\centering s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The sample time of the control thread   &\PBS\centering \\\cline{1-7}
+\PBS\centering cmd\+Mode   &\PBS\centering int   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering = 0 to test single joint method, = 1 to test all joints, = 2 to test multi joint method   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 60 of file Position\+Direct.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/position\+Direct/Position\+Direct.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/position\+Direct/Position\+Direct.\+cpp\end{DoxyCompactItemize}

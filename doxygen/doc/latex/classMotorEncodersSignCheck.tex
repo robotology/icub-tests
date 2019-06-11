@@ -1,0 +1,74 @@
+\doxysection{Motor\+Encoders\+Sign\+Check Class Reference}
+\label{classMotorEncodersSignCheck}\index{MotorEncodersSignCheck@{MotorEncodersSignCheck}}
+
+
+This tests checks if the motor encoder readings increase when positive pwm is applayed to motor.  
+
+
+
+
+{\ttfamily \#include $<$motor\+Encoders\+Sign\+Check.\+h$>$}
+
+
+
+Inherits yarp\+::robottestingframework\+::\+Test\+Case.
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\label{classMotorEncodersSignCheck_a9473c20f3efe4b8fc2c554b6d12f65f9}} 
+virtual bool {\bfseries setup} (yarp\+::os\+::\+Property \&property)
+\item 
+\mbox{\label{classMotorEncodersSignCheck_a706ce3dbc1073c90b2981ed55286a407}} 
+virtual void {\bfseries tear\+Down} ()
+\item 
+\mbox{\label{classMotorEncodersSignCheck_ac1bb7e6d1b55c9e97c2432dd78f0c625}} 
+virtual void {\bfseries run} ()
+\item 
+\mbox{\label{classMotorEncodersSignCheck_adc3e407539e8368936eed1749dc69317}} 
+void {\bfseries set\+Mode\+Single} (int i, int desired\+\_\+control\+\_\+mode, yarp\+::dev\+::\+Interaction\+Mode\+Enum desired\+\_\+interaction\+\_\+mode)
+\item 
+\mbox{\label{classMotorEncodersSignCheck_aeb8969c7334373e30d409de1a4efb429}} 
+void {\bfseries Opl\+Execute} (int i)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This tests checks if the motor encoder readings increase when positive pwm is applayed to motor. 
+
+This test helps you to check if Rotor\+Encoder\+Resolution parameter in robot\textquotesingle{}s configuration files has correct sign. The test sets one joint per time in Open Loop control mode; then applies positive pwm starting with value defined in parameter \char`\"{}pwm\+Start\char`\"{} and increments pwm with step defined in parameter \char`\"{}pwm\+Step\char`\"{} until motor doesn\textquotesingle{}t move of Posthreshold degree at least.
+
+Note\+: This test uses yarp\+::robottestingframework\+::joints\+Pos\+Motion class, a class for reduce time in developing test.
+
+Accepts the following parameters\+: \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Parameter name   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Type   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Units   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Default Value   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Required   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Notes    }\\\cline{1-7}
+\endhead
+\PBS\centering robot   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of the robot.   &\PBS\centering e.\+g. icub    \\\cline{1-7}
+\PBS\centering name   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering No   &\PBS\centering The name of test.   &\PBS\centering e.\+g. mot\+Enc\+Sign\+Check\+\_\+\+Head    \\\cline{1-7}
+\PBS\centering part   &\PBS\centering string   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The name of trhe robot part.   &\PBS\centering e.\+g. head    \\\cline{1-7}
+\PBS\centering joints   &\PBS\centering vector of ints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering List of joints to be tested   &\PBS\centering \\\cline{1-7}
+\PBS\centering home   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The home position for each joint. It should be distant from joint\textquotesingle{}s limits   &\PBS\centering \\\cline{1-7}
+\PBS\centering speed   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg/s   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The reference speed used during the movement   &\PBS\centering \\\cline{1-7}
+\PBS\centering pwm\+Start   &\PBS\centering vector of doubles of size joints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The starting pwm applied to joint   &\PBS\centering \\\cline{1-7}
+\PBS\centering pwm\+Step   &\PBS\centering vector of doubles of size joints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The increment of pwm per time   &\PBS\centering \\\cline{1-7}
+\PBS\centering pwm\+Max   &\PBS\centering vector of doubles of size joints   &\PBS\centering -\/   &\PBS\centering -\/   &\PBS\centering Yes   &\PBS\centering The max pwm applicable   &\PBS\centering \\\cline{1-7}
+\PBS\centering Posthreshold   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering 5   &\PBS\centering No   &\PBS\centering The minumum movement to check if motor position increases   &\PBS\centering \\\cline{1-7}
+\PBS\centering command\+Delay   &\PBS\centering vector of doubles of size joints   &\PBS\centering deg   &\PBS\centering 0.\+1   &\PBS\centering No   &\PBS\centering The delay between two Set\+Ref\+Open\+Looop commands consecutive   &\PBS\centering \\\cline{1-7}
+\end{longtabu}
+
+
+Definition at line 61 of file motor\+Encoders\+Sign\+Check.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor\+Encoders\+Sign\+Check/motor\+Encoders\+Sign\+Check.\+h\item 
+/home/runner/work/icub-\/tests/icub-\/tests/gh-\/pages/src/motor\+Encoders\+Sign\+Check/motor\+Encoders\+Sign\+Check.\+cpp\end{DoxyCompactItemize}
