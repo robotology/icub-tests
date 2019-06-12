@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="Position Direct Test Suite">
+    <description> Testing position direct</description>
+    <environment>--robotname icub</environment>
+
+    <test param="--from positionDirect_head.ini"> PositionDirect.so</test>
+
+</suite>
+

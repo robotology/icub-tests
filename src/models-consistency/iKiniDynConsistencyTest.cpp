@@ -1,16 +1,27 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Ali Paikan
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <cmath>
 
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include "iKiniDynConsistencyTest.h"
 
 // Yarp includes
@@ -27,7 +38,7 @@
 #include <iCub/iDyn/iDynBody.h>
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::math;
@@ -45,7 +56,7 @@ void set_random_vector(yarp::sig::Vector & vec, yarp::os::Random & rng, double c
 
 
 // prepare the plugin
-PREPARE_PLUGIN(iKiniDynConsistencyTest)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(iKiniDynConsistencyTest)
 
 iKiniDynConsistencyTest::iKiniDynConsistencyTest() : TestCase("iKiniDynConsistencyTest") {
 }
@@ -54,15 +65,15 @@ void iKiniDynConsistencyTest::check_matrix_are_equal(const yarp::sig::Matrix & m
                             const yarp::sig::Matrix & mat2,
                             double tol)
 {
-    RTF_TEST_REPORT(Asserter::format("Comparing mat1: \n %s \n",mat1.toString().c_str()));
-    RTF_TEST_REPORT(Asserter::format("with mat2: \n %s \n",mat2.toString().c_str()));
-    RTF_TEST_FAIL_IF_FALSE(mat1.rows()==mat2.rows(),"matrix rows do not match");
-    RTF_TEST_FAIL_IF_FALSE(mat1.cols()==mat2.cols(),"matrix cols do not match");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Comparing mat1: \n %s \n",mat1.toString().c_str()));
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("with mat2: \n %s \n",mat2.toString().c_str()));
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(mat1.rows()==mat2.rows(),"matrix rows do not match");
+    ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(mat1.cols()==mat2.cols(),"matrix cols do not match");
     for(int row=0; row < mat1.rows(); row++ )
     {
         for(int col=0; col < mat1.cols(); col++ )
         {
-            RTF_TEST_FAIL_IF_FALSE(std::fabs(mat1(row,col)-mat2(row,col)) < tol,
+            ROBOTTESTINGFRAMEWORK_TEST_FAIL_IF_FALSE(std::fabs(mat1(row,col)-mat2(row,col)) < tol,
                       Asserter::format("Element %d %d don't match",row,col));
         }
     }
@@ -128,11 +139,11 @@ Matrix iKiniDynConsistencyTest::getiDynTransform(const string part, int index)
 
 void iKiniDynConsistencyTest::run() {
 
-    RTF_TEST_REPORT("Creating iCubWholeBody object");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Creating iCubWholeBody object");
     version_tag ver;
     ver.head_version = 1;
     ver.legs_version = 1;
-    RTF_TEST_REPORT(Asserter::format("Creating iCubWholeBody object with head version %d and legs version %d", ver.head_version, ver.legs_version));
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Creating iCubWholeBody object with head version %d and legs version %d", ver.head_version, ver.legs_version));
     icub = new iCubWholeBody(ver);
 
     // now we set the joint angles for all the limbs
@@ -158,7 +169,7 @@ void iKiniDynConsistencyTest::run() {
 
 
 
-    RTF_TEST_REPORT("Setting positions in iCubWholeBody");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Setting positions in iCubWholeBody");
     q_head = icub->upperTorso->setAng("head",q_head);
     q_rarm = icub->upperTorso->setAng("right_arm",q_rarm);
     q_larm = icub->upperTorso->setAng("left_arm",q_larm);
@@ -169,7 +180,7 @@ void iKiniDynConsistencyTest::run() {
     yarp::sig::Matrix transform_ikin(4,4), transform_idyn(4,4);
 
     //////////////////////////////////////////////////////////////////////////
-    RTF_TEST_REPORT("Checking left hand position");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking left hand position");
     new(&ikin_larm) iCubArm("left");
 
     Vector q_torso_larm = cat(q_torso,q_larm);
@@ -177,8 +188,8 @@ void iKiniDynConsistencyTest::run() {
     ikin_larm.releaseLink(0);
     ikin_larm.releaseLink(1);
     ikin_larm.releaseLink(2);
-    RTF_TEST_REPORT(Asserter::format("q_torso_larm : %d ikin_larm : %d",q_torso_larm.size(),ikin_larm.getDOF()));
-    RTF_ASSERT_ERROR_IF_FALSE(q_torso_larm.size() == ikin_larm.getDOF(),"unexpected chain size");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("q_torso_larm : %d ikin_larm : %d",q_torso_larm.size(),ikin_larm.getDOF()));
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(q_torso_larm.size() == ikin_larm.getDOF(),"unexpected chain size");
     ikin_larm.setAng(q_torso_larm);
 
     transform_ikin = ikin_larm.getH();
@@ -191,14 +202,14 @@ void iKiniDynConsistencyTest::run() {
 
 
     //////////////////////////////////////////////////////////////////////////
-    RTF_TEST_REPORT("Checking right hand position");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking right hand position");
     new(&ikin_rarm) iCubArm("right");
     Vector q_torso_rarm = cat(q_torso,q_rarm);
     ikin_rarm.setAllConstraints(false);
     ikin_rarm.releaseLink(0);
     ikin_rarm.releaseLink(1);
     ikin_rarm.releaseLink(2);
-    RTF_ASSERT_ERROR_IF_FALSE(q_torso_rarm.size() == ikin_rarm.getDOF(),"unexpected chain size");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(q_torso_rarm.size() == ikin_rarm.getDOF(),"unexpected chain size");
     ikin_rarm.setAng(q_torso_rarm);
 
     transform_ikin = ikin_rarm.getH();
@@ -211,11 +222,11 @@ void iKiniDynConsistencyTest::run() {
 
 
     //////////////////////////////////////////////////////////////////////////
-    RTF_TEST_REPORT("Checking left leg end effector positions");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking left leg end effector positions");
     new(&ikin_lleg) iCubLeg("left");
     ikin_lleg.setAllConstraints(false);
-    RTF_TEST_REPORT(Asserter::format("q_lleg : %d ikin_lleg : %d",q_lleg.size(),ikin_lleg.getDOF()));
-    RTF_ASSERT_ERROR_IF_FALSE(q_lleg.size() == ikin_lleg.getDOF(),"unexpected chain size");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("q_lleg : %d ikin_lleg : %d",q_lleg.size(),ikin_lleg.getDOF()));
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(q_lleg.size() == ikin_lleg.getDOF(),"unexpected chain size");
     ikin_lleg.setAng(q_lleg);
 
     transform_ikin = ikin_lleg.getH();
@@ -227,16 +238,16 @@ void iKiniDynConsistencyTest::run() {
     /*
     for(int link=0; link < ikin_lleg.getDOF(); link++ )
     {
-        RTF_TEST_REPORT(Asserter::format("Checking %d DH frame of left_leg",link));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking %d DH frame of left_leg",link));
         check_matrix_are_equal(this->getiKinTransform("left_leg",link),
                                this->getiDynTransform("left_leg",link));
     }*/
 
     //////////////////////////////////////////////////////////////////////////
-    RTF_TEST_REPORT("Checking right leg end effector positions");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Checking right leg end effector positions");
     new(&ikin_rleg) iCubLeg("right");
     ikin_rleg.setAllConstraints(false);
-    RTF_ASSERT_ERROR_IF_FALSE(q_rleg.size() == ikin_rleg.getDOF(),"unexpected chain size");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(q_rleg.size() == ikin_rleg.getDOF(),"unexpected chain size");
     ikin_rleg.setAng(q_rleg);
 
     transform_ikin = ikin_rleg.getH();
@@ -248,7 +259,7 @@ void iKiniDynConsistencyTest::run() {
     /*
     for(int link=0; link < ikin_rleg.getDOF(); link++ )
     {
-        RTF_TEST_REPORT(Asserter::format("Checking %d DH frame of right_leg",link));
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT(Asserter::format("Checking %d DH frame of right_leg",link));
         check_matrix_are_equal(this->getiKinTransform("right_leg",link),
                                this->getiDynTransform("right_leg",link));
     }*/

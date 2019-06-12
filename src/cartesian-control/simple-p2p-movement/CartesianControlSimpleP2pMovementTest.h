@@ -1,24 +1,27 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Ugo Pattacini
- * email:  ugo.pattacini@iit.it
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
-*/
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #ifndef _CARTESIANCONTROLSIMPLEP2PMOVEMENT_H_
 #define _CARTESIANCONTROLSIMPLEP2PMOVEMENT_H_
 
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 
@@ -33,7 +36,7 @@
 * |     robot      | string |   -   |    icubSim    |    No    |   robot name  |   -   |
 * |    arm-type    | string |   -   |      left     |    No    | left or right |   -   |
 */
-class CartesianControlSimpleP2pMovementTest : public yarp::rtf::TestCase
+class CartesianControlSimpleP2pMovementTest : public yarp::robottestingframework::TestCase
 {
     yarp::dev::PolyDriver driver;
 

@@ -1,15 +1,26 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Property.h>
 
@@ -19,14 +30,14 @@
 //example2    -v -t TorqueControlConsistency.dll -p "--robot icub --part head --joints ""(0 1 2)"" --zero 0 "
 //example3    -v -t TorqueControlConsistency.dll -p "--robot icub --part head --joints ""(0 1 2 3 4 5)"" --zero 0"
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(TorqueControlConsistency)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(TorqueControlConsistency)
 
-TorqueControlConsistency::TorqueControlConsistency() : yarp::rtf::TestCase("TorqueControlConsistency") {
+TorqueControlConsistency::TorqueControlConsistency() : yarp::robottestingframework::TestCase("TorqueControlConsistency") {
     jointsList=0;
     pos_tot=0;
     dd=0;
@@ -51,10 +62,10 @@ bool TorqueControlConsistency::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("zero"),    "The zero position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("zero"),    "The zero position must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
@@ -62,9 +73,9 @@ bool TorqueControlConsistency::setup(yarp::os::Property& property) {
     zero = property.find("zero").asDouble();
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
     n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -72,21 +83,21 @@ bool TorqueControlConsistency::setup(yarp::os::Property& property) {
     options.put("local", "/TorqueControlConsistencyTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(itrq),"Unable to open torque control interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(itrq),"Unable to open torque control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     if      (n_part_joints<=0)
-        RTF_ASSERT_ERROR("Error this part has in invalid (<=0) number of jonits");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Error this part has in invalid (<=0) number of jonits");
     else if (jointsBottle->size() == 1)
         cmd_mode=single_joint;
     else if (jointsBottle->size() < n_part_joints)
@@ -94,7 +105,7 @@ bool TorqueControlConsistency::setup(yarp::os::Property& property) {
     else if (jointsBottle->size() == n_part_joints)
         cmd_mode=all_joints;
     else
-        RTF_ASSERT_ERROR("invalid joint selection?");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("invalid joint selection?");
 
     cmd_tot = new double[n_part_joints];
     pos_tot=new double[n_part_joints];
@@ -123,7 +134,7 @@ void TorqueControlConsistency::setMode(int desired_control_mode, yarp::dev::Inte
     }
 }
 
-void TorqueControlConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void TorqueControlConsistency::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
     yarp::dev::InteractionModeEnum imode;
@@ -143,14 +154,14 @@ void TorqueControlConsistency::verifyMode(int desired_control_mode, yarp::dev::I
         {
             char sbuf[500];
             sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode,cmode,imode);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
-    RTF_TEST_REPORT(sbuf);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
 void TorqueControlConsistency::goHome()
@@ -173,7 +184,7 @@ void TorqueControlConsistency::goHome()
         if (in_position==n_cmd_joints) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching zero position");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while reaching zero position");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -208,12 +219,12 @@ void TorqueControlConsistency::setRefTorque(double value)
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }
 
-void TorqueControlConsistency::verifyRefTorque(double verify_val, yarp::os::ConstString title)
+void TorqueControlConsistency::verifyRefTorque(double verify_val, std::string title)
 {
     double value;
     char sbuf[500];
@@ -225,12 +236,12 @@ void TorqueControlConsistency::verifyRefTorque(double verify_val, yarp::os::Cons
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed, j%d current reference is (%f)",title.c_str(),i, verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current reference is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -243,12 +254,12 @@ void TorqueControlConsistency::verifyRefTorque(double verify_val, yarp::os::Cons
             if (value==verify_val)
             {
                 sprintf(sbuf,"Test (%s) passed j%d current reference is (%f)",title.c_str(),i, verify_val);
-                RTF_TEST_REPORT(sbuf);
+                ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
             }
             else
             {
                 sprintf(sbuf,"Test (%s) failed: current reference is (%f), it should be (%f)",title.c_str(), value, verify_val);
-                RTF_ASSERT_ERROR(sbuf);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
             }
         }
     }
@@ -263,17 +274,17 @@ void TorqueControlConsistency::verifyRefTorque(double verify_val, yarp::os::Cons
         if (ok==n_part_joints)
         {
             sprintf(sbuf,"Test (%s) passed, current reference is (%f)",title.c_str(), verify_val);
-            RTF_TEST_REPORT(sbuf);
+            ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
         }
         else
         {
             sprintf(sbuf,"Test (%s) failed: only %d joints (of %d) are ok",title.c_str(),ok,n_part_joints);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
     }
     else
     {
-        RTF_ASSERT_ERROR("Invalid cmd_mode");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid cmd_mode");
     }
     yarp::os::Time::delay(0.010);
 }

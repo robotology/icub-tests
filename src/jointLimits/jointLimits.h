@@ -1,17 +1,28 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #ifndef _JOINTLIMITS_H_
 #define _JOINTLIMITS_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -29,7 +40,7 @@
 * If this limit is too small, the the joint may be unable to reach the limit (e.g. because of friction), so the value must be chosen accurately.
 * The test assumes the the position control is properly working and the position pid is properly tuned.
 * After testing the limits, this test also tries to move the joint out of the limits on puropose (adding to the joint limits the value of outOfBoundPosition).
-* The test is successfull if the position move command is correctly stopped at the limit. 
+* The test is successfull if the position move command is correctly stopped at the limit.
 *
 * Example: testRunner -v -t JointLimits.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)"" --speed ""(20 20 20)"" --outputLimitPercent ""(30 30 30)"" --outOfBoundPosition ""(2 2 2)"" --tolerance 0.2"
 *
@@ -43,7 +54,7 @@
 * \li IEncoders::getEncoder()
 * \li IEncoders::getEncoders()
 * \li IPid::getPid()/IPid::setPid()
-* \li IControlMode2::getControlMode()/setControlMode()
+* \li IControlMode::getControlMode()/setControlMode()
 * \li IInteractionMode::getInteractionMode()/setInteractionMode()
 *
 *  Accepts the following parameters:
@@ -60,7 +71,7 @@
 *
 */
 
-class JointLimits : public yarp::rtf::TestCase {
+class JointLimits : public yarp::robottestingframework::TestCase {
 public:
     JointLimits();
     virtual ~JointLimits();
@@ -88,8 +99,8 @@ private:
     int    n_part_joints;
 
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IPositionControl2 *ipos;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IPositionControl *ipos;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IControlLimits    *ilim;

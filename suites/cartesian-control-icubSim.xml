@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="Cartesian Control Tests Suite">
+    <description>Testing Cartesian Control functionalities</description>
+    <environment>--robotname icubSim</environment>
+    <fixture param="--fixture icubsim-cartesian-control-fixture.xml"> yarpmanager </fixture>
+
+    <test type="dll" param="--arm-type left"> CartesianControlSimpleP2pMovementTest </test>
+    <test type="dll" param="--arm-type right"> CartesianControlSimpleP2pMovementTest </test>
+    <test type="dll" param="--arm-type left"> CartesianControlReachingToleranceTest </test>
+    <test type="dll" param="--arm-type right"> CartesianControlReachingToleranceTest </test>
+</suite>

@@ -20,9 +20,9 @@ before_script:
 
   - cd ..
 
-  # install robot-testing framework
-  - git clone --depth=1 --branch devel https://github.com/robotology/robot-testing
-  - cd robot-testing
+  # install robot testing framework
+  - git clone --depth=1 --branch devel https://github.com/robotology/robot-testing-framework
+  - cd robot-testing-framework
   - mkdir build
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
@@ -35,7 +35,7 @@ before_script:
   - cd yarp
   - mkdir build
   - cd build
-  - cmake -DCREATE_LIB_MATH:BOOL=ON -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_COMPILE_RTF_ADDONS:BOOL=ON ..
+  - cmake -DCREATE_LIB_MATH:BOOL=ON -DCREATE_SHARED_LIBRARY:BOOL=ON -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_COMPILE_RobotTestingFramework_ADDONS:BOOL=ON ..
   - make
   - sudo make install
   - sudo ldconfig

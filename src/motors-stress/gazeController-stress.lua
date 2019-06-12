@@ -1,51 +1,63 @@
+-- iCub Robot Unit Tests (Robot Testing Framework)
 --
--- Copyright (C) 2015 iCub Facility
--- Authors: Ali Paikan
--- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+-- Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
 --
- 
+-- This library is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either
+-- version 2.1 of the License, or (at your option) any later version.
+--
+-- This library is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public
+-- License along with this library; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
 --
 -- The TestCase table is used by the lua plugin loader
 -- to invoke the corresponding methods:
 --
 -- TestCase.setup = function(options) ... return true end
--- TestCase.run = function() ... end 
--- TestCase.tearDown = function() ... end 
+-- TestCase.run = function() ... end
+-- TestCase.tearDown = function() ... end
 --
--- The following methods are for reporting, failures or assertions: 
+-- The following methods are for reporting, failures or assertions:
 --
--- RTF.setName(name)             : sets the test name (defualt is the test filename)
--- RTF.testReport(msg)           : reports a informative message
--- RTF.testCheck(condition, msg) : reports a failure message
--- RTF.assertError(msg)          : throws an error exception with message
--- RTF.asserFail(msg)            : throws a failure exception with message
--- RTF.getEnvironment()          : returns the test environment params
+-- robottestingframework.setName(name)             : sets the test name (defualt is the test filename)
+-- robottestingframework.testReport(msg)           : reports a informative message
+-- robottestingframework.testCheck(condition, msg) : reports a failure message
+-- robottestingframework.assertError(msg)          : throws an error exception with message
+-- robottestingframework.asserFail(msg)            : throws a failure exception with message
+-- robottestingframework.getEnvironment()          : returns the test environment params
 --
 
 --
--- e.g., testrunner -v -t gazeController-stress.lua -p "--robot icub" --repetition 3
+-- e.g., robottestingframework-testrunner -v -t gazeController-stress.lua -p "--robot icub" --repetition 3
 --
 
 require("yarp")
 
 function loadParameters(parameter)
 
-    local env = RTF.getEnvironment()
+    local env = robottestingframework.getEnvironment()
     envprop = yarp.Property()
     envprop:fromArguments(env)
-    useSuitContext = envprop:check("context")
+    useSuiteContext = envprop:check("context")
 
     -- load the config file and update the environment if available
     local rf = yarp.ResourceFinder()
     rf:setVerbose(false)
-    if useSuitContext then
+    if useSuiteContext then
         rf:setDefaultContext(envprop:find("context"):asString())
     else
         rf:setDefaultContext("RobotTesting")
     end
 
     -- rf:configure(argc, argv);
-    
+
     local property = yarp.Property()
     local paramprop = yarp.Property()
     paramprop:fromArguments(parameter)
@@ -54,7 +66,7 @@ function loadParameters(parameter)
 
         local cfgname = paramprop:find("from"):asString()
         if string.len(cfgname) == 0 then
-            RTF.assertError("Empty value was set for the '--from' property")
+            robottestingframework.assertError("Empty value was set for the '--from' property")
         end
 
         -- loading configuration file indicated by --from
@@ -63,17 +75,17 @@ function loadParameters(parameter)
 
         -- if the config file cannot be found from default context or
         -- there is not any context, use the robotname environment as context
-        if not useSuitContext and not useTestContext
+        if not useSuiteContext and not useTestContext
            and string.len(cfgfile) == 0 and envprop:check("robotname") then
             rf:setContext(envprop:find("robotname"):asString())
             cfgfile = rf:findFileByName(cfgname)
         end
 
         if string.len(cfgfile) == 0 then
-            RTF.assertError("Cannot find configuration file " .. cfgfile)
+            robottestingframework.assertError("Cannot find configuration file " .. cfgfile)
         end
         -- update the properties with environment
-        property:fromConfigFile(cfgfile, envprop);   
+        property:fromConfigFile(cfgfile, envprop);
     else
         property:fromArguments(parameter);
     end
@@ -84,7 +96,7 @@ end
 --
 -- Testcase startup()
 --
-TestCase.setup = function(parameter)   
+TestCase.setup = function(parameter)
     -- initialize yarp network
     yarp.Network()
 
@@ -92,10 +104,10 @@ TestCase.setup = function(parameter)
     local property = loadParameters(parameter)
 
     if property:check("name") then
-        RTF.setName(property:find("name"):asString())
-    end        
+        robottestingframework.setName(property:find("name"):asString())
+    end
 
-    if not property:check("robot") then RTF.assertError("The robot name must be given as the test parameter!") end
+    if not property:check("robot") then robottestingframework.assertError("The robot name must be given as the test parameter!") end
     robot = property:find("robot"):asString()
 
     --
@@ -108,14 +120,14 @@ TestCase.setup = function(parameter)
 
     gazeDriver = yarp.PolyDriver(options)
     if gazeDriver:isValid() == false then
-        RTF.assertError("Cannot open the gazecontrollerclient device")
+        robottestingframework.assertError("Cannot open the gazecontrollerclient device")
     end
 
     -- open the GazeController interface
     iGaze = gazeDriver:viewIGazeControl()
-    if iGaze == nil then 
+    if iGaze == nil then
         gazeDriver:close()
-        RTF.assertError("Cannot open the IGazeControl interface")
+        robottestingframework.assertError("Cannot open the IGazeControl interface")
     end
 
     --
@@ -129,22 +141,22 @@ TestCase.setup = function(parameter)
 
     boardDriver = yarp.PolyDriver(options)
     if boardDriver:isValid() == false then
-        RTF.assertError("Cannot open the device")
+        robottestingframework.assertError("Cannot open the device")
     end
 
     imode = boardDriver:viewIControlMode()
-    if imode == nil then 
+    if imode == nil then
         boardDriver:close()
-        RTF.assertError("Cannot open the iControlMode interface")
+        robottestingframework.assertError("Cannot open the iControlMode interface")
     end
 
     --[[
     iamp = boardDriver:viewIAmplifierControl()
-    if iamp == nil then 
+    if iamp == nil then
         driver:close()
-        RTF.assertError("Cannot open the IAmplifierControl interface")
-    end 
-    ]]-- 
+        robottestingframework.assertError("Cannot open the IAmplifierControl interface")
+    end
+    ]]--
 
     return true
 end
@@ -159,15 +171,15 @@ TestCase.run = function()
     fp:set(0, -1.0)
     fp:set(1, yarp.Random_uniform(-10,10)/10.0)
     fp:set(2, yarp.Random_uniform(-10,10)/10.0)
-    RTF.testReport("Looking at "..fp:toString(2,-1))
-    iGaze:lookAtFixationPoint(fp)    
+    robottestingframework.testReport("Looking at "..fp:toString(2,-1))
+    iGaze:lookAtFixationPoint(fp)
     --iGaze:waitMotionDone()
-    yarp.Time_delay(yarp.Random_uniform(5,30)/10.0)        
+    yarp.Time_delay(yarp.Random_uniform(5,30)/10.0)
 
     -- checking control mode
     local modes = yarp.IVector(6)
     local ret = imode:getControlModes(modes)
-    RTF.testCheck(ret, "Getting the control mode")
+    robottestingframework.testCheck(ret, "Getting the control mode")
     local mode_msg = ""
     local all_mode_pos = true
     for i=0,5 do
@@ -175,11 +187,11 @@ TestCase.run = function()
                                     and (yarp.Vocab_decode(modes[i]) ~= "hwf")
         mode_msg = mode_msg .. yarp.Vocab_decode(modes[i]) .. " "
     end
-    RTF.testReport("Control Modes ("..mode_msg..")")
+    robottestingframework.testReport("Control Modes ("..mode_msg..")")
     if not all_mode_pos then
-        RTF.assertFail("some of the joints went in idle/hardware fault!")
-    end 
-    RTF.testReport("")
+        robottestingframework.assertFail("some of the joints went in idle/hardware fault!")
+    end
+    robottestingframework.testReport("")
 end
 
 
@@ -187,14 +199,14 @@ end
 -- TestCase tearDown
 --
 TestCase.tearDown = function()
-    RTF.testReport("Tearing down...")
+    robottestingframework.testReport("Tearing down...")
     -- homing
-    if iGaze ~= nil then 
+    if iGaze ~= nil then
         local fp = yarp.Vector(3)
         fp:set(0, -0.5)
         fp:set(1, 0.0)
-        fp:set(2, 0.35) 
-        RTF.testCheck(ret, "Homing ...")
+        fp:set(2, 0.35)
+        robottestingframework.testCheck(ret, "Homing ...")
         iGaze:lookAtFixationPoint(fp)
         yarp.Time_delay(3.0)
         --iGaze:waitMotionDone()

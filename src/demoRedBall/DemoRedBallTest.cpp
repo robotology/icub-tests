@@ -1,23 +1,26 @@
-/* 
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Ugo Pattacini
- * email:  ugo.pattacini@iit.it
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
+/*
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
-*/
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <algorithm>
-#include <rtf/dll/Plugin.h>
-#include <rtf/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
@@ -30,20 +33,20 @@
 #include "DemoRedBallTest.h"
 
 using namespace std;
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
 
 // prepare the plugin
-PREPARE_PLUGIN(DemoRedBallTest)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(DemoRedBallTest)
 
 
-/***********************************************************************************/ 
-class DemoRedBallPosition : public RateThread
+/***********************************************************************************/
+class DemoRedBallPosition : public PeriodicThread
 {
-    string name;    
+    string name;
     IGazeControl *igaze;
     string eye;
     Vector pos;
@@ -54,7 +57,7 @@ class DemoRedBallPosition : public RateThread
     {
         string dest="/demoRedBall/trackTarget:i";
         port.open(("/"+name+"/redballpos:o"));
-        RTF_ASSERT_ERROR_IF_FALSE(Network::connect(port.getName(),dest,"udp"),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(Network::connect(port.getName(),dest,"udp"),
                             Asserter::format("Unable to connect to %s!",dest.c_str()));
         return true;
     }
@@ -95,7 +98,7 @@ public:
     DemoRedBallPosition(const string &name_,
                         PolyDriver &driver,
                         const string &eye_) :
-                        RateThread(100), name(name_),
+                        PeriodicThread(0.1), name(name_),
                         eye(eye_), pos(4,0.0),
                         visible(false)
     {
@@ -121,7 +124,7 @@ public:
 
 
 /***********************************************************************************/
-DemoRedBallTest::DemoRedBallTest() : yarp::rtf::TestCase("DemoRedBallTest"), redBallPos(NULL)
+DemoRedBallTest::DemoRedBallTest() : yarp::robottestingframework::TestCase("DemoRedBallTest"), redBallPos(NULL)
 {
 }
 
@@ -173,8 +176,8 @@ bool DemoRedBallTest::setup(Property &property)
                 params.home_arm[i]=poss.get(1+i).asDouble();
         }
     }
-    
-    RTF_TEST_REPORT("Opening Clients");
+
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Opening Clients");
     if (params.use_left)
     {
         Property optJoint;
@@ -187,7 +190,7 @@ bool DemoRedBallTest::setup(Property &property)
         optCart.put("remote",("/"+params.robot+"/"+"cartesianController/left_arm"));
         optCart.put("local",("/"+getName()+"/cartesian/left_arm"));
 
-        RTF_ASSERT_ERROR_IF_FALSE(drvJointArmL.open(optJoint)&&drvCartArmL.open(optCart),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(drvJointArmL.open(optJoint)&&drvCartArmL.open(optCart),
                             "Unable to open clients for left_arm!");
     }
 
@@ -203,7 +206,7 @@ bool DemoRedBallTest::setup(Property &property)
         optCart.put("remote",("/"+params.robot+"/"+"cartesianController/right_arm"));
         optCart.put("local",("/"+getName()+"/cartesian/right_arm"));
 
-        RTF_ASSERT_ERROR_IF_FALSE(drvJointArmR.open(optJoint)&&drvCartArmR.open(optCart),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(drvJointArmR.open(optJoint)&&drvCartArmR.open(optCart),
                             "Unable to open clients for right_arm!");
     }
 
@@ -218,7 +221,7 @@ bool DemoRedBallTest::setup(Property &property)
         optGaze.put("remote","/iKinGazeCtrl");
         optGaze.put("local",("/"+getName()+"/gaze"));
 
-        RTF_ASSERT_ERROR_IF_FALSE(drvJointHead.open(optJoint)&&drvGaze.open(optGaze),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(drvJointHead.open(optJoint)&&drvGaze.open(optGaze),
                             "Unable to open clients for head!");
     }
 
@@ -228,7 +231,7 @@ bool DemoRedBallTest::setup(Property &property)
         optJoint.put("remote",("/"+params.robot+"/"+"torso"));
         optJoint.put("local",("/"+getName()+"/joint/torso"));
 
-        RTF_ASSERT_ERROR_IF_FALSE(drvJointTorso.open(optJoint),
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(drvJointTorso.open(optJoint),
                             "Unable to open clients for torso!");
     }
 
@@ -244,14 +247,14 @@ void DemoRedBallTest::tearDown()
 {
     redBallPos->stop();
 
-    RTF_TEST_REPORT("Closing Clients");
-    RTF_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Closing Clients");
+    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
                        "Unable to close client for left_arm!");
-    RTF_ASSERT_FAIL_IF_FALSE(drvJointArmR.close()&&drvCartArmR.close(),
+    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmR.close()&&drvCartArmR.close(),
                        "Unable to close client for right_arm!");
-    RTF_ASSERT_FAIL_IF_FALSE(drvJointHead.close()&&drvGaze.close(),
+    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointHead.close()&&drvGaze.close(),
                        "Unable to close client for head!");
-    RTF_ASSERT_FAIL_IF_FALSE(drvJointTorso.close(),"Unable to close client for left_arm!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointTorso.close(),"Unable to close client for left_arm!");
 }
 
 
@@ -280,7 +283,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
         }
         Time::delay(0.01);
     }
-    RTF_TEST_CHECK(done,"Ball gazed at with the eyes!");
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Ball gazed at with the eyes!");
 
     t0=Time::now();
     while (Time::now()-t0<10.0)
@@ -293,11 +296,11 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
         }
         Time::delay(0.01);
     }
-    RTF_TEST_CHECK(done,"Ball reached with the hand!");
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Ball reached with the hand!");
 
-    RTF_TEST_REPORT("Going home");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Going home");
     ball->setInvisible();
-    
+
     arm_under_test.ienc->getAxes(&nEncs);
     encs.resize(nEncs,0.0);
     t0=Time::now();
@@ -311,7 +314,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
         }
         Time::delay(1.0);
     }
-    RTF_TEST_CHECK(done,"Arm has reached home!");
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Arm has reached home!");
 
     drvJointHead.view(ienc);
     ienc->getAxes(&nEncs);
@@ -327,7 +330,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
         }
         Time::delay(1.0);
     }
-    RTF_TEST_CHECK(done,"Head has reached home!");
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Head has reached home!");
 
     drvJointTorso.view(ienc);
     ienc->getAxes(&nEncs);
@@ -343,7 +346,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
         }
         Time::delay(1.0);
     }
-    RTF_TEST_CHECK(done,"Torso has reached home!");
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Torso has reached home!");
 }
 
 
@@ -356,13 +359,13 @@ void DemoRedBallTest::run()
     pos[1]=-0.15;
     drvJointArmL.view(arm_under_test.ienc);
     drvCartArmL.view(arm_under_test.iarm);
-    RTF_TEST_REPORT("Reaching with the left hand");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the left hand");
     testBallPosition(pos);
 
     pos[1]=+0.15;
     drvJointArmR.view(arm_under_test.ienc);
     drvCartArmR.view(arm_under_test.iarm);
-    RTF_TEST_REPORT("Reaching with the right hand");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the right hand");
     testBallPosition(pos);
 }
 

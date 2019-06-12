@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="Basic Tests Suite">
+    <description>Testing robot's basic features</description>
+    <environment>--robotname icubSim</environment>
+    <fixture param="--fixture icubsim-fixture.xml"> yarpmanager </fixture>
+    <!-- Camera -->
+    <test type="dll" param="--from camera_right.ini"> CameraTest </test>
+    <test type="dll" param="--from camera_left.ini"> CameraTest </test> 
+
+    <!-- Interfaces (wrappers) frequency -->
+    <test type="dll" param="--from robinterface_stream.ini"> PortsFrequency </test>
+
+</suite>
+

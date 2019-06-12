@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<suit name="SkinWrapper Tests Suite">
-    <description>Testing skinWrapper functionalities</description>
-    <fixture param="--devices fakeAnalogSensor analogServer skinWrapper"> yarpplugin </fixture>
-
-    <test type="dll"> SkinWrapperTest </test>
-</suit>

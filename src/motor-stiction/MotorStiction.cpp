@@ -1,15 +1,26 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
@@ -17,18 +28,17 @@
 #include <algorithm>
 #include <cstdlib>
 #include "MotorStiction.h"
-#include <yarp/manager/localbroker.h>
 
 //example1    -v -t MotorStiction.dll -p "--robot icub --part left_arm --joints ""(4)"" --home ""(45)"" --outputStep ""(0.5)"" --outputMax ""(50)"" --outputDelay ""(2.0)""  --threshold ""(5.0)"" "
 
-using namespace RTF;
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 
 // prepare the plugin
-PREPARE_PLUGIN(MotorStiction)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(MotorStiction)
 
-MotorStiction::MotorStiction() : yarp::rtf::TestCase("MotorStiction") {
+MotorStiction::MotorStiction() : yarp::robottestingframework::TestCase("MotorStiction") {
     jointsList=0;
     dd=0;
     ipos=0;
@@ -46,40 +56,40 @@ bool MotorStiction::setup(yarp::os::Property& property) {
         setName(property.find("name").asString());
 
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"),  "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"),   "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),   "The home position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"),  "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"),   "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("home"),   "The home position must be given as the test parameter!");
 
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputStep"),    "The output_step must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputDelay") ,  "The output_delay must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("outputMax"),     "The output_max must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("threshold"),     "The threshold must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("repeat"),        "The repeat must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("outputStep"),    "The output_step must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("outputDelay") ,  "The output_delay must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("outputMax"),     "The output_max must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("threshold"),     "The threshold must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("repeat"),        "The repeat must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
-    
+
     repeat = property.find("repeat").asInt();
-    RTF_ASSERT_ERROR_IF_FALSE(repeat>=0,"repeat must be greater than zero");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(repeat>=0,"repeat must be greater than zero");
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse zero parameter");
 
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* output_step_Bottle = property.find("outputStep").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(output_step_Bottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(output_step_Bottle!=0,"unable to parse joints parameter");
 
     Bottle* output_delay_Bottle = property.find("outputDelay").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(output_delay_Bottle!=0,"unable to parse joints parameter");
-    
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(output_delay_Bottle!=0,"unable to parse joints parameter");
+
     Bottle* output_max_Bottle = property.find("outputMax").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(output_max_Bottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(output_max_Bottle!=0,"unable to parse joints parameter");
 
     Bottle* threshold_Bottle = property.find("threshold").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(threshold_Bottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(threshold_Bottle!=0,"unable to parse joints parameter");
 
     Property options;
     options.put("device", "remote_controlboard");
@@ -87,22 +97,22 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     options.put("local", "/MotorStictionTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipwm),"Unable to open pwm control interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ilim),"Unable to open limits interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipwm),"Unable to open pwm control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iamp),"Unable to open ampliefier interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ilim),"Unable to open limits interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     int n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
     home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
@@ -110,7 +120,7 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     opl_delay.resize (n_cmd_joints);          for (int i=0; i< n_cmd_joints; i++) opl_delay[i]=output_delay_Bottle->get(i).asDouble();
     opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=output_max_Bottle->get(i).asDouble();
     movement_threshold.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) movement_threshold[i]=threshold_Bottle->get(i).asDouble();
-    
+
     max_lims.resize(n_cmd_joints);
     min_lims.resize(n_cmd_joints);
     for (int i=0; i <n_cmd_joints; i++) ilim->getLimits((int)jointsList[i],&min_lims[i],&max_lims[i]);
@@ -121,7 +131,7 @@ bool MotorStiction::setup(yarp::os::Property& property) {
 void MotorStiction::tearDown()
 {
     char buff[500];
-    sprintf(buff,"Closing test module");RTF_TEST_REPORT(buff);
+    sprintf(buff,"Closing test module");ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     verifyMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF,"test0");
     goHome();
@@ -145,10 +155,10 @@ void MotorStiction::setModeSingle(int i, int desired_control_mode, yarp::dev::In
     yarp::os::Time::delay(0.010);
 }
 
-void MotorStiction::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title)
+void MotorStiction::verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title)
 {
     int cmode;
-    yarp::dev::InteractionModeEnum imode; 
+    yarp::dev::InteractionModeEnum imode;
     int timeout = 0;
 
     while (1)
@@ -165,14 +175,14 @@ void MotorStiction::verifyMode(int desired_control_mode, yarp::dev::InteractionM
         {
             char sbuf[500];
             sprintf(sbuf,"Test (%s) failed: current mode is (%d,%d), it should be (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode,cmode,imode);
-            RTF_ASSERT_ERROR(sbuf);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
     sprintf(sbuf,"Test (%s) passed: current mode is (%d,%d)",title.c_str(), desired_control_mode,desired_interaction_mode);
-    RTF_TEST_REPORT(sbuf);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
 void MotorStiction::goHome()
@@ -185,7 +195,7 @@ void MotorStiction::goHome()
     }
 
     char buff [500];
-    sprintf(buff,"Homing the whole part");RTF_TEST_REPORT(buff);
+    sprintf(buff,"Homing the whole part");ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
     int in_position=0;
     for (unsigned int i=0; i<jointsList.size(); i++)
@@ -196,22 +206,22 @@ void MotorStiction::goHome()
             double pos;
             ienc->getEncoder((int)jointsList[i],&pos);
             if (fabs(pos-home[i])<1.0) break;
-            if (yarp::os::Time::now()-time_started>20) 
+            if (yarp::os::Time::now()-time_started>20)
             {
                 sprintf(buff,"Timeout while reaching zero position, joint %d, curr_enc %f, home %f", (int)jointsList[i],pos,home[i]);
-                RTF_ASSERT_ERROR(buff);
+                ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
             }
         }
     }
 
-    sprintf(buff,"Homing succesfully completed");RTF_TEST_REPORT(buff);
+    sprintf(buff,"Homing succesfully completed");ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 }
 
 void MotorStiction::saveToFile(std::string filename, yarp::os::Bottle &b)
 {
     std::fstream fs;
     fs.open (filename.c_str(), std::fstream::out);
-    
+
     for (int i=0; i<b.size(); i++)
     {
         std::string s = b.get(i).toString();
@@ -248,7 +258,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
         ipwm->setRefDutyCycle((int)jointsList[i],opl);
         ienc->getEncoder((int)jointsList[i],&enc);
 
-        //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);RTF_TEST_REPORT(buff);
+        //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
         if (fabs(enc-start_enc)>movement_threshold[i])
         {
@@ -257,7 +267,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=true;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=true;}
             dataToPlotList.push_back(dataToPlot);
-            sprintf(buff,"Test success (output=%f)",opl);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Test success (output=%f)",opl);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
         else if (opl>=opl_max[i])
         {
@@ -266,7 +276,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
             dataToPlotList.push_back(dataToPlot);
-            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
         else if (fabs(enc-max_lims[i]) < 1.0 ||
                  fabs(enc-min_lims[i]) < 1.0 )
@@ -276,7 +286,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
             dataToPlotList.push_back(dataToPlot);
-            sprintf(buff,"Test failed because hw limit was touched (enc=%f)",enc);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Test failed because hw limit was touched (enc=%f)",enc);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
 
         if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
@@ -287,7 +297,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
             {opl-=opl_step[i];}
             last_opl_cmd=yarp::os::Time::now();
         }
-            
+
         time = yarp::os::Time::now();
         v1.addDouble(time);
         v2.addDouble(enc);
@@ -296,7 +306,7 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
 
         if (time-time_old>5.0 && not_moving==true)
         {
-            sprintf(buff,"test in progress on joint %d, current output value = %f",(int)jointsList[i],opl);RTF_TEST_REPORT(buff);
+            sprintf(buff,"test in progress on joint %d, current output value = %f",(int)jointsList[i],opl);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             time_old=time;
         }
     }
@@ -327,7 +337,7 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
         ipwm->setRefDutyCycle((int)jointsList[i], opl);
         ienc->getEncoder((int)jointsList[i],&enc);
 
-        //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);RTF_TEST_REPORT(buff);
+        //sprintf(buff,"%f %f %f %f",enc,start_enc,fabs(enc-start_enc),movement_threshold[i]);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
         if (opl>=opl_max[i])
         {
@@ -336,7 +346,7 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=false;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=false;}
             dataToPlotList.push_back(dataToPlot);
-            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Test failed failed because max output was reached(output=%f)",opl);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
         else if (fabs(enc-max_lims[i]) < 1.0 ||
                  fabs(enc-min_lims[i]) < 1.0 )
@@ -346,7 +356,7 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
             if (positive_sign) {current_test.pos_opl=opl; current_test.pos_test_passed=true;}
             else               {current_test.neg_opl=opl; current_test.neg_test_passed=true;}
             dataToPlotList.push_back(dataToPlot);
-            sprintf(buff,"Test success (output=%f)",opl);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Test success (output=%f)",opl);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
         }
 
         if (yarp::os::Time::now()-last_opl_cmd>opl_delay[i])
@@ -357,7 +367,7 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
             {opl-=opl_step[i];}
             last_opl_cmd=yarp::os::Time::now();
         }
-            
+
         time = yarp::os::Time::now();
         v1.addDouble(time);
         v2.addDouble(enc);
@@ -366,7 +376,7 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
 
         if (time-time_old>5.0 && not_moving==true)
         {
-            sprintf(buff,"test in progress on joint %d, current output value = %f",(int)jointsList[i],opl);RTF_TEST_REPORT(buff);
+            sprintf(buff,"test in progress on joint %d, current output value = %f",(int)jointsList[i],opl);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             time_old=time;
         }
     }
@@ -378,7 +388,7 @@ void MotorStiction::run()
 
     char buff[500];
     std::vector<Bottle> dataToPlotList;
-    
+
     setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
     goHome();
 
@@ -393,7 +403,7 @@ void MotorStiction::run()
             setModeSingle(i,VOCAB_CM_PWM,VOCAB_IM_STIFF);
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
 
-            sprintf(buff,"Testing joint %d, cycle %d, positive output",(int)jointsList[i],repeat_count);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Testing joint %d, cycle %d, positive output",(int)jointsList[i],repeat_count);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             OplExecute(i,dataToPlotList,current_test, true);
 
             setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
@@ -402,7 +412,7 @@ void MotorStiction::run()
             setModeSingle(i, VOCAB_CM_PWM,VOCAB_IM_STIFF);
             ipwm->setRefDutyCycle((int)jointsList[i], 0.0);
 
-            sprintf(buff,"Testing joint %d, cycle %d, negative output",(int)jointsList[i],repeat_count);RTF_TEST_REPORT(buff);
+            sprintf(buff,"Testing joint %d, cycle %d, negative output",(int)jointsList[i],repeat_count);ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             OplExecute(i,dataToPlotList,current_test, false);
 
             setMode(VOCAB_CM_POSITION,VOCAB_IM_STIFF);
@@ -416,8 +426,8 @@ void MotorStiction::run()
             saveToFile(filename,dataToPlotList.rbegin()[0]); //last element
             sprintf (filename, "plot_stiction_%s_j%d_p_c%d.txt",partName.c_str(),(int)jointsList[i],repeat_count);
             saveToFile(filename,dataToPlotList.rbegin()[1]); //second last element
-        } 
-    } 
+        }
+    }
 
     goHome();
 
@@ -430,7 +440,7 @@ void MotorStiction::run()
         sprintf (plotstring, "gnuplot -e \" unset key; plot for [col=1:%d] '%s' using col with lines \" -persist", n_part_joints,filename);
         //system (plotstring);
     }
-    
+
     //stiction_data_list.size() include tests for all joints, multiple cycles
     for (unsigned int i=0; i <stiction_data_list.size(); i++)
     {
@@ -438,13 +448,13 @@ void MotorStiction::run()
         {
             char buff [500];
             sprintf(buff, "test failed on joint %d, cycle %d, negative output value: %f",stiction_data_list[i].jnt,stiction_data_list[i].cycle,stiction_data_list[i].neg_opl);
-            RTF_ASSERT_ERROR(buff);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         }
         else if (stiction_data_list[i].pos_test_passed==false)
         {
             char buff [500];
             sprintf(buff, "test failed on joint %d, cycle %d,  positive output value: %f",stiction_data_list[i].jnt,stiction_data_list[i].cycle,stiction_data_list[i].pos_opl);
-            RTF_ASSERT_ERROR(buff);
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         }
     }
 

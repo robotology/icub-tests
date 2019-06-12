@@ -1,10 +1,21 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #ifndef _MOTORSTICTION_H_
@@ -12,7 +23,7 @@
 
 #include <string>
 #include <vector>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
@@ -33,7 +44,7 @@ class stiction_data
     stiction_data() {jnt=0; cycle=0; pos_test_passed=false; neg_test_passed=false; pos_opl=0; neg_opl=0;}
 };
 
-class MotorStiction : public yarp::rtf::TestCase
+class MotorStiction : public yarp::robottestingframework::TestCase
 {
 public:
     MotorStiction();
@@ -48,12 +59,12 @@ public:
     void goHome();
     void setMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
     void setModeSingle(int i, int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode);
-    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, yarp::os::ConstString title);
+    void verifyMode(int desired_control_mode, yarp::dev::InteractionModeEnum desired_interaction_mode, std::string title);
     void saveToFile(std::string filename, yarp::os::Bottle &b);
-    
+
     //ok if the joints moves of 5 degrees
     void OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotList, stiction_data& current_test, bool positive_sign);
-    
+
     //ok if the joint reaches the hardware limit
     void OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlotList, stiction_data& current_test, bool positive_sign);
 
@@ -74,9 +85,9 @@ private:
     int    n_part_joints;
 
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IPositionControl2 *ipos;
+    yarp::dev::IPositionControl *ipos;
     yarp::dev::IAmplifierControl *iamp;
-    yarp::dev::IControlMode2     *icmd;
+    yarp::dev::IControlMode     *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IPWMControl       *ipwm;

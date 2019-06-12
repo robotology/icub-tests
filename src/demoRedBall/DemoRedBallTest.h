@@ -1,27 +1,30 @@
 /*
- * Copyright (C) 2016 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Ugo Pattacini
- * email:  ugo.pattacini@iit.it
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
-*/
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #ifndef _DEMOREDBALL_H_
 #define _DEMOREDBALL_H_
 
 #include <string>
-#include <yarp/rtf/TestCase.h>
+#include <yarp/robottestingframework/TestCase.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/CartesianControl.h>
@@ -36,13 +39,13 @@
 * | Parameter name | Type   | Units |  Default Value   | Required |  Description  | Notes |
 * |:--------------:|:------:|:-----:|:----------------:|:--------:|:-------------:|:-----:|
 * |     context    | string |   -   |  demoRedBall     |    No    |   context containing the demoRedBall conf file  |   -   |
-* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   | 
-* 
+* |      from      | string |   -   |  config-test.ini |    No    |   demoRedBall configuration file  |   -   |
+*
 * You can watch a <a
 * href="https://www.youtube.com/watch?v=ackQ5Bfk9jk">video</a>
 * of how this test will be performing.
 */
-class DemoRedBallTest : public yarp::rtf::TestCase
+class DemoRedBallTest : public yarp::robottestingframework::TestCase
 {
     struct {
         std::string robot;
@@ -66,7 +69,7 @@ class DemoRedBallTest : public yarp::rtf::TestCase
     yarp::dev::IEncoders         *ienc;
     } arm_under_test;
 
-    yarp::os::RateThread *redBallPos;
+    yarp::os::PeriodicThread *redBallPos;
     void testBallPosition(const yarp::sig::Vector &pos);
 
 public:

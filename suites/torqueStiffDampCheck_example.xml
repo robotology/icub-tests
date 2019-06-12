@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<suite name="Motor Control Interfaces Suite">
+    <description>Testing robots's Motor Control Interfaces</description>
+    <environment>--robotname icub</environment>
+
+    <test type="dll" param="--from torque_stiffDampCheck_elbown.ini"> TorqueControlStiffDampCheck </test>
+    
+</suite>
+

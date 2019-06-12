@@ -1,15 +1,26 @@
-// -*- mode:C++ { } tab-width:4 { } c-basic-offset:4 { } indent-tabs-mode:nil -*-
-
 /*
- * Copyright (C) 2015 iCub Facility
- * Authors: Marco Randazzo
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * iCub Robot Unit Tests (Robot Testing Framework)
  *
+ * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <math.h>
-#include <rtf/TestAssert.h>
-#include <rtf/dll/Plugin.h>
+#include <robottestingframework/TestAssert.h>
+#include <robottestingframework/dll/Plugin.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
@@ -19,23 +30,22 @@
 #include <cstdlib>
 #include <fstream>
 #include "motorEncodersConsistency.h"
-#include <yarp/manager/localbroker.h>
 #include <iostream>
 
 using namespace std;
 
 //example     -v -t OpticalEncodersConsistency.dll -p "--robot icub --part left_arm --joints ""(0 1 2)"" --home ""(-30 30 10)"" --speed ""(20 20 20)"" --max ""(-20 40 20)"" --min ""(-40 20 0)"" --cycles 10 --tolerance 1.0 "
 //example2    -v -t OpticalEncodersConsistency.dll -p "--robot icub --part head     --joints ""(2)""     --home ""(0)""         --speed ""(20      )"" --max ""(10      )""  --min ""(-10)""      --cycles 10 --tolerance 1.0 "
-//-v - s "C:\software\icub-tests\suits\encoders-icubSim.xml"
-using namespace RTF;
+//-v - s "C:\software\icub-tests\suites\encoders-icubSim.xml"
+using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::math;
 
 // prepare the plugin
-PREPARE_PLUGIN(OpticalEncodersConsistency)
+ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(OpticalEncodersConsistency)
 
-OpticalEncodersConsistency::OpticalEncodersConsistency() : yarp::rtf::TestCase("OpticalEncodersConsistency") {
+OpticalEncodersConsistency::OpticalEncodersConsistency() : yarp::robottestingframework::TestCase("OpticalEncodersConsistency") {
     jointsList=0;
     dd=0;
     ipos=0;
@@ -44,7 +54,7 @@ OpticalEncodersConsistency::OpticalEncodersConsistency() : yarp::rtf::TestCase("
     ienc=0;
     imot=0;
     imotenc=0;
-   
+
     enc_jnt=0;
     enc_jnt2mot=0;
     enc_mot=0;
@@ -68,18 +78,18 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 
     char b[5000];
     strcpy (b,property.toString().c_str());
-    RTF_TEST_REPORT("on setup()");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("on setup()");
     // updating parameters
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("home"),      "The home position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("max"),       "The max position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("min"),       "The min position must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("matrix_size"),  "The matrix size must be given!");
-    RTF_ASSERT_ERROR_IF_FALSE(property.check("matrix"),       "The coupling matrix must be given!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("joints"), "The joints list must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("home"),      "The home position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("max"),       "The max position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("min"),       "The min position must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix_size"),  "The matrix size must be given!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix"),       "The coupling matrix must be given!");
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
     if(property.check("plot_enabled"))
@@ -92,22 +102,22 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         plotString4 = property.find("plotString4").asString();
     }*/
     Bottle* jointsBottle = property.find("joints").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
 
     Bottle* homeBottle = property.find("home").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(homeBottle!=0,"unable to parse home parameter");
 
     Bottle* maxBottle = property.find("max").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(maxBottle!=0,"unable to parse max parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(maxBottle!=0,"unable to parse max parameter");
 
     Bottle* minBottle = property.find("min").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(minBottle!=0,"unable to parse min parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(minBottle!=0,"unable to parse min parameter");
 
     Bottle* speedBottle = property.find("speed").asList();
-    RTF_ASSERT_ERROR_IF_FALSE(speedBottle!=0,"unable to parse speed parameter");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(speedBottle!=0,"unable to parse speed parameter");
 
     tolerance = property.find("tolerance").asDouble();
-    RTF_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
 
     int matrix_size=property.find("matrix_size").asInt();
     if (matrix_size>0)
@@ -126,12 +136,12 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         {
            char buff [500];
            sprintf (buff, "invalid number of elements of parameter matrix %d!=%d", matrixBottle->size() , (matrix_size*matrix_size));
-           RTF_ASSERT_ERROR(buff);
+           ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
         }
     }
     else
     {
-        RTF_ASSERT_ERROR("invalid matrix_size: must be >0");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("invalid matrix_size: must be >0");
     }
 
     //optional parameters
@@ -144,21 +154,21 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     options.put("local", "/positionDirectTest/"+robotName+"/"+partName);
 
     dd = new PolyDriver(options);
-    RTF_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(imotenc),"Unable to open motor encoders interface");
-    RTF_ASSERT_ERROR_IF_FALSE(dd->view(imot),"Unable to open motor interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->isValid(),"Unable to open device driver");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ienc),"Unable to open encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ipos),"Unable to open position interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(icmd),"Unable to open control mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imotenc),"Unable to open motor encoders interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imot),"Unable to open motor interface");
 
     if (!ienc->getAxes(&n_part_joints))
     {
-        RTF_ASSERT_ERROR("unable to get the number of joints of the part");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("unable to get the number of joints of the part");
     }
 
     int n_cmd_joints = jointsBottle->size();
-    RTF_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     jointsList.clear();
     for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
 
@@ -178,7 +188,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     prev_acc_mot.resize(n_cmd_joints); prev_acc_mot.zero();
     prev_acc_jnt2mot.resize(n_cmd_joints); prev_acc_jnt2mot.zero();
     zero_vector.resize(n_cmd_joints);
-    zero_vector.zero(); 
+    zero_vector.zero();
 
     max.resize(n_cmd_joints);     for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
     min.resize(n_cmd_joints);     for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
@@ -198,7 +208,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
 void OpticalEncodersConsistency::tearDown()
 {
     char buff[500];
-    sprintf(buff,"Closing test module");RTF_TEST_REPORT(buff);
+    sprintf(buff,"Closing test module");ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
     setMode(VOCAB_CM_POSITION);
     goHome();
     if (dd) {delete dd; dd =0;}
@@ -206,8 +216,8 @@ void OpticalEncodersConsistency::tearDown()
 
 void OpticalEncodersConsistency::setMode(int desired_mode)
 {
-    if (icmd == 0) RTF_ASSERT_ERROR("Invalid control mode interface");
-    if (iimd == 0) RTF_ASSERT_ERROR("Invalid interaction mode interface");
+    if (icmd == 0) ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid control mode interface");
+    if (iimd == 0) ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid interaction mode interface");
 
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
@@ -232,7 +242,7 @@ void OpticalEncodersConsistency::setMode(int desired_mode)
         if (ok==jointsList.size()) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Unable to set control mode/interaction mode");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Unable to set control mode/interaction mode");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -241,19 +251,19 @@ void OpticalEncodersConsistency::setMode(int desired_mode)
 
 void OpticalEncodersConsistency::goHome()
 {
-    if (ipos == 0) RTF_ASSERT_ERROR("Invalid position control interface");
-    if (ienc == 0) RTF_ASSERT_ERROR("Invalid encoders interface");
+    if (ipos == 0) ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid position control interface");
+    if (ienc == 0) ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Invalid encoders interface");
 
     bool ret = true;
     char buff [500];
-    sprintf(buff,"Homing the whole part");RTF_TEST_REPORT(buff);
+    sprintf(buff,"Homing the whole part");ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
     for (unsigned int i=0; i<jointsList.size(); i++)
     {
         ret = ipos->setRefSpeed((int)jointsList[i],speed[i]);
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "ipos->setRefSpeed returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "ipos->setRefSpeed returned false");
         ret = ipos->positionMove((int)jointsList[i],home[i]);
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "ipos->positionMove returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "ipos->positionMove returned false");
     }
 
     int timeout = 0;
@@ -269,7 +279,7 @@ void OpticalEncodersConsistency::goHome()
         if (in_position==jointsList.size()) break;
         if (timeout>100)
         {
-            RTF_ASSERT_ERROR("Timeout while reaching home position");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while reaching home position");
         }
         yarp::os::Time::delay(0.2);
         timeout++;
@@ -280,7 +290,7 @@ void OpticalEncodersConsistency::saveToFile(std::string filename, yarp::os::Bott
 {
     std::fstream fs;
     fs.open (filename.c_str(), std::fstream::out);
-    
+
     for (int i=0; i<b.size(); i++)
     {
         std::string s = b.get(i).toString();
@@ -312,9 +322,9 @@ void OpticalEncodersConsistency::run()
     inv_trasp_matrix = inv_matrix.transposed();
 
     sprintf(buff,"Matrix:\n %s \n", matrix.toString().c_str());
-    RTF_TEST_REPORT(buff);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
     sprintf(buff,"Inv matrix:\n %s \n", inv_matrix.toString().c_str());
-    RTF_TEST_REPORT(buff);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
 
     Bottle dataToPlot_test1;
     Bottle dataToPlot_test2;
@@ -339,24 +349,24 @@ void OpticalEncodersConsistency::run()
             enc_jnt[i] = tmp_vector[jointsList[i]];
 
 
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "ienc->getEncoders returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "ienc->getEncoders returned false");
         ret = imotenc->getMotorEncoders(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "imotenc->getMotorEncoder returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "imotenc->getMotorEncoder returned false");
         ret = ienc->getEncoderSpeeds(tmp_vector.data());             for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "ienc->getEncoderSpeeds returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "ienc->getEncoderSpeeds returned false");
         ret = imotenc->getMotorEncoderSpeeds(tmp_vector.data());        for (unsigned int i = 0; i < jointsList.size(); i++) vel_mot[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "imotenc->getMotorEncoderSpeeds returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "imotenc->getMotorEncoderSpeeds returned false");
         ret = ienc->getEncoderAccelerations(tmp_vector.data());      for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "ienc->getEncoderAccelerations returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "ienc->getEncoderAccelerations returned false");
         ret = imotenc->getMotorEncoderAccelerations(tmp_vector.data()); for (unsigned int i = 0; i < jointsList.size(); i++) acc_mot[i] = tmp_vector[jointsList(i)];
-        RTF_ASSERT_ERROR_IF_FALSE(ret, "imotenc->getMotorEncoderAccelerations returned false");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret, "imotenc->getMotorEncoderAccelerations returned false");
 
-        //if (enc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoders data"); test_data_is_valid = true; }
-        //if (enc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoders data"); test_data_is_valid = true; }
-        //if (vel_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderSpeeds data"); test_data_is_valid = true; }
-        //if (vel_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderSpeeds data"); test_data_is_valid = true; }
-        //if (acc_jnt == zero_vector) { RTF_TEST_REPORT("Invalid getEncoderAccelerations data"); test_data_is_valid = true; }
-        //if (acc_mot == zero_vector) { RTF_TEST_REPORT("Invalid getMotorEncoderAccelerations data"); test_data_is_valid = true; }
+        //if (enc_jnt == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getEncoders data"); test_data_is_valid = true; }
+        //if (enc_mot == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getMotorEncoders data"); test_data_is_valid = true; }
+        //if (vel_jnt == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getEncoderSpeeds data"); test_data_is_valid = true; }
+        //if (vel_mot == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getMotorEncoderSpeeds data"); test_data_is_valid = true; }
+        //if (acc_jnt == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getEncoderAccelerations data"); test_data_is_valid = true; }
+        //if (acc_mot == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getMotorEncoderAccelerations data"); test_data_is_valid = true; }
 
         enc_jnt2mot = matrix * enc_jnt;
         vel_jnt2mot = matrix * vel_jnt;
@@ -378,12 +388,12 @@ void OpticalEncodersConsistency::run()
 
         if (elapsed >= 20.0)
         {
-            RTF_ASSERT_ERROR("Timeout while moving joint");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR("Timeout while moving joint");
         }
 
         if (reached)
         {
-            sprintf(buff, "Test cycle %d/%d", cycle, cycles); RTF_TEST_REPORT(buff);
+            sprintf(buff, "Test cycle %d/%d", cycle, cycles); ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             if (go_to_max == false)
             {
                 for (unsigned int i = 0; i < jointsList.size(); i++)
@@ -513,7 +523,7 @@ void OpticalEncodersConsistency::run()
          yInfo() << octaveCommand;
          yInfo() << "To exit from Octave application please type 'exit' command.";
     }
-   // RTF_ASSERT_ERROR_IF_FALSE(test_data_is_valid,"Invalid data obtained from encoders interface");
+   // ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(test_data_is_valid,"Invalid data obtained from encoders interface");
 }
 
 
