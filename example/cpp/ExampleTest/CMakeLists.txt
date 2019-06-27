@@ -25,7 +25,7 @@ project(ExampleTest)
 
 # add the required cmake packages
 find_package(RobotTestingFramework 2 COMPONENTS DLL)
-find_package(YARP 3.1.100 COMPONENTS OS robottestingframework)
+find_package(YARP 3.2 COMPONENTS OS robottestingframework)
 
 # add the source codes to build the plugin library
 add_library(${PROJECT_NAME} MODULE ExampleTest.h
