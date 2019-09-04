@@ -285,6 +285,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     }
     ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Ball gazed at with the eyes!");
 
+    done=false;
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
@@ -303,6 +304,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
 
     arm_under_test.ienc->getAxes(&nEncs);
     encs.resize(nEncs,0.0);
+    done=false;
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
@@ -319,6 +321,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     drvJointHead.view(ienc);
     ienc->getAxes(&nEncs);
     encs.resize(nEncs,0.0);
+    done=false;
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
@@ -335,6 +338,7 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     drvJointTorso.view(ienc);
     ienc->getAxes(&nEncs);
     encs.resize(nEncs,0.0);
+    done=false;
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
