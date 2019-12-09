@@ -28,7 +28,7 @@ robottestingframework_add_plugin(${PROJECT_NAME} HEADERS TorqueControlConsistenc
 
 target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
                                       RobotTestingFramework::RTF_dll
-                                      YARP::YARP_OS
+                                      YARP::YARP_os
                                       YARP::YARP_init
                                       YARP::YARP_robottestingframework)
 
