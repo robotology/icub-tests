@@ -1,29 +1,14 @@
 icub-tests
 ==========
+
+![gh-pages](https://github.com/robotology/icub-tests/workflows/GitHub%20Pages/badge.svg)
+
 The `icub-tests` repository contains tests for the iCub robot.
 Tests are written using the [Robot Testing Framework](https://github.com/robotology/robot-testing-framework).
 
 ## Installation, tutorial and available tests
 
 See the [icub-test documentation](https://robotology.github.io/icub-tests/).
-
-## Update the documentation
-
-To update documentation follow these steps:
-
-```bash
- git checkout gh-pages
- git rebase master
- cd doxygen
- rm -rf doc
- doxygen ./generate.txt
- git add ./doc
- git log -1
- git commit --amend
- git push --force-with-lease
- git checkout master
-```
-For in-depth details about doxygen documentation and gh-pages, see [how-to-document-modules](https://github.com/robotology/how-to-document-modules).
 
 ## Contributors
 
