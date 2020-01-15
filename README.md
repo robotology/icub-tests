@@ -3,6 +3,14 @@ icub-tests
 
 ![gh-pages](https://github.com/robotology/icub-tests/workflows/GitHub%20Pages/badge.svg)
 
+## Maintainers
+This repository is maintained by:
+
+| | |
+|:---:|:---:|
+| [<img src="https://github.com/Nicogene.png" width="40">](https://github.com/niNicogenecogene) | [@Nicogene](https://github.com/Nicogene) |
+
+
 The `icub-tests` repository contains tests for the iCub robot.
 Tests are written using the [Robot Testing Framework](https://github.com/robotology/robot-testing-framework).
 
