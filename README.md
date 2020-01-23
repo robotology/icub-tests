@@ -1,6 +1,8 @@
 icub-tests
 ==========
 
+
+![ci](https://github.com/robotology/icub-tests/workflows/Continuous%20Integration/badge.svg)
 ![gh-pages](https://github.com/robotology/icub-tests/workflows/GitHub%20Pages/badge.svg)
 
 ## Maintainers
