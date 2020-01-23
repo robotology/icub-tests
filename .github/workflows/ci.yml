@@ -79,7 +79,7 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }} --target INSTALL 
         # robot-testing-framework
         cd ${GITHUB_WORKSPACE}
-        git clone https://github.com/robotology/robot-testing-framework.git --depth 1 --branch master
+        git clone https://github.com/robotology/robot-testing-framework.git --depth 1 --branch devel
         cd robot-testing-framework && mkdir -p build && cd build
         cmake -A x64 -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROBOTOLOGY_ROOT}/scripts/buildsystems/vcpkg.cmake \
                      -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
@@ -96,7 +96,7 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }} --target INSTALL
         # icub-main
         cd ${GITHUB_WORKSPACE}
-        git clone https://github.com/robotology/icub-main.git --depth 1 --branch master
+        git clone https://github.com/robotology/icub-main.git --depth 1 --branch devel
         cd icub-main && mkdir -p build && cd build
         cmake -A x64 -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROBOTOLOGY_ROOT}/scripts/buildsystems/vcpkg.cmake \
                      -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install \
@@ -116,7 +116,7 @@ jobs:
         cmake --build . --config ${{ matrix.build_type }} --target install 
         # robot-testing-framework
         cd ${GITHUB_WORKSPACE}
-        git clone https://github.com/robotology/robot-testing-framework.git --depth 1 --branch master
+        git clone https://github.com/robotology/robot-testing-framework.git --depth 1 --branch devel
         cd robot-testing-framework && mkdir -p build && cd build
         cmake -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DENABLE_LUA_PLUGIN:BOOL=ON -DENABLE_WEB_LISTENER:BOOL=ON ..
         cmake --build . --config ${{ matrix.build_type }} --target install 
