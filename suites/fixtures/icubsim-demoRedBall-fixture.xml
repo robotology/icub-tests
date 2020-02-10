@@ -65,7 +65,7 @@
 
    <connection>
        <from>/icubSim/inertial</from>
-       <to>/iCubGui/inertial:i</to>
+       <to>/iCubGui/inertials/measures:i</to>
        <protocol>udp</protocol>
    </connection>
    <connection>
