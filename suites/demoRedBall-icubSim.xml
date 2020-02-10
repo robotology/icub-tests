@@ -5,5 +5,5 @@
     <environment>--robotname icubSim</environment>
     <fixture param="--fixture icubsim-demoRedBall-fixture.xml"> yarpmanager </fixture>
 
-    <test type="dll" param="--context demoRedBall --from config.ini"> DemoRedBallTest </test>
+    <test type="dll" param="--context demoRedBall --from config-test.ini"> DemoRedBallTest </test>
 </suite>
