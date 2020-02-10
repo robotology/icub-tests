@@ -51,6 +51,7 @@ class DemoRedBallTest : public yarp::robottestingframework::TestCase
         std::string robot;
         std::string eye;
         double reach_tol;
+        bool use_torso;
         bool use_left;
         bool use_right;
         yarp::sig::Vector home_arm;

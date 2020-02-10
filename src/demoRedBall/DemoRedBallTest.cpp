@@ -152,6 +152,7 @@ bool DemoRedBallTest::setup(Property &property)
     params.robot="icubSim";
     params.eye="left";
     params.reach_tol=0.01;
+    params.use_torso=true;
     params.use_left=true;
     params.use_right=true;
     params.home_arm.resize(7,0.0);
@@ -162,6 +163,7 @@ bool DemoRedBallTest::setup(Property &property)
         params.robot=general.check("robot",Value(params.robot)).asString();
         params.eye=general.check("eye",Value(params.eye)).asString();
         params.reach_tol=general.check("reach_tol",Value(params.reach_tol)).asDouble();
+        params.use_torso=(general.check("torso",Value(params.use_torso?"on":"off")).asString()=="on");
         params.use_left=(general.check("left_arm",Value(params.use_left?"on":"off")).asString()=="on");
         params.use_right=(general.check("right_arm",Value(params.use_right?"on":"off")).asString()=="on");
     }
@@ -225,6 +227,7 @@ bool DemoRedBallTest::setup(Property &property)
                             "Unable to open clients for head!");
     }
 
+    if (params.use_torso)
     {
         Property optJoint;
         optJoint.put("device","remote_controlboard");
@@ -248,13 +251,22 @@ void DemoRedBallTest::tearDown()
     redBallPos->stop();
 
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Closing Clients");
-    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
-                       "Unable to close client for left_arm!");
-    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmR.close()&&drvCartArmR.close(),
-                       "Unable to close client for right_arm!");
+    if (params.use_left)
+    {
+        ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
+                           "Unable to close client for left_arm!");
+    }
+    if (params.use_right)
+    {
+        ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmR.close()&&drvCartArmR.close(),
+                           "Unable to close client for right_arm!");
+    }
     ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointHead.close()&&drvGaze.close(),
                        "Unable to close client for head!");
-    ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointTorso.close(),"Unable to close client for left_arm!");
+    if (params.use_torso)
+    {
+        ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointTorso.close(),"Unable to close client for left_arm!");
+    }
 }
 
 
@@ -335,22 +347,25 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     }
     ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Head has reached home!");
 
-    drvJointTorso.view(ienc);
-    ienc->getAxes(&nEncs);
-    encs.resize(nEncs,0.0);
-    done=false;
-    t0=Time::now();
-    while (Time::now()-t0<10.0)
+    if (params.use_torso)
     {
-        ienc->getEncoders(encs.data());
-        if (norm(encs.subVector(0,3))<5.0)
+        drvJointTorso.view(ienc);
+        ienc->getAxes(&nEncs);
+        encs.resize(nEncs,0.0);
+        done=false;
+        t0=Time::now();
+        while (Time::now()-t0<10.0)
         {
-            done=true;
-            break;
+            ienc->getEncoders(encs.data());
+            if (norm(encs.subVector(0,3))<5.0)
+            {
+                done=true;
+                break;
+            }
+            Time::delay(1.0);
         }
-        Time::delay(1.0);
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Torso has reached home!");
     }
-    ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Torso has reached home!");
 }
 
 
@@ -360,16 +375,22 @@ void DemoRedBallTest::run()
     Vector pos(3,0.0);
     pos[0]=-0.3;
 
-    pos[1]=-0.15;
-    drvJointArmL.view(arm_under_test.ienc);
-    drvCartArmL.view(arm_under_test.iarm);
-    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the left hand");
-    testBallPosition(pos);
+    if (params.use_torso || params.use_left)
+    {
+        pos[1]=-0.15;
+        drvJointArmL.view(arm_under_test.ienc);
+        drvCartArmL.view(arm_under_test.iarm);
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the left hand");
+        testBallPosition(pos);
+    }
 
-    pos[1]=+0.15;
-    drvJointArmR.view(arm_under_test.ienc);
-    drvCartArmR.view(arm_under_test.iarm);
-    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the right hand");
-    testBallPosition(pos);
+    if (params.use_torso || params.use_right)
+    {
+        pos[1]=+0.15;
+        drvJointArmR.view(arm_under_test.ienc);
+        drvCartArmR.view(arm_under_test.iarm);
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the right hand");
+        testBallPosition(pos);
+    }
 }
 
