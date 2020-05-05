@@ -143,7 +143,7 @@ bool DemoRedBallTest::setup(Property &property)
     string from=property.check("from",Value("config-test.ini")).asString();
 
     // retrieve demoRedBall parameters
-    ResourceFinder rf; rf.setVerbose();
+    ResourceFinder rf;
     rf.setDefaultContext(context.c_str());
     rf.setDefaultConfigFile(from.c_str());
     rf.configure(0,NULL);
