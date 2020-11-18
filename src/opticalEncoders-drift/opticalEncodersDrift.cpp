@@ -251,14 +251,25 @@ void OpticalEncodersDrift::run()
         double curr_time = yarp::os::Time::now();
         double elapsed = curr_time-start_time;
 
+        //get joint e motor encoders data for the whole robot part
         ienc->getEncoders                  (enc_jnt.data());
         imot->getMotorEncoders             (enc_mot.data());
+        //extract only the joints of interest
+        yarp::sig::Vector enc_jnt_of_interest (jointsList.size());
+        yarp::sig::Vector enc_mot_of_interest (jointsList.size());
+        for (size_t i =0; i< jointsList.size(); i++)
+        {
+            enc_jnt_of_interest[i] = enc_jnt[jointsList[i]];
+            enc_mot_of_interest[i] = enc_mot[jointsList[i]];
+        }
+        //put the data into a Bottle
+        //this is the output format: n values for the motor encoders, then n values for the jnt encoders
         Bottle& row = dataToPlot.addList();
-        Bottle& v1 = row.addList();
-        Bottle& v2 = row.addList();
-        v1.read(enc_jnt);
-        v2.read(enc_mot);
-
+        Bottle& b_mot = row.addList();
+        Bottle& b_jnt = row.addList();
+        b_mot.read(enc_mot_of_interest);
+        b_jnt.read(enc_jnt_of_interest);
+       
         bool reached= false;
         int in_position=0;
         for (unsigned int i=0; i<jointsList.size(); i++)
