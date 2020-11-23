@@ -35,5 +35,9 @@ figure(4);
 filename = strcat("encConsis_motor_derivedVel_vel_", partname, ".txt");
 oneFile_plot(filename, "motor: derivedVel vs misuredVel", numofjoint);
 
+figure(5);
+filename = strcat("encConsis_jointPos_MotorPos_reversed_", partname, ".txt");
+oneFile_plot(filename, "jointPos vs MotorPos (REVERSED)", numofjoint);
+
 endfunction
 

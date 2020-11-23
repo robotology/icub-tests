@@ -330,11 +330,14 @@ void OpticalEncodersConsistency::run()
     Bottle dataToPlot_test2;
     Bottle dataToPlot_test3;
     Bottle dataToPlot_test4;
+    Bottle dataToPlot_test1rev;
 
     bool test_data_is_valid = false;
     bool first_time = true;
     yarp::sig::Vector off_enc_mot; off_enc_mot.resize(jointsList.size());
+    yarp::sig::Vector off_enc_jnt; off_enc_jnt.resize(jointsList.size());
     yarp::sig::Vector off_enc_jnt2mot; off_enc_jnt2mot.resize(jointsList.size());
+    yarp::sig::Vector off_enc_mot2jnt; off_enc_mot2jnt.resize(jointsList.size());
     yarp::sig::Vector tmp_vector;
     tmp_vector.resize(n_part_joints);
 
@@ -368,12 +371,20 @@ void OpticalEncodersConsistency::run()
         //if (acc_jnt == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getEncoderAccelerations data"); test_data_is_valid = true; }
         //if (acc_mot == zero_vector) { ROBOTTESTINGFRAMEWORK_TEST_REPORT("Invalid getMotorEncoderAccelerations data"); test_data_is_valid = true; }
 
+        if (first_time)
+        {
+            off_enc_jnt = enc_jnt;
+            off_enc_mot2jnt = enc_mot2jnt;
+        }
+        
         enc_jnt2mot = matrix * enc_jnt;
+        enc_mot2jnt = inv_matrix * (enc_mot - off_enc_mot);
         vel_jnt2mot = matrix * vel_jnt;
         //acc_jnt2mot = matrix * acc_jnt;
         for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];
         for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[i];
         //for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
+        for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot2jnt[i] = enc_mot2jnt[i] / gearbox[i];
 
         bool reached = false;
         int in_position = 0;
@@ -438,43 +449,63 @@ void OpticalEncodersConsistency::run()
             off_enc_jnt2mot = enc_jnt2mot;
         }
 
-        //prepare data to plot
-        //JOINT POSITIONS vs MOTOR POSITIONS
-        Bottle& row_test1 = dataToPlot_test1.addList();
-        Bottle& v1_test1 = row_test1.addList();
-        Bottle& v2_test1 = row_test1.addList();
-        yarp::sig::Vector v1 = enc_mot - off_enc_mot;
-        yarp::sig::Vector v2 = enc_jnt2mot - off_enc_jnt2mot;
-        v1_test1.read(v1);
-        v2_test1.read(v2);
-
-        //JOINT VELOCITES vs MOTOR VELOCITIES
-        Bottle& row_test2 = dataToPlot_test2.addList();
-        Bottle& v1_test2 = row_test2.addList();
-        Bottle& v2_test2 = row_test2.addList();
-        v1_test2.read(vel_mot);
-        v2_test2.read(vel_jnt2mot);
-
-        //JOINT POSITIONS(DERIVED) vs JOINT SPEED
-        if (first_time == false)
         {
-            Bottle& row_test3 = dataToPlot_test3.addList();
-            Bottle& v1_test3 = row_test3.addList();
-            Bottle& v2_test3 = row_test3.addList();
-            v1_test3.read(vel_jnt);
-            v2_test3.read(diff_enc_jnt);
+            //prepare data to plot
+            //JOINT POSITIONS vs MOTOR POSITIONS
+            Bottle& row_test1 = dataToPlot_test1.addList();
+            Bottle& v1_test1 = row_test1.addList();
+            Bottle& v2_test1 = row_test1.addList();
+            yarp::sig::Vector v1 = enc_mot - off_enc_mot;
+            yarp::sig::Vector v2 = enc_jnt2mot - off_enc_jnt2mot;
+            v1_test1.read(v1);
+            v2_test1.read(v2);
         }
 
-        //MOTOR POSITIONS(DERIVED) vs MOTOR SPEED
-        if (first_time == false)
         {
-            Bottle& row_test4 = dataToPlot_test4.addList();
-            Bottle& v1_test4 = row_test4.addList();
-            Bottle& v2_test4 = row_test4.addList();
-            v1_test4.read(vel_mot);
-            v2_test4.read(diff_enc_mot);
+            //JOINT VELOCITES vs MOTOR VELOCITIES
+            Bottle& row_test2 = dataToPlot_test2.addList();
+            Bottle& v1_test2 = row_test2.addList();
+            Bottle& v2_test2 = row_test2.addList();
+            v1_test2.read(vel_mot);
+            v2_test2.read(vel_jnt2mot);
         }
 
+        {
+            //JOINT POSITIONS(DERIVED) vs JOINT SPEED
+            if (first_time == false)
+            {
+                Bottle& row_test3 = dataToPlot_test3.addList();
+                Bottle& v1_test3 = row_test3.addList();
+                Bottle& v2_test3 = row_test3.addList();
+                v1_test3.read(vel_jnt);
+                v2_test3.read(diff_enc_jnt);
+            }
+        }
+
+        {
+            //MOTOR POSITIONS(DERIVED) vs MOTOR SPEED
+            if (first_time == false)
+            {
+                Bottle& row_test4 = dataToPlot_test4.addList();
+                Bottle& v1_test4 = row_test4.addList();
+                Bottle& v2_test4 = row_test4.addList();
+                v1_test4.read(vel_mot);
+                v2_test4.read(diff_enc_mot);
+            }
+        }
+
+        {
+            //JOINT POSITIONS vs MOTOR POSITIONS REVERSED
+            Bottle& row_test1 = dataToPlot_test1rev.addList();
+            Bottle& v1_test1 = row_test1.addList();
+            Bottle& v2_test1 = row_test1.addList();
+            yarp::sig::Vector v1 = enc_jnt;
+            yarp::sig::Vector v2 = enc_mot2jnt + off_enc_jnt;
+            v1_test1.read(v1);
+            v2_test1.read(v2);
+        }
+
+        //flag set
         first_time = false;
 
         //exit condition
@@ -496,6 +527,9 @@ void OpticalEncodersConsistency::run()
     saveToFile(filename3,dataToPlot_test3);
     string filename4 = testfilename + "motor_derivedVel_vel_" + partfilename;
     saveToFile(filename4,dataToPlot_test4);
+
+    string filename1rev = testfilename + "jointPos_MotorPos_reversed_" + partfilename;
+    saveToFile(filename1rev,dataToPlot_test1rev);
 
     //find octave scripts
     std::string octaveFile = rf.findFile("encoderConsistencyPlotAll.m");
