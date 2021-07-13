@@ -18,17 +18,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <memory>
 #include <algorithm>
 #include <robottestingframework/dll/Plugin.h>
 #include <robottestingframework/TestAssert.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/Bottle.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/GazeControl.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/Math.h>
+
+#include <iCub/ctrl/filters.h>
 
 #include "DemoRedBallTest.h"
 
@@ -38,93 +40,14 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
+using namespace iCub::ctrl;
 
 // prepare the plugin
 ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(DemoRedBallTest)
 
 
 /***********************************************************************************/
-class DemoRedBallPosition : public PeriodicThread
-{
-    string name;
-    IGazeControl *igaze;
-    string eye;
-    Vector pos;
-    bool visible;
-    BufferedPort<Bottle> port;
-
-    bool threadInit()
-    {
-        string dest="/demoRedBall/trackTarget:i";
-        port.open(("/"+name+"/redballpos:o"));
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(Network::connect(port.getName(),dest,"udp"),
-                            Asserter::format("Unable to connect to %s!",dest.c_str()));
-        return true;
-    }
-
-    void run()
-    {
-        if (igaze!=NULL)
-        {
-            Vector x,o;
-            if (eye=="left")
-                igaze->getLeftEyePose(x,o);
-            else
-                igaze->getRightEyePose(x,o);
-
-            Matrix T=axis2dcm(o);
-            T.setSubcol(x,0,3);
-            Vector pos_=SE3inv(T)*pos;
-
-            Bottle &cmd=port.prepare();
-            cmd.clear();
-            cmd.addDouble(pos_[0]);
-            cmd.addDouble(pos_[1]);
-            cmd.addDouble(pos_[2]);
-            cmd.addDouble(0.0);
-            cmd.addDouble(0.0);
-            cmd.addDouble(0.0);
-            cmd.addDouble(visible?1.0:0.0);
-            port.write();
-        }
-    }
-
-    void threadRelease()
-    {
-        port.close();
-    }
-
-public:
-    DemoRedBallPosition(const string &name_,
-                        PolyDriver &driver,
-                        const string &eye_) :
-                        PeriodicThread(0.1), name(name_),
-                        eye(eye_), pos(4,0.0),
-                        visible(false)
-    {
-        if (!driver.view(igaze))
-            igaze=NULL;
-        pos[3]=1.0;
-    }
-
-    bool setPos(const Vector &pos)
-    {
-        if (pos.length()>=3)
-        {
-            this->pos.setSubvector(0,pos.subVector(0,2));
-            return true;
-        }
-        else
-            return false;
-    }
-
-    void setVisible()   { visible=true;  }
-    void setInvisible() { visible=false; }
-};
-
-
-/***********************************************************************************/
-DemoRedBallTest::DemoRedBallTest() : yarp::robottestingframework::TestCase("DemoRedBallTest"), redBallPos(NULL)
+DemoRedBallTest::DemoRedBallTest() : yarp::robottestingframework::TestCase("DemoRedBallTest")
 {
 }
 
@@ -132,13 +55,14 @@ DemoRedBallTest::DemoRedBallTest() : yarp::robottestingframework::TestCase("Demo
 /***********************************************************************************/
 DemoRedBallTest::~DemoRedBallTest()
 {
-    delete redBallPos;
 }
 
 
 /***********************************************************************************/
 bool DemoRedBallTest::setup(Property &property)
 {
+    Time::useNetworkClock("/clock");
+
     string context=property.check("context",Value("demoRedBall")).asString();
     string from=property.check("from",Value("config-test.ini")).asString();
 
@@ -238,8 +162,15 @@ bool DemoRedBallTest::setup(Property &property)
                             "Unable to open clients for torso!");
     }
 
-    redBallPos=new DemoRedBallPosition(getName(),drvGaze,params.eye);
-    redBallPos->start();
+    rpcPort.open("/"+getName()+"/rpc");
+    string dest="/demoRedBall/rpc";
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(Network::connect(rpcPort.getName(),dest),
+                            Asserter::format("Unable to connect to %s!",dest.c_str()));
+
+    guiPort.open("/"+getName()+"/gui:i");
+    string src="/demoRedBall/gui:o";
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(Network::connect(src,guiPort.getName()),
+                            Asserter::format("Unable to connect to %s!",src.c_str()));                            
 
     return true;
 }
@@ -248,9 +179,9 @@ bool DemoRedBallTest::setup(Property &property)
 /***********************************************************************************/
 void DemoRedBallTest::tearDown()
 {
-    redBallPos->stop();
-
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Closing Clients");
+    rpcPort.close();
+    guiPort.close();
     if (params.use_left)
     {
         ROBOTTESTINGFRAMEWORK_ASSERT_FAIL_IF_FALSE(drvJointArmL.close()&&drvCartArmL.close(),
@@ -271,24 +202,65 @@ void DemoRedBallTest::tearDown()
 
 
 /***********************************************************************************/
-void DemoRedBallTest::testBallPosition(const Vector &pos)
+bool DemoRedBallTest::getBallPosition(const Bottle* b, Vector& pos)
 {
-    DemoRedBallPosition *ball=dynamic_cast<DemoRedBallPosition*>(redBallPos);
-    ball->setPos(pos);
-    ball->setVisible();
+    if (b->size()>=15)
+    {
+        if (b->get(0).isString() && (b->get(0).asString()=="object"))
+        {
+            pos.resize(3);
+            pos[0]=b->get(5).asDouble()/1000.;
+            pos[1]=b->get(6).asDouble()/1000.;
+            pos[2]=b->get(7).asDouble()/1000.;
+            return true;
+        }
+    }
+    return false;
+}
 
+
+/***********************************************************************************/
+void DemoRedBallTest::testBallPosition(const Vector &dpos)
+{
     Vector x,o,encs;
     int nEncs; IEncoders* ienc;
     bool done=false;
     double t0;
 
+    Bottle cmd,rep;
+    cmd.addString("update_pose");
+    cmd.addDouble(dpos[0]);
+    cmd.addDouble(dpos[1]);
+    cmd.addDouble(dpos[2]);
+    rpcPort.write(cmd,rep);
+
+    Time::delay(3.0);
+
+    cmd.clear();
+    cmd.addString("start");
+    cmd.addDouble(0.);
+    cmd.addDouble(-50.);
+    cmd.addDouble(10.);
+    rpcPort.write(cmd,rep);
+
+    auto filt = make_unique<MedianFilter>(5, Vector{0., 0., 0.});
+
     IGazeControl* igaze;
     drvGaze.view(igaze);
+
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
+        if (auto* gui=guiPort.read(false))
+        {
+            Vector pos;
+            if (getBallPosition(gui,pos))
+            {
+                filt->filt(pos);
+            }
+        }
         igaze->getFixationPoint(x);
-        if (norm(pos-x)<2.0*params.reach_tol)
+        if (norm(filt->output()-x)<2.0*params.reach_tol)
         {
             done=true;
             break;
@@ -297,12 +269,21 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     }
     ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Ball gazed at with the eyes!");
 
+    filt->init(Vector{0., 0., 0.});
     done=false;
     t0=Time::now();
     while (Time::now()-t0<10.0)
     {
+        if (auto* gui=guiPort.read(false))
+        {
+            Vector pos;
+            if (getBallPosition(gui,pos))
+            {
+                filt->filt(pos);
+            }
+        }
         arm_under_test.iarm->getPose(x,o);
-        if (norm(pos-x)<params.reach_tol)
+        if (norm(filt->output()-x)<params.reach_tol)
         {
             done=true;
             break;
@@ -312,7 +293,9 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
     ROBOTTESTINGFRAMEWORK_TEST_CHECK(done,"Ball reached with the hand!");
 
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Going home");
-    ball->setInvisible();
+    cmd.clear();
+    cmd.addString("stop");
+    rpcPort.write(cmd,rep);
 
     arm_under_test.ienc->getAxes(&nEncs);
     encs.resize(nEncs,0.0);
@@ -371,26 +354,27 @@ void DemoRedBallTest::testBallPosition(const Vector &pos)
 
 /***********************************************************************************/
 void DemoRedBallTest::run()
-{
-    Vector pos(3,0.0);
-    pos[0]=-0.3;
-
+{    
     if (params.use_torso || params.use_left)
     {
-        pos[1]=-0.15;
+        Vector dpos(3,0.0);
+        dpos[1]=-0.06;
+        dpos[2]=-0.3;
         drvJointArmL.view(arm_under_test.ienc);
         drvCartArmL.view(arm_under_test.iarm);
         ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the left hand");
-        testBallPosition(pos);
+        testBallPosition(dpos);
     }
 
-    if (params.use_torso || params.use_right)
+   if (params.use_torso || params.use_right)
     {
-        pos[1]=+0.15;
+        Vector dpos(3,0.0);
+        dpos[1]=+0.06;
+        dpos[2]=-0.3;
         drvJointArmR.view(arm_under_test.ienc);
         drvCartArmR.view(arm_under_test.iarm);
         ROBOTTESTINGFRAMEWORK_TEST_REPORT("Reaching with the right hand");
-        testBallPosition(pos);
+        testBallPosition(dpos);
     }
 }
 

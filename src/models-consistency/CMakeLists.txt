@@ -23,16 +23,7 @@ endif()
 
 project(iKiniDynConsistencyTest)
 
-find_package(ICUB REQUIRED)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ICUB_MODULE_PATH})
-
-include(iCubHelpers)
-
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ICUB_LINK_FLAGS}")
-
-# add include directories
-include_directories(${ICUB_INCLUDE_DIRS})
 
 # import math symbols from standard cmath
 add_definitions(-D_USE_MATH_DEFINES)
@@ -47,8 +38,8 @@ target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
                                       YARP::YARP_init
                                       YARP::YARP_math
                                       YARP::YARP_robottestingframework
-                                      iKin
-                                      iDyn)
+                                      ICUB::iKin
+                                      ICUB::iDyn)
 
 # set the installation options
 install(TARGETS ${PROJECT_NAME}

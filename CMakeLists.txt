@@ -29,7 +29,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
 # options
-option(ICUB_TESTS_USES_ICUB_MAIN "Turn on to compile the tests that depend on the icub-main repository" OFF)
+option(ICUB_TESTS_USES_ICUB_MAIN "Turn on to compile the tests that depend on the icub-main repository" ON)
 option(ICUB_TESTS_USES_CODYCO    "Turn on to compile the test that depend on the codyco-superbuil repository" OFF)
 
 # Build examples?
@@ -58,9 +58,6 @@ add_subdirectory(src/cartesian-control)
 # Build gaze controller tests
 add_subdirectory(src/gaze-control)
 
-# Build demoRedBall test
-add_subdirectory(src/demoRedBall)
-
 if(ICUB_TESTS_USES_CODYCO)
     add_subdirectory(src/torqueControl-gravityConsistency)
 endif()
@@ -72,7 +69,9 @@ add_subdirectory(src/motorEncodersSignCheck)
 
 # Build model consistency check
 if(ICUB_TESTS_USES_ICUB_MAIN)
+    find_package(ICUB REQUIRED)
     add_subdirectory(src/models-consistency)
+    add_subdirectory(src/demoRedBall)
 endif()
 
 # Build motor tests

@@ -23,8 +23,10 @@
 
 #include <string>
 #include <yarp/robottestingframework/TestCase.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/PeriodicThread.h>
+#include <yarp/os/RpcClient.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/CartesianControl.h>
@@ -70,8 +72,10 @@ class DemoRedBallTest : public yarp::robottestingframework::TestCase
     yarp::dev::IEncoders         *ienc;
     } arm_under_test;
 
-    yarp::os::PeriodicThread *redBallPos;
+    yarp::os::RpcClient rpcPort;
+    yarp::os::BufferedPort<yarp::os::Bottle> guiPort;
     void testBallPosition(const yarp::sig::Vector &pos);
+    bool getBallPosition(const yarp::os::Bottle* b, yarp::sig::Vector& pos);
 
 public:
     DemoRedBallTest();
