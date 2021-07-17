@@ -6,53 +6,66 @@
         <author email="ugo.pattacini@iit.it">Ugo Pattacini</author>
     </authors>
     <module>
-        <name>iCub_SIM</name>
+        <name>gzserver</name>
+        <parameters>-s libgazebo_yarp_clock.so grasp-ball-gazebo.sdf</parameters>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>gzclient</name>
         <parameters></parameters>
         <node>localhost</node>
-        <ensure>
-            <wait>10</wait>
-        </ensure>
     </module>
     <module>
         <name>yarprobotinterface</name>
-        <parameters>--context simCartesianControl --config no_legs.xml</parameters>
+        <parameters>--context gazeboCartesianControl --config no_legs.xml</parameters>
         <node>localhost</node>
         <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
             <port timeout="20">/icubSim/left_arm/state:o</port>
             <port timeout="20">/icubSim/right_arm/state:o</port>
         </dependencies>
+        <environment>YARP_CLOCK=/clock</environment>
+        <ensure>
+            <wait when="stop">5</wait>
+        </ensure>       
     </module>
     <module>
         <name>iKinCartesianSolver</name>
-        <parameters>--context simCartesianControl --part right_arm</parameters>
+        <parameters>--context gazeboCartesianControl --part right_arm</parameters>
         <node>localhost</node>
         <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
             <port timeout="20">/icubSim/right_arm/state:o</port>
         </dependencies>
+        <environment>YARP_CLOCK=/clock</environment>
     </module>
     <module>
         <name>iKinCartesianSolver</name>
-        <parameters>--context simCartesianControl --part left_arm</parameters>
+        <parameters>--context gazeboCartesianControl --part left_arm</parameters>
         <node>localhost</node>
         <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
             <port timeout="20">/icubSim/left_arm/state:o</port>
         </dependencies>
+        <environment>YARP_CLOCK=/clock</environment>
     </module>
     <module>
         <name>iKinGazeCtrl</name>
-        <parameters>--from configSim.ini</parameters>
+        <parameters>--context gazeboCartesianControl --from iKinGazeCtrl.ini</parameters>
         <node>localhost</node>
         <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
             <port timeout="20">/icubSim/head/state:o</port>
             <port timeout="20">/icubSim/inertial</port>
         </dependencies>
+        <environment>YARP_CLOCK=/clock</environment>
     </module>
     <module>
-        <name>iCubGui</name>
-        <parameters>--xpos 800 --ypos 80 --width 370</parameters>
+        <name>pf3dTracker</name>
+        <parameters>--from pf3dTracker-gazebo.ini</parameters>
         <node>localhost</node>
-   </module>
-   <module>
+    </module>
+    <module>
         <name>demoRedBall</name>
         <parameters>--from config-test.ini</parameters>
         <node>localhost</node>
@@ -61,36 +74,68 @@
             <port timeout="20">/icubSim/cartesianController/right_arm/state:o</port>
             <port timeout="20">/iKinGazeCtrl/rpc</port>
         </dependencies>
-   </module>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /PF3DTracker_viewer --x 320 --y 80 --p 50 --compact</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/demoRedBall/rpc</port>
+        </dependencies>
+        <environment>YARP_CLOCK=/clock</environment>
+    </module>
+    <module>
+        <name>iCubGui</name>
+        <parameters>--xpos 1400 --ypos 80 --width 370</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/demoRedBall/rpc</port>
+        </dependencies>
+    </module>
 
-   <connection>
-       <from>/icubSim/inertial</from>
-       <to>/iCubGui/inertials/measures:i</to>
-       <protocol>udp</protocol>
-   </connection>
-   <connection>
-       <from>/icubSim/head/state:o</from>
-       <to>/iCubGui/head:i</to>
-       <protocol>udp</protocol>
-   </connection>
-   <connection>
-       <from>/icubSim/torso/state:o</from>
-       <to>/iCubGui/torso:i</to>
-       <protocol>udp</protocol>
-   </connection>
-   <connection>
-       <from>/icubSim/left_arm/state:o</from>
-       <to>/iCubGui/left_arm:i</to>
-       <protocol>udp</protocol>
-   </connection>
-   <connection>
-       <from>/icubSim/right_arm/state:o</from>
-       <to>/iCubGui/right_arm:i</to>
-       <protocol>udp</protocol>
-   </connection>
-   <connection>
-       <from>/demoRedBall/gui:o</from>
-       <to>/iCubGui/objects</to>
-       <protocol>tcp</protocol>
-   </connection>
+    <connection>
+        <from>/icubSim/inertial</from>
+        <to>/iCubGui/inertials/measures:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icubSim/head/state:o</from>
+        <to>/iCubGui/head:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icubSim/torso/state:o</from>
+        <to>/iCubGui/torso:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icubSim/left_arm/state:o</from>
+        <to>/iCubGui/left_arm:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/icubSim/right_arm/state:o</from>
+        <to>/iCubGui/right_arm:i</to>
+        <protocol>udp</protocol>
+    </connection>
+    <connection>
+        <from>/demoRedBall/gui:o</from>
+        <to>/iCubGui/objects</to>
+        <protocol>fast_tcp</protocol>
+    </connection>
+    <connection>
+        <from>/icubSim/cam/left/rgbImage:o</from>
+        <to>/pf3dTracker/video:i</to>
+        <protocol>fast_tcp</protocol>
+    </connection>
+    <connection>
+        <from>/pf3dTracker/video:o</from>
+        <to>/PF3DTracker_viewer</to>
+        <protocol>fast_tcp</protocol>
+    </connection>
+    <connection>
+        <from>/pf3dTracker/data:o</from>
+        <to>/demoRedBall/trackTarget:i</to>
+        <protocol>fast_tcp</protocol>
+    </connection>
 </application>

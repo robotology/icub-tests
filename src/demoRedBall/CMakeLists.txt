@@ -36,7 +36,8 @@ target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
                                       YARP::YARP_os
                                       YARP::YARP_init
                                       YARP::YARP_math
-                                      YARP::YARP_robottestingframework)
+                                      YARP::YARP_robottestingframework
+                                      ICUB::ctrlLib)
 
 # set the installation options
 install(TARGETS ${PROJECT_NAME}
