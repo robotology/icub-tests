@@ -69,8 +69,6 @@ jobs:
     - name: Dependencies [macOS]
       if: matrix.os == 'macOS-latest'
       run: |
-        # Workaround for https://github.com/actions/virtual-environments/issues/3733
-        brew uninstall mongodb-community
         brew update
         brew upgrade
         brew install ace cmake eigen gsl ipopt opencv pkg-config qt5
