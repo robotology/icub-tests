@@ -76,12 +76,12 @@ bool TorqueControlAccuracy::setup(yarp::os::Property& property) {
     m_n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(m_n_cmd_joints>0, "invalid number of joints, it must be >0");
 
-    m_step = property.find("step").asDouble();
+    m_step = property.find("step").asFloat64();
 
-    m_cycles = property.find("cycles").asInt();
+    m_cycles = property.find("cycles").asInt32();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(m_cycles>0, "invalid cycles");
 
-    m_sampleTime = property.find("sampleTime").asDouble();
+    m_sampleTime = property.find("sampleTime").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(m_sampleTime>0, "invalid sampleTime");
 
     Property options;
@@ -106,8 +106,8 @@ bool TorqueControlAccuracy::setup(yarp::os::Property& property) {
     m_encoders = new double[m_n_part_joints];
     m_jointsList = new int[m_n_cmd_joints];
     m_torques = new double[m_n_part_joints];
-    for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt();
-    for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asDouble();
+    for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt32();
+    for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asFloat64();
 
     return true;
 }
@@ -229,25 +229,25 @@ void TorqueControlAccuracy::run()
                 itrq->setRefTorque(m_jointsList[i], m_cmd_single);
 
                 Bottle& b1 = dataToPlotRaw.addList();
-                b1.addInt(cycle);
-                b1.addDouble(elapsed);
-                b1.addDouble(m_torques[m_jointsList[i]]);
-                b1.addDouble(m_cmd_single);
+                b1.addInt32(cycle);
+                b1.addFloat64(elapsed);
+                b1.addFloat64(m_torques[m_jointsList[i]]);
+                b1.addFloat64(m_cmd_single);
                 yarp::os::Time::delay(m_sampleTime);
             }
 
             //reorder data
             for (int t = 0; t < dataToPlotRaw.size(); t++)
             {
-                int    cycle = dataToPlotRaw.get(t).asList()->get(0).asInt();
-                double time = dataToPlotRaw.get(t).asList()->get(1).asDouble();
-                double val = dataToPlotRaw.get(t).asList()->get(2).asDouble();
-                double cmd = dataToPlotRaw.get(t).asList()->get(3).asDouble();
+                int    cycle = dataToPlotRaw.get(t).asList()->get(0).asInt32();
+                double time = dataToPlotRaw.get(t).asList()->get(1).asFloat64();
+                double val = dataToPlotRaw.get(t).asList()->get(2).asFloat64();
+                double cmd = dataToPlotRaw.get(t).asList()->get(3).asFloat64();
                 Bottle& b1 = dataToPlotSync.addList();
-                b1.addInt(cycle);
-                b1.addDouble(time - time_zero);
-                b1.addDouble(val);
-                b1.addDouble(cmd);
+                b1.addInt32(cycle);
+                b1.addFloat64(time - time_zero);
+                b1.addFloat64(val);
+                b1.addFloat64(cmd);
             }
 
             m_dataToSave.append(dataToPlotSync);

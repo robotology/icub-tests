@@ -68,7 +68,7 @@ bool ControlModes::setup(yarp::os::Property& property) {
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
     if(property.check("tolerance"))
-        tolerance = property.find("tolerance").asDouble();
+        tolerance = property.find("tolerance").asFloat64();
     else
         tolerance = 0.5;
 
@@ -121,10 +121,10 @@ bool ControlModes::setup(yarp::os::Property& property) {
     jointTorqueCtrlEnabled = new int[n_part_joints];
     home_pos = new double[n_cmd_joints];
 
-    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
+    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt32();
 
     Bottle* homePosBottle = property.find("home").asList();
-    for (int i=0; i <n_cmd_joints; i++) home_pos[i]=homePosBottle->get(i).asDouble();
+    for (int i=0; i <n_cmd_joints; i++) home_pos[i]=homePosBottle->get(i).asFloat64();
 
     checkJointWithTorqueMode();
     return true;
@@ -222,14 +222,14 @@ void ControlModes::verifyMode(int desired_control_mode, yarp::dev::InteractionMo
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)cmode).c_str(), Vocab::decode((NetInt32)imode).c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab32::decode((NetInt32)cmode).c_str(), Vocab32::decode((NetInt32)imode).c_str(), Vocab32::decode((NetInt32)desired_control_mode).c_str(),Vocab32::decode((NetInt32)desired_interaction_mode).c_str());
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab::decode((NetInt32)desired_control_mode).c_str(), Vocab::decode((NetInt32)desired_interaction_mode).c_str());
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab32::decode((NetInt32)desired_control_mode).c_str(), Vocab32::decode((NetInt32)desired_interaction_mode).c_str());
     ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
@@ -250,14 +250,14 @@ void ControlModes::verifyModeSingle(int joint, int desired_control_mode, yarp::d
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)cmode).c_str(), Vocab::decode((NetInt32)imode).c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab32::decode((NetInt32)cmode).c_str(), Vocab32::decode((NetInt32)imode).c_str(), Vocab32::decode((NetInt32)desired_control_mode).c_str(),Vocab32::decode((NetInt32)desired_interaction_mode).c_str());
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab::decode((NetInt32)desired_control_mode).c_str(), Vocab::decode((NetInt32)desired_interaction_mode).c_str());
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(),Vocab32::decode((NetInt32)desired_control_mode).c_str(), Vocab32::decode((NetInt32)desired_interaction_mode).c_str());
     ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
@@ -274,7 +274,7 @@ void ControlModes::checkJointWithTorqueMode()
         yarp::os::Bottle *baux = b.get(i).asList();
         for(int k=0; k<baux->size()&& j<n_part_joints; k++)
         {
-            jointTorqueCtrlEnabled[j] = baux->get(k).asInt();
+            jointTorqueCtrlEnabled[j] = baux->get(k).asInt32();
             j++;
         }
     }
@@ -377,7 +377,7 @@ void ControlModes::checkControlModeWithImCompliant(int desired_control_mode, std
     {
         if(jointTorqueCtrlEnabled[jointsList[i]])
         {
-            sprintf(buff, "joint %d has torque enabled. try to set %s and im_comp", jointsList[i], Vocab::decode((NetInt32)desired_control_mode).c_str());
+            sprintf(buff, "joint %d has torque enabled. try to set %s and im_comp", jointsList[i], Vocab32::decode((NetInt32)desired_control_mode).c_str());
             ROBOTTESTINGFRAMEWORK_TEST_REPORT(buff);
             setModeSingle(jointsList[i],desired_control_mode,VOCAB_IM_COMPLIANT);
             verifyModeSingle(jointsList[i], desired_control_mode,VOCAB_IM_COMPLIANT,title);

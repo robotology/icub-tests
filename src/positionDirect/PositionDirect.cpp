@@ -74,24 +74,24 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0,"invalid number of joints, it must be >0");
 
-    frequency = property.find("frequency").asDouble();
+    frequency = property.find("frequency").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(frequency>0,"invalid frequency");
 
-    amplitude = property.find("amplitude").asDouble();
+    amplitude = property.find("amplitude").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(amplitude>0,"invalid amplitude");
 
-    zero = property.find("zero").asDouble();
+    zero = property.find("zero").asFloat64();
 
-    cycles = property.find("cycles").asDouble();
+    cycles = property.find("cycles").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cycles>0,"invalid cycles");
 
-    tolerance = property.find("tolerance").asDouble();
+    tolerance = property.find("tolerance").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tolerance>0,"invalid tolerance");
 
-    sampleTime = property.find("sampleTime").asDouble();
+    sampleTime = property.find("sampleTime").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(sampleTime>0,"invalid sampleTime");
 
-    cmd_mode = (cmd_mode_t) property.find("cmdMode").asInt();
+    cmd_mode = (cmd_mode_t) property.find("cmdMode").asInt32();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cmd_mode>=0 && cmd_mode<=2,"invalid cmdMode: can be 0=single_joint, 1=all_joints ,2=some_joints");
 
     Property options;
@@ -126,7 +126,7 @@ bool PositionDirect::setup(yarp::os::Property& property) {
     pos_tot=new double[n_part_joints];
     jointsList=new int[n_cmd_joints];
     cmd_some=new double[n_cmd_joints];
-    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
+    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt32();
 
     return true;
 }

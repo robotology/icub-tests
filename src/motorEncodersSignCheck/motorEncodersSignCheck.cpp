@@ -112,17 +112,17 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     int n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
     jointsList.clear();
-    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
+    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt32());
 
-    home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
-    opl_step.resize (n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_step[i]=pwm_step_Bottle->get(i).asDouble();
-    opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=pwm_max_Bottle->get(i).asDouble();
-    opl_start.resize(n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_start[i]=pwm_start_Bottle->get(i).asDouble();
+    home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asFloat64();
+    opl_step.resize (n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_step[i]=pwm_step_Bottle->get(i).asFloat64();
+    opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=pwm_max_Bottle->get(i).asFloat64();
+    opl_start.resize(n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_start[i]=pwm_start_Bottle->get(i).asFloat64();
     pos_threshold.resize (n_cmd_joints);
     if(threshold_Bottle!=0)
     {
         for (int i=0; i< n_cmd_joints; i++)
-            pos_threshold[i]=threshold_Bottle->get(i).asDouble();
+            pos_threshold[i]=threshold_Bottle->get(i).asFloat64();
     }
     else
     {
@@ -134,7 +134,7 @@ bool MotorEncodersSignCheck::setup(yarp::os::Property& property) {
     if(command_delay_Bottle!=0)
     {
         for (int i=0; i< n_cmd_joints; i++)
-            opl_delay[i]=command_delay_Bottle->get(i).asDouble();
+            opl_delay[i]=command_delay_Bottle->get(i).asFloat64();
     }
     else
     {

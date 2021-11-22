@@ -70,7 +70,7 @@ bool TorqueControlConsistency::setup(yarp::os::Property& property) {
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
-    zero = property.find("zero").asDouble();
+    zero = property.find("zero").asFloat64();
 
     Bottle* jointsBottle = property.find("joints").asList();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(jointsBottle!=0,"unable to parse joints parameter");
@@ -113,7 +113,7 @@ bool TorqueControlConsistency::setup(yarp::os::Property& property) {
     cmd_some=new double[n_cmd_joints];
     prevcurr_tot=new double[n_part_joints];
     prevcurr_some=new double[n_cmd_joints];
-    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
+    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt32();
 
     return true;
 }

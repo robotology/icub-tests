@@ -46,7 +46,7 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
         setName(property.find("name").asString());
 
     // updating parameters
-   testTime = (property.check("time")) ? property.find("time").asDouble() : 2;
+   testTime = (property.check("time")) ? property.find("time").asFloat64() : 2;
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("PORTS"),
                         "A list of the ports must be given");
@@ -57,8 +57,8 @@ bool PortsFrequency::setup(yarp::os::Property &property) {
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(btport && btport->size()>=3, "The ports must be given as lists of <portname> <grequency> <tolerance>");
         MyPortInfo info;
         info.name = btport->get(0).asString();
-        info.frequency = btport->get(1).asInt();
-        info.tolerance = btport->get(2).asInt();
+        info.frequency = btport->get(1).asInt32();
+        info.tolerance = btport->get(2).asInt32();
         ports.push_back(info);
     }
 

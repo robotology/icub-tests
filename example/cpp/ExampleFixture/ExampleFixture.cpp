@@ -40,7 +40,7 @@ bool ExampleFixture::setup(int argc, char** argv) {
         printf("ExampleFixture: missing 'probability' param.\n");
         return false;
     }
-    probability = prop.find("probability").asDouble();
+    probability = prop.find("probability").asFloat64();
     Random::seed(time(NULL));
     return true;
 }

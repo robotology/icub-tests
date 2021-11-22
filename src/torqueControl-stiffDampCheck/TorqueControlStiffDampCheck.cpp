@@ -103,7 +103,7 @@ bool TorqueControlStiffDampCheck::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(b_home!=0,"unable to parse home parameter");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(b_home->size()==n_cmd_joints,"invalid number of home values");
 
-    testLen_sec = property.find("duration").asDouble();
+    testLen_sec = property.find("duration").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(testLen_sec>0, "duretion should be bigger than 0");
 
     if(property.check("plot_enabled"))
@@ -147,10 +147,10 @@ bool TorqueControlStiffDampCheck::setup(yarp::os::Property& property) {
     pos_tot=new double[n_cmd_joints];
     home=new double[n_cmd_joints];
 
-    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
-    for (int i=0; i <n_cmd_joints; i++) stiffness[i]=b_stiff->get(i).asDouble();
-    for (int i=0; i <n_cmd_joints; i++) damping[i]=b_dump->get(i).asDouble();
-    for (int i=0; i <n_cmd_joints; i++) home[i]=b_home->get(i).asDouble();
+    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt32();
+    for (int i=0; i <n_cmd_joints; i++) stiffness[i]=b_stiff->get(i).asFloat64();
+    for (int i=0; i <n_cmd_joints; i++) damping[i]=b_dump->get(i).asFloat64();
+    for (int i=0; i <n_cmd_joints; i++) home[i]=b_home->get(i).asFloat64();
     return true;
 }
 
@@ -192,18 +192,18 @@ void TorqueControlStiffDampCheck::verifyMode(int desired_control_mode, yarp::dev
         {
             char sbuf[800];
             sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(),
-                    Vocab::decode((NetInt32)desired_control_mode).c_str(),
-                    Vocab::decode((NetInt32)desired_interaction_mode).c_str(),
-                    Vocab::decode((NetInt32)cmode).c_str(),
-                    Vocab::decode((NetInt32)imode).c_str());
+                    Vocab32::decode((NetInt32)desired_control_mode).c_str(),
+                    Vocab32::decode((NetInt32)desired_interaction_mode).c_str(),
+                    Vocab32::decode((NetInt32)cmode).c_str(),
+                    Vocab32::decode((NetInt32)imode).c_str());
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),
-            Vocab::decode((NetInt32)desired_interaction_mode).c_str());
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab32::decode((NetInt32)desired_control_mode).c_str(),
+            Vocab32::decode((NetInt32)desired_interaction_mode).c_str());
     ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 
@@ -318,16 +318,16 @@ void TorqueControlStiffDampCheck::run()
             itrq->getRefTorque(jointsList[i], &reftrq);
 
             Bottle& row = b_pos_trq.addList();
-            row.addDouble(curr_pos-home[i]);
-            row.addDouble(torque- init_torque);
-            row.addDouble(reftrq);
+            row.addFloat64(curr_pos-home[i]);
+            row.addFloat64(torque- init_torque);
+            row.addFloat64(reftrq);
             yarp::os::Time::delay(0.01);
             curr_time = yarp::os::Time::now();
         }
 
         string testfilename = "posVStrq_";
         Bottle b;
-        b.addInt(jointsList[i]);
+        b.addInt32(jointsList[i]);
         string filename1 = testfilename + partName + "_j" + b.toString().c_str() + ".txt";
         saveToFile(filename1,b_pos_trq);
         b_pos_trq.clear();
@@ -354,16 +354,16 @@ void TorqueControlStiffDampCheck::run()
             itrq->getRefTorque(jointsList[i], &reftrq);
 
             Bottle& row = b_vel_trq.addList();
-            row.addDouble(curr_vel);
-            row.addDouble(torque- init_torque);
-            row.addDouble(reftrq);
+            row.addFloat64(curr_vel);
+            row.addFloat64(torque- init_torque);
+            row.addFloat64(reftrq);
             yarp::os::Time::delay(0.01);
             curr_time = yarp::os::Time::now();
         }
 
         testfilename = "velVStrq_";
         Bottle b1;
-        b1.addInt(jointsList[i]);
+        b1.addInt32(jointsList[i]);
         filename1 = testfilename + partName + "_j" + b1.toString().c_str() + ".txt";
         saveToFile(filename1,b_vel_trq);
         b_vel_trq.clear();
@@ -457,9 +457,9 @@ void TorqueControlStiffDampCheck::run()
 //            //itrq->getTorque(jointsList[i], torque);
 
 //            Bottle& row = b_pos_trq.addList();
-//            //row.addDouble(curr_pos-home[i], torque);
-//            row.addDouble(x);
-//            row.addDouble(10+x);
+//            //row.addFloat64(curr_pos-home[i], torque);
+//            row.addFloat64(x);
+//            row.addFloat64(10+x);
 //            yarp::os::Time::delay(0.01);
 //            curr_time = yarp::os::Time::now();
 //            x++;
@@ -467,7 +467,7 @@ void TorqueControlStiffDampCheck::run()
 
 //        string testfilename = "posVStrq_";
 //        Bottle b;
-//        b.addInt(jointsList[i]);
+//        b.addInt32(jointsList[i]);
 //        string filename1 = testfilename + partName + "_j" + b.toString().c_str() + ".txt";
 //        saveToFile(filename1,b_pos_trq);
 //        b_pos_trq.clear();
@@ -491,8 +491,8 @@ void TorqueControlStiffDampCheck::run()
 //            //itrq->getTorque(jointsList[i], torque);
 
 //            Bottle& row = b_vel_trq.addList();
-//            row.addDouble(x);
-//            row.addDouble(x+20);
+//            row.addFloat64(x);
+//            row.addFloat64(x+20);
 //            yarp::os::Time::delay(0.01);
 //            curr_time = yarp::os::Time::now();
 //            x++;
@@ -500,7 +500,7 @@ void TorqueControlStiffDampCheck::run()
 
 //        testfilename = "velVStrq_";
 //        Bottle b1;
-//        b1.addInt(jointsList[i]);
+//        b1.addInt32(jointsList[i]);
 //        filename1 = testfilename + partName + "_j" + b1.toString().c_str() + ".txt";
 //        saveToFile(filename1,b_vel_trq);
 //        b_vel_trq.clear();

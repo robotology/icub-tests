@@ -55,9 +55,9 @@ bool CameraTest::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("portname"),
                         "The portname must be given as the test paramter!");
     cameraPortName = property.find("portname").asString();
-    measure_time = property.check("measure_time") ? property.find("measure_time").asInt() : TIMES;
-    expected_frequency = property.check("expected_frequency") ? property.find("expected_frequency").asInt() : FREQUENCY;
-    tolerance = property.check("tolerance") ? property.find("tolerance").asInt() : TOLERANCE;
+    measure_time = property.check("measure_time") ? property.find("measure_time").asInt32() : TIMES;
+    expected_frequency = property.check("expected_frequency") ? property.find("expected_frequency").asInt32() : FREQUENCY;
+    tolerance = property.check("tolerance") ? property.find("tolerance").asInt32() : TOLERANCE;
 
     // opening port
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(port.open("/CameraTest/image:i"),

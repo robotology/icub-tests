@@ -52,7 +52,7 @@ bool SystemStatus::setup(yarp::os::Property &property) {
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(btport && btport->size()>=2, "Hosts must be given as lists of <host name> <max cpu load>");
         HostInfo info;
         info.name = btport->get(0).asString();
-        info.maxCpuLoad = btport->get(1).asInt();
+        info.maxCpuLoad = btport->get(1).asInt32();
         hosts.push_back(info);
     }
 

@@ -25,7 +25,7 @@ project(ExampleFixture)
 
 # add the required cmake packages
 find_package(RobotTestingFramework 2 COMPONENTS DLL)
-find_package(YARP 3.3.0 COMPONENTS os robottestingframework)
+find_package(YARP 3.5.1 COMPONENTS os robottestingframework)
 
 # add the source codes to build the plugin library
 add_library(${PROJECT_NAME} MODULE ExampleFixture.h

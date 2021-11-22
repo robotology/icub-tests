@@ -90,7 +90,7 @@ bool JointLimits::setup(yarp::os::Property& property) {
     Bottle* outputLimitBottle = property.find("outputLimitPercent").asList();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(outputLimitBottle!=0,"unable to parse speed parameter");
 
-    tolerance = property.find("tolerance").asDouble();
+    tolerance = property.find("tolerance").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
 
     Bottle* toleranceListBottle = property.find("toleranceList").asList(); //optional param
@@ -116,22 +116,22 @@ bool JointLimits::setup(yarp::os::Property& property) {
 
     int n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
-    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
+    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt32());
 
     enc_jnt.resize(n_part_joints);
     max_lims.resize(n_cmd_joints);
     min_lims.resize(n_cmd_joints);
 
-    home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
-    speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
-    outputLimit.resize(n_cmd_joints);for (int i=0; i< n_cmd_joints; i++) outputLimit[i]=outputLimitBottle->get(i).asDouble();
-    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asDouble(); ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
+    home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asFloat64();
+    speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asFloat64();
+    outputLimit.resize(n_cmd_joints);for (int i=0; i< n_cmd_joints; i++) outputLimit[i]=outputLimitBottle->get(i).asFloat64();
+    outOfBoundPos.resize(n_cmd_joints); for (int i = 0; i < n_cmd_joints; i++) { outOfBoundPos[i] = outOfBoundPosition->get(i).asFloat64(); ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(outOfBoundPos[i] > 0 , "outOfBoundPosition must be > 0"); }
     toleranceList.resize(n_cmd_joints);
     for (int i = 0; i < n_cmd_joints; i++)
     {
         if(toleranceListBottle)
         {
-            toleranceList[i] = toleranceListBottle->get(i).asDouble();
+            toleranceList[i] = toleranceListBottle->get(i).asFloat64();
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(toleranceList[i] >= 0 , "toleranceList must be > 0");
         }
         else

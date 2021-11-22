@@ -137,26 +137,26 @@ bool MovementReferencesTest::setup(yarp::os::Property &config)
     jointsList.resize(numJoints);
     for (int i=0; i< numJoints; i++)
     {
-        jointsList[i]=jointsBottle->get(i).asInt();
+        jointsList[i]=jointsBottle->get(i).asInt32();
     }
 
     jList = new int[numJoints];
     for (int i=0; i< numJoints; i++)
     {
-        jList[i]=jointsBottle->get(i).asInt();
+        jList[i]=jointsBottle->get(i).asInt32();
     }
 
 
 
-    //for (int i=0; i <numJoints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
+    //for (int i=0; i <numJoints; i++) jointsList.push_back(jointsBottle->get(i).asInt32());
 
-    homePos.resize (numJoints);         for (int i=0; i< numJoints; i++) homePos[i]=homeBottle->get(i).asDouble();
-    targetPos.resize (numJoints);       for (int i=0; i< numJoints; i++) targetPos[i]=targetBottle->get(i).asDouble();
-    refVel.resize (numJoints);          for (int i=0; i< numJoints; i++) refVel[i]=refVelBottle->get(i).asDouble();
+    homePos.resize (numJoints);         for (int i=0; i< numJoints; i++) homePos[i]=homeBottle->get(i).asFloat64();
+    targetPos.resize (numJoints);       for (int i=0; i< numJoints; i++) targetPos[i]=targetBottle->get(i).asFloat64();
+    refVel.resize (numJoints);          for (int i=0; i< numJoints; i++) refVel[i]=refVelBottle->get(i).asFloat64();
     if(refAccBottle != NULL)
     {
         refAcc.resize (numJoints);
-        for (int i=0; i< numJoints; i++) refAcc[i]=refAccBottle->get(i).asDouble();
+        for (int i=0; i< numJoints; i++) refAcc[i]=refAccBottle->get(i).asFloat64();
     }
     else
     {

@@ -86,7 +86,7 @@ bool DemoRedBallTest::setup(Property &property)
     {
         params.robot=general.check("robot",Value(params.robot)).asString();
         params.eye=general.check("eye",Value(params.eye)).asString();
-        params.reach_tol=general.check("reach_tol",Value(params.reach_tol)).asDouble();
+        params.reach_tol=general.check("reach_tol",Value(params.reach_tol)).asFloat64();
         params.use_torso=(general.check("torso",Value(params.use_torso?"on":"off")).asString()=="on");
         params.use_left=(general.check("left_arm",Value(params.use_left?"on":"off")).asString()=="on");
         params.use_right=(general.check("right_arm",Value(params.use_right?"on":"off")).asString()=="on");
@@ -99,7 +99,7 @@ bool DemoRedBallTest::setup(Property &property)
         {
             Bottle &poss=home_arm.findGroup("poss");
             for (size_t i=0; i<std::min(params.home_arm.length(),(size_t)poss.size()-1); i++)
-                params.home_arm[i]=poss.get(1+i).asDouble();
+                params.home_arm[i]=poss.get(1+i).asFloat64();
         }
     }
 
@@ -209,9 +209,9 @@ bool DemoRedBallTest::getBallPosition(const Bottle* b, Vector& pos)
         if (b->get(0).isString() && (b->get(0).asString()=="object"))
         {
             pos.resize(3);
-            pos[0]=b->get(5).asDouble()/1000.;
-            pos[1]=b->get(6).asDouble()/1000.;
-            pos[2]=b->get(7).asDouble()/1000.;
+            pos[0]=b->get(5).asFloat64()/1000.;
+            pos[1]=b->get(6).asFloat64()/1000.;
+            pos[2]=b->get(7).asFloat64()/1000.;
             return true;
         }
     }
@@ -229,18 +229,18 @@ void DemoRedBallTest::testBallPosition(const Vector &dpos)
 
     Bottle cmd,rep;
     cmd.addString("update_pose");
-    cmd.addDouble(dpos[0]);
-    cmd.addDouble(dpos[1]);
-    cmd.addDouble(dpos[2]);
+    cmd.addFloat64(dpos[0]);
+    cmd.addFloat64(dpos[1]);
+    cmd.addFloat64(dpos[2]);
     rpcPort.write(cmd,rep);
 
     Time::delay(3.0);
 
     cmd.clear();
     cmd.addString("start");
-    cmd.addDouble(0.);
-    cmd.addDouble(-50.);
-    cmd.addDouble(10.);
+    cmd.addFloat64(0.);
+    cmd.addFloat64(-50.);
+    cmd.addFloat64(10.);
     rpcPort.write(cmd,rep);
 
     auto filt = make_unique<MedianFilter>(5, Vector{0., 0., 0.});

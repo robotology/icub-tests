@@ -70,7 +70,7 @@ bool MotorStiction::setup(yarp::os::Property& property) {
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
 
-    repeat = property.find("repeat").asInt();
+    repeat = property.find("repeat").asInt32();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(repeat>=0,"repeat must be greater than zero");
 
     Bottle* homeBottle = property.find("home").asList();
@@ -113,13 +113,13 @@ bool MotorStiction::setup(yarp::os::Property& property) {
 
     int n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
-    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
+    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt32());
 
-    home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
-    opl_step.resize (n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_step[i]=output_step_Bottle->get(i).asDouble();
-    opl_delay.resize (n_cmd_joints);          for (int i=0; i< n_cmd_joints; i++) opl_delay[i]=output_delay_Bottle->get(i).asDouble();
-    opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=output_max_Bottle->get(i).asDouble();
-    movement_threshold.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) movement_threshold[i]=threshold_Bottle->get(i).asDouble();
+    home.resize (n_cmd_joints);               for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asFloat64();
+    opl_step.resize (n_cmd_joints);           for (int i=0; i< n_cmd_joints; i++) opl_step[i]=output_step_Bottle->get(i).asFloat64();
+    opl_delay.resize (n_cmd_joints);          for (int i=0; i< n_cmd_joints; i++) opl_delay[i]=output_delay_Bottle->get(i).asFloat64();
+    opl_max.resize (n_cmd_joints);            for (int i=0; i< n_cmd_joints; i++) opl_max[i]=output_max_Bottle->get(i).asFloat64();
+    movement_threshold.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) movement_threshold[i]=threshold_Bottle->get(i).asFloat64();
 
     max_lims.resize(n_cmd_joints);
     min_lims.resize(n_cmd_joints);
@@ -299,9 +299,9 @@ void MotorStiction::OplExecute(int i, std::vector<yarp::os::Bottle>& dataToPlotL
         }
 
         time = yarp::os::Time::now();
-        v1.addDouble(time);
-        v2.addDouble(enc);
-        v2.addDouble(opl);
+        v1.addFloat64(time);
+        v2.addFloat64(enc);
+        v2.addFloat64(opl);
         yarp::os::Time::delay(0.010);
 
         if (time-time_old>5.0 && not_moving==true)
@@ -369,9 +369,9 @@ void MotorStiction::OplExecute2(int i, std::vector<yarp::os::Bottle>& dataToPlot
         }
 
         time = yarp::os::Time::now();
-        v1.addDouble(time);
-        v2.addDouble(enc);
-        v2.addDouble(opl);
+        v1.addFloat64(time);
+        v2.addFloat64(enc);
+        v2.addFloat64(opl);
         yarp::os::Time::delay(0.010);
 
         if (time-time_old>5.0 && not_moving==true)

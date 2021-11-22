@@ -45,7 +45,7 @@ bool SensorsDuplicateReadings::setup(yarp::os::Property &property) {
         setName(property.find("name").asString());
 
     // updating parameters
-   testTime = (property.check("time")) ? property.find("time").asDouble() : 2;
+   testTime = (property.check("time")) ? property.find("time").asFloat64() : 2;
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(property.check("PORTS"),
                         "A list of the ports must be given");
@@ -56,7 +56,7 @@ bool SensorsDuplicateReadings::setup(yarp::os::Property &property) {
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF(btport && btport->size()>=3, "The ports must be given as lists of <portname> <toleratedDuplicates>");
         DuplicateReadingsPortInfo info;
         info.name = btport->get(0).asString();
-        info.toleratedDuplicates = btport->get(1).asInt();
+        info.toleratedDuplicates = btport->get(1).asInt32();
         ports.push_back(info);
     }
 

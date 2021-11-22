@@ -93,10 +93,10 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     Bottle* speedBottle = property.find("speed").asList();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(speedBottle!=0,"unable to parse speed parameter");
 
-    tolerance = property.find("tolerance").asDouble();
+    tolerance = property.find("tolerance").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tolerance>=0,"invalid tolerance");
 
-    cycles = property.find("cycles").asInt();
+    cycles = property.find("cycles").asInt32();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cycles>=0,"invalid cycles");
 
     if(property.check("plot_enabled"))
@@ -131,7 +131,7 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
 
     int n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(n_cmd_joints>0 && n_cmd_joints<=n_part_joints,"invalid number of joints, it must be >0 & <= number of part joints");
-    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt());
+    for (int i=0; i <n_cmd_joints; i++) jointsList.push_back(jointsBottle->get(i).asInt32());
 
     enc_jnt.resize(n_part_joints);
     enc_mot.resize(n_part_joints);
@@ -139,10 +139,10 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     end_enc_mot.resize(n_part_joints);
     err_enc_mot.resize(n_part_joints);
 
-    max.resize  (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asDouble();
-    min.resize  (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asDouble();
-    home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
-    speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asDouble();
+    max.resize  (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) max[i]=maxBottle->get(i).asFloat64();
+    min.resize  (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) min[i]=minBottle->get(i).asFloat64();
+    home.resize (n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) home[i]=homeBottle->get(i).asFloat64();
+    speed.resize(n_cmd_joints); for (int i=0; i< n_cmd_joints; i++) speed[i]=speedBottle->get(i).asFloat64();
 
     return true;
 }

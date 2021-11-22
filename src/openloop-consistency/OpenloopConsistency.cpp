@@ -115,8 +115,8 @@ bool OpenLoopConsistency::setup(yarp::os::Property& property) {
     prevcurr_tot=new double[n_part_joints];
     prevcurr_some=new double[n_cmd_joints];
     home=new double[n_cmd_joints];
-    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt();
-    for (int i=0; i <n_cmd_joints; i++) home[i]=homeBottle->get(i).asDouble();
+    for (int i=0; i <n_cmd_joints; i++) jointsList[i]=jointsBottle->get(i).asInt32();
+    for (int i=0; i <n_cmd_joints; i++) home[i]=homeBottle->get(i).asFloat64();
     return true;
 }
 
@@ -161,14 +161,14 @@ void OpenLoopConsistency::verifyMode(int desired_control_mode, yarp::dev::Intera
         if (timeout>100)
         {
             char sbuf[500];
-            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str(), Vocab::decode((NetInt32)cmode).c_str(),Vocab::decode((NetInt32)imode).c_str());
+            sprintf(sbuf,"Test (%s) failed: current mode is (%s,%s), it should be (%s,%s)",title.c_str(), Vocab32::decode((NetInt32)desired_control_mode).c_str(),Vocab32::decode((NetInt32)desired_interaction_mode).c_str(), Vocab32::decode((NetInt32)cmode).c_str(),Vocab32::decode((NetInt32)imode).c_str());
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(sbuf);
         }
         yarp::os::Time::delay(0.2);
         timeout++;
     }
     char sbuf[500];
-    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab::decode((NetInt32)desired_control_mode).c_str(),Vocab::decode((NetInt32)desired_interaction_mode).c_str());
+    sprintf(sbuf,"Test (%s) passed: current mode is (%s,%s)",title.c_str(), Vocab32::decode((NetInt32)desired_control_mode).c_str(),Vocab32::decode((NetInt32)desired_interaction_mode).c_str());
     ROBOTTESTINGFRAMEWORK_TEST_REPORT(sbuf);
 }
 

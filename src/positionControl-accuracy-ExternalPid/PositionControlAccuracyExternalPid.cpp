@@ -74,13 +74,13 @@ bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
     if(property.check("filename"))
       {m_requested_filename = property.find("filename").asString();}
     if(property.check("home_tolerance"))
-      {m_home_tolerance = property.find("home_tolerance").asDouble();}
+      {m_home_tolerance = property.find("home_tolerance").asFloat64();}
     if(property.check("step_duration"))
-      {m_step_duration = property.find("step_duration").asDouble();}
+      {m_step_duration = property.find("step_duration").asFloat64();}
     if(property.check("pid_vup"))
-      {m_pospid_vup = property.find("pid_vup").asDouble();}
+      {m_pospid_vup = property.find("pid_vup").asFloat64();}
     if(property.check("pid_vdown"))
-      {m_pospid_vdown = property.find("pid_vdown").asDouble();}
+      {m_pospid_vdown = property.find("pid_vdown").asFloat64();}
 
     m_robotName = property.find("robot").asString();
     m_partName = property.find("part").asString();
@@ -92,12 +92,12 @@ bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
     m_n_cmd_joints = jointsBottle->size();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_n_cmd_joints>0, "invalid number of joints, it must be >0");
 
-    m_step = property.find("step").asDouble();
+    m_step = property.find("step").asFloat64();
 
-    m_cycles = property.find("cycles").asInt();
+    m_cycles = property.find("cycles").asInt32();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_cycles>0, "invalid cycles");
 
-    m_sampleTime = property.find("sampleTime").asDouble();
+    m_sampleTime = property.find("sampleTime").asFloat64();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(m_sampleTime>0, "invalid sampleTime");
 
     Property options;
@@ -122,22 +122,22 @@ bool PositionControlAccuracyExernalPid::setup(yarp::os::Property& property) {
     m_zeros = new double[m_n_part_joints];
     m_encoders = new double[m_n_part_joints];
     m_jointsList = new int[m_n_cmd_joints];
-    for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt();
-    for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asDouble();
+    for (int i = 0; i <m_n_cmd_joints; i++) m_jointsList[i] = jointsBottle->get(i).asInt32();
+    for (int i = 0; i <m_n_cmd_joints; i++) m_zeros[i] = zerosBottle->get(i).asFloat64();
 
     double  p_Ts = m_sampleTime;
     yarp::sig::Vector p_Kp(1,0.0);
     yarp::sig::Vector p_Ki(1,0.0);
     yarp::sig::Vector p_Kd(1,0.0);
     if(property.check("Kp"))
-      {p_Kp = property.find("Kp").asDouble();}
+      {p_Kp = property.find("Kp").asFloat64();}
     if(property.check("Ki"))
-      {p_Ki = property.find("Ki").asDouble();}
+      {p_Ki = property.find("Ki").asFloat64();}
     if(property.check("Kd"))
-      {p_Kd = property.find("Kd").asDouble();}
+      {p_Kd = property.find("Kd").asFloat64();}
     double p_Max=100;
     if(property.check("MaxValue"))
-      {p_Max = property.find("MaxValue").asDouble();}
+      {p_Max = property.find("MaxValue").asFloat64();}
     yarp::sig::Vector p_Wp(1,1);
     yarp::sig::Vector p_Wi(1,1);
     yarp::sig::Vector p_Wd(1,1);
@@ -309,28 +309,28 @@ void PositionControlAccuracyExernalPid::run()
                 ipwm->setRefDutyCycle(m_jointsList[i], m_cmd_single);
 
                 Bottle& b1 = dataToPlotRaw.addList();
-                b1.addInt(cycle);
-                b1.addDouble(elapsed);
-                b1.addDouble(m_encoders[m_jointsList[i]]);
-                b1.addDouble(ref);
-                b1.addDouble(m_cmd_single);
+                b1.addInt32(cycle);
+                b1.addFloat64(elapsed);
+                b1.addFloat64(m_encoders[m_jointsList[i]]);
+                b1.addFloat64(ref);
+                b1.addFloat64(m_cmd_single);
                 yarp::os::Time::delay(m_sampleTime);
             }
 
             //reorder data
             for (int t = 0; t < dataToPlotRaw.size(); t++)
             {
-                int    cycle = dataToPlotRaw.get(t).asList()->get(0).asInt();
-                double time = dataToPlotRaw.get(t).asList()->get(1).asDouble();
-                double val = dataToPlotRaw.get(t).asList()->get(2).asDouble();
-                double cmd = dataToPlotRaw.get(t).asList()->get(3).asDouble();
-                double duty = dataToPlotRaw.get(t).asList()->get(4).asDouble();
+                int    cycle = dataToPlotRaw.get(t).asList()->get(0).asInt32();
+                double time = dataToPlotRaw.get(t).asList()->get(1).asFloat64();
+                double val = dataToPlotRaw.get(t).asList()->get(2).asFloat64();
+                double cmd = dataToPlotRaw.get(t).asList()->get(3).asFloat64();
+                double duty = dataToPlotRaw.get(t).asList()->get(4).asFloat64();
                 Bottle& b1 = dataToPlotSync.addList();
-                b1.addInt(cycle);
-                b1.addDouble(time - time_zero);
-                b1.addDouble(val);
-                b1.addDouble(cmd);
-                b1.addDouble(duty);
+                b1.addInt32(cycle);
+                b1.addFloat64(time - time_zero);
+                b1.addFloat64(val);
+                b1.addFloat64(cmd);
+                b1.addFloat64(duty);
             }
 
             m_dataToSave.append(dataToPlotSync);

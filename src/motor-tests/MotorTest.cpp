@@ -63,7 +63,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("joints"),
                         "Missing 'joints' parameter, cannot open device");
-    m_NumJoints=configuration.find("joints").asInt();
+    m_NumJoints=configuration.find("joints").asInt32();
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("target"),
                         "Missing 'target' parameter, cannot open device");
@@ -72,7 +72,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     m_aTargetVal=new double[m_NumJoints];
     m_aHome=new double [m_NumJoints];
     for (int i=0; i<n; ++i) {
-        m_aTargetVal[i]=bot.get(i).asDouble();
+        m_aTargetVal[i]=bot.get(i).asFloat64();
         m_aHome[i]=0.0;
     }
 
@@ -82,7 +82,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
     m_aMinErr=new double[m_NumJoints];
     for (int i=0; i<n; ++i)
-       m_aMinErr[i]=bot.get(i).asDouble();
+       m_aMinErr[i]=bot.get(i).asFloat64();
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("max"),
                         "Missing 'max' parameter, cannot open device");
@@ -90,7 +90,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     n = m_NumJoints<bot.size()? m_NumJoints:bot.size();
     m_aMaxErr=new double[m_NumJoints];
     for (int i=0; i<n; ++i)
-         m_aMaxErr[i]=bot.get(i).asDouble();
+         m_aMaxErr[i]=bot.get(i).asFloat64();
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("refvel"),
                         "Missing 'max' parameter, cannot open device");
@@ -98,14 +98,14 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
     m_aRefVel=new double[m_NumJoints];
     for (int i=0; i<n; ++i)
-        m_aRefVel[i]=bot.get(i).asDouble();
+        m_aRefVel[i]=bot.get(i).asFloat64();
 
     if(configuration.check("refacc")) {
         bot = configuration.findGroup("refacc").tail();
         n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
         m_aRefAcc=new double[m_NumJoints];
         for (int i=0; i<n; ++i)
-            m_aRefAcc[i]=bot.get(i).asDouble();
+            m_aRefAcc[i]=bot.get(i).asFloat64();
     }
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(configuration.check("timeout"),
@@ -114,7 +114,7 @@ bool MotorTest::setup(yarp::os::Property &configuration) {
     n = m_NumJoints<bot.size()?m_NumJoints:bot.size();
     m_aTimeout = new double[m_NumJoints];
     for (int i=0; i<n; ++i)
-        m_aTimeout[i]=bot.get(i).asDouble();
+        m_aTimeout[i]=bot.get(i).asFloat64();
 
     // opening interfaces
     yarp::os::Property options;
