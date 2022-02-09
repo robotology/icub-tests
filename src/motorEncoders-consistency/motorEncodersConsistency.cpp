@@ -31,6 +31,7 @@
 #include <fstream>
 #include "motorEncodersConsistency.h"
 #include <iostream>
+#include <yarp/dev/IRemoteVariables.h>
 
 using namespace std;
 
@@ -130,6 +131,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
             for (int i=0; i< (matrix_size*matrix_size); i++)
             {
                 matrix.data()[i]=matrixBottle->get(i).asFloat64();
+                yDebug() << "TUMME matrix: " << matrix.data()[i];
             }
         }
         else
@@ -201,8 +203,11 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         int b=imot->getGearboxRatio(jointsList[i],&t);
         gearbox[i]=t;
         yDebug() << "******* TUMME : " << t;
+        yDebug() << "******* TUMME : " << matrix_size << " " << matrix.data()[i];
     }
 
+
+    yDebug() << "******* TUMME : " << "PIPPO " << " " << matrix.data()[7];
     return true;
 }
 
@@ -342,6 +347,14 @@ void OpticalEncodersConsistency::run()
     yarp::sig::Vector tmp_vector;
     tmp_vector.resize(n_part_joints);
 
+    // IRemoteVariables *iVars;
+    // Bottle* b1;
+
+    // iVars->getRemoteVariable("gearbox_M2J", *b1);
+   // iVars->getRemoteVariablesList(&b1);
+  //  yInfo() << "TUMME : list variables : " << b1.toString();
+
+
     while (1)
     {
         double curr_time = yarp::os::Time::now();
@@ -385,7 +398,7 @@ void OpticalEncodersConsistency::run()
         //acc_jnt2mot = matrix * acc_jnt;
 
 
-        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];
+        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];;
         for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[i];
         //for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
         for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot2jnt[i] = enc_mot2jnt[i] / gearbox[i];

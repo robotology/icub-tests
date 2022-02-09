@@ -115,6 +115,7 @@ private:
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IMotorEncoders    *imotenc;
     yarp::dev::IMotor            *imot;
+    yarp::dev::IRemoteVariables          *iVars;
 
     yarp::sig::Vector zero_vector;
     yarp::sig::Vector enc_jnt;
