@@ -200,6 +200,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         double t;
         int b=imot->getGearboxRatio(jointsList[i],&t);
         gearbox[i]=t;
+        yDebug() << "******* TUMME : " << t;
     }
 
     return true;
@@ -375,12 +376,15 @@ void OpticalEncodersConsistency::run()
         {
             off_enc_jnt = enc_jnt;
             off_enc_mot2jnt = enc_mot2jnt;
+
         }
         
         enc_jnt2mot = matrix * enc_jnt;
         enc_mot2jnt = inv_matrix * (enc_mot - off_enc_mot);
         vel_jnt2mot = matrix * vel_jnt;
         //acc_jnt2mot = matrix * acc_jnt;
+
+
         for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];
         for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[i];
         //for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
