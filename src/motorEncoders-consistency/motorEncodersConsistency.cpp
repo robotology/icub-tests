@@ -126,6 +126,8 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         matrix.resize(matrix_size,matrix_size);
         matrix.eye();
         Bottle* matrixBottle = property.find("matrix").asList();
+                        yDebug() << "TUMME matrixbottle: " << matrixBottle->get(0).asFloat64();
+
         if (matrixBottle!= NULL && matrixBottle->size() == (matrix_size*matrix_size) )
         {
             for (int i=0; i< (matrix_size*matrix_size); i++)
@@ -202,7 +204,6 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         double t;
         int b=imot->getGearboxRatio(jointsList[i],&t);
         gearbox[i]=t;
-        yDebug() << "******* TUMME : " << t;
         yDebug() << "******* TUMME : " << matrix_size << " " << matrix.data()[i];
     }
 
@@ -347,12 +348,6 @@ void OpticalEncodersConsistency::run()
     yarp::sig::Vector tmp_vector;
     tmp_vector.resize(n_part_joints);
 
-    // IRemoteVariables *iVars;
-    // Bottle* b1;
-
-    // iVars->getRemoteVariable("gearbox_M2J", *b1);
-   // iVars->getRemoteVariablesList(&b1);
-  //  yInfo() << "TUMME : list variables : " << b1.toString();
 
 
     while (1)
