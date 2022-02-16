@@ -22,8 +22,11 @@
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IRemoteVariables.h>
-#include<iostream>
-#include<vector>
+#include <yarp/sig/Matrix.h>
+#include <algorithm>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 using namespace yarp::os;
@@ -87,7 +90,7 @@ int main(int argc, char * argv[])
 
 
     iVars->getRemoteVariablesList(&b1);
-    yInfo() << "list variables : " << b1.toString();
+    // yInfo() << "list variables : " << b1.toString();
 
     iVars->getRemoteVariable("kinematic_j2m", b);
     // iVars->getRemoteVariable("gearbox_M2J", b1);
@@ -97,9 +100,26 @@ int main(int argc, char * argv[])
 
     int matrix_size = 6;
     string s;
+    yarp::sig::Matrix matrix, matrix1;
+    
+    matrix.resize(matrix_size,matrix_size);
+    matrix.eye();
 
+    for (int i=0; i< (matrix_size*matrix_size); i++)
+            {
+                //matrix.data()[i]= i;
+                yDebug() << "TUMME matrix: " << matrix.data()[i];
+            }
+
+    char buff [500];
+    sprintf(buff,"Matrix:\n %s \n", matrix.toString().c_str());
+
+    yDebug() << matrix.toString();
+
+    
     for(int i=0 ; i< b.size() ; i++)
     {
+       
         s += " " + b.get(i).toString();
 
     }
