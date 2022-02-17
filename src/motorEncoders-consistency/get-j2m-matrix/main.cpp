@@ -74,12 +74,15 @@ int main(int argc, char * argv[])
     matrix.eye();
     int njoints [4];
 
+    
     for(int i=0 ; i< b.size() ; i++)
     {
         Bottle bv;
         bv.fromString(b.get(i).toString());
         njoints[i] = sqrt(bv.size());
-        
+
+        yDebug() << " \n" << bv.toString();
+
        int ele = 0;
        if(i==0) {
            for (int r=0; r < njoints[i]; r++) 
