@@ -108,14 +108,15 @@ private:
 
     int    n_part_joints;
     int    cycles;
+     
     yarp::dev::PolyDriver        *dd;
-    yarp::dev::IPositionControl *ipos;
-    yarp::dev::IControlMode     *icmd;
+    yarp::dev::IPositionControl  *ipos;
+    yarp::dev::IControlMode      *icmd;
     yarp::dev::IInteractionMode  *iimd;
     yarp::dev::IEncoders         *ienc;
     yarp::dev::IMotorEncoders    *imotenc;
     yarp::dev::IMotor            *imot;
-    yarp::dev::IRemoteVariables          *iVars;
+    yarp::dev::IRemoteVariables  *ivar;
 
     yarp::sig::Vector zero_vector;
     yarp::sig::Vector enc_jnt;

@@ -125,23 +125,24 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     {
         matrix.resize(matrix_size,matrix_size);
         matrix.eye();
-        Bottle* matrixBottle = property.find("matrix").asList();
-                        yDebug() << "TUMME matrixbottle: " << matrixBottle->get(0).asFloat64();
 
-        if (matrixBottle!= NULL && matrixBottle->size() == (matrix_size*matrix_size) )
-        {
-            for (int i=0; i< (matrix_size*matrix_size); i++)
-            {
-                matrix.data()[i]=matrixBottle->get(i).asFloat64();
-                yDebug() << "TUMME matrix: " << matrix.data()[i];
-            }
-        }
-        else
-        {
-           char buff [500];
-           sprintf (buff, "invalid number of elements of parameter matrix %d!=%d", matrixBottle->size() , (matrix_size*matrix_size));
-           ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
-        }
+        // The couplig matrix is retrived run-time by the IRemoteVariable interface accessing the jinimatic_mj variable
+        //
+        // Bottle* matrixBottle = property.find("matrix").asList();
+
+        // if (matrixBottle!= NULL && matrixBottle->size() == (matrix_size*matrix_size) )
+        // {
+        //     for (int i=0; i< (matrix_size*matrix_size); i++)
+        //     {
+        //         matrix.data()[i]=matrixBottle->get(i).asFloat64();
+        //     }
+        // }
+        // else
+        // {
+        //    char buff [500];
+        //    sprintf (buff, "invalid number of elements of parameter matrix %d!=%d", matrixBottle->size() , (matrix_size*matrix_size));
+        //    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
+        // }
     }
     else
     {
@@ -165,6 +166,8 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imotenc),"Unable to open motor encoders interface");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imot),"Unable to open motor interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open motor interface");
+
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -204,11 +207,9 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         double t;
         int b=imot->getGearboxRatio(jointsList[i],&t);
         gearbox[i]=t;
-        yDebug() << "******* TUMME : " << matrix_size << " " << matrix.data()[i];
     }
 
 
-    yDebug() << "******* TUMME : " << "PIPPO " << " " << matrix.data()[7];
     return true;
 }
 
@@ -323,6 +324,59 @@ void OpticalEncodersConsistency::run()
 
     int  cycle=0;
     double start_time = yarp::os::Time::now();
+
+    //****************************************************************************************
+    //Retrieving coupling matrix using IRemoteVariable
+    //****************************************************************************************
+
+    yarp::os::Bottle b;
+
+    ivar->getRemoteVariable("kinematic_mj", b);
+
+    auto bb = b.get(1);
+    
+    int matrix_size = matrix.cols();
+
+    matrix.eye();
+    
+    int njoints [4];
+    
+    for(int i=0 ; i< b.size() ; i++)
+    {
+        Bottle bv;
+        bv.fromString(b.get(i).toString());
+        njoints[i] = sqrt(bv.size());
+
+        int ele = 0;
+        if(i==0) {
+        for (int r=0; r < njoints[i]; r++) 
+        {
+            for (int c=0; c < njoints[i]; c++) 
+            {
+                matrix(r,c) = bv.get(ele).asFloat64();
+                ele++;
+            }
+        }
+
+       }  
+       else{
+           for (int r=0; r < njoints[i]; r++) 
+            {
+                for (int c=0; c < njoints[i]; c++) 
+                {
+                    int jntprev = 0;
+                    for (int j=0; j < i; j++) jntprev += njoints[j];
+                    if(!jntprev > matrix_size)  matrix(r+jntprev,c+jntprev) = bv.get(ele).asFloat64();
+                    ele++;
+                }
+            }
+       }
+    
+    }
+
+    // yDebug() << "MATRIX J2M : \n" << matrix.toString();
+
+// **************************************************************************************
 
     trasp_matrix = matrix.transposed();
     inv_matrix = yarp::math::luinv(matrix);
