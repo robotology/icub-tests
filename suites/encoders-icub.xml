@@ -5,5 +5,17 @@
     <environment>--robotname icub</environment>
 
    
-    <test type="dll" param="--from contexts/icub/motorEncoderConsistency_left_leg.ini"> MotorEncodersConsistency </test>
+    <test type="dll" param="--from optical_encoders_drift_left_arm.ini">  OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_right_arm.ini"> OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_left_leg.ini">  OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_right_leg.ini"> OpticalEncodersDrift </test>
+    <test type="dll" param="--from optical_encoders_drift_torso.ini">     OpticalEncodersDrift </test>
+
+    <test type="dll" param="--from motorEncoderConsistency_left_arm.ini">  MotorEncodersConsistency </test>
+    <test type="dll" param="--from motorEncoderConsistency_right_arm.ini"> MotorEncodersConsistency </test>
+    <test type="dll" param="--from motorEncoderConsistency_left_leg.ini">  MotorEncodersConsistency </test>
+    <test type="dll" param="--from motorEncoderConsistency_right_leg.ini"> MotorEncodersConsistency </test>
+    <test type="dll" param="--from motorEncoderConsistency_torso.ini">     MotorEncodersConsistency </test>
+    <test type="dll" param="--from motorEncodersConsistency_face.ini">     MotorEncodersConsistency </test> 
+    <test type="dll" param="--from motorEncodersConsistency_head.ini">     MotorEncodersConsistency </test> 
 </suite>
