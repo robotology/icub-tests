@@ -333,8 +333,6 @@ void OpticalEncodersConsistency::run()
 
     ivar->getRemoteVariable("kinematic_mj", b);
 
-    auto bb = b.get(1);
-    
     int matrix_size = matrix.cols();
 
     matrix.eye();
