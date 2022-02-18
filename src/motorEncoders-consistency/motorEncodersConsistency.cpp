@@ -166,7 +166,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imotenc),"Unable to open motor encoders interface");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imot),"Unable to open motor interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open motor interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open remote variables interface");
 
 
     if (!ienc->getAxes(&n_part_joints))
