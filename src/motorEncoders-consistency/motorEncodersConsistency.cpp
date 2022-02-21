@@ -31,6 +31,7 @@
 #include <fstream>
 #include "motorEncodersConsistency.h"
 #include <iostream>
+#include <yarp/dev/IRemoteVariables.h>
 
 using namespace std;
 
@@ -89,7 +90,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix_size"),  "The matrix size must be given!");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix"),       "The coupling matrix must be given!");
+   // ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix"),       "The coupling matrix must be given!");
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
     if(property.check("plot_enabled"))
@@ -124,20 +125,24 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     {
         matrix.resize(matrix_size,matrix_size);
         matrix.eye();
-        Bottle* matrixBottle = property.find("matrix").asList();
-        if (matrixBottle!= NULL && matrixBottle->size() == (matrix_size*matrix_size) )
-        {
-            for (int i=0; i< (matrix_size*matrix_size); i++)
-            {
-                matrix.data()[i]=matrixBottle->get(i).asFloat64();
-            }
-        }
-        else
-        {
-           char buff [500];
-           sprintf (buff, "invalid number of elements of parameter matrix %d!=%d", matrixBottle->size() , (matrix_size*matrix_size));
-           ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
-        }
+
+        // The couplig matrix is retrived run-time by the IRemoteVariable interface accessing the jinimatic_mj variable
+        //
+        // Bottle* matrixBottle = property.find("matrix").asList();
+
+        // if (matrixBottle!= NULL && matrixBottle->size() == (matrix_size*matrix_size) )
+        // {
+        //     for (int i=0; i< (matrix_size*matrix_size); i++)
+        //     {
+        //         matrix.data()[i]=matrixBottle->get(i).asFloat64();
+        //     }
+        // }
+        // else
+        // {
+        //    char buff [500];
+        //    sprintf (buff, "invalid number of elements of parameter matrix %d!=%d", matrixBottle->size() , (matrix_size*matrix_size));
+        //    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR(buff);
+        // }
     }
     else
     {
@@ -161,6 +166,8 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(iimd),"Unable to open interaction mode interface");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imotenc),"Unable to open motor encoders interface");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(imot),"Unable to open motor interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(dd->view(ivar),"Unable to open remote variables interface");
+
 
     if (!ienc->getAxes(&n_part_joints))
     {
@@ -201,6 +208,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
         int b=imot->getGearboxRatio(jointsList[i],&t);
         gearbox[i]=t;
     }
+
 
     return true;
 }
@@ -317,6 +325,57 @@ void OpticalEncodersConsistency::run()
     int  cycle=0;
     double start_time = yarp::os::Time::now();
 
+    //****************************************************************************************
+    //Retrieving coupling matrix using IRemoteVariable
+    //****************************************************************************************
+
+    yarp::os::Bottle b;
+
+    ivar->getRemoteVariable("kinematic_mj", b);
+
+    int matrix_size = matrix.cols();
+
+    matrix.eye();
+    
+    int njoints [4];
+    
+    for(int i=0 ; i< b.size() ; i++)
+    {
+        Bottle bv;
+        bv.fromString(b.get(i).toString());
+        njoints[i] = sqrt(bv.size());
+
+        int ele = 0;
+        if(i==0) {
+        for (int r=0; r < njoints[i]; r++) 
+        {
+            for (int c=0; c < njoints[i]; c++) 
+            {
+                matrix(r,c) = bv.get(ele).asFloat64();
+                ele++;
+            }
+        }
+
+       }  
+       else{
+           for (int r=0; r < njoints[i]; r++) 
+            {
+                for (int c=0; c < njoints[i]; c++) 
+                {
+                    int jntprev = 0;
+                    for (int j=0; j < i; j++) jntprev += njoints[j];
+                    if(!jntprev > matrix_size)  matrix(r+jntprev,c+jntprev) = bv.get(ele).asFloat64();
+                    ele++;
+                }
+            }
+       }
+    
+    }
+
+    // yDebug() << "MATRIX J2M : \n" << matrix.toString();
+
+// **************************************************************************************
+
     trasp_matrix = matrix.transposed();
     inv_matrix = yarp::math::luinv(matrix);
     inv_trasp_matrix = inv_matrix.transposed();
@@ -340,6 +399,8 @@ void OpticalEncodersConsistency::run()
     yarp::sig::Vector off_enc_mot2jnt; off_enc_mot2jnt.resize(jointsList.size());
     yarp::sig::Vector tmp_vector;
     tmp_vector.resize(n_part_joints);
+
+
 
     while (1)
     {
@@ -375,13 +436,16 @@ void OpticalEncodersConsistency::run()
         {
             off_enc_jnt = enc_jnt;
             off_enc_mot2jnt = enc_mot2jnt;
+
         }
         
         enc_jnt2mot = matrix * enc_jnt;
         enc_mot2jnt = inv_matrix * (enc_mot - off_enc_mot);
         vel_jnt2mot = matrix * vel_jnt;
         //acc_jnt2mot = matrix * acc_jnt;
-        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];
+
+
+        for (unsigned int i = 0; i < jointsList.size(); i++) enc_jnt2mot[i] = enc_jnt2mot[i] * gearbox[i];;
         for (unsigned int i = 0; i < jointsList.size(); i++) vel_jnt2mot[i] = vel_jnt2mot[i] * gearbox[i];
         //for (unsigned int i = 0; i < jointsList.size(); i++) acc_jnt2mot[i] = acc_jnt2mot[i] * gearbox[i];
         for (unsigned int i = 0; i < jointsList.size(); i++) enc_mot2jnt[i] = enc_mot2jnt[i] / gearbox[i];

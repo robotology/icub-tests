@@ -4,6 +4,7 @@
     <description> Testing encoders</description>
     <environment>--robotname icub</environment>
 
+   
     <test type="dll" param="--from optical_encoders_drift_left_arm.ini">  OpticalEncodersDrift </test>
     <test type="dll" param="--from optical_encoders_drift_right_arm.ini"> OpticalEncodersDrift </test>
     <test type="dll" param="--from optical_encoders_drift_left_leg.ini">  OpticalEncodersDrift </test>
