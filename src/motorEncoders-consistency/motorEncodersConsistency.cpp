@@ -90,7 +90,7 @@ bool OpticalEncodersConsistency::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("speed"),     "The positionMove reference speed must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "The tolerance of the control signal must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix_size"),  "The matrix size must be given!");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix"),       "The coupling matrix must be given!");
+   // ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("matrix"),       "The coupling matrix must be given!");
     robotName = property.find("robot").asString();
     partName = property.find("part").asString();
     if(property.check("plot_enabled"))
