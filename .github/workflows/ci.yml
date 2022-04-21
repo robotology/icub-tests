@@ -132,9 +132,9 @@ jobs:
         cd ${GITHUB_WORKSPACE}
         git clone https://github.com/robotology/yarp.git --depth 1 --branch master
         cd yarp && mkdir -p build && cd build
-        cmake  -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install \
         # Workaround for https://github.com/robotology/robotology-superbuild/issues/1091
-        -DYARP_DISABLE_MACOS_BUNDLES:BOOL=ON \
+        cmake -DYARP_DISABLE_MACOS_BUNDLES:BOOL=ON -DCMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/install \
+        -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install \
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DYARP_COMPILE_RobotTestingFramework_ADDONS:BOOL=ON ..
         cmake --build . --config ${{ matrix.build_type }} --target install 
         # icub-main
