@@ -99,10 +99,7 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     cycles = property.find("cycles").asInt32();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(cycles>=0,"invalid cycles");
 
-    if(property.check("plot_enabled"))
-        plot = property.find("plot").asBool();
-    else
-        plot = true;
+    plot = property.find("plot_enabled").asBool();
 
     if(plot)
         ROBOTTESTINGFRAMEWORK_TEST_REPORT("This test will run gnuplot utility at the end.");
