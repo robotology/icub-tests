@@ -1,7 +1,7 @@
 /*
  * iCub Robot Unit Tests (Robot Testing Framework)
  *
- * Copyright (C) 2015-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2015-2022 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,14 @@
 #include <yarp/os/Time.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Property.h>
+#include <yarp/conf/environment.h>
 #include <fstream>
 #include <algorithm>
 #include <cstdlib>
 #include "opticalEncodersDrift.h"
 #include <iostream>
+#include <ctime>
+#include <filesystem>
 
 //example     -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(0 1 2)"" --home ""(0 0 0)" --speed "(20 20 20)" --max "(10 10 10)" --min "(-10 -10 -10)" --cycles 100 --tolerance 1.0 "
 //example2    -v -t OpticalEncodersDrift.dll -p "--robot icub --part head --joints ""(2)""     --home ""(0)""    --speed "(20      )" --max "(10      )" --min "(-10)"         --cycles 100 --tolerance 1.0 "
@@ -37,6 +40,8 @@ using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::math;
+using namespace std;
+using namespace std::filesystem;
 
 // prepare the plugin
 ROBOTTESTINGFRAMEWORK_PREPARE_PLUGIN(OpticalEncodersDrift)
@@ -76,6 +81,7 @@ bool OpticalEncodersDrift::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("tolerance"), "The max error tolerance must be given as the test parameter!");
 
     robotName = property.find("robot").asString();
+    
     partName = property.find("part").asString();
 
     Bottle* jointsBottle = property.find("joints").asList();
@@ -211,10 +217,16 @@ bool OpticalEncodersDrift::goHome()
     return true;
 }
 
-void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
+bool OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
 {
     std::fstream fs;
     fs.open (filename.c_str(), std::fstream::out);
+
+    if ( (fs.rdstate() & std::ifstream::failbit ) != 0 )
+    {
+        std::cerr << "Error opening " << filename << "\n";
+        return false;
+    }
 
     for (unsigned int i=0; i<b.size(); i++)
     {
@@ -225,6 +237,7 @@ void OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
     }
 
     fs.close();
+    return true;
 }
 
 void OpticalEncodersDrift::run()
@@ -327,18 +340,42 @@ void OpticalEncodersDrift::run()
         }
     }
 
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
 
-    std::string filename = "encDrift_plot_";
+    char folder_time_buffer[80];
+    char file_time_buffer[80];
+
+    strftime(folder_time_buffer, sizeof(folder_time_buffer), "%d%m%Y", ltm);
+    strftime(file_time_buffer, sizeof(file_time_buffer), "%d%m%Y_%H%M", ltm);
+
+    string folder_time_str(folder_time_buffer);
+    string file_time_str(file_time_buffer); //This string contain also minutes
+
+    // Create the filename with date and time
+    string filename = "encDrift_plot_";
     filename += partName;
+    filename += "_";
+    filename += file_time_str;
     filename += ".txt";
+    
+    constexpr char default_robot_name[] = "RobotName";
 
-    int num_j = jointsList.size();
-    saveToFile(filename,dataToPlot);
+    string robot_str = yarp::conf::environment::get_string("YARP_ROBOT_NAME", default_robot_name);
+    string directory_tree = "results/" + robot_str + "/encoders-icub_" + folder_time_str + "/encDrift";
+    create_directories(directory_tree); // This function return false if there is an error or if the directories already exist
+    
+    string filename_with_path = directory_tree + "/" + filename;
+    bool saved_files = saveToFile(filename_with_path,dataToPlot);
+    
+    if(!saved_files)
+    {
+        ROBOTTESTINGFRAMEWORK_TEST_REPORT("Error saving files to plot!");
+    }
 
     char plotstring[1000];
-    //gnuplot -e "unset key; plot for [col=1:6] 'C:\software\icub-tests\build\plugins\Debug\plot.txt' using col with lines" -persist
-    sprintf (plotstring, "gnuplot -e \" unset key; plot for [col=1:%d] '%s' using col with lines \" -persist", num_j,filename.c_str());
-
+    sprintf (plotstring, "gnuplot -e \" unset key; plot for [col=1:%d] '%s' using col with lines \" -persist", (int)jointsList.size(),filename_with_path.c_str());
+    
     if(plot)
     {
         system (plotstring);
@@ -350,5 +387,6 @@ void OpticalEncodersDrift::run()
     }
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(isInHome, "This part is not in home. Suite test will be terminated!");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Test is finished. Your files are saved in: \n" + filename_with_path);
 
 }
