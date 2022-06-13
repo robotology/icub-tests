@@ -72,7 +72,7 @@ public:
 
     bool goHome();
     void setMode(int desired_mode);
-    bool saveToFile(std::string filename, yarp::os::Bottle &b);
+    bool saveToFile(const std::string &filename, const yarp::os::Bottle &b);
 
 private:
     std::string robotName;
