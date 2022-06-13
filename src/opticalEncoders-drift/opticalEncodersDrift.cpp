@@ -217,7 +217,7 @@ bool OpticalEncodersDrift::goHome()
     return true;
 }
 
-bool OpticalEncodersDrift::saveToFile(std::string filename, yarp::os::Bottle &b)
+bool OpticalEncodersDrift::saveToFile(const std::string &filename, const yarp::os::Bottle &b)
 {
     std::fstream fs;
     fs.open (filename.c_str(), std::fstream::out);
