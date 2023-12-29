@@ -1,0 +1,17 @@
+<application>
+    <name>Demo Red Ball</name>
+    <description>A fixture to prepare components required to test Red Ball Demo</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ugo.pattacini@iit.it">Ugo Pattacini</author>
+    </authors>
+    <module>
+        <name>gzserver</name>
+        <parameters>-s libgazebo_yarp_clock.so grasp-ball-gazebo.sdf</parameters>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>gzclient</name>
+        <node>localhost</node>
+    </module>
+</application>
