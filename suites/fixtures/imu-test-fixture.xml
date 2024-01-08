@@ -5,13 +5,18 @@
     <authors>
         <author email="ugo.pattacini@iit.it">Ugo Pattacini</author>
     </authors>
-    <module>
+    <!-- <module>
         <name>gzserver</name>
         <parameters>-s libgazebo_yarp_clock.so grasp-ball-gazebo.sdf</parameters>
         <node>localhost</node>
     </module>
     <module>
         <name>gzclient</name>
+        <node>localhost</node>
+    </module> -->
+    <module>
+        <name>yarpscope</name>
+        <parameters>--xml ../src/imu/plot.xml</parameters>
         <node>localhost</node>
     </module>
 </application>
