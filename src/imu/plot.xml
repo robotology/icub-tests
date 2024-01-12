@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<portscope rows="2" columns="2" carrier="fast_tcp">
+<portscope rows="1" columns="3" carrier="fast_tcp">
       <plot gridx="0"
             gridy="0"
             hspan="1"
@@ -14,9 +14,15 @@
                         title="Graph 0"
                         type="lines"
                         size="2" />
+                  <graph remote="/test-imu/out"
+                        index="3"
+                        color="Blue"
+                        title="Graph 0"
+                        type="lines"
+                        size="2" />
       </plot>
-      <plot gridx="0"
-            gridy="1"
+      <plot gridx="1"
+            gridy="0"
             hspan="1"
             vspan="1"
             title="Pitch"
@@ -24,13 +30,19 @@
             maxval="5"
             bgcolor="LightSlateGrey">
                   <graph remote="/test-imu/out"
-                  index="1"
-                  color="Green"
-                  title="Graph 1"
-                  size="2"
-                  type="lines" />
+                        index="1"
+                        color="Red"
+                        title="Graph 1"
+                        size="2"
+                        type="lines" />
+                  <graph remote="test-imu/out"
+                        index="4"
+                        color="Blue"
+                        title="Graph 1"
+                        size="2"
+                        type="lines" />
       </plot>
-      <plot gridx="1"
+      <plot gridx="2"
             gridy="0"
             hspan="1"
             vspan="1"
@@ -39,10 +51,16 @@
             maxval="5"
             bgcolor="LightSlateGrey">
                   <graph remote="/test-imu/out"
-                  index="2"
-                  color="Blue"
-                  title="Graph 2"
-                  size="2"
-                  type="lines" />
+                        index="2"
+                        color="Red"
+                        title="Graph 2"
+                        size="2"
+                        type="lines" />
+                  <graph remote="/test-imu/out"
+                        index="5"
+                        color="Blue"
+                        title="Graph 2"
+                        size="2"
+                        type="lines" />
       </plot>
 </portscope>

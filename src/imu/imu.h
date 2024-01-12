@@ -47,7 +47,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         iDynTree::Vector3 gravity;
         iDynTree::Rotation baseLinkOrientation;
 
-        bool sendData(yarp::sig::Vector rpy);
+        bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
 
     };
 
