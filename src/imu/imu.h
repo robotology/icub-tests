@@ -35,8 +35,8 @@ class Imu : public yarp::robottestingframework::TestCase {
 
         yarp::os::BufferedPort <yarp::os::Bottle> outputPort;
         yarp::sig::Vector rpyValues;
-        double positions;
-        double velocities;
+        yarp::sig::Vector positions;
+        yarp::sig::Vector velocities;
         int axes;
 
         iDynTree::ModelLoader model;
@@ -46,6 +46,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         iDynTree::VectorDynSize ds;
         iDynTree::Vector3 gravity;
         iDynTree::Rotation baseLinkOrientation;
+
 
         bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
 

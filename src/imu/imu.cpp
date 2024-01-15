@@ -78,14 +78,20 @@ bool Imu::setup(yarp::os::Property& property) {
     s.resize(dofs);
     ds.resize(dofs);
 
+    for (int i=0; i<kinDynComp.model().getNrOfDOFs(); i++) {
+        std::cout<<kinDynComp.model().getJointName(i)<<std::endl;
+    }
+
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getAxes(&axes), "Cannot get number of controlled axes");
+    positions.resize(axes);
+    velocities.resize(axes);
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoders(positions.data()), "Cannot get joint positions");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint positions");
+
     for(auto i = 0; i < axes; i++)
     {
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoder(i, &positions), "Cannot get joint positions");
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeed(i, &velocities), "Cannot get joint positions");
-
-        s.setVal(i, positions);
-        ds.setVal(i, velocities);
+        s.setVal(i, iDynTree::deg2rad(positions[i]));
+        ds.setVal(i, iDynTree::deg2rad(velocities[i]));
     }
 
     gravity.zero();
@@ -137,21 +143,20 @@ void Imu::run() {
     // compute the first measurement
     iorientation->getOrientationSensorMeasureAsRollPitchYaw(0, rpyValues, timestamp); //rpy in deg
     iDynTree::Rotation I_R_FK = kinDynComp.getWorldTransform(frameName).getRotation(); //compute the orientation of the frame where the IMU is attached 
-    iDynTree::Rotation I_R_I_IMU = (I_R_FK * ((iDynTree::Rotation::RPY(rpyValues[0], rpyValues[1], rpyValues[2])).inverse())); 
+    iDynTree::Rotation I_R_I_IMU = (I_R_FK * ((iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))).inverse())); 
 
     while(true)
     {
         iorientation->getOrientationSensorMeasureAsRollPitchYaw(0, rpyValues, timestamp); //rpy in deg
         count++;
-        // yarp::os::Time::delay(0.01);
+
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoders(positions.data()), "Cannot get joint positions");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint positions");
 
         for (auto i = 0; i < axes; i++)
         {
-            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoder(i, &positions), "Cannot get joint positions");
-            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeed(i, &velocities), "Cannot get joint positions");
-            
-            s.setVal(i, positions);
-            ds.setVal(i, velocities);
+            s.setVal(i, iDynTree::deg2rad(positions[i]));
+            ds.setVal(i, iDynTree::deg2rad(velocities[i]));
         }  
 
         kinDynComp.setRobotState(
@@ -162,13 +167,12 @@ void Imu::run() {
         gravity);
 
         iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation(); // it's computed from the FK
-        iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(rpyValues[0], rpyValues[1], rpyValues[2])); // imu signal wrt inertial frame of the robot
+        iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))); // imu signal wrt inertial frame of the robot
 
         auto error = (expectedImuSignal * imuSignal.inverse()).log();
-        // std::cout << "I_R_IMU: " << I_R_IMU.asRPY().toString() << std::endl;
-        // ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoder(i, &positions), "Cannot get joint positions");
 
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
+        yarp::os::Time::delay(0.01);
     }
 
 }
@@ -182,13 +186,17 @@ bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal
     outputPort.setEnvelope(stamp);
     out.clear();
 
-    out.addFloat64(expectedValues[0]);
-    out.addFloat64(expectedValues[1]);
-    out.addFloat64(expectedValues[2]);
+    out.addFloat64(iDynTree::rad2deg(expectedValues[0]));
+    out.addFloat64(iDynTree::rad2deg(expectedValues[1]));
+    out.addFloat64(iDynTree::rad2deg(expectedValues[2]));
 
-    out.addFloat64(imuSignal[0]);
-    out.addFloat64(imuSignal[1]);
-    out.addFloat64(imuSignal[2]);
+    out.addFloat64(iDynTree::rad2deg(imuSignal[0]));
+    out.addFloat64(iDynTree::rad2deg(imuSignal[1]));
+    out.addFloat64(iDynTree::rad2deg(imuSignal[2]));
+
+    out.addFloat64(imuData[0]);
+    out.addFloat64(imuData[1]);
+    out.addFloat64(imuData[2]);
 
     out.addFloat64(stamp.getTime());
 
