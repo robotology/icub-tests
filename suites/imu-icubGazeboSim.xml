@@ -2,8 +2,8 @@
 
 <suite name="IMU sensor test">
     <description>Testing IMU sensors</description>
-    <environment>--robotname icub --context icub</environment>
-    <fixture param="--fixture imu-test-fixture.xml"> yarpmanager </fixture>
+    <environment>--robotname icubSim --context icubGazeboSim</environment>
+    <fixture param="--fixture imu-test-sim-fixture.xml"> yarpmanager </fixture>
 
     <!-- Sensors -->
     <test type="dll" param="--from test_imu.ini"> imu </test>

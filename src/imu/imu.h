@@ -5,6 +5,8 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IEncoders.h>
+#include <yarp/dev/IAxisInfo.h>
+#include <yarp/dev/IControlLimits.h>
 #include <yarp/robottestingframework/TestCase.h>
 
 #include <iDynTree/KinDynComputations.h>
@@ -32,12 +34,16 @@ class Imu : public yarp::robottestingframework::TestCase {
         yarp::dev::IOrientationSensors* iorientation;
         yarp::dev::IPositionControl* ipos;
         yarp::dev::IEncoders* ienc;
+        yarp::dev::IAxisInfo* iaxes;
+        yarp::dev::IControlLimits* ilim;
 
         yarp::os::BufferedPort <yarp::os::Bottle> outputPort;
         yarp::sig::Vector rpyValues;
         yarp::sig::Vector positions;
         yarp::sig::Vector velocities;
+
         int axes;
+        double timestamp;
 
         iDynTree::ModelLoader model;
         iDynTree::KinDynComputations kinDynComp;
@@ -46,10 +52,12 @@ class Imu : public yarp::robottestingframework::TestCase {
         iDynTree::VectorDynSize ds;
         iDynTree::Vector3 gravity;
         iDynTree::Rotation baseLinkOrientation;
-
+        iDynTree::Twist baseVelocity;
+        iDynTree::Transform I_T_base;
+        iDynTree::Rotation I_R_I_IMU;
 
         bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
-
+        bool moveJoint(int ax, double pos);
     };
 
 #endif //_IMU_H_

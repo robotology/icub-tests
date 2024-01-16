@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<portscope rows="1" columns="3" carrier="fast_tcp">
+<portscope rows="1" columns="3" carrier="udp">
       <plot gridx="0"
             gridy="0"
             hspan="1"

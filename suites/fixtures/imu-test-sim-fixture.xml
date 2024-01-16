@@ -1,0 +1,40 @@
+<application>
+    <name>Test IMU sensor</name>
+    <description>A fixture to test the orientation data from the IMU in simulated environment</description>
+    <version>1.0</version>
+    <authors>
+        <author email="martina.gloria@iit.it">Martina Gloria</author>
+    </authors>
+    <!-- <module>
+        <name>gzserver</name>
+        <parameters>-s libgazebo_yarp_clock.so iCubGazeboV2_7_feet_fixed.sdf</parameters>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>gzclient</name>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>gz model</name>
+        <parameters>-f /home/mgloria/iit/robotology-superbuild/build/install/share/iCub/robots/iCubGazeboV2_7/model.urdf -m iCubGazebo</parameters>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>yarprobotinterface</name>
+        <parameters>config icub.xml</parameters>
+        <node>localhost</node>
+        <dependencies>
+            <port timeout="20">/icubSim/torso/state:o</port>
+            <port timeout="20">/icubSim/left_arm/state:o</port>
+            <port timeout="20">/icubSim/right_arm/state:o</port>
+        </dependencies>     
+    </module> -->
+    <module>
+        <name>yarpscope</name>
+        <parameters>--xml ../src/imu/plot.xml</parameters>
+        <node>localhost</node>
+        <ensure>
+            <wait when="start">5</wait>
+        </ensure>  
+    </module>
+</application>

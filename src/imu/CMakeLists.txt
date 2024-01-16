@@ -17,7 +17,6 @@ target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
                                       YARP::YARP_robottestingframework
                                       iDynTree::idyntree-high-level 
                                       iDynTree::idyntree-estimation)
-
 # set the installation options
 install(TARGETS ${PROJECT_NAME}
         EXPORT ${PROJECT_NAME}
