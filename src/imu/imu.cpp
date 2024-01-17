@@ -20,23 +20,23 @@ Imu::~Imu() { }
 bool Imu::setup(yarp::os::Property& property) {
     
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("port"), "The port name must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("model"), "Please, provide the urdf model path.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("frame"), "Please, provide the frame name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("sensor"), "Please, provide the sensor name.");
     
     robotName = property.find("robot").asString(); // robot name
-    partName = property.find("part").asString(); // part of the robot on which the sensor is mountekd
+    portName = property.find("port").asString(); // name of the port from which the data are streamed
     modelPath = property.find("model").asString(); // urdf model path
     frameName = property.find("frame").asString(); // frame on which the sensor is attached
     sensorName = property.find("sensor").asString(); // sensor name within urdf
 
-    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+" for "+partName);
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+"...");
 
     yarp::os::Property options1;
     options1.put("device", "multipleanalogsensorsclient");
-    options1.put("remote", "/"+robotName+"/"+partName+"/inertials");
-    options1.put("local", "/imuTest/"+robotName+"/"+partName);
+    options1.put("remote", portName);
+    options1.put("local", "/imuTest/"+portName);
     
     driver1 = new yarp::dev::PolyDriver(options1);
     
@@ -96,14 +96,8 @@ bool Imu::setup(yarp::os::Property& property) {
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelPath.c_str(), axis), Asserter::format("Cannot load model %s", modelPath.c_str()));
     kinDynComp.loadRobotModel(model.model());
 
-    iDynTree::Vector3 baseLinkOrientationDeg;
     iDynTree::Vector3 baseLinkOrientationRad;
-    baseLinkOrientationDeg.zero();
-
-    for (auto i : baseLinkOrientationDeg)
-    {
-        baseLinkOrientationRad[i] = iDynTree::deg2rad(baseLinkOrientationDeg[i]);
-    }
+    baseLinkOrientationRad.zero();
 
     baseLinkOrientation = iDynTree::Rotation::RPY(baseLinkOrientationRad[0], baseLinkOrientationRad[1], baseLinkOrientationRad[2]);
     I_T_base = iDynTree::Transform(baseLinkOrientation, iDynTree::Position::Zero());
@@ -160,7 +154,7 @@ void Imu::tearDown() {
 }
 
 void Imu::run() {
-    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Starting reading FT sensors values...");
+    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Starting reading IMU orientation values...");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorMeasureAsRollPitchYaw(0, rpyValues, timestamp), "Unable to obtain rpy measurements.");
 
     iDynTree::Rotation I_R_FK = kinDynComp.getWorldTransform(frameName).getRotation(); 
@@ -169,14 +163,14 @@ void Imu::run() {
     double minLim;
     double maxLim;
 
-    for (int i = 0; i < 3; i++)
+    for (int i = kinDynComp.model().getJointIndex("neck_pitch"); i <= kinDynComp.model().getJointIndex("neck_yaw"); i++)
     {
         ilim->getLimits(i, &minLim, &maxLim);
 
         moveJoint(i, minLim + 5);
-        yarp::os::Time::delay(1.0);
+        yarp::os::Time::delay(1.);
         moveJoint(i, maxLim - 5);
-        yarp::os::Time::delay(1.0);
+        yarp::os::Time::delay(1.);
     }
 }
 
@@ -209,7 +203,7 @@ bool Imu::moveJoint(int ax, double pos)
     bool done = false;
     double refPos;
 
-    yarp::os::Time::delay(0.1);
+    yarp::os::Time::delay(.1);
 
     ipos->positionMove(ax, pos);
     ipos->getTargetPosition(ax, &refPos);
@@ -243,6 +237,7 @@ bool Imu::moveJoint(int ax, double pos)
 
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
         ipos->checkMotionDone(&done);
+
     }
 
     ipos->positionMove(ax, 0.0);

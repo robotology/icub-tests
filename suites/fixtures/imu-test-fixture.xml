@@ -6,16 +6,11 @@
         <author email="martina.gloria@iit.it">Martina Gloria</author>
     </authors>
     <module>
-        <name>yarprobotinterface</name>
-        <parameters>--config icub_all_no_legs.xml</parameters>
-        <node>localhost</node>  
-    </module>
-    <module>
         <name>yarpscope</name>
         <parameters>--xml ../src/imu/plot.xml</parameters>
         <node>localhost</node>
         <ensure>
-            <wait when="start">5</wait>
+            <wait when="start">1</wait>
         </ensure>  
     </module>
 </application>

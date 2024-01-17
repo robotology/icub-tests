@@ -23,7 +23,6 @@ class Imu : public yarp::robottestingframework::TestCase {
 
     private:
         std::string robotName;
-        std::string partName;
         std::string portName;
         std::string modelPath;
         std::string frameName;
