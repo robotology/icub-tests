@@ -28,8 +28,8 @@ class Imu : public yarp::robottestingframework::TestCase {
         std::string frameName;
         std::string sensorName;
 
-        yarp::dev::PolyDriver *driver1;
-        yarp::dev::PolyDriver *driver2;
+        yarp::dev::PolyDriver *MASclientDriver;
+        yarp::dev::PolyDriver *controlBoardDriver;
         yarp::dev::IOrientationSensors* iorientation;
         yarp::dev::IPositionControl* ipos;
         yarp::dev::IEncoders* ienc;

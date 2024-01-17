@@ -33,15 +33,15 @@ bool Imu::setup(yarp::os::Property& property) {
 
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+"...");
 
-    yarp::os::Property options1;
-    options1.put("device", "multipleanalogsensorsclient");
-    options1.put("remote", portName);
-    options1.put("local", "/imuTest/"+portName);
+    yarp::os::Property MASclientOptions;
+    MASclientOptions.put("device", "multipleanalogsensorsclient");
+    MASclientOptions.put("remote", portName);
+    MASclientOptions.put("local", "/imuTest/"+portName);
     
-    driver1 = new yarp::dev::PolyDriver(options1);
+    MASclientDriver = new yarp::dev::PolyDriver(MASclientOptions);
     
-    yarp::os::Property options2;
-    options2.put("device", "remotecontrolboardremapper");
+    yarp::os::Property controlBoardOptions;
+    controlBoardOptions.put("device", "remotecontrolboardremapper");
     yarp::os::Bottle axesNames;
     yarp::os::Bottle & axesList = axesNames.addList();
     axesList.addString("neck_pitch");
@@ -59,7 +59,7 @@ bool Imu::setup(yarp::os::Property& property) {
     axesList.addString("r_shoulder_yaw");
     axesList.addString("r_elbow");
 
-    options2.put("axesNames", axesNames.get(0));
+    controlBoardOptions.put("axesNames", axesNames.get(0));
 
     yarp::os::Bottle remoteControlBoards;
     yarp::os::Bottle & remoteControlBoardsList = remoteControlBoards.addList();
@@ -67,17 +67,17 @@ bool Imu::setup(yarp::os::Property& property) {
     remoteControlBoardsList.addString("/"+robotName+"/head");
     remoteControlBoardsList.addString("/"+robotName+"/left_arm");
     remoteControlBoardsList.addString("/"+robotName+"/right_arm");
-    options2.put("remoteControlBoards", remoteControlBoards.get(0));
-    options2.put("localPortPrefix", "/test");
+    controlBoardOptions.put("remoteControlBoards", remoteControlBoards.get(0));
+    controlBoardOptions.put("localPortPrefix", "/test");
 
-    driver2 = new yarp::dev::PolyDriver(options2);
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver1->isValid(), "Device driver cannot be opened");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver1->view(iorientation), "Unable to open orientation interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver2->isValid(), "Device driver cannot be opened");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver2->view(ipos), "Unable to open position control interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver2->view(ienc), "Unable to open encoder interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver2->view(iaxes), "Unable to open axes interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(driver2->view(ilim), "Unable to open limits interface");
+    controlBoardDriver = new yarp::dev::PolyDriver(controlBoardOptions);
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver->isValid(), "Device driver cannot be opened");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver->view(iorientation), "Unable to open orientation interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->isValid(), "Device driver cannot be opened");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(ipos), "Unable to open position control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(ienc), "Unable to open encoder interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(iaxes), "Unable to open axes interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(ilim), "Unable to open limits interface");
 
 
     outputPort.open("/test-imu/out");
@@ -136,16 +136,16 @@ void Imu::tearDown() {
     outputPort.interrupt();
     outputPort.close();
 
-    if(driver1)
+    if(MASclientDriver)
     {
-        delete driver1;
-        driver1 = 0;
+        delete MASclientDriver;
+        MASclientDriver = 0;
     }
 
-    if(driver2)
+    if(controlBoardDriver)
     {
-        delete driver2;
-        driver2 = 0;
+        delete controlBoardDriver;
+        controlBoardDriver = 0;
     }
 }
 
