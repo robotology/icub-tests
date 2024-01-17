@@ -5,7 +5,7 @@
     <authors>
         <author email="martina.gloria@iit.it">Martina Gloria</author>
     </authors>
-    <module>
+    <!-- <module>
         <name>gzserver</name>
         <parameters>-s libgazebo_yarp_clock.so</parameters>
         <node>localhost</node>
@@ -18,7 +18,7 @@
         <name>gz model</name>
         <parameters>-f /home/mgloria/iit/robotology-superbuild/build/install/share/iCub/robots/iCubGazeboV2_7_feet_fixed/iCubGazeboV2_7_feet_fixed.sdf -m iCubGazebo -i</parameters>
         <node>localhost</node>
-    </module>
+    </module> -->
     <!-- <module>
         <name>yarprobotinterface</name>
         <parameters>config icub.xml</parameters>
@@ -35,7 +35,7 @@
         <parameters>--xml ../src/imu/plot.xml</parameters>
         <node>localhost</node>
         <ensure>
-            <wait when="start">5</wait>
+            <wait when="start">1</wait>
         </ensure>  
     </module>
 </application>

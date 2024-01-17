@@ -107,10 +107,6 @@ bool Imu::setup(yarp::os::Property& property) {
     s.resize(dofs);
     ds.resize(dofs);
 
-    for (int i = 0; i < kinDynComp.model().getNrOfDOFs(); i++) {
-        std::cout << kinDynComp.model().getJointName(i) << std::endl;
-    }
-
     positions.resize(axes);
     velocities.resize(axes);
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoders(positions.data()), "Cannot get joint positions");
