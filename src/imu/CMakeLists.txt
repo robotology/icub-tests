@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 project(imu)
 
 add_definitions(-D_USE_MATH_DEFINES)
-find_package(iDynTree REQUIRED)
-find_package(Eigen3 CONFIG REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}
                     ${RobotTestingFramework_INCLUDE_DIRS})
