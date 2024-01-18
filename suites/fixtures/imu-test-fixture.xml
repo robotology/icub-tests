@@ -1,0 +1,16 @@
+<application>
+    <name>Test IMU sensor</name>
+    <description>A fixture to test the orientation data from the IMU</description>
+    <version>1.0</version>
+    <authors>
+        <author email="martina.gloria@iit.it">Martina Gloria</author>
+    </authors>
+    <module>
+        <name>yarpscope</name>
+        <parameters>--xml ../src/imu/plot.xml</parameters>
+        <node>localhost</node>
+        <ensure>
+            <wait when="start">1</wait>
+        </ensure>  
+    </module>
+</application>
