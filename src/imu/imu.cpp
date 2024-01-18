@@ -7,6 +7,7 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include "imu.h"
 
@@ -27,9 +28,11 @@ bool Imu::setup(yarp::os::Property& property) {
     
     robotName = property.find("robot").asString(); // robot name
     portName = property.find("port").asString(); // name of the port from which the data are streamed
-    modelPath = property.find("model").asString(); // urdf model path
     frameName = property.find("frame").asString(); // frame on which the sensor is attached
     sensorName = property.find("sensor").asString(); // sensor name within urdf
+    modelName = property.find("model").asString(); // urdf model path
+    yarp::os::ResourceFinder &rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
+    std::string modelAbsolutePath = rf.findFileByName(modelName);
 
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+"...");
 
@@ -37,9 +40,9 @@ bool Imu::setup(yarp::os::Property& property) {
     MASclientOptions.put("device", "multipleanalogsensorsclient");
     MASclientOptions.put("remote", portName);
     MASclientOptions.put("local", "/imuTest/"+portName);
-    
-    MASclientDriver = new yarp::dev::PolyDriver(MASclientOptions);
-    
+
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver.open(MASclientOptions), "Unable to open the MAS client driver");
+        
     yarp::os::Property controlBoardOptions;
     controlBoardOptions.put("device", "remotecontrolboardremapper");
     yarp::os::Bottle axesNames;
@@ -70,15 +73,15 @@ bool Imu::setup(yarp::os::Property& property) {
     controlBoardOptions.put("remoteControlBoards", remoteControlBoards.get(0));
     controlBoardOptions.put("localPortPrefix", "/test");
 
-    controlBoardDriver = new yarp::dev::PolyDriver(controlBoardOptions);
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver->isValid(), "Device driver cannot be opened");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver->view(iorientation), "Unable to open orientation interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->isValid(), "Device driver cannot be opened");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(ipos), "Unable to open position control interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(ienc), "Unable to open encoder interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(iaxes), "Unable to open axes interface");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver->view(ilim), "Unable to open limits interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.open(controlBoardOptions), "Unable to open the controlBoard driver");
 
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver.isValid(), "Device driver cannot be opened");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver.view(iorientation), "Unable to open orientation interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.isValid(), "Device driver cannot be opened");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.view(ipos), "Unable to open position control interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.view(ienc), "Unable to open encoder interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.view(iaxes), "Unable to open axes interface");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.view(ilim), "Unable to open limits interface");
 
     outputPort.open("/test-imu/out");
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Opening port "+outputPort.getName()+"...");
@@ -93,7 +96,7 @@ bool Imu::setup(yarp::os::Property& property) {
         axis.push_back(axisName);
     }
     
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelPath.c_str(), axis), Asserter::format("Cannot load model %s", modelPath.c_str()));
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelAbsolutePath.c_str(), axis), Asserter::format("Cannot load model from %s", modelAbsolutePath.c_str()));
     kinDynComp.loadRobotModel(model.model());
 
     iDynTree::Vector3 baseLinkOrientationRad;
@@ -136,17 +139,8 @@ void Imu::tearDown() {
     outputPort.interrupt();
     outputPort.close();
 
-    if(MASclientDriver)
-    {
-        delete MASclientDriver;
-        MASclientDriver = 0;
-    }
-
-    if(controlBoardDriver)
-    {
-        delete controlBoardDriver;
-        controlBoardDriver = 0;
-    }
+    controlBoardDriver.close();
+    MASclientDriver.close();
 }
 
 void Imu::run() {

@@ -1,5 +1,5 @@
-#ifndef _IMU_H_
-#define _IMU_H_
+#ifndef IMU_H
+#define IMU_H
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
@@ -24,12 +24,12 @@ class Imu : public yarp::robottestingframework::TestCase {
     private:
         std::string robotName;
         std::string portName;
-        std::string modelPath;
+        std::string modelName;
         std::string frameName;
         std::string sensorName;
 
-        yarp::dev::PolyDriver *MASclientDriver;
-        yarp::dev::PolyDriver *controlBoardDriver;
+        yarp::dev::PolyDriver MASclientDriver;
+        yarp::dev::PolyDriver controlBoardDriver;
         yarp::dev::IOrientationSensors* iorientation;
         yarp::dev::IPositionControl* ipos;
         yarp::dev::IEncoders* ienc;
@@ -59,4 +59,4 @@ class Imu : public yarp::robottestingframework::TestCase {
         bool moveJoint(int ax, double pos);
     };
 
-#endif //_IMU_H_
+#endif //IMU_H

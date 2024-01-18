@@ -1,22 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
-project(imu)
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.5)
+endif()
 
 add_definitions(-D_USE_MATH_DEFINES)
 
-include_directories(${CMAKE_SOURCE_DIR}
-                    ${RobotTestingFramework_INCLUDE_DIRS})
-
-robottestingframework_add_plugin(${PROJECT_NAME} HEADERS ${PROJECT_NAME}.h
-                                                 SOURCES ${PROJECT_NAME}.cpp)
+robottestingframework_add_plugin(imu HEADERS imu.h
+                                     SOURCES imu.cpp)
 
 # add required libraries
-target_link_libraries(${PROJECT_NAME} RobotTestingFramework::RTF
+target_link_libraries(imu RobotTestingFramework::RTF
                                       RobotTestingFramework::RTF_dll
                                       YARP::YARP_robottestingframework
                                       iDynTree::idyntree-high-level 
                                       iDynTree::idyntree-estimation)
 # set the installation options
-install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}
+install(TARGETS imu
+        EXPORT imu
         COMPONENT runtime
         LIBRARY DESTINATION lib)
