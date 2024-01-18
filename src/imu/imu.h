@@ -24,9 +24,11 @@ class Imu : public yarp::robottestingframework::TestCase {
     private:
         std::string robotName;
         std::string portName;
+        std::string partName;
         std::string modelName;
         std::string frameName;
         std::string sensorName;
+        double errorMean;
 
         yarp::dev::PolyDriver MASclientDriver;
         yarp::dev::PolyDriver controlBoardDriver;
@@ -43,6 +45,7 @@ class Imu : public yarp::robottestingframework::TestCase {
 
         int axes;
         double timestamp;
+        std::vector<std::string> axis;
 
         iDynTree::ModelLoader model;
         iDynTree::KinDynComputations kinDynComp;

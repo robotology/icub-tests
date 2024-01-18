@@ -1,7 +1,3 @@
-if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  cmake_minimum_required(VERSION 3.5)
-endif()
-
 add_definitions(-D_USE_MATH_DEFINES)
 
 robottestingframework_add_plugin(imu HEADERS imu.h
