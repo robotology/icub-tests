@@ -64,10 +64,6 @@ bool Imu::setup(yarp::os::Property& property)
     yarp::os::Bottle axesNames;
     yarp::os::Bottle & axesList = axesNames.addList();
 
-    yarp::dev::PolyDriver tmpDriver;
-    yarp::dev::IEncoders* tmpEncoders;
-    yarp::dev::IAxisInfo* tmpAxis;
-
     yarp::os::Property tmpOptions;
 
     int tmpAxisNum;
@@ -116,10 +112,10 @@ bool Imu::setup(yarp::os::Property& property)
     for (int i = 0; i < axes; i++)
     {
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iaxes->getAxisName(i, axisName), "Cannot get the name of controlled axes");
-        axis.push_back(axisName);
+        axesVec.push_back(axisName);
     }
     
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelAbsolutePath.c_str(), axis), Asserter::format("Cannot load model from %s", modelAbsolutePath.c_str()));
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelAbsolutePath.c_str(), axesVec), Asserter::format("Cannot load model from %s", modelAbsolutePath.c_str()));
     kinDynComp.loadRobotModel(model.model());
 
     iDynTree::Vector3 baseLinkOrientationRad;
@@ -178,9 +174,6 @@ void Imu::run()
     double minLim;
     double maxLim;
 
-    yarp::dev::PolyDriver tmpDriver;
-    yarp::dev::IEncoders* tmpEncoders;
-    yarp::dev::IAxisInfo* tmpAxis;
     yarp::os::Property tmpOptions;
 
     int tmpAxisNum;

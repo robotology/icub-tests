@@ -66,6 +66,10 @@ class Imu : public yarp::robottestingframework::TestCase {
         yarp::dev::IAxisInfo* iaxes;
         yarp::dev::IControlLimits* ilim;
 
+        yarp::dev::PolyDriver tmpDriver;
+        yarp::dev::IEncoders* tmpEncoders;
+        yarp::dev::IAxisInfo* tmpAxis;
+
         yarp::os::BufferedPort <yarp::os::Bottle> outputPort;
         yarp::sig::Vector rpyValues;
         yarp::sig::Vector positions;
@@ -73,7 +77,7 @@ class Imu : public yarp::robottestingframework::TestCase {
 
         int axes;
         double timestamp;
-        std::vector<std::string> axis;
+        std::vector<std::string> axesVec;
 
         iDynTree::ModelLoader model;
         iDynTree::KinDynComputations kinDynComp;
