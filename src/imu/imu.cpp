@@ -23,7 +23,7 @@ bool Imu::setup(yarp::os::Property& property)
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("port"), "The port name must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("remote_controlboards"), "Please, provide the controlboards name.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("controlboards"), "Please, provide the controlboards name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("model"), "Please, provide the urdf model path.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("frame"), "Please, provide the frame name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("sensor"), "Please, provide the sensor name.");
@@ -54,7 +54,7 @@ bool Imu::setup(yarp::os::Property& property)
     yarp::os::Bottle remoteControlBoards;
     yarp::os::Bottle & remoteControlBoardsList = remoteControlBoards.addList(); 
     yarp::os::Bottle *inputControlBoards;
-    inputControlBoards = property.find("remote_controlboards").asList();
+    inputControlBoards = property.find("controlboards").asList();
     for (int i = 0; i < inputControlBoards->size(); i++)
     {
         remoteControlBoardsList.addString("/"+robotName+"/"+inputControlBoards->get(i).asString());
