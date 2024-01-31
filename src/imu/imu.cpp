@@ -24,6 +24,7 @@ bool Imu::setup(yarp::os::Property& property)
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("port"), "The port name must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("controlboards"), "Please, provide the controlboards name.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("controlled_joints"), "Please, provide the controlled joints name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("model"), "Please, provide the urdf model path.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("frame"), "Please, provide the frame name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("sensor"), "Please, provide the sensor name.");
@@ -38,6 +39,13 @@ bool Imu::setup(yarp::os::Property& property)
     modelName = property.find("model").asString(); // urdf model path
     yarp::os::ResourceFinder &rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
     std::string modelAbsolutePath = rf.findFileByName(modelName);
+
+    yarp::os::Bottle *inputMoveJoints;
+    inputMoveJoints = property.find("move_joints").asList();
+    for (int i = 0; i < inputMoveJoints->size(); i++)
+    {
+        movJointsList.addString(inputMoveJoints->get(i).asString());
+    }
 
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+"...");
 
@@ -58,36 +66,15 @@ bool Imu::setup(yarp::os::Property& property)
     for (int i = 0; i < inputControlBoards->size(); i++)
     {
         remoteControlBoardsList.addString("/"+robotName+"/"+inputControlBoards->get(i).asString());
-        std::cout << inputControlBoards->get(i).asString() << std::endl;
     }
 
     yarp::os::Bottle axesNames;
     yarp::os::Bottle & axesList = axesNames.addList();
-
-    yarp::os::Property tmpOptions;
-
-    int tmpAxisNum;
-    std::string tmpString;
-
-    tmpOptions.put("device", "remote_controlboard");
-    tmpOptions.put("local", "/tmp");
-
-    for(int rcb = 0; rcb < remoteControlBoardsList.size(); rcb++)
+    yarp::os::Bottle *inputJoints;
+    inputJoints = property.find("controlled_joints").asList();
+    for(int i = 0; i < inputJoints->size(); i++)
     {
-        tmpOptions.put("remote", remoteControlBoardsList.get(rcb));
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tmpDriver.open(tmpOptions), "Unable to open the tmp driver");
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tmpDriver.isValid(), "Device driver cannot be opened");
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tmpDriver.view(tmpEncoders), "Unable to open encoder interface");
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tmpDriver.view(tmpAxis), "Unable to open axes interface");
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tmpEncoders->getAxes(&tmpAxisNum), "Cannot get the name of controlled axes");
-
-        for(int i = 0; i < tmpAxisNum; i++)
-        {
-            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(tmpAxis->getAxisName(i, tmpString), "Cannot get name of controlled axes");
-            axesList.addString(tmpString);
-        }
-
-        tmpDriver.close();
+        axesList.addString(inputJoints->get(i).asString());
     }
 
     controlBoardOptions.put("remoteControlBoards", remoteControlBoards.get(0));
@@ -174,32 +161,14 @@ void Imu::run()
     double minLim;
     double maxLim;
 
-    yarp::os::Property tmpOptions;
-
-    int tmpAxisNum;
-    std::string tmpString;
-
-    tmpOptions.put("device", "remote_controlboard");
-    tmpOptions.put("local", "/tmp");
-    tmpOptions.put("remote", "/"+robotName+"/"+partName);
-
-    tmpDriver.open(tmpOptions);
-    tmpDriver.view(tmpEncoders);
-    tmpDriver.view(tmpAxis);
-    tmpEncoders->getAxes(&tmpAxisNum);
-
-    for (int i = 0; i < tmpAxisNum; i++)
+    for (int i = 0; i < movJointsList.size(); i++)
     {
-        tmpAxis->getAxisName(i, tmpString);
-        ilim->getLimits(model.model().getJointIndex(tmpString), &minLim, &maxLim);
-
-        moveJoint(model.model().getJointIndex(tmpString), minLim + 5);
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ilim->getLimits(model.model().getJointIndex(movJointsList.get(i).toString()), &minLim, &maxLim), Asserter::format("Unable to get limits for joint %s", movJointsList.get(i).toString()));
+        moveJoint(model.model().getJointIndex(movJointsList.get(i).toString()), minLim + 5);
         yarp::os::Time::delay(1.);
-        moveJoint(model.model().getJointIndex(tmpString), maxLim - 5);
+        moveJoint(model.model().getJointIndex(movJointsList.get(i).toString()), maxLim - 5);
         yarp::os::Time::delay(1.);
     }
-
-    tmpDriver.close();
 }
 
 bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal)
@@ -229,6 +198,8 @@ bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal
 bool Imu::moveJoint(int ax, double pos)
 {
     bool done = false;
+    int count = 0;
+    iDynTree::GeomVector3 error;
     yarp::os::Time::delay(.1);
 
     ipos->positionMove(ax, pos);
@@ -256,15 +227,16 @@ bool Imu::moveJoint(int ax, double pos)
         iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation();
         iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))); 
 
-        auto error = (expectedImuSignal * imuSignal.inverse()).log();
-        double err_mean = (std::accumulate(error.begin(), error.end(), 0)) / error.size();
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(err_mean < errorMean, "Error > 0.1! Aborting ...");
-
+        error = error + (expectedImuSignal * imuSignal.inverse()).log();
+        count++;
+ 
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
         ipos->checkMotionDone(&done);
     }
 
+    double err_mean = fabs((std::accumulate(error.begin(), error.end(), 0.0)) / count);
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(err_mean < errorMean, Asserter::format("The error mean on axis %s is %f rad!", axesVec[ax].c_str(), err_mean));
     ipos->positionMove(ax, 0.0);
-
+ 
     return true;
 }

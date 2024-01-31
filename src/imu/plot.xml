@@ -5,8 +5,8 @@
             hspan="1"
             vspan="1"
             title="Roll"
-            minval="-180"
-            maxval="180"
+            minval="-200"
+            maxval="200"
             bgcolor="LightSlateGrey">
                   <graph remote="/test-imu/out"
                         index="0"
@@ -26,8 +26,8 @@
             hspan="1"
             vspan="1"
             title="Pitch"
-            minval="-180"
-            maxval="180"
+            minval="-200"
+            maxval="200"
             bgcolor="LightSlateGrey">
                   <graph remote="/test-imu/out"
                         index="1"
@@ -47,8 +47,8 @@
             hspan="1"
             vspan="1"
             title="Yaw"
-            minval="-180"
-            maxval="180"
+            minval="-200"
+            maxval="200"
             bgcolor="LightSlateGrey">
                   <graph remote="/test-imu/out"
                         index="2"

@@ -57,6 +57,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         std::string frameName;
         std::string sensorName;
         double errorMean;
+        yarp::os::Bottle movJointsList;
 
         yarp::dev::PolyDriver MASclientDriver;
         yarp::dev::PolyDriver controlBoardDriver;
@@ -65,10 +66,6 @@ class Imu : public yarp::robottestingframework::TestCase {
         yarp::dev::IEncoders* ienc;
         yarp::dev::IAxisInfo* iaxes;
         yarp::dev::IControlLimits* ilim;
-
-        yarp::dev::PolyDriver tmpDriver;
-        yarp::dev::IEncoders* tmpEncoders;
-        yarp::dev::IAxisInfo* tmpAxis;
 
         yarp::os::BufferedPort <yarp::os::Bottle> outputPort;
         yarp::sig::Vector rpyValues;
