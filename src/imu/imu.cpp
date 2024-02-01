@@ -18,21 +18,34 @@ Imu::Imu() : TestCase("Imu") { }
 
 Imu::~Imu() { }
 
-bool Imu::setup(yarp::os::Property& property) {
-    
+bool Imu::setup(yarp::os::Property& property) 
+{
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("robot"), "The robot name must be given as the test parameter!");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("port"), "The port name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("part"), "The part name must be given as the test parameter!");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("controlboards"), "Please, provide the controlboards name.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("controlled_joints"), "Please, provide the controlled joints name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("model"), "Please, provide the urdf model path.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("frame"), "Please, provide the frame name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("sensor"), "Please, provide the sensor name.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("mean_error"), "Please, provide the threshold error.");
     
     robotName = property.find("robot").asString(); // robot name
     portName = property.find("port").asString(); // name of the port from which the data are streamed
+    partName = property.find("part").asString(); // name of the part of the robot on which the sensor is mounted
     frameName = property.find("frame").asString(); // frame on which the sensor is attached
     sensorName = property.find("sensor").asString(); // sensor name within urdf
+    errorMean = property.find("mean_error").asFloat64(); //error mean
     modelName = property.find("model").asString(); // urdf model path
     yarp::os::ResourceFinder &rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
     std::string modelAbsolutePath = rf.findFileByName(modelName);
+
+    yarp::os::Bottle *inputMoveJoints;
+    inputMoveJoints = property.find("move_joints").asList();
+    for (int i = 0; i < inputMoveJoints->size(); i++)
+    {
+        movJointsList.addString(inputMoveJoints->get(i).asString());
+    }
 
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+"...");
 
@@ -45,34 +58,28 @@ bool Imu::setup(yarp::os::Property& property) {
         
     yarp::os::Property controlBoardOptions;
     controlBoardOptions.put("device", "remotecontrolboardremapper");
-    yarp::os::Bottle axesNames;
-    yarp::os::Bottle & axesList = axesNames.addList();
-    axesList.addString("neck_pitch");
-    axesList.addString("neck_roll");
-    axesList.addString("neck_yaw");
-    axesList.addString("torso_pitch");
-    axesList.addString("torso_roll");
-    axesList.addString("torso_yaw");
-    axesList.addString("l_shoulder_pitch");
-    axesList.addString("l_shoulder_roll");
-    axesList.addString("l_shoulder_yaw");
-    axesList.addString("l_elbow");
-    axesList.addString("r_shoulder_pitch");
-    axesList.addString("r_shoulder_roll");
-    axesList.addString("r_shoulder_yaw");
-    axesList.addString("r_elbow");
-
-    controlBoardOptions.put("axesNames", axesNames.get(0));
 
     yarp::os::Bottle remoteControlBoards;
-    yarp::os::Bottle & remoteControlBoardsList = remoteControlBoards.addList();
-    remoteControlBoardsList.addString("/"+robotName+"/torso");
-    remoteControlBoardsList.addString("/"+robotName+"/head");
-    remoteControlBoardsList.addString("/"+robotName+"/left_arm");
-    remoteControlBoardsList.addString("/"+robotName+"/right_arm");
+    yarp::os::Bottle & remoteControlBoardsList = remoteControlBoards.addList(); 
+    yarp::os::Bottle *inputControlBoards;
+    inputControlBoards = property.find("controlboards").asList();
+    for (int i = 0; i < inputControlBoards->size(); i++)
+    {
+        remoteControlBoardsList.addString("/"+robotName+"/"+inputControlBoards->get(i).asString());
+    }
+
+    yarp::os::Bottle axesNames;
+    yarp::os::Bottle & axesList = axesNames.addList();
+    yarp::os::Bottle *inputJoints;
+    inputJoints = property.find("controlled_joints").asList();
+    for(int i = 0; i < inputJoints->size(); i++)
+    {
+        axesList.addString(inputJoints->get(i).asString());
+    }
+
     controlBoardOptions.put("remoteControlBoards", remoteControlBoards.get(0));
     controlBoardOptions.put("localPortPrefix", "/test");
-
+    controlBoardOptions.put("axesNames", axesNames.get(0));
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(controlBoardDriver.open(controlBoardOptions), "Unable to open the controlBoard driver");
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver.isValid(), "Device driver cannot be opened");
@@ -88,15 +95,14 @@ bool Imu::setup(yarp::os::Property& property) {
 
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getAxes(&axes), "Cannot get number of controlled axes");
     std::string axisName;
-    std::vector<std::string> axis;
     
     for (int i = 0; i < axes; i++)
     {
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iaxes->getAxisName(i, axisName), "Cannot get the name of controlled axes");
-        axis.push_back(axisName);
+        axesVec.push_back(axisName);
     }
     
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelAbsolutePath.c_str(), axis), Asserter::format("Cannot load model from %s", modelAbsolutePath.c_str()));
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(model.loadReducedModelFromFile(modelAbsolutePath.c_str(), axesVec), Asserter::format("Cannot load model from %s", modelAbsolutePath.c_str()));
     kinDynComp.loadRobotModel(model.model());
 
     iDynTree::Vector3 baseLinkOrientationRad;
@@ -113,7 +119,7 @@ bool Imu::setup(yarp::os::Property& property) {
     positions.resize(axes);
     velocities.resize(axes);
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoders(positions.data()), "Cannot get joint positions");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint positions");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint velocities");
 
     for(auto i = 0; i < axes; i++)
     {
@@ -135,7 +141,8 @@ bool Imu::setup(yarp::os::Property& property) {
     return true;
 }
 
-void Imu::tearDown() {
+void Imu::tearDown() 
+{
     outputPort.interrupt();
     outputPort.close();
 
@@ -143,7 +150,8 @@ void Imu::tearDown() {
     MASclientDriver.close();
 }
 
-void Imu::run() {
+void Imu::run() 
+{
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Starting reading IMU orientation values...");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorMeasureAsRollPitchYaw(0, rpyValues, timestamp), "Unable to obtain rpy measurements.");
 
@@ -153,13 +161,12 @@ void Imu::run() {
     double minLim;
     double maxLim;
 
-    for (int i = kinDynComp.model().getJointIndex("neck_pitch"); i <= kinDynComp.model().getJointIndex("neck_yaw"); i++)
+    for (int i = 0; i < movJointsList.size(); i++)
     {
-        ilim->getLimits(i, &minLim, &maxLim);
-
-        moveJoint(i, minLim + 5);
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ilim->getLimits(model.model().getJointIndex(movJointsList.get(i).toString()), &minLim, &maxLim), Asserter::format("Unable to get limits for joint %s", movJointsList.get(i).toString()));
+        moveJoint(model.model().getJointIndex(movJointsList.get(i).toString()), minLim + 5);
         yarp::os::Time::delay(1.);
-        moveJoint(i, maxLim - 5);
+        moveJoint(model.model().getJointIndex(movJointsList.get(i).toString()), maxLim - 5);
         yarp::os::Time::delay(1.);
     }
 }
@@ -191,19 +198,18 @@ bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal
 bool Imu::moveJoint(int ax, double pos)
 {
     bool done = false;
-    double refPos;
-
+    int count = 0;
+    iDynTree::GeomVector3 error;
     yarp::os::Time::delay(.1);
 
     ipos->positionMove(ax, pos);
-    ipos->getTargetPosition(ax, &refPos);
 
     while(!done)
     {
         iorientation->getOrientationSensorMeasureAsRollPitchYaw(0, rpyValues, timestamp);
 
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoders(positions.data()), "Cannot get joint positions");
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint positions");
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint velocities");
 
         for (auto i = 0; i < axes; i++)
         {
@@ -221,16 +227,16 @@ bool Imu::moveJoint(int ax, double pos)
         iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation();
         iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))); 
 
-        auto error = (expectedImuSignal * imuSignal.inverse()).log();
-        double err_mean = (std::accumulate(error.begin(), error.end(), 0)) / error.size();
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(err_mean < 0.1, "Error > 0.1! Aborting ...");
-
+        error = error + (expectedImuSignal * imuSignal.inverse()).log();
+        count++;
+ 
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
         ipos->checkMotionDone(&done);
-
     }
 
+    double err_mean = fabs((std::accumulate(error.begin(), error.end(), 0.0)) / count);
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(err_mean < errorMean, Asserter::format("The error mean on axis %s is %f rad!", axesVec[ax].c_str(), err_mean));
     ipos->positionMove(ax, 0.0);
-
+ 
     return true;
 }
