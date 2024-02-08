@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <numeric>
+#include <fstream>
 
 #include <robottestingframework/TestAssert.h>
 #include <robottestingframework/dll/Plugin.h>
@@ -200,6 +201,7 @@ bool Imu::moveJoint(int ax, double pos)
     bool done = false;
     int count = 0;
     iDynTree::GeomVector3 error;
+    std::vector<double> errorTot;
     yarp::os::Time::delay(.1);
 
     ipos->positionMove(ax, pos);
@@ -226,17 +228,27 @@ bool Imu::moveJoint(int ax, double pos)
 
         iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation();
         iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))); 
+        error = (expectedImuSignal * imuSignal.inverse()).log();
 
-        error = error + (expectedImuSignal * imuSignal.inverse()).log();
-        count++;
+        double p = 0.0;
+        double mag = 0.0;
+
+        for (auto i : error)
+        {
+            p += pow(i, 2);
+            mag = sqrt(p);
+            errorTot.push_back(mag);
+        }
  
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
         ipos->checkMotionDone(&done);
     }
 
-    double err_mean = fabs((std::accumulate(error.begin(), error.end(), 0.0)) / count);
-    ROBOTTESTINGFRAMEWORK_TEST_CHECK(err_mean < errorMean, Asserter::format("The error mean on axis %s is %f rad!", axesVec[ax].c_str(), err_mean));
+    iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation();
+    iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))); 
+
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(*max_element(errorTot.begin(), errorTot.end()) < errorMean, Asserter::format("Testing %s: the max error of the rotation angle is %f rad!", axesVec[ax].c_str(), *max_element(errorTot.begin(), errorTot.end())));
     ipos->positionMove(ax, 0.0);
- 
+
     return true;
 }
