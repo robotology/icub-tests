@@ -235,8 +235,8 @@ bool Imu::moveJoint(int ax, double pos)
             return accumulator + element * element;
         });
     
-        double rms = std::sqrt(sumOfSquares);
-        errorTot.push_back(rms);
+        double mag = std::sqrt(sumOfSquares);
+        errorTot.push_back(mag);
  
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
         ipos->checkMotionDone(&done);
