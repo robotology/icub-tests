@@ -198,8 +198,8 @@ bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal
 bool Imu::moveJoint(int ax, double pos)
 {
     bool done = false;
-    int count = 0;
     iDynTree::GeomVector3 error;
+    std::vector<double> errorTot;
     yarp::os::Time::delay(.1);
 
     ipos->positionMove(ax, pos);
@@ -226,17 +226,26 @@ bool Imu::moveJoint(int ax, double pos)
 
         iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation();
         iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[0]), iDynTree::deg2rad(rpyValues[1]), iDynTree::deg2rad(rpyValues[2]))); 
+        error = (expectedImuSignal * imuSignal.inverse()).log();
 
-        error = error + (expectedImuSignal * imuSignal.inverse()).log();
-        count++;
+        errorTot.reserve(error.size());
+
+        double sumOfSquares = std::accumulate(error.begin(), error.end(), 0.0,
+        [](double accumulator, double element) {
+            return accumulator + element * element;
+        });
+    
+        double mag = std::sqrt(sumOfSquares);
+        errorTot.push_back(mag);
  
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
         ipos->checkMotionDone(&done);
     }
 
-    double err_mean = fabs((std::accumulate(error.begin(), error.end(), 0.0)) / count);
-    ROBOTTESTINGFRAMEWORK_TEST_CHECK(err_mean < errorMean, Asserter::format("The error mean on axis %s is %f rad!", axesVec[ax].c_str(), err_mean));
+    double maxError = *max_element(errorTot.begin(), errorTot.end());
+
+    ROBOTTESTINGFRAMEWORK_TEST_CHECK(maxError < errorMean, Asserter::format("Testing %s: the max rotation angle error is %f rad!", axesVec[ax].c_str(), maxError));
     ipos->positionMove(ax, 0.0);
- 
+
     return true;
 }
