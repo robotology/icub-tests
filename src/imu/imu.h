@@ -13,6 +13,8 @@
 #include <iDynTree/ModelLoader.h>
 #include <iDynTree/Model.h>
 
+#include <map>
+
 /**
 * \ingroup icub-tests
 *
@@ -57,7 +59,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         std::string frameName;
         std::string sensorName;
         double errorMean;
-        yarp::os::Bottle movJointsList;
+        std::map<std::string, yarp::os::Bottle> sensorMap;
 
         yarp::dev::PolyDriver MASclientDriver;
         yarp::dev::PolyDriver controlBoardDriver;
