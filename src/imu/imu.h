@@ -36,10 +36,9 @@
 * | robot              | string             | -     | -             | Yes      | The name of the robot. | e.g. icub |
 * | model              | string             | -     | -             | Yes      | The name of the robot model. | e.g. model.urdf |
 * | port               | string             | -     | -             | Yes      | The name of the port streaming IMU data. | e.g. /icub/head/inertials |
-* | controlboards      | vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
-* | controlled_joints  | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
-* | move_joints        | vector of string   | -     | -             | Yes      | The list of the joints to move during the test. | e.g. ("neck_pitch", "neck_roll") |
-* | sensor             | string             | -     | -             | Yes      | The name of the sensor to be tested. | e.g. head_imu_0 |
+* | remoteControlBoards| vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
+* | axesNames          | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
+* | testList           | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") |
 * | mean_error         | double             | -     | -             | Yes      | The tolerance on the mean of the error. | |
 */
 
