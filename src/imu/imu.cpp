@@ -163,7 +163,6 @@ void Imu::run()
     for (int sensorIndex = 0; sensorIndex < iorientation->getNrOfOrientationSensors(); sensorIndex++)
     {
         iorientation->getOrientationSensorName(sensorIndex, sensorName);
-        // ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(sensorMap.find(sensorName) != sensorMap.end(), Asserter::format("The sensor %s is not present in the sensor list to be checked", sensorName.c_str()));
 
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorMeasureAsRollPitchYaw(sensorIndex, rpyValues, timestamp), "Unable to obtain rpy measurements.");
         iorientation->getOrientationSensorFrameName(sensorIndex, frameName);
