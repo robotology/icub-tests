@@ -22,11 +22,9 @@
 * It takes as input the urdf of the robot and make a comparison between the expected values retrieved from the forward kinematics and the ones read from the IMU itself.
 * The test involves the movements of the joints belonging to the part on which the sensor is mounted. The movements are executed sequentially, traversing from the home position to the lower limit, upper limit and back to the home position for each joint.
 *
-* Example: robottestingframework-testrunner --test plugins/imu.so --param "--robot icub --model model.urdf --port /icub/head/inertials --part head --controlboards ("torso", "head") --sensor head_imu_0 --mean_error 0.1"
+* You can manually modify the suites/contexts/icub/test_imu.ini file depending on the parameters of the test. In this case, after compiling, you can run:
 *
-* Moreover, you can manually modify the suites/contexts/icub/test_imu.ini file depending on the parameters of the test. In this case, after compiling, you can run:
-*
-* robottestingframework-testrunner --suite ../suites/imu.xml
+* Example: robottestingframework-testrunner --suite ../suites/imu.xml
 *
 * This will launch the test and open a yarpscope with the plots of the IMU traces.
 *
@@ -39,7 +37,7 @@
 * | remoteControlBoards| vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
 * | axesNames          | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
 * | testList           | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") |
-* | mean_error         | double             | -     | -             | Yes      | The tolerance on the mean of the error. | |
+* | meanError          | double             | -     | -             | Yes      | The tolerance on the mean of the error. | |
 */
 
 class Imu : public yarp::robottestingframework::TestCase {
