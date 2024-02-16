@@ -36,11 +36,11 @@ bool Imu::setup(yarp::os::Property& property)
     
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Running IMU test on "+robotName+"...");
     
-    yarp::os::Bottle *testList;
-    testList = property.find("testList").asList();
-    for(int test = 0; test < testList->size(); test++)
+    yarp::os::Bottle *sensorsList;
+    sensorsList = property.find("sensorsList").asList();
+    for(int sensor = 0; sensor < sensorsList->size(); sensor++)
     {
-        yarp::os::Bottle &sensors = property.findGroup(testList->get(test).asString());
+        yarp::os::Bottle &sensors = property.findGroup(sensorsList->get(sensor).asString());
 
         yarp::os::Bottle moveJoints;
         yarp::os::Bottle *inputMoveJoints;
@@ -51,7 +51,7 @@ bool Imu::setup(yarp::os::Property& property)
             moveJoints.addString(inputMoveJoints->get(movJoint).asString());
         }
 
-        sensorMap[testList->get(test).asString()] = moveJoints;
+        sensorMap[sensorsList->get(sensor).asString()] = moveJoints;
         moveJoints.clear();
     }
 

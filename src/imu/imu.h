@@ -36,7 +36,7 @@
 * | port               | string             | -     | -             | Yes      | The name of the port streaming IMU data. | e.g. /icub/head/inertials |
 * | remoteControlBoards| vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
 * | axesNames          | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
-* | testList           | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") |
+* | sensorsList        | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") |
 * | meanError          | double             | -     | -             | Yes      | The tolerance on the mean of the error. | |
 */
 
