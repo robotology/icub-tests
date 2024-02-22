@@ -85,8 +85,11 @@ class Imu : public yarp::robottestingframework::TestCase {
         iDynTree::Transform I_T_base;
         iDynTree::Rotation I_R_I_IMU;
 
+        robometry::BufferManager bufferManager;
+
         bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
         bool moveJoint(int ax, double pos, int sensIndex);
+        bool setupTelemetry();
     };
 
 #endif //IMU_H

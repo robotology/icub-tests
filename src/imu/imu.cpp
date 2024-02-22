@@ -9,6 +9,9 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/ResourceFinder.h>
 
+#include <robometry/BufferConfig.h>
+#include <robometry/BufferManager.h>
+
 #include "imu.h"
 
 using namespace robottestingframework;
@@ -144,6 +147,8 @@ bool Imu::setup(yarp::os::Property& property)
         gravity
     );
 
+    setupTelemetry();
+
     return true;
 }
 
@@ -252,13 +257,46 @@ bool Imu::moveJoint(int ax, double pos, int sensorIndex)
         errorTot.push_back(mag);
  
         sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
+
+        bufferManager.push_back(positions, "joints_state::positions");
+        bufferManager.push_back(velocities, "joints_state::velocities");
+        bufferManager.push_back({expectedImuSignal.asRPY()[0], expectedImuSignal.asRPY()[1], expectedImuSignal.asRPY()[2]}, "orientations::" + sensorName + "::expected");
+        bufferManager.push_back({imuSignal.asRPY()[0], imuSignal.asRPY()[1], imuSignal.asRPY()[2]}, "orientations::" + sensorName + "::measured");
+
         ipos->checkMotionDone(&done);
     }
 
     double maxError = *max_element(errorTot.begin(), errorTot.end());
+    bufferManager.push_back(maxError, "orientations::" + sensorName + "::error::" + axesVec[ax]);
 
     ROBOTTESTINGFRAMEWORK_TEST_CHECK(maxError < errorMean, Asserter::format("Testing %s for sensor %s: the max rotation angle error is %f rad!", axesVec[ax].c_str(), sensorName.c_str(), maxError));
     ipos->positionMove(ax, 0.0);
 
     return true;
+}
+
+bool Imu::setupTelemetry()
+{
+    robometry::BufferConfig bufferConfig;
+    bufferConfig.auto_save = true;
+    bufferConfig.yarp_robot_name = std::getenv("YARP_ROBOT_NAME");
+    bufferConfig.filename = "test_imu";
+    bufferConfig.file_indexing = "%Y_%m_%d_%H_%M_%S";
+    bufferConfig.n_samples = 100000;
+    
+    bufferManager.addChannel({"joints_state::positions", {axesVec.size(), 1}, axesVec});
+    bufferManager.addChannel({"joints_state::velocities", {axesVec.size(), 1}, axesVec});
+
+    for(auto it = sensorMap.begin(); it != sensorMap.end(); it++) 
+    {
+        bufferManager.addChannel({"orientations::" + it->first + "::expected", {3, 1}, {"r", "p", "y"}});
+        bufferManager.addChannel({"orientations::" + it->first + "::measured", {3, 1}, {"r", "p", "y"}});
+        
+        for(int i = 0; i < sensorMap[it->first].size(); i ++)
+        {
+            bufferManager.addChannel({"orientations::" + it->first + "::error::" + sensorMap[it->first].get(i).toString(), {1, 1}, {"max_error"}});
+        }
+    }
+    
+    return bufferManager.configure(bufferConfig);
 }
