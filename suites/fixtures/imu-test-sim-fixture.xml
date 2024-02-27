@@ -5,37 +5,24 @@
     <authors>
         <author email="martina.gloria@iit.it">Martina Gloria</author>
     </authors>
-    <!-- <module>
-        <name>gzserver</name>
-        <parameters>-s libgazebo_yarp_clock.so</parameters>
+    <module>
+        <name>ctpService</name>
+        <parameters>--robot icubSim --part head --period 10</parameters>
         <node>localhost</node>
     </module>
     <module>
-        <name>gzclient</name>
+        <name>ctpService</name>
+        <parameters>--robot icubSim --part left_arm --period 10</parameters>
         <node>localhost</node>
     </module>
     <module>
-        <name>gz model</name>
-        <parameters>-f /home/mgloria/iit/robotology-superbuild/build/install/share/iCub/robots/iCubGazeboV2_7_feet_fixed/iCubGazeboV2_7_feet_fixed.sdf -m iCubGazebo -i</parameters>
+        <name>ctpService</name>
+        <parameters>--robot icubSim --part right_arm --period 10</parameters>
         <node>localhost</node>
-    </module> -->
-    <!-- <module>
-        <name>yarprobotinterface</name>
-        <parameters>config icub.xml</parameters>
-        <node>localhost</node>
-        <environment>YARP_CLOCK=/clock</environment>
-        <dependencies>
-            <port timeout="20">/icubSim/torso/state:o</port>
-            <port timeout="20">/icubSim/left_arm/state:o</port>
-            <port timeout="20">/icubSim/right_arm/state:o</port>
-        </dependencies>     
-    </module> -->
+    </module>
     <module>
-        <name>yarpscope</name>
-        <parameters>--xml ../src/imu/plot.xml</parameters>
+        <name>move.sh</name>
+        <parameters>sequence</parameters>
         <node>localhost</node>
-        <ensure>
-            <wait when="start">1</wait>
-        </ensure>  
     </module>
 </application>

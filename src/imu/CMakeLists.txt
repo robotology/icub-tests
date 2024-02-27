@@ -16,3 +16,5 @@ install(TARGETS imu
         EXPORT imu
         COMPONENT runtime
         LIBRARY DESTINATION lib)
+
+install(PROGRAMS move.sh DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
