@@ -6,7 +6,7 @@
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IAxisInfo.h>
-#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/robottestingframework/TestCase.h>
 
 #include <iDynTree/KinDynComputations.h>
@@ -36,8 +36,8 @@
 * | port               | string             | -     | -             | Yes      | The name of the port streaming IMU data. | e.g. /icub/head/inertials |
 * | remoteControlBoards| vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
 * | axesNames          | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
-* | sensorsList        | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") |
-* | meanError          | double             | -     | -             | Yes      | The tolerance on the mean of the error. | |
+* | sensorsList        | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") or ("all)|
+* | meanError          | double             | -     | -             | Yes      | The tolerance on the error. | |
 */
 
 class Imu : public yarp::robottestingframework::TestCase {
@@ -56,18 +56,19 @@ class Imu : public yarp::robottestingframework::TestCase {
         std::string frameName;
         std::string sensorName;
         double errorMean;
-        std::map<std::string, yarp::os::Bottle> sensorMap;
+        yarp::os::Bottle sensorsList;
 
         yarp::dev::PolyDriver MASclientDriver;
         yarp::dev::PolyDriver controlBoardDriver;
+        yarp::dev::PolyDriver MASremapperDriver;
         yarp::dev::IOrientationSensors* iorientation;
         yarp::dev::IPositionControl* ipos;
         yarp::dev::IEncoders* ienc;
         yarp::dev::IAxisInfo* iaxes;
-        yarp::dev::IControlLimits* ilim;
+        yarp::dev::IMultipleWrapper* imultiwrap;
 
         yarp::os::BufferedPort <yarp::os::Bottle> outputPort;
-        yarp::sig::Vector rpyValues;
+        std::vector<yarp::sig::Vector> rpyValues;
         yarp::sig::Vector positions;
         yarp::sig::Vector velocities;
 
@@ -88,7 +89,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         robometry::BufferManager bufferManager;
 
         bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
-        bool moveJoint(int ax, double pos, int sensIndex);
+        bool startMove();
         bool setupTelemetry();
     };
 
