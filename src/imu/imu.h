@@ -13,8 +13,6 @@
 #include <iDynTree/ModelLoader.h>
 #include <iDynTree/Model.h>
 
-#include <map>
-
 /**
 * \ingroup icub-tests
 *
@@ -37,7 +35,7 @@
 * | remoteControlBoards| vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
 * | axesNames          | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
 * | sensorsList        | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") or ("all)|
-* | meanError          | double             | -     | -             | Yes      | The tolerance on the error. | |
+* | maxError           | double             | -     | -             | Yes      | The tolerance on the error. | |
 */
 
 class Imu : public yarp::robottestingframework::TestCase {
@@ -55,7 +53,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         std::string modelName;
         std::string frameName;
         std::string sensorName;
-        double errorMean;
+        double errorMax;
         yarp::os::Bottle sensorsList;
 
         yarp::dev::PolyDriver MASclientDriver;
@@ -90,7 +88,7 @@ class Imu : public yarp::robottestingframework::TestCase {
 
         bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
         bool startMove();
-        bool setupTelemetry();
+        bool setupRobometry();
     };
 
 #endif //IMU_H

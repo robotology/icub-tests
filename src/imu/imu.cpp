@@ -28,12 +28,12 @@ bool Imu::setup(yarp::os::Property& property)
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("remoteControlBoards"), "Please, provide the controlboards name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("axesNames"), "Please, provide the controlled joints name.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("model"), "Please, provide the urdf model path.");
-    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("meanError"), "Please, provide the threshold error.");
+    ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("maxError"), "Please, provide the threshold error.");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(property.check("sensorsList"), "Please, provide the list of the sensors you want to check or 'all' if you want to test all the IMUs.");
     
     robotName = property.find("robot").asString(); // robot name
     portName = property.find("port").asString(); // name of the port from which the data are streamed
-    errorMean = property.find("meanError").asFloat64(); //error mean
+    errorMax = property.find("maxError").asFloat64(); //error mean
     modelName = property.find("model").asString(); // urdf model path
     yarp::os::ResourceFinder &rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
     std::string modelAbsolutePath = rf.findFileByName(modelName);
@@ -161,7 +161,7 @@ bool Imu::setup(yarp::os::Property& property)
         gravity
     );
 
-    setupTelemetry();
+    setupRobometry();
 
     return true;
 }
@@ -253,7 +253,7 @@ bool Imu::startMove()
     {
         sensorName = sensorsList.get(0).asList()->get(sensorIndex).asString();
         auto maxError = std::max_element(errorTot[sensorIndex].begin(), errorTot[sensorIndex].end());
-        ROBOTTESTINGFRAMEWORK_TEST_CHECK(*maxError < errorMean, Asserter::format("Testing sensor %s: the max rotation angle error is %f rad!", sensorName.c_str(), *maxError));
+        ROBOTTESTINGFRAMEWORK_TEST_CHECK(*maxError < errorMax, Asserter::format("Testing sensor %s: the max rotation angle error is %f rad!", sensorName.c_str(), *maxError));
     }
 
     return true;
@@ -283,7 +283,7 @@ bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal
     return true;
 }
 
-bool Imu::setupTelemetry()
+bool Imu::setupRobometry()
 {
     robometry::BufferConfig bufferConfig;
     bufferConfig.auto_save = true;
