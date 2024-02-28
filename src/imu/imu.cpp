@@ -98,9 +98,14 @@ bool Imu::setup(yarp::os::Property& property)
     if(inputSensorsList->size() == 0 || inputSensorsList->get(0).asString() == "all")
     {
         ROBOTTESTINGFRAMEWORK_TEST_REPORT("Testing all the IMUs available...");
-        sensorsNamesList.addString("l_arm_ft");
-        sensorsNamesList.addString("r_arm_ft");
-        sensorsNamesList.addString("head_imu_0");
+
+        yarp::dev::IOrientationSensors* ior;
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver.view(ior), "Unable to open the orientation interface");
+        for(int sensorIndex = 0; sensorIndex < ior->getNrOfOrientationSensors(); sensorIndex++)
+        {
+            ior->getOrientationSensorName(sensorIndex, sensorName);
+            sensorsNamesList.addString(sensorName);
+        }    
     }
 
     else
