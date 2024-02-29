@@ -1,4 +1,5 @@
 add_definitions(-D_USE_MATH_DEFINES)
+find_package(iDynTree REQUIRED)
 find_package(robometry)
 
 robottestingframework_add_plugin(imu HEADERS imu.h

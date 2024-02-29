@@ -33,7 +33,7 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 # options
 option(ICUB_TESTS_USES_ICUB_MAIN "Turn on to compile the tests that depend on the icub-main repository" ON)
 option(ICUB_TESTS_USES_CODYCO    "Turn on to compile the test that depend on the codyco-superbuil repository" OFF)
-option(ICUB_TESTS_USES_IDYNTREE "Turn on to compile the test that depend on the idyntree repository" OFF)
+option(ICUB_TESTS_COMPILES_IMU_TEST "Turn on to compile the IMU test" OFF)
 
 # Build examples?
 add_subdirectory(example/cpp)
@@ -101,8 +101,7 @@ add_subdirectory(src/skinWrapperTest)
 #add_subdirectory(src/system-status)
 
 # Build IMU test
-if(ICUB_TESTS_USES_IDYNTREE)
-    find_package(iDynTree REQUIRED)
+if(ICUB_TESTS_COMPILES_IMU_TEST)
     add_subdirectory(src/imu)
 endif()
 
