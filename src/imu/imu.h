@@ -18,13 +18,14 @@
 *
 * The purpose of this test is to evaluate the accuracy of the IMU Euler angles measurements.
 * It takes as input the urdf of the robot and make a comparison between the expected values retrieved from the forward kinematics and the ones read from the IMU itself.
-* The test involves the movements of the joints belonging to the part on which the sensor is mounted. The movements are executed sequentially, traversing from the home position to the lower limit, upper limit and back to the home position for each joint.
+* The test involves the movements of the joints belonging to the part on which the sensors are mounted.
 *
-* You can manually modify the suites/contexts/icub/test_imu.ini file depending on the parameters of the test. In this case, after compiling, you can run:
+* You can find the parameters involved in the test in suites/contexts/icub/test_imu.ini file. 
+* To run the test, you have to install <a href="https://pixi.sh/latest/#installation">pixi</a> and then, after cloning this repo, you can run:
 *
-* Example: robottestingframework-testrunner --suite ../suites/imu.xml
+* pixi run imu_test
 *
-* This will launch the test and open a yarpscope with the plots of the IMU traces.
+* This will compile the dependencies, launch the test and, at the end, a .mat file is generated containing the relevant measurements of the test.
 *
 *  Accepts the following parameters:
 * | Parameter name     | Type               | Units | Default Value | Required | Description | Notes |
