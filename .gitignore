@@ -5,6 +5,6 @@ CMakeLists.txt.user
 result.txt
 .DS_Store
 .vscode
-.pixi
-.build
+.pixi*
+.build*
 *.mat
