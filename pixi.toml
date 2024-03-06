@@ -12,12 +12,15 @@ scripts = ["set_path.sh"]
 [tasks]
 build_imu_test = {cmd = "cmake -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX -S. -B.build -DICUB_TESTS_COMPILES_IMU_TEST=ON"}
 compile_imu_test = {cmd = "cmake --build .build", depends_on = ["build_imu_test"]}
-imu_sim_test = {cmd = "robottestingframework-testrunner --verbose --suite suites/imu-icubGazeboSim.xml", depends_on = ["compile_imu_test"]}
-imu_test = {cmd = "robottestingframework-testrunner --verbose --suite suites/imu.xml", depends_on = ["compile_imu_test"]}
+install_imu_test = {cmd = "cmake --install .build", depends_on = ["compile_imu_test"]}
+imu_sim_test = {cmd = "robottestingframework-testrunner --verbose --suite suites/imu-icubGazeboSim.xml", depends_on = ["install_imu_test"]}
+imu_test = {cmd = "robottestingframework-testrunner --verbose --suite suites/imu.xml", depends_on = ["install_imu_test"]}
 
 [dependencies]
-robometry = ">=1.2.3,<1.3"
-idyntree = ">=10.3.0,<10.4"
-yarp = ">=3.9.0,<3.10"
-robot-testing-framework = ">=2.0.1,<2.1"
-icub-main = ">=2.5.0,<2.6"
+robometry = "*"
+idyntree = "*"
+yarp = "*"
+robot-testing-framework = "*"
+icub-main = "*"
+icub-models = "*"
+robotology-distro = ">=2024.2.0,<2024.3"
