@@ -40,6 +40,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/harfbuzz-8.3.0-h3d44ed6_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/hdf5-1.14.3-nompi_h4f84152_100.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/icu-73.2-h59595ed_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/icub-models-2.5.0-py311hb755f60_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/idyntree-10.3.0-py311ha885c8a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ipopt-3.14.14-h04b96a2_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/irrlicht-1.8.5-h2a6caf8_4.conda
@@ -218,6 +219,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2024a-h0c530f3_0.conda
       - conda: https://conda.anaconda.org/robotology/linux-64/icub-firmware-shared-1.38.0-h59595ed_119.tar.bz2
       - conda: https://conda.anaconda.org/robotology/linux-64/icub-main-2.5.0-py311h8fc83d3_119.tar.bz2
+      - conda: https://conda.anaconda.org/robotology/linux-64/robotology-distro-2024.02.0-ha770c72_118.tar.bz2
       osx-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/font-ttf-dejavu-sans-mono-2.37-hab24e00_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/font-ttf-inconsolata-3.000-h77eed37_0.tar.bz2
@@ -254,6 +256,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/harfbuzz-8.3.0-hf45c392_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/hdf5-1.14.3-nompi_h691f4bf_100.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/icu-73.2-hf5e326d_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/icub-models-2.5.0-py311hdd0406b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/idyntree-10.3.0-py311h616ed6d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/ipopt-3.14.14-h09c0c07_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/irrlicht-1.8.5-h5bfa9a0_4.conda
@@ -379,6 +382,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.5-h829000d_0.conda
       - conda: https://conda.anaconda.org/robotology/osx-64/icub-firmware-shared-1.38.0-h2f15cd5_119.tar.bz2
       - conda: https://conda.anaconda.org/robotology/osx-64/icub-main-2.5.0-py311h3bba15c_119.tar.bz2
+      - conda: https://conda.anaconda.org/robotology/osx-64/robotology-distro-2024.02.0-h694c41f_118.tar.bz2
       win-64:
       - conda: https://conda.anaconda.org/conda-forge/noarch/font-ttf-dejavu-sans-mono-2.37-hab24e00_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/font-ttf-inconsolata-3.000-h77eed37_0.tar.bz2
@@ -412,6 +416,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/harfbuzz-8.3.0-h7ab893a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/hdf5-1.14.3-nompi_h73e8ff5_100.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/icu-73.2-h63175ca_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/icub-models-2.5.0-py311h12c1d0e_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/idyntree-10.3.0-py311heed4631_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/intel-openmp-2024.0.0-h57928b3_49841.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/ipopt-3.14.14-h1709daf_1.conda
@@ -511,6 +516,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/zstd-1.5.5-h12be248_0.conda
       - conda: https://conda.anaconda.org/robotology/win-64/icub-firmware-shared-1.38.0-h63175ca_119.tar.bz2
       - conda: https://conda.anaconda.org/robotology/win-64/icub-main-2.5.0-py311h7c432e8_119.tar.bz2
+      - conda: https://conda.anaconda.org/robotology/win-64/robotology-distro-2024.02.0-h57928b3_118.tar.bz2
 packages:
 - kind: conda
   name: _libgcc_mutex
@@ -2258,6 +2264,54 @@ packages:
   platform: linux
   size: 10998376
   timestamp: 1709599293721
+- kind: conda
+  name: icub-models
+  version: 2.5.0
+  build: py311h12c1d0e_0
+  subdir: win-64
+  url: https://conda.anaconda.org/conda-forge/win-64/icub-models-2.5.0-py311h12c1d0e_0.conda
+  sha256: 8d7ee2be02e922153f6885c8a3ebd55a65233d984d303a2798350f9cb4eab423
+  md5: 4d148d26436373072f13b9738f9c2f86
+  depends:
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  - ucrt >=10.0.20348.0
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  license: CC-BY-SA-4.0
+  size: 17870796
+  timestamp: 1707240838269
+- kind: conda
+  name: icub-models
+  version: 2.5.0
+  build: py311hb755f60_0
+  subdir: linux-64
+  url: https://conda.anaconda.org/conda-forge/linux-64/icub-models-2.5.0-py311hb755f60_0.conda
+  sha256: 5ff93174596343e9135be8d594b0c324206afeda2725e9824ed64f73e7435a7d
+  md5: ad79dc104ab560a672221603eef9d86a
+  depends:
+  - libgcc-ng >=12
+  - libstdcxx-ng >=12
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  license: CC-BY-SA-4.0
+  size: 18581307
+  timestamp: 1707240225529
+- kind: conda
+  name: icub-models
+  version: 2.5.0
+  build: py311hdd0406b_0
+  subdir: osx-64
+  url: https://conda.anaconda.org/conda-forge/osx-64/icub-models-2.5.0-py311hdd0406b_0.conda
+  sha256: ef84718b28b532e60cd722aff9ac76208a02fa16a28601abf29f001a61c3c3e4
+  md5: 6300dc8276f228ff2744269e149159d0
+  depends:
+  - libcxx >=16
+  - python >=3.11,<3.12.0a0
+  - python_abi 3.11.* *_cp311
+  license: CC-BY-SA-4.0
+  size: 17161140
+  timestamp: 1707240370198
 - kind: conda
   name: idyntree
   version: 10.3.0
@@ -7515,6 +7569,210 @@ packages:
   license: LGPL-2.1-or-later
   size: 186609
   timestamp: 1674117260864
+- kind: conda
+  name: robotology-distro
+  version: 2024.02.0
+  build: h57928b3_118
+  build_number: 118
+  subdir: win-64
+  url: https://conda.anaconda.org/robotology/win-64/robotology-distro-2024.02.0-h57928b3_118.tar.bz2
+  sha256: b27cde9b87e609a18e2fa70f51c85bd3d3ca6650474f63d30ea92c61ded935d5
+  md5: 6a4d2cfa189e273891e6045dbc632027
+  constrains:
+  - robots-configuration=2.6.0
+  - yarp-device-openxrheadset=0.0.3
+  - blocktest=2.3.8
+  - idyntree-yarp-tools=0.0.9
+  - resolve-robotics-uri-py=0.2.0
+  - icub-models=2.5.0
+  - openvr=1.16.8.1
+  - human-gazebo=1.1.0
+  - casadi=3.6.3
+  - speech=1.2.0
+  - wearables=1.8.0
+  - icub-contrib-common=1.19.0
+  - icub-firmware-shared=1.38.0
+  - yarp-openvr-trackers=0.0.1
+  - libgazebo-yarp-plugins=4.10.0
+  - icub-main=2.5.0
+  - libbayes-filters-lib=0.10.0
+  - idyntree=10.3.0
+  - idyntree-matlab-bindings=10.3.0
+  - bipedal-locomotion-framework=0.18.0
+  - walking-teleoperation=1.3.4
+  - yarp-devices-forcetorque=0.3.1
+  - wb-toolbox=5.6.1
+  - blockfactory=0.8.5
+  - matlab-whole-body-simulator=3.3.0
+  - icub-basic-demos=1.24.0
+  - robot-testing-framework=2.0.1
+  - icub-tests=1.26.0
+  - libmatio-cpp=0.2.3
+  - casadi-matlab-bindings=3.6.3.1
+  - pyqtconsole=1.2.3
+  - libosqp=0.6.3
+  - whole-body-controllers=2.5.6
+  - cppad=20240000.3
+  - openxr-sdk=1.0.34
+  - libyarp=3.9.0
+  - ycm-cmake-modules=0.16.2
+  - liblie-group-controllers=0.2.0
+  - osqp-matlab=0.6.2.4
+  - icub-firmware=1.38.0
+  - qpoases=3.2.1
+  - libunicycle-footstep-planner=0.7.0
+  - walking-controllers=0.8.0
+  - osqp-eigen=0.8.1
+  - ergocub-software=0.7.1
+  - librobometry=1.2.3
+  - human-dynamics-estimation=3.0.0
+  - manif=0.0.4
+  - yarp-matlab-bindings=3.9.1
+  - whole-body-estimators=0.10.0
+  - robot-log-visualizer=0.8.0
+  - funny-things=2.2.0
+  - meshcat-python=0.3.2
+  - blocktest-yarp-plugins=1.1.4
+  arch: x86_64
+  platform: win
+  size: 6670
+  timestamp: 1709229909367
+- kind: conda
+  name: robotology-distro
+  version: 2024.02.0
+  build: h694c41f_118
+  build_number: 118
+  subdir: osx-64
+  url: https://conda.anaconda.org/robotology/osx-64/robotology-distro-2024.02.0-h694c41f_118.tar.bz2
+  sha256: 444967146322c5b215461e5a208e6d484b3e39b98ef9412aa408c5f5b24413dd
+  md5: 8d2299b1166b0730d3d29efdb3ae2021
+  constrains:
+  - walking-controllers=0.8.0
+  - idyntree=10.3.0
+  - osqp-eigen=0.8.1
+  - libbayes-filters-lib=0.10.0
+  - resolve-robotics-uri-py=0.2.0
+  - ergocub-software=0.7.1
+  - idyntree-matlab-bindings=10.3.0
+  - human-dynamics-estimation=3.0.0
+  - osqp-matlab=0.6.2.4
+  - libosqp=0.6.3
+  - qpoases=3.2.1
+  - wb-toolbox=5.6.1
+  - casadi=3.6.3
+  - icub-basic-demos=1.24.0
+  - libyarp=3.9.0
+  - human-gazebo=1.1.0
+  - casadi-matlab-bindings=3.6.3.1
+  - proxsuite=0.6.3
+  - librobometry=1.2.3
+  - libunicycle-footstep-planner=0.7.0
+  - idyntree-yarp-tools=0.0.9
+  - whole-body-controllers=2.5.6
+  - icub-firmware-shared=1.38.0
+  - cppad=20240000.3
+  - meshcat-python=0.3.2
+  - whole-body-estimators=0.10.0
+  - yarp-devices-forcetorque=0.3.1
+  - pyqtconsole=1.2.3
+  - libgazebo-yarp-plugins=4.10.0
+  - bipedal-locomotion-framework=0.18.0
+  - funny-things=2.2.0
+  - robots-configuration=2.6.0
+  - ycm-cmake-modules=0.16.2
+  - icub-firmware=1.38.0
+  - matlab-whole-body-simulator=3.3.0
+  - icub-main=2.5.0
+  - speech=1.2.0
+  - liblie-group-controllers=0.2.0
+  - libmatio-cpp=0.2.3
+  - blockfactory=0.8.5
+  - manif=0.0.4
+  - icub-tests=1.26.0
+  - blocktest=2.3.8
+  - yarp-matlab-bindings=3.9.1
+  - blocktest-yarp-plugins=1.1.4
+  - robot-testing-framework=2.0.1
+  - wearables=1.8.0
+  - walking-teleoperation=1.3.4
+  - icub-contrib-common=1.19.0
+  - icub-models=2.5.0
+  - robot-log-visualizer=0.8.0
+  arch: x86_64
+  platform: osx
+  size: 6803
+  timestamp: 1709234431562
+- kind: conda
+  name: robotology-distro
+  version: 2024.02.0
+  build: ha770c72_118
+  build_number: 118
+  subdir: linux-64
+  url: https://conda.anaconda.org/robotology/linux-64/robotology-distro-2024.02.0-ha770c72_118.tar.bz2
+  sha256: 32cbe612348c36bcda5b13f0bc9cc0fa23b0c46e7cf99635803a6edf60a38ac4
+  md5: 29a435ae615b128c9c3172671e6b4b29
+  constrains:
+  - blocktest=2.3.8
+  - bipedal-locomotion-framework=0.18.0
+  - walking-teleoperation=1.3.4
+  - matlab-whole-body-simulator=3.3.0
+  - robot-testing-framework=2.0.1
+  - blockfactory=0.8.5
+  - libbayes-filters-lib=0.10.0
+  - yarp-openvr-trackers=0.0.1
+  - human-gazebo=1.1.0
+  - idyntree-yarp-tools=0.0.9
+  - human-dynamics-estimation=3.0.0
+  - robots-configuration=2.6.0
+  - cppad=20240000.3
+  - idyntree-matlab-bindings=10.3.0
+  - icub-firmware=1.38.0
+  - funny-things=2.2.0
+  - walking-controllers=0.8.0
+  - icub-firmware-shared=1.38.0
+  - robot-log-visualizer=0.8.0
+  - libgazebo-yarp-plugins=4.10.0
+  - speech=1.2.0
+  - casadi=3.6.3
+  - idyntree=10.3.0
+  - whole-body-estimators=0.10.0
+  - osqp-matlab=0.6.2.4
+  - yarp-device-xsensmt=0.3.0
+  - openxr-sdk=1.0.34
+  - icub-tests=1.26.0
+  - qpoases=3.2.1
+  - proxsuite=0.6.3
+  - openvr=1.16.8.1
+  - pyqtconsole=1.2.3
+  - librobometry=1.2.3
+  - yarp-device-openxrheadset=0.0.3
+  - icub-models=2.5.0
+  - meshcat-python=0.3.2
+  - icub-basic-demos=1.24.0
+  - whole-body-controllers=2.5.6
+  - wb-toolbox=5.6.1
+  - yarp-matlab-bindings=3.9.1
+  - libyarp=3.9.0
+  - libunicycle-footstep-planner=0.7.0
+  - wearables=1.8.0
+  - libmatio-cpp=0.2.3
+  - manif=0.0.4
+  - yarp-devices-forcetorque=0.3.1
+  - libosqp=0.6.3
+  - ergocub-software=0.7.1
+  - liblie-group-controllers=0.2.0
+  - casadi-matlab-bindings=3.6.3.1
+  - blocktest-yarp-plugins=1.1.4
+  - event-driven=2.1
+  - icub-main=2.5.0
+  - icub-contrib-common=1.19.0
+  - osqp-eigen=0.8.1
+  - ycm-cmake-modules=0.16.2
+  - resolve-robotics-uri-py=0.2.0
+  arch: x86_64
+  platform: linux
+  size: 6767
+  timestamp: 1709225364541
 - kind: conda
   name: scotch
   version: 7.0.4
