@@ -20,23 +20,19 @@
 * It takes as input the urdf of the robot and make a comparison between the expected values retrieved from the forward kinematics and the ones read from the IMU itself.
 * The test involves the movements of the joints belonging to the part on which the sensors are mounted.
 *
-* You can find the parameters involved in the test in suites/contexts/icub/test_imu.ini file. 
-* To run the test, you have to install <a href="https://pixi.sh/latest/#installation">pixi</a> and then, after cloning this repo, you can run:
+* You can find the parameters involved in the test in the following table:
 *
-* pixi run imu_test
+* | Parameter name     | Type               | Required | Description | Notes |
+* |:------------------:|:------------------:|:--------:|:-----------:|:-----:|
+* | robot              | string             | Yes      | The name of the robot. | e.g. icub |
+* | model              | string             | Yes      | The name of the robot model. | e.g. model.urdf |
+* | port               | string             | Yes      | The name of the port streaming IMU data. | e.g. /icub/alljoints/inertials |
+* | remoteControlBoards| vector of string   | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
+* | axesNames          | vector of string   | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
+* | sensorsList        | vector of string   | Yes      | The list of the sensors to be tested. | e.g. ("head_imu_0", "l_arm_ft") or ("all")|
+* | maxError           | double             | Yes      | The tolerance on the error. | |
 *
-* This will compile the dependencies, launch the test and, at the end, a .mat file is generated containing the relevant measurements of the test.
-*
-*  Accepts the following parameters:
-* | Parameter name     | Type               | Units | Default Value | Required | Description | Notes |
-* |:------------------:|:------------------:|:-----:|:-------------:|:--------:|:-----------:|:-----:|
-* | robot              | string             | -     | -             | Yes      | The name of the robot. | e.g. icub |
-* | model              | string             | -     | -             | Yes      | The name of the robot model. | e.g. model.urdf |
-* | port               | string             | -     | -             | Yes      | The name of the port streaming IMU data. | e.g. /icub/head/inertials |
-* | remoteControlBoards| vector of string   | -     | -             | Yes      | The list of the controlboards to open. | e.g. ("torso", "head") |
-* | axesNames          | vector of string   | -     | -             | Yes      | The list of the controlled joints. | e.g. ("torso_pitch", "torso_roll", "torso_yaw", "neck_pitch", "neck_roll", "neck_yaw") |
-* | sensorsList        | vector of string   | -     | -             | Yes      | The list of the sensors to be tested | e.g. ("head_imu_0", "l_arm_ft") or ("all)|
-* | maxError           | double             | -     | -             | Yes      | The tolerance on the error. | |
+* Further instructions about how to install, configure and run the test can be found in the <a href="http://robotology.github.io/icub-tests/doxygen/doc/html/pages.html">related page</a>.
 */
 
 class Imu : public yarp::robottestingframework::TestCase {
