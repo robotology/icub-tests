@@ -9,6 +9,7 @@ robottestingframework_add_plugin(imu HEADERS imu.h
 target_link_libraries(imu   RobotTestingFramework::RTF
                             RobotTestingFramework::RTF_dll
                             YARP::YARP_robottestingframework
+                            YARP::YARP_manager
                             iDynTree::idyntree-high-level 
                             iDynTree::idyntree-estimation
                             robometry::robometry)

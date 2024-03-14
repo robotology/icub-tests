@@ -119,10 +119,21 @@ arms_up() {
     echo "ctpq time 5 off 0 pos (-90.0 60.0 20.0 45.0 0.0 0.0 0.0)" | yarp rpc /ctpservice/right_arm/rpc
 }
 
+left_leg() {
+    echo "ctpq time 5 off 0 pos (70.0 50.0 0.0 -50.0 0.0 0.0) " | yarp rpc /ctpservice/left_leg/rpc
+    echo "ctpq time 5 off 0 pos (70.0 50.0 0.0 -50.0 -25.0 0.0) " | yarp rpc /ctpservice/left_leg/rpc
+    echo "ctpq time 5 off 0 pos (0.0 0.0 0.0 0.0 0.0 0.0) " | yarp rpc /ctpservice/left_leg/rpc
+}
+
+right_leg() {
+    echo "ctpq time 5 off 0 pos (70.0 50.0 0.0 -50.0 0.0 0.0) " | yarp rpc /ctpservice/right_leg/rpc
+    echo "ctpq time 5 off 0 pos (70.0 50.0 0.0 -50.0 -25.0 0.0) " | yarp rpc /ctpservice/right_leg/rpc
+    echo "ctpq time 5 off 0 pos (0.0 0.0 0.0 0.0 0.0 0.0) " | yarp rpc /ctpservice/right_leg/rpc
+}
+
 #######################################################################################
 # SEQUENCE:                                                                           #
 #######################################################################################
-
 
 sequence(){
 
@@ -136,6 +147,10 @@ sequence(){
   go_home
 }
 
+legs() {
+    left_leg
+    right_leg
+}
 
 #######################################################################################
 # "MAIN" FUNCTION:                                                                    #
@@ -143,11 +158,10 @@ sequence(){
 echo "********************************************************************************"
 echo ""
 
-$1 "$2"
-
-if [[ $# -eq 0 ]] ; then
-    echo "No options were passed!"
-    echo ""
-    usage
-    exit 1
+if [[ -n "$1" && $1 == "no_legs" ]] ; then
+    echo "Parameter no_legs passed"
+    sequence
+else
+    sequence
+    legs
 fi

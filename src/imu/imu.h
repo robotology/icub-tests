@@ -9,6 +9,9 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/robottestingframework/TestCase.h>
 
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/scriptbroker.h>
+
 #include <iDynTree/KinDynComputations.h>
 #include <iDynTree/ModelLoader.h>
 #include <iDynTree/Model.h>
@@ -46,12 +49,12 @@ class Imu : public yarp::robottestingframework::TestCase {
     private:
         std::string robotName;
         std::string portName;
-        std::string partName;
         std::string modelName;
         std::string frameName;
         std::string sensorName;
         double errorMax;
         yarp::os::Bottle sensorsList;
+        std::vector<std::string> partsList;
 
         yarp::dev::PolyDriver MASclientDriver;
         yarp::dev::PolyDriver controlBoardDriver;
@@ -83,9 +86,14 @@ class Imu : public yarp::robottestingframework::TestCase {
 
         robometry::BufferManager bufferManager;
 
-        bool sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal);
         bool startMove();
         bool setupRobometry();
-    };
+        void setupBrokers();
+
+        std::vector<yarp::manager::LocalBroker> localBroker;
+        yarp::manager::LocalBroker scriptBroker;
+        std::string strCmd;
+        std::string strParam;
+};
 
 #endif //IMU_H
