@@ -8,9 +8,7 @@
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/robottestingframework/TestCase.h>
-
 #include <yarp/manager/localbroker.h>
-#include <yarp/manager/scriptbroker.h>
 
 #include <iDynTree/KinDynComputations.h>
 #include <iDynTree/ModelLoader.h>
