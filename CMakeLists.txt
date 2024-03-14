@@ -24,7 +24,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(iCub-Tests)
 
 find_package(RobotTestingFramework 2 COMPONENTS DLL REQUIRED)
-find_package(YARP 3.5.1 COMPONENTS os math robottestingframework REQUIRED)
+find_package(YARP 3.5.1 COMPONENTS os math robottestingframework manager REQUIRED)
 
 # set the output plugin directory to collect all the shared libraries
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)

@@ -49,6 +49,7 @@ bool Imu::setup(yarp::os::Property& property)
     inputControlBoards = property.find("remoteControlBoards").asList();
     for(int ctrlBoard = 0; ctrlBoard < inputControlBoards->size(); ctrlBoard++)
     {
+        partsList.push_back(inputControlBoards->get(ctrlBoard).asString());
         remoteControlBoardsList.addString("/"+robotName+"/"+inputControlBoards->get(ctrlBoard).asString());
     }
 
@@ -167,6 +168,7 @@ bool Imu::setup(yarp::os::Property& property)
     );
 
     setupRobometry();
+    localBroker.resize(remoteControlBoards.get(0).asList()->size());
 
     return true;
 }
@@ -178,6 +180,13 @@ void Imu::tearDown()
 
     controlBoardDriver.close();
     MASclientDriver.close();
+
+    for(int i = 0; i < localBroker.size(); i++)
+    {
+        localBroker[i].stop();
+    }
+    
+    scriptBroker.stop();
 }
 
 void Imu::run() 
@@ -194,6 +203,7 @@ void Imu::run()
         I_R_I_IMU = (I_R_FK * ((iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]), iDynTree::deg2rad(rpyValues[sensorIndex][1]), iDynTree::deg2rad(rpyValues[sensorIndex][2]))).inverse()));    
     }
 
+    setupBrokers();
     startMove();
 }
 
@@ -233,8 +243,6 @@ bool Imu::startMove()
             iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]), iDynTree::deg2rad(rpyValues[sensorIndex][1]), iDynTree::deg2rad(rpyValues[sensorIndex][2]))); 
             error = (expectedImuSignal * imuSignal.inverse()).log();
 
-            // sendData(expectedImuSignal.asRPY(), imuSignal.asRPY());
-
             bufferManager.push_back(positions, "joints_state::positions");
             bufferManager.push_back(velocities, "joints_state::velocities");
             bufferManager.push_back({expectedImuSignal.asRPY()[0], expectedImuSignal.asRPY()[1], expectedImuSignal.asRPY()[2]}, "orientations::" + sensorName + "::expected");
@@ -264,30 +272,6 @@ bool Imu::startMove()
     return true;
 }
 
-bool Imu::sendData(iDynTree::Vector3 expectedValues, iDynTree::Vector3 imuSignal)
-{
-    yarp::os::Bottle& out = outputPort.prepare();
-    static yarp::os::Stamp stamp;
-
-    stamp.update();
-    outputPort.setEnvelope(stamp);
-    out.clear();
-
-    out.addFloat64(iDynTree::rad2deg(expectedValues[0]));
-    out.addFloat64(iDynTree::rad2deg(expectedValues[1]));
-    out.addFloat64(iDynTree::rad2deg(expectedValues[2]));
-
-    out.addFloat64(iDynTree::rad2deg(imuSignal[0]));
-    out.addFloat64(iDynTree::rad2deg(imuSignal[1]));
-    out.addFloat64(iDynTree::rad2deg(imuSignal[2]));
-
-    out.addFloat64(stamp.getTime());
-
-    outputPort.writeStrict();    
-    
-    return true;
-}
-
 bool Imu::setupRobometry()
 {
     robometry::BufferConfig bufferConfig;
@@ -308,4 +292,30 @@ bool Imu::setupRobometry()
     }
     
     return bufferManager.configure(bufferConfig);
+}
+
+void Imu::setupBrokers()
+{
+    strCmd = "ctpService";
+    for(int i = 0; i < localBroker.size(); i++)
+    {
+        strParam = "--robot " + robotName + " --part " + partsList[i];
+        localBroker[i].init(strCmd.c_str(), strParam.c_str(), nullptr, nullptr, nullptr, nullptr);
+        localBroker[i].start();
+        strParam.clear(); 
+    }
+
+    for (auto part : partsList)
+    {
+        if(part.find("leg") != std::string::npos)
+        {
+            strParam = "no_legs";
+        }
+    }
+
+    strCmd.clear();
+    strCmd = "move.sh";
+
+    scriptBroker.init(strCmd.c_str(), strParam.c_str(), nullptr, nullptr, nullptr, nullptr);
+    scriptBroker.start();
 }
