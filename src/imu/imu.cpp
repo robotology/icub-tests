@@ -308,9 +308,10 @@ void Imu::setupBrokers()
     for (auto part : partsList)
     {
         if(part.find("leg") != std::string::npos)
-        {
+            strParam = "";
+
+        else
             strParam = "no_legs";
-        }
     }
 
     strCmd.clear();
