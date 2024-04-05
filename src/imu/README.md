@@ -93,3 +93,13 @@ export YARP_ROBOT_NAME=iCubGazeboV2_7
 cd icub-tests
 pixi run imu_sim_test
 ```
+
+## Generate report
+
+The IMU test is based on [`robometry`](https://github.com/robotology/robometry) that allows logging data from the robot sensors and saving them into a .mat file that will be generated at the end of the test execution. 
+
+To generate the report containing the plots with the acquired data and the results of the test, you can launch the `generate_report.mlx` MATLAB Live Script under `icub-tests/src/imu/report/` folder. After opening this file with MATLAB, `run` the script. Wait until it's done, it may take some time to finish. Finally, you can manually export the report in HTML format or, in the Command Window, run:
+
+```matlab
+    export('report.mlx', format='html', HideCode=true);
+```
