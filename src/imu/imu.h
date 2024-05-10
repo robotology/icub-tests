@@ -48,8 +48,6 @@ class Imu : public yarp::robottestingframework::TestCase {
         std::string robotName;
         std::string portName;
         std::string modelName;
-        std::string frameName;
-        std::string sensorName;
         double errorMax;
         yarp::os::Bottle sensorsList;
         std::vector<std::string> partsList;
@@ -69,7 +67,6 @@ class Imu : public yarp::robottestingframework::TestCase {
         yarp::sig::Vector velocities;
 
         int axes;
-        double timestamp;
         std::vector<std::string> axesVec;
 
         iDynTree::ModelLoader model;
@@ -80,7 +77,7 @@ class Imu : public yarp::robottestingframework::TestCase {
         iDynTree::Rotation baseLinkOrientation;
         iDynTree::Twist baseVelocity;
         iDynTree::Transform I_T_base;
-        iDynTree::Rotation I_R_I_IMU;
+        std::vector<iDynTree::Rotation> I_R_I_IMU;
 
         robometry::BufferManager bufferManager;
 
