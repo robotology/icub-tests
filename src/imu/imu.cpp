@@ -8,6 +8,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/LogStream.h>
 
 #include <robometry/BufferConfig.h>
 #include <robometry/BufferManager.h>
@@ -99,7 +100,7 @@ bool Imu::setup(yarp::os::Property& property)
     if(inputSensorsList->size() == 0 || inputSensorsList->get(0).asString() == "all")
     {
         ROBOTTESTINGFRAMEWORK_TEST_REPORT("Testing all the IMUs available...");
-
+        std::string sensorName{""};
         yarp::dev::IOrientationSensors* ior;
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASclientDriver.view(ior), "Unable to open the orientation interface");
         for(int sensorIndex = 0; sensorIndex < ior->getNrOfOrientationSensors(); sensorIndex++)
@@ -130,9 +131,6 @@ bool Imu::setup(yarp::os::Property& property)
     driverList.push(&MASclientDriver, "alljoints_inertials");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(imultiwrap->attachAll(driverList), "Unable to do the attach");
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(MASremapperDriver.view(iorientation), "Unable to open orientation interface");
-        
-    outputPort.open("/test-imu/out");
-    ROBOTTESTINGFRAMEWORK_TEST_REPORT("Opening port "+outputPort.getName()+"...");
 
     iDynTree::Vector3 baseLinkOrientationRad;
     baseLinkOrientationRad.zero();
@@ -180,6 +178,7 @@ void Imu::tearDown()
 
     controlBoardDriver.close();
     MASclientDriver.close();
+    MASremapperDriver.close();
 
     for(int i = 0; i < localBroker.size(); i++)
     {
@@ -193,14 +192,18 @@ void Imu::run()
 {
     ROBOTTESTINGFRAMEWORK_TEST_REPORT("Starting reading IMU orientation values...");
     rpyValues.resize(sensorsList.get(0).asList()->size());
+    I_R_I_IMU.resize(sensorsList.get(0).asList()->size());
 
     for (int sensorIndex = 0; sensorIndex < sensorsList.get(0).asList()->size(); sensorIndex++)
     {
-        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorName(sensorIndex, sensorName), "Unable to obtain rpy measurements.");
+        std::string sensorName{""};
+        std::string frameName{""};
+        double timestamp;
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorName(sensorIndex, sensorName), "Unable to obtain sensor name.");
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorMeasureAsRollPitchYaw(sensorIndex, rpyValues[sensorIndex], timestamp), "Unable to obtain rpy measurements.");
-        iorientation->getOrientationSensorFrameName(sensorIndex, frameName);
+        ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorFrameName(sensorIndex, frameName), "Unable to obtain frame name.");
         iDynTree::Rotation I_R_FK = kinDynComp.getWorldTransform(frameName).getRotation(); 
-        I_R_I_IMU = (I_R_FK * ((iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]), iDynTree::deg2rad(rpyValues[sensorIndex][1]), iDynTree::deg2rad(rpyValues[sensorIndex][2]))).inverse()));    
+        I_R_I_IMU[sensorIndex] = (I_R_FK * ((iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]), iDynTree::deg2rad(rpyValues[sensorIndex][1]), iDynTree::deg2rad(rpyValues[sensorIndex][2]))).inverse()));    
     }
 
     setupBrokers();
@@ -219,9 +222,13 @@ bool Imu::startMove()
     {
         for (int sensorIndex = 0; sensorIndex < sensorsList.get(0).asList()->size(); sensorIndex++)
         {
-            sensorName = sensorsList.get(0).asList()->get(sensorIndex).asString();
-            iorientation->getOrientationSensorMeasureAsRollPitchYaw(sensorIndex, rpyValues[sensorIndex], timestamp);
-            iorientation->getOrientationSensorFrameName(sensorIndex, frameName);
+            std::string frameName{""};
+            std::string sensorName{""};
+            
+            double timestamp;
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorName(sensorIndex, sensorName), "Unable to obtain sensor name.");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorMeasureAsRollPitchYaw(sensorIndex, rpyValues[sensorIndex], timestamp), "Unable to obtain rpy measurements.");
+            ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(iorientation->getOrientationSensorFrameName(sensorIndex, frameName), "Unable to obtain frame name.");
 
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoders(positions.data()), "Cannot get joint positions");
             ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ienc->getEncoderSpeeds(velocities.data()), "Cannot get joint velocities");
@@ -240,7 +247,7 @@ bool Imu::startMove()
             gravity);
 
             iDynTree::Rotation expectedImuSignal = kinDynComp.getWorldTransform(frameName).getRotation();
-            iDynTree::Rotation imuSignal = (I_R_I_IMU * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]), iDynTree::deg2rad(rpyValues[sensorIndex][1]), iDynTree::deg2rad(rpyValues[sensorIndex][2]))); 
+            iDynTree::Rotation imuSignal = (I_R_I_IMU[sensorIndex] * iDynTree::Rotation::RPY(iDynTree::deg2rad(rpyValues[sensorIndex][0]), iDynTree::deg2rad(rpyValues[sensorIndex][1]), iDynTree::deg2rad(rpyValues[sensorIndex][2]))); 
             error = (expectedImuSignal * imuSignal.inverse()).log();
 
             bufferManager.push_back(positions, "joints_state::positions");
@@ -264,7 +271,7 @@ bool Imu::startMove()
 
     for(int sensorIndex = 0; sensorIndex < sensorsList.get(0).asList()->size(); sensorIndex++)
     {
-        sensorName = sensorsList.get(0).asList()->get(sensorIndex).asString();
+        auto sensorName = sensorsList.get(0).asList()->get(sensorIndex).asString();
         auto maxError = std::max_element(errorTot[sensorIndex].begin(), errorTot[sensorIndex].end());
         ROBOTTESTINGFRAMEWORK_TEST_CHECK(*maxError < errorMax, Asserter::format("Testing sensor %s: the max rotation angle error is %f rad!", sensorName.c_str(), *maxError));
     }
