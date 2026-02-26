@@ -55,7 +55,7 @@ jobs:
       run: |
         mkdir -p build
         cd build
-        cmake -G"Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install \
+        cmake -G"Visual Studio 17 2022" -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install \
               -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DICUB_TESTS_COMPILES_IMU_TEST=ON ..
 
     - name: Build
